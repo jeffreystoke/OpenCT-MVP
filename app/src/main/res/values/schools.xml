@@ -43,7 +43,6 @@
         <item>淮阴工学院</item>
         <item>江南大学</item>
         <item>江苏大学</item>
-        <item>江苏科技大学</item>
         <item>江苏理工学院</item>
         <item>金陵科技学院</item>
         <item>南京工程学院</item>
@@ -52,11 +51,44 @@
         <item>南京信息工程大学</item>
         <item>南京信息工程大学滨江学院</item>
         <item>南京邮电大学</item>
+        <item>山东财经大学</item>
         <item>苏州大学</item>
         <item>苏州科技大学</item>
         <item>西华大学</item>
         <item>盐城工学院</item>
         <item>中国矿业大学</item>
+        <item>安徽国防科技职业学院(仅教务网)</item>
+        <item>福建医科大学(仅教务网)</item>
+        <item>广东海洋大学(仅教务网)</item>
+        <item>湖南师范大学(仅教务网)</item>
+        <item>四川大学锦城学院(仅教务网)</item>
+        <item>浙江工贸职业技术学院(仅教务网)</item>
+        <item>鞍山师范学院(仅图书馆)</item>
+        <item>北京城市学院(仅图书馆)</item>
+        <item>北京科技大学(仅图书馆)</item>
+        <item>北京林业大学(仅图书馆)</item>
+        <item>成都信息工程大学(仅图书馆)</item>
+        <item>大连工业大学(仅图书馆)</item>
+        <item>东北财经大学(仅图书馆)</item>
+        <item>东北大学秦皇岛分校(仅图书馆)</item>
+        <item>东北林业大学(仅图书馆)</item>
+        <item>东北农业大学(仅图书馆)</item>
+        <item>东南大学(仅图书馆)</item>
+        <item>东南大学成贤学院 (仅图书馆)</item>
+        <item>吉林财经大学(仅图书馆)</item>
+        <item>江苏科技大学(仅图书馆)</item>
+        <item>江苏师范大学(仅图书馆)</item>
+        <item>南京林业大学(仅图书馆)</item>
+        <item>南京农业大学(仅图书馆)</item>
+        <item>南京森林警察学院(仅图书馆)</item>
+        <item>南京师范大学(仅图书馆)</item>
+        <item>南京医科大学(仅图书馆)</item>
+        <item>南开大学(仅图书馆)</item>
+        <item>山东农业大学(仅图书馆)</item>
+        <item>长安大学(仅图书馆)</item>
+        <item>长春大学(仅图书馆)</item>
+        <item>长春理工大学(仅图书馆)</item>
+        <item>长春中医药大学(仅图书馆)</item>
     </string-array>
     <string-array name="pref_school_values">
         <item>AQNU</item>
@@ -72,7 +104,6 @@
         <item>HYIT</item>
         <item>JIANGNAN</item>
         <item>UJS</item>
-        <item>JUST</item>
         <item>JSTU</item>
         <item>JIT</item>
         <item>NJIT</item>
@@ -81,10 +112,43 @@
         <item>NUIST</item>
         <item>BJXY</item>
         <item>NJUPT</item>
+        <item>SDUFE</item>
         <item>SUDA</item>
         <item>USTS</item>
         <item>XHU</item>
         <item>YCTU</item>
         <item>CUMT</item>
+        <item>ANGF</item>
+        <item>FJMU</item>
+        <item>GDOU</item>
+        <item>HUNNU</item>
+        <item>SCUJCC</item>
+        <item>ZJITC</item>
+        <item>ASNC</item>
+        <item>BCU</item>
+        <item>USTB</item>
+        <item>BJFU</item>
+        <item>CUIT</item>
+        <item>DLPU</item>
+        <item>DUFE</item>
+        <item>NEUQ</item>
+        <item>NEFU</item>
+        <item>NEAU</item>
+        <item>SEU</item>
+        <item>CXXY</item>
+        <item>JLUFE</item>
+        <item>JUST</item>
+        <item>JSNU</item>
+        <item>NJFU</item>
+        <item>NJAU</item>
+        <item>FORESTPOLICE</item>
+        <item>NJNU</item>
+        <item>NJMU</item>
+        <item>NANKAI</item>
+        <item>SDAU</item>
+        <item>CHD</item>
+        <item>CCU</item>
+        <item>CUST</item>
+        <item>CCUCM</item>
     </string-array>
 </resources>

@@ -64,8 +64,8 @@ public class ClassFragment extends Fragment implements ClassContract.View {
 
     private int height, width;
     private int colorIndex;
-    private int classLength = Loader.getClassLength();
-    private int dailyClasses = Loader.getDailyClasses();
+    private int classLength;
+    private int dailyClasses;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,7 +76,6 @@ public class ClassFragment extends Fragment implements ClassContract.View {
         ButterKnife.bind(this, mainView);
 
         initViewPager(mainView);
-
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         width = (int) Math.round(metrics.widthPixels * (2.0 / 15.0));
         height = (int) Math.round(metrics.heightPixels * (1.0 / 15.0));
@@ -150,20 +149,22 @@ public class ClassFragment extends Fragment implements ClassContract.View {
     }
 
     private void addSeqViews(ViewGroup index) {
-        index.removeAllViews();
-        for (int i = 1; i <= dailyClasses * classLength; i++) {
-            TextView textView = new TextView(mContext);
-            if (classLength == 2) {
-                if (i % classLength == 0) continue;
-                textView.setText("第\n" + i + "\n~\n" + (i + 1) + "\n节");
-            } else {
-                textView.setText("第\n" + i + "\n节");
+        if (index != null) {
+            index.removeAllViews();
+            for (int i = 1; i <= dailyClasses * classLength; i++) {
+                TextView textView = new TextView(mContext);
+                if (classLength == 2) {
+                    if (i % classLength == 0) continue;
+                    textView.setText("第\n" + i + "\n~\n" + (i + 1) + "\n节");
+                } else {
+                    textView.setText("第\n" + i + "\n节");
+                }
+                textView.setGravity(Gravity.CENTER);
+                textView.setMinHeight(height * classLength);
+                textView.setMaxHeight(height * classLength);
+                textView.setTextSize(10);
+                index.addView(textView);
             }
-            textView.setGravity(Gravity.CENTER);
-            textView.setMinHeight(height * classLength);
-            textView.setMaxHeight(height * classLength);
-            textView.setTextSize(10);
-            index.addView(textView);
         }
     }
 
@@ -238,6 +239,8 @@ public class ClassFragment extends Fragment implements ClassContract.View {
 
     @Override
     public void updateClasses(List<ClassInfo> classes) {
+        classLength = Loader.getClassLength();
+        dailyClasses = Loader.getDailyClasses();
         int week = Loader.getCurrentWeek(mContext);
         mTitles[1] = "本周 (第" + week + "周)";
 

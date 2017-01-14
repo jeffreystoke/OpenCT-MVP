@@ -198,6 +198,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
     protected void onResume() {
         ActivityUtils.encryptionCheck(this);
         super.onResume();
