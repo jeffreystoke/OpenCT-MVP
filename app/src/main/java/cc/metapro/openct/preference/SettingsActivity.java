@@ -16,7 +16,6 @@ package cc.metapro.openct.preference;
  * limitations under the License.
  */
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -67,24 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         ActivityUtils.encryptionCheck(this);
-        Observable
-                .create(new ObservableOnSubscribe<Integer>() {
-                    @Override
-                    public void subscribe(ObservableEmitter<Integer> e) throws Exception {
-                        Loader.loadUniversity(SettingsActivity.this);
-                        e.onComplete();
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .onErrorReturn(new Function<Throwable, Integer>() {
-                    @Override
-                    public Integer apply(Throwable throwable) throws Exception {
-                        Toast.makeText(SettingsActivity.this, "FATAL: 加载学校信息失败", Toast.LENGTH_LONG).show();
-                        return 0;
-                    }
-                })
-                .subscribe();
+        Loader.loadUniversity(SettingsActivity.this);
         super.onDestroy();
     }
 
@@ -128,10 +110,8 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
             }
         };
-        private Context mContext;
 
         public SchoolPreferenceFragment() {
-            mContext = getActivity();
         }
 
         @Override
@@ -140,7 +120,7 @@ public class SettingsActivity extends AppCompatActivity {
             addPreferencesFromResource(R.xml.pref_school);
             setHasOptionsMenu(false);
 
-            bindSummaryToValue(findPreference(Constants.PREF_SCHOOL_NAME_KEY));
+            bindSummaryToValue(findPreference(Constants.PREF_SCHOOL_ABBR_KEY));
             bindSummaryToValue(findPreference(Constants.PREF_CURRENT_WEEK_KEY));
             bindSummaryToValue(findPreference(Constants.PREF_CMS_USERNAME_KEY));
             bindSummaryToValue(findPreference(Constants.PREF_LIB_USERNAME_KEY));
@@ -150,6 +130,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         private void bindSummaryToValue(Preference preference) {
+            if (preference == null) return;
             preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
             sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                     PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));

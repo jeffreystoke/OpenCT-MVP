@@ -27,6 +27,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
@@ -40,6 +42,18 @@ import io.reactivex.schedulers.Schedulers;
 
 public class InitDiaolgHelper {
 
+    @BindView(R.id.info_init_cms_username)
+    EditText cmsUsername;
+    @BindView(R.id.info_init_cms_password)
+    EditText cmsPassword;
+    @BindView(R.id.info_init_lib_username)
+    EditText libUsername;
+    @BindView(R.id.info_init_lib_password)
+    EditText libPassword;
+    @BindView(R.id.info_init_school)
+    Spinner schoolSpinner;
+    @BindView(R.id.info_init_week)
+    Spinner weekSpinner;
     private Context mContext;
 
     public InitDiaolgHelper(Context context) {
@@ -48,13 +62,10 @@ public class InitDiaolgHelper {
 
     public AlertDialog getInitDialog() {
         AlertDialog.Builder ab = new AlertDialog.Builder(mContext);
-        final View view = LayoutInflater.from(mContext).inflate(R.layout.info_init_dialog_layout, null);
-        final EditText cmsUsername = (EditText) view.findViewById(R.id.info_init_cms_username);
-        final EditText cmsPassword = (EditText) view.findViewById(R.id.info_init_cms_password);
-        final EditText libUsername = (EditText) view.findViewById(R.id.info_init_lib_username);
-        final EditText libPassword = (EditText) view.findViewById(R.id.info_init_lib_password);
-        final Spinner schoolSpinner = (Spinner) view.findViewById(R.id.info_init_school);
-        final Spinner weekSpinner = (Spinner) view.findViewById(R.id.info_init_week);
+
+        View view = LayoutInflater.from(mContext).inflate(R.layout.info_init_dialog_layout, null);
+
+        ButterKnife.bind(this, view);
 
         ab.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
@@ -63,7 +74,7 @@ public class InitDiaolgHelper {
                 String week = mContext.getResources().getStringArray(R.array.pref_week_seq_values)[weekSpinner.getSelectedItemPosition()];
                 SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(mContext);
                 SharedPreferences.Editor editor = p.edit();
-                editor.putString(Constants.PREF_SCHOOL_NAME_KEY, school);
+                editor.putString(Constants.PREF_SCHOOL_ABBR_KEY, school);
                 editor.putString(Constants.PREF_CURRENT_WEEK_KEY, week);
                 editor.putString(Constants.PREF_CMS_USERNAME_KEY, cmsUsername.getText().toString());
                 editor.putString(Constants.PREF_CMS_PASSWORD_KEY, cmsPassword.getText().toString());

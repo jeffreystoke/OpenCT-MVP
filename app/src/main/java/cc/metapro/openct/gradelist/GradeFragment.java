@@ -60,7 +60,6 @@ public class GradeFragment extends Fragment implements GradeContract.View {
     FloatingActionButton fab;
 
     private Context mContext;
-    private Unbinder mUnbinder;
     private AlertDialog.Builder ab;
     private AlertDialog mCaptchaDialog;
     private GradeAdapter mGradeAdapter;
@@ -88,7 +87,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
     public View
     onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_grade, container, false);
-        mUnbinder = ButterKnife.bind(this, view);
+        ButterKnife.bind(this, view);
         mContext = getContext();
 
         mCaptchaDialogHelper = new ActivityUtils.CaptchaDialogHelper(getContext(), mPresenter, "刷新");
@@ -104,13 +103,6 @@ public class GradeFragment extends Fragment implements GradeContract.View {
     public void onResume() {
         mPresenter.start();
         super.onResume();
-    }
-
-    @Override
-    public void onDestroy() {
-        mPresenter.storeGrades();
-        mUnbinder.unbind();
-        super.onDestroy();
     }
 
     @Override

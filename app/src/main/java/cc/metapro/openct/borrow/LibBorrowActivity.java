@@ -58,7 +58,7 @@ public class LibBorrowActivity extends AppCompatActivity {
     @OnClick(R.id.fab_refresh)
     public void load() {
         Map<String, String> map = Loader.getLibStuInfo(this);
-        if (map.size() == 0) {
+        if (map.size() < 2) {
             Toast.makeText(this, R.string.enrich_lib_info, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);

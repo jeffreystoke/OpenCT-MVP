@@ -22,6 +22,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -62,7 +63,39 @@ public class DBManger {
         }
     }
 
-    UniversityInfo getUniversity(String abbr) {
+    public boolean updateCustomSchoolInfo(UniversityInfo.SchoolInfo info) {
+        mDatabase.beginTransaction();
+        try {
+            mDatabase.delete(DBHelper.CUSTOM_TABLE, null, null);
+            mDatabase.execSQL("INSERT INTO " + DBHelper.CUSTOM_TABLE + " VALUES(null, ?)", new Object[]{info.toString()});
+            mDatabase.setTransactionSuccessful();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            mDatabase.endTransaction();
+        }
+    }
+
+    public UniversityInfo.SchoolInfo getCustomSchoolInfo() {
+        Cursor cursor = null;
+        try {
+            cursor = mDatabase.query(DBHelper.CUSTOM_TABLE, null, null, null, null, null, null);
+            cursor.moveToFirst();
+            Gson gson = new Gson();
+            return gson.fromJson(cursor.getString(1), UniversityInfo.SchoolInfo.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    private UniversityInfo.SchoolInfo getSchoolInfo(String abbr) {
         Cursor cursor = mDatabase.query(
                 DBHelper.SCHOOL_TABLE, null,
                 DBHelper.ABBR + "=? COLLATE NOCASE", new String[]{abbr},
@@ -72,20 +105,25 @@ public class DBManger {
         Map<String, String> strKvs = new HashMap<>(n);
         Map<String, Boolean> boolKvs = new HashMap<>(n);
         cursor.moveToFirst();
-        for (int i = 0; i < n; i++) {
-            switch (cursor.getType(i)) {
-                case Cursor.FIELD_TYPE_STRING:
-                    strKvs.put(content[i], cursor.getString(i));
-                    break;
-                case Cursor.FIELD_TYPE_INTEGER:
-                    boolean s = cursor.getInt(i) == 1;
-                    boolKvs.put(content[i], s);
-                    break;
+        if (cursor.getCount() > 0) {
+            for (int i = 0; i < n; i++) {
+                switch (cursor.getType(i)) {
+                    case Cursor.FIELD_TYPE_STRING:
+                        strKvs.put(content[i], cursor.getString(i));
+                        break;
+                    case Cursor.FIELD_TYPE_INTEGER:
+                        boolean s = cursor.getInt(i) == 1;
+                        boolKvs.put(content[i], s);
+                        break;
+                }
             }
         }
         cursor.close();
 
-        UniversityInfo.SchoolInfo schoolInfo = new UniversityInfo.SchoolInfo(strKvs, boolKvs);
+        return new UniversityInfo.SchoolInfo(strKvs, boolKvs);
+    }
+
+    UniversityInfo getUniversity(UniversityInfo.SchoolInfo schoolInfo) {
         UniversityInfo universityInfo = new UniversityInfo();
         String cmsJson = null;
         String libJson = null;
@@ -127,8 +165,12 @@ public class DBManger {
 
         universityInfo.mCMSInfo = cmsInfo;
         universityInfo.mLibraryInfo = libraryInfo;
-
         return universityInfo;
+    }
+
+    public UniversityInfo getUniversity(String abbr) {
+        UniversityInfo.SchoolInfo schoolInfo = getSchoolInfo(abbr);
+        return getUniversity(schoolInfo);
     }
 
     public void updateClassInfos(List<ClassInfo> classInfos) {
@@ -225,5 +267,4 @@ public class DBManger {
         cursor.close();
         return borrowInfos;
     }
-
 }

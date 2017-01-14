@@ -61,5 +61,36 @@
       "mGradeFinalExamIndex": 10,
       "mGradeMakeupIndex": 6
     }
+  },
+  {
+    "mCmsSys": "qzdatasoft",
+    "mClassTableInfo": {
+      "mClassLength": 1,
+      "mDailyClasses": 5,
+      "mClassTableID": "kbtable",
+      "mClassInfoStart": "\\w*",
+      "mClassStringCount": 5,
+      "mNameIndex": 1,
+      "mTypeIndex": 0,
+      "mTimeIndex": 3,
+      "mDuringIndex": 2,
+      "mTeacherIndex": 2,
+      "mPlaceIndex": 4,
+      "mDuringRE": "",
+      "mTimeRE": ""
+    },
+    "mGradeTableInfo": {
+      "mGradeTableID": "dataList",
+      "mClassCodeIndex": 2,
+      "mClassNameIndex": 3,
+      "mClassTypeIndex": 8,
+      "mPointsIndex": 5,
+      "mGradeSummaryIndex": 4,
+      "mGradePracticeIndex": 11,
+      "mGradeCommonIndex": 11,
+      "mGradeMidExamIndex": 11,
+      "mGradeFinalExamIndex": 11,
+      "mGradeMakeupIndex": 11
+    }
   }
 ]

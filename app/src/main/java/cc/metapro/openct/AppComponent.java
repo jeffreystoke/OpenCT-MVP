@@ -1,7 +1,7 @@
 package cc.metapro.openct;
 
 /*
- *  Copyright 2015 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 metapro.cc Jeffctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,14 @@ package cc.metapro.openct;
 
 import android.app.Application;
 
-import com.google.common.base.Strings;
+import javax.inject.Singleton;
 
-import cc.metapro.openct.utils.ActivityUtils;
-import cc.metapro.openct.utils.Constants;
+import dagger.Component;
 
-public class OpenCT extends Application {
+@Singleton
+@Component(modules = AppModule.class)
+public interface AppComponent {
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        if (Strings.isNullOrEmpty(Constants.CAPTCHA_FILE)) {
-            Constants.CAPTCHA_FILE = getCacheDir().getPath() + "/" + Constants.CAPTCHA_FILENAME;
-        }
-        ActivityUtils.encryptionCheck(OpenCT.this);
-    }
+    Application getApplication();
+
 }

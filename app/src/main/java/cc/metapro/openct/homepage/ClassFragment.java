@@ -41,7 +41,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.ClassInfo;
@@ -61,11 +60,12 @@ public class ClassFragment extends Fragment implements ClassContract.View {
     private DailyClassAdapter mTodayClassAdapter;
     private String[] mTitles = {"今日课表", "本周课表", "学期课表"};
 
+    private static boolean showedPrompt;
+
     private int height, width;
     private int colorIndex;
     private int classLength = Loader.getClassLength();
     private int dailyClasses = Loader.getDailyClasses();
-    private Unbinder mUnbinder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,7 +73,7 @@ public class ClassFragment extends Fragment implements ClassContract.View {
         mContext = getContext();
         View mainView = inflater.inflate(R.layout.fragment_class, container, false);
 
-        mUnbinder = ButterKnife.bind(this, mainView);
+        ButterKnife.bind(this, mainView);
 
         initViewPager(mainView);
 
@@ -86,13 +86,12 @@ public class ClassFragment extends Fragment implements ClassContract.View {
 
     @Override
     public void onResume() {
-        super.onResume();
         mPresenter.start();
+        super.onResume();
     }
 
     @Override
     public void onDestroy() {
-        mUnbinder.unbind();
         super.onDestroy();
     }
 
@@ -250,15 +249,16 @@ public class ClassFragment extends Fragment implements ClassContract.View {
         ViewGroup con = (ViewGroup) view.findViewById(R.id.sem_class_content);
         addSeqViews(seq);
         addContentView(con, classes, false, -1);
-
         showSelectedWeek(classes, week);
-        ActivityUtils.dismissProgressDialog();
 
-        if (mTodayClassAdapter.hasClassToday()) {
-            int count = mTodayClassAdapter.getItemCount();
-            Snackbar.make(mViewPager, "今天有 " + count + " 节课", Snackbar.LENGTH_SHORT).show();
-        } else {
-            Snackbar.make(mViewPager, "今天没有课, 好好休息一下吧~", Snackbar.LENGTH_SHORT).show();
+        if (!showedPrompt) {
+            showedPrompt = true;
+            if (mTodayClassAdapter.hasClassToday()) {
+                int count = mTodayClassAdapter.getItemCount();
+                Snackbar.make(mViewPager, "今天有 " + count + " 节课", Snackbar.LENGTH_SHORT).show();
+            } else {
+                Snackbar.make(mViewPager, "今天没有课, 好好休息一下吧~", Snackbar.LENGTH_SHORT).show();
+            }
         }
     }
 

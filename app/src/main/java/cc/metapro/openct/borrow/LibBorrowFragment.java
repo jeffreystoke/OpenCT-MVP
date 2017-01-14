@@ -44,7 +44,6 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
     RecyclerView mRecyclerView;
 
     private Context mContext;
-    private Unbinder mUnbinder;
     private BorrowAdapter mBorrowAdapter;
     private LibBorrowContract.Presenter mPresenter;
 
@@ -53,7 +52,7 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_lib_borrow, container, false);
         mContext = getContext();
-        mUnbinder = ButterKnife.bind(this, view);
+        ButterKnife.bind(this, view);
 
         mBorrowAdapter = new BorrowAdapter(mContext);
         RecyclerViewHelper.setRecyclerView(mContext, mRecyclerView, mBorrowAdapter);
@@ -71,13 +70,6 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
     public void onResume() {
         mPresenter.start();
         super.onResume();
-    }
-
-    @Override
-    public void onDestroy() {
-        mPresenter.storeBorrows();
-        mUnbinder.unbind();
-        super.onDestroy();
     }
 
     @Override

@@ -16,6 +16,8 @@ package cc.metapro.openct.utils.HTMLUtils;
  * limitations under the License.
  */
 
+import com.google.common.base.Strings;
+
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -64,6 +66,9 @@ public class Form {
 
     private void addFormItem(Element item) {
         String key = item.attr("name");
+        if (Strings.isNullOrEmpty(key)) {
+            key = item.attr("id");
+        }
         Elements stored = mFormItems.get(key);
         if (stored == null) {
             mFormItems.put(key, new Elements(item));

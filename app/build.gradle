@@ -7,8 +7,8 @@ android {
         applicationId "cc.metapro.openct"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 3
-        versionName "0.1.0"
+        versionCode 4
+        versionName "0.2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
@@ -30,17 +30,9 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
-
-
-
-
-
-
     compile('org.mnode.ical4j:ical4j:2.0.0') {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
     }
-
     compile 'org.jsoup:jsoup:1.10.1'
     compile 'com.android.support:support-v4:25.1.0'
     compile 'com.android.support:appcompat-v7:25.1.0'

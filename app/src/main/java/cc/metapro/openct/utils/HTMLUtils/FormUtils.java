@@ -97,6 +97,7 @@ public class FormUtils {
         Elements prev = null;
         Map<String, String> loginMap = new LinkedHashMap<>();
         boolean clicked = false;
+        boolean passwordOK = false;
 
         for (Elements elements : form.getFormItems().values()) {
             Element element = classify(elements, null);
@@ -105,7 +106,7 @@ public class FormUtils {
             String key = element.attr("name");
             String value = element.attr("value");
             String onclick = element.attr("onclick");
-
+            String id = element.id();
             if ("radio".equalsIgnoreCase(type)) {
                 loginMap.put(key, value);
             } else if ("submit".equalsIgnoreCase(type)) {
@@ -120,14 +121,32 @@ public class FormUtils {
                 // password text
                 String username = kvs.get(Constants.USERNAME_KEY);
                 String password = kvs.get(Constants.PASSWORD_KEY);
-                loginMap.put(prev.attr("name"), username);
-                loginMap.put(key, password);
+
+                // 填写用户名
+                String userNameKey = prev.attr("name");
+                if (Strings.isNullOrEmpty(userNameKey)) {
+                    userNameKey = prev.attr("id");
+                }
+                loginMap.put(userNameKey, username);
+
+                // 填写密码
+                if (!Strings.isNullOrEmpty(key)) {
+                    loginMap.put(key, password);
+                } else {
+                    loginMap.put(id, password);
+                }
+                passwordOK = true;
             } else if ("text".equalsIgnoreCase(type)) {
                 // common text
                 // secret code text (after password)
-                if (prev != null && "password".equalsIgnoreCase(prev.attr("type"))) {
+                if (prev != null && passwordOK) {
                     String code = kvs.get(Constants.CAPTCHA_KEY);
-                    loginMap.put(key, code);
+                    if (!Strings.isNullOrEmpty(key)) {
+                        loginMap.put(key, code);
+                    } else {
+                        loginMap.put(id, code);
+                    }
+                    passwordOK = false;
                 } else {
                     Matcher matcher = INVISIBLE_FORM_ITEM.matcher(elements.toString());
                     if (matcher.find()) {

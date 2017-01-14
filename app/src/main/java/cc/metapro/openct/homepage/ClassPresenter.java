@@ -58,6 +58,7 @@ class ClassPresenter implements ClassContract.Presenter {
     private ClassContract.View mClassView;
     private List<ClassInfo> mClasses;
     private Context mContext;
+    private static boolean showedNotice;
 
     ClassPresenter(@NonNull ClassContract.View view, Context context) {
         mClassView = view;
@@ -110,7 +111,10 @@ class ClassPresenter implements ClassContract.Presenter {
             DBManger manger = DBManger.getInstance(mContext);
             mClasses = manger.getClassInfos();
             if (mClasses.size() == 0) {
-                Toast.makeText(mContext, R.string.no_local_classes_avail, Toast.LENGTH_LONG).show();
+                if (!showedNotice) {
+                    showedNotice = true;
+                    Toast.makeText(mContext, R.string.no_local_classes_avail, Toast.LENGTH_LONG).show();
+                }
             } else {
                 mClassView.updateClasses(mClasses);
             }

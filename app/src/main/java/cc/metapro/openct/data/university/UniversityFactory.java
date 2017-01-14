@@ -21,14 +21,23 @@ import android.support.annotation.Nullable;
 
 import com.google.common.base.Strings;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cc.metapro.openct.data.source.StoreHelper;
+import cc.metapro.openct.data.university.item.ClassInfo;
+import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.utils.HTMLUtils.FormHandler;
@@ -54,25 +63,122 @@ public abstract class UniversityFactory {
     UniversityService mService;
     private boolean gotDynPart;
 
+    public static List<ClassInfo> generateClasses(String classTablePage, CmsFactory.ClassTableInfo classTableInfo) {
+        Document doc = Jsoup.parse(classTablePage);
+        Elements tables = doc.select("table");
+        Element targetTable = null;
+        for (Element table : tables) {
+            if (table.attr("id").equals(classTableInfo.mClassTableID)) {
+                targetTable = table;
+            }
+        }
+
+        if (targetTable == null) return new ArrayList<>(0);
+
+        Pattern pattern = Pattern.compile(classTableInfo.mClassInfoStart);
+        List<ClassInfo> classes = new ArrayList<>(classTableInfo.mDailyClasses * 7);
+
+        for (Element tr : targetTable.select("tr")) {
+            Elements tds = tr.select("td");
+            Element td = tds.first();
+            boolean found = false;
+            while (td != null) {
+                Matcher matcher = pattern.matcher(td.text());
+                if (matcher.find()) {
+                    td = td.nextElementSibling();
+                    found = true;
+                    break;
+                }
+                td = td.nextElementSibling();
+            }
+            if (!found) continue;
+
+            // add class
+            int i = 0;
+            while (td != null) {
+                i++;
+                classes.add(new ClassInfo(td.text(), classTableInfo));
+                td = td.nextElementSibling();
+            }
+
+            // make up to 7 classes in one tr
+            for (; i < 7; i++) {
+                classes.add(new ClassInfo());
+            }
+        }
+        return classes;
+    }
+
+    @NonNull
+    public static List<GradeInfo> generateGrades(String classTablePage, CmsFactory.GradeTableInfo gradeTableInfo) {
+        Document doc = Jsoup.parse(classTablePage);
+        Elements tables = doc.select("table");
+        Element targetTable = null;
+        for (Element table : tables) {
+            if (gradeTableInfo.mGradeTableID.equals(table.attr("id"))) {
+                targetTable = table;
+                break;
+            }
+        }
+
+        if (targetTable == null) return new ArrayList<>(0);
+
+        List<GradeInfo> grades = new ArrayList<>();
+
+        Elements trs = targetTable.select("tr");
+        trs.remove(0);
+        for (Element tr : trs) {
+            Elements tds = tr.select("td");
+            grades.add(new GradeInfo(tds, gradeTableInfo));
+        }
+        return grades;
+    }
+
     @Nullable
     String login(@NonNull Map<String, String> loginMap) throws Exception {
         getDynPart();
-
         String loginPageHtml = mService.getPage(getLoginURL(), null).execute().body();
+        String userCenter = null;
 
+        // TODO: 17/1/14 针对强智系统进行处理
+        // 强智教务系统 (特殊处理)
+//        if (mCMSInfo != null) {
+//            if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
+//                String serverResponse = mService.login(mCMSInfo.mCmsURL + "Logon.do?method=logon&flag=sess", getLoginURL(), new HashMap<String, String>(0)).execute().body();
+//                // 加密登录
+//                String scode = serverResponse.split("#")[0];
+//                String sxh = serverResponse.split("#")[1];
+//                String code = loginMap.get(Constants.USERNAME_KEY) + "%%%" + loginMap.get(Constants.PASSWORD_KEY);
+//                String encoded = "";
+//                for(int i=0;i<code.length();i++){
+//                    if(i<20){
+//                        encoded=encoded+code.substring(i,i+1)+scode.substring(0,Integer.parseInt(sxh.substring(i,i+1)));
+//                        scode = scode.substring(Integer.parseInt(sxh.substring(i,i+1)),scode.length());
+//                    }else{
+//                        encoded=encoded+code.substring(i,code.length());
+//                        i=code.length();
+//                    }
+//                }
+//                Map<String, String> map = new HashMap<>(3);
+//                map.put("useDogCode", "");
+//                map.put("encoded", encoded);
+//                map.put("RANDOMCODE", loginMap.get(Constants.CAPTCHA_KEY));
+//                Document document = Jsoup.parse(loginPageHtml, mCMSInfo.mCmsURL);
+//                String action = document.select("form").get(0).absUrl("action");
+//                userCenter = mService.login(action, getLoginRefer(), map).execute().body();
+//            }
+//        }
+        // 一般系统
         FormHandler handler = new FormHandler(loginPageHtml, getLoginURL());
         Form form = handler.getForm(0);
-
         if (form == null) {
-            throw new Exception("学校服务器好像除了点问题~\n要不等下再试试?");
+            throw new Exception("学校服务器好像出了点问题~\n要不等下再试试?");
         }
-
         Map<String, String> res = FormUtils.getLoginFiledMap(form, loginMap, true);
         String action = res.get(Constants.ACTION);
         res.remove(Constants.ACTION);
-
-        String userCenter = mService.login(action, getLoginRefer(), res).execute().body();
-        if (LOGIN_SUCCESS.matcher(userCenter).find()) {
+        userCenter = mService.login(action, getLoginRefer(), res).execute().body();
+        if (!Strings.isNullOrEmpty(userCenter) && LOGIN_SUCCESS.matcher(userCenter).find()) {
             return userCenter;
         } else {
             throw new Exception("登录失败, 请检查您的用户名和密码\n(以及验证码)");

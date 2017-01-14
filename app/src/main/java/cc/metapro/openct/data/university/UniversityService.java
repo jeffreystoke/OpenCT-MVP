@@ -40,6 +40,14 @@ public interface UniversityService {
             @FieldMap Map<String, String> loginMap
     );
 
+    @POST
+    @FormUrlEncoded
+    Call<String> post(
+            @Url String url,
+            @Header("Referer") String referer,
+            @FieldMap Map<String, String> postMap
+    );
+
     @Streaming
     @GET
     Call<ResponseBody> getCAPTCHA(

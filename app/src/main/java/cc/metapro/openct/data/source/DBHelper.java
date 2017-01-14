@@ -33,9 +33,6 @@ import cc.metapro.openct.data.university.UniversityInfo;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    /**
-     * school table, used to store basic school info
-     */
     public static final String
             ABBR = "abbr", SCHOOL_NAME = "school_name",
             CMS_SYS = "cms_sys", CMS_URL = "cms_url", CMS_CAPTCHA = "cms_captcha",
@@ -50,7 +47,9 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String LIB_TABLE = "libs";
     static final String GRADE_TABLE = "grades";
     static final String BORROW_TABLE = "borrows";
+    static final String CUSTOM_TABLE = "custom";
     private static final String DB_NAME = "openct.db";
+
     private static final String SCHOOL_TITLES =
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     ABBR + " TEXT," + SCHOOL_NAME + " TEXT, " +
@@ -58,6 +57,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     CMS_DYN_URL + " BOOLEAN, " + CMS_CAPTCHA + " BOOLEAN, " + CMS_INNER_ACCESS + " BOOLEAN, " +
                     LIB_SYS + " TEXT, " + LIB_URL + " TEXT, " +
                     LIB_DYN_URL + " BOOLEAN, " + LIB_CAPTCHA + " BOOLEAN, " + LIB_INNER_ACCESS + " BOOLEAN)";
+
     private static final String LIB_TITLES =
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " + SYS_NAME + " TEXT, " + JSON + " TEXT)";
     private static final String CMS_TITLES =
@@ -68,8 +68,10 @@ public class DBHelper extends SQLiteOpenHelper {
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " + JSON + " TEXT)";
     private static final String BORROW_TITLES =
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " + JSON + " TEXT)";
+    private static final String CUSTOM_TITLES =
+            "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " + JSON + " TEXT)";
 
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     private Context mContext;
 
@@ -86,6 +88,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + BORROW_TABLE + BORROW_TITLES);
         db.execSQL("CREATE TABLE IF NOT EXISTS " + CMS_TABLE + CMS_TITLES);
         db.execSQL("CREATE TABLE IF NOT EXISTS " + LIB_TABLE + LIB_TITLES);
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + CUSTOM_TABLE + CUSTOM_TITLES);
 
         updateSchools(db);
         updateCmsSys(db);
@@ -192,4 +195,5 @@ public class DBHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
     }
+
 }

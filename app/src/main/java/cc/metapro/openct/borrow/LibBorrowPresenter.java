@@ -79,8 +79,8 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
                             Toast.makeText(mContext, R.string.no_borrows_avail, Toast.LENGTH_SHORT).show();
                         } else {
                             mBorrows = infos;
-                            mLibBorrowView.onLoadBorrows(mBorrows);
                             storeBorrows();
+                            loadLocalBorrows();
                         }
                     }
                 })
@@ -169,14 +169,12 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
 
     @Override
     public void storeBorrows() {
-        Observable.create(new ObservableOnSubscribe() {
-            @Override
-            public void subscribe(ObservableEmitter e) throws Exception {
-                DBManger manger = DBManger.getInstance(mContext);
-                manger.updateBorrowInfos(mBorrows);
-                e.onComplete();
-            }
-        }).subscribeOn(Schedulers.newThread()).subscribe();
+        try {
+            DBManger manger = DBManger.getInstance(mContext);
+            manger.updateBorrowInfos(mBorrows);
+        } catch (Exception e) {
+            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

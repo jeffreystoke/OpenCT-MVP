@@ -16,10 +16,15 @@ package cc.metapro.openct.data.university;
  * limitations under the License.
  */
 
+import android.util.Log;
+
+import com.google.gson.Gson;
+
 import java.util.Map;
 
 import cc.metapro.openct.data.source.DBHelper;
 import cc.metapro.openct.data.source.StoreHelper;
+import cc.metapro.openct.utils.Constants;
 
 public class UniversityInfo {
 
@@ -67,22 +72,41 @@ public class UniversityInfo {
                 libDynURL, libCaptcha, libInnerAccess;
 
         public SchoolInfo() {
+
         }
 
         public SchoolInfo(Map<String, String> stringMap, Map<String, Boolean> booleanMap) {
-            abbr = stringMap.get(DBHelper.ABBR);
-            name = stringMap.get(DBHelper.SCHOOL_NAME);
-            cmsSys = stringMap.get(DBHelper.CMS_SYS);
-            cmsURL = stringMap.get(DBHelper.CMS_URL);
-            libSys = stringMap.get(DBHelper.LIB_SYS);
-            libURL = stringMap.get(DBHelper.LIB_URL);
+            try {
+                abbr = stringMap.get(DBHelper.ABBR);
+                name = stringMap.get(DBHelper.SCHOOL_NAME);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-            cmsDynURL = booleanMap.get(DBHelper.CMS_DYN_URL);
-            cmsCaptcha = booleanMap.get(DBHelper.CMS_CAPTCHA);
-            cmsInnerAccess = booleanMap.get(DBHelper.CMS_INNER_ACCESS);
-            libDynURL = booleanMap.get(DBHelper.LIB_DYN_URL);
-            libCaptcha = booleanMap.get(DBHelper.LIB_CAPTCHA);
-            libInnerAccess = booleanMap.get(DBHelper.LIB_INNER_ACCESS);
+            try {
+                cmsSys = stringMap.get(DBHelper.CMS_SYS);
+                cmsURL = stringMap.get(DBHelper.CMS_URL);
+                cmsDynURL = booleanMap.get(DBHelper.CMS_DYN_URL);
+                cmsCaptcha = booleanMap.get(DBHelper.CMS_CAPTCHA);
+                cmsInnerAccess = booleanMap.get(DBHelper.CMS_INNER_ACCESS);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                libSys = stringMap.get(DBHelper.LIB_SYS);
+                libURL = stringMap.get(DBHelper.LIB_URL);
+                libDynURL = booleanMap.get(DBHelper.LIB_DYN_URL);
+                libCaptcha = booleanMap.get(DBHelper.LIB_CAPTCHA);
+                libInnerAccess = booleanMap.get(DBHelper.LIB_INNER_ACCESS);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public String toString() {
+            Gson gson = new Gson();
+            return gson.toJson(this);
         }
     }
 }

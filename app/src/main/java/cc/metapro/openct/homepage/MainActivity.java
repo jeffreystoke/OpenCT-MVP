@@ -40,6 +40,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.LibBorrowActivity;
+import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.customviews.InitDiaolgHelper;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.gradelist.GradeActivity;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity
 
     @BindView(R.id.nav_view)
     NavigationView mNavigationView;
+
     private boolean mExitState;
 
     private ActivityUtils.CaptchaDialogHelper mCaptchaHelper;
@@ -93,10 +95,12 @@ public class MainActivity extends AppCompatActivity
             editor.apply();
         }
 
+        Loader.loadUniversity(this);
+
         // add class fragment
         FragmentManager fm = getSupportFragmentManager();
         mClassFragment =
-                (ClassFragment) fm.findFragmentById(R.id.lib_borrow_container);
+                (ClassFragment) fm.findFragmentById(R.id.classes_container);
 
         if (mClassFragment == null) {
             mClassFragment = new ClassFragment();
@@ -179,6 +183,9 @@ public class MainActivity extends AppCompatActivity
                 intent = new Intent(this, LibBorrowActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.nav_custom:
+                intent = new Intent(this, CustomActivity.class);
+                startActivity(intent);
 //            case R.id.nav_empty_room:
 //                intent = new Intent(this, RoomActivity.class);
 //                startActivity(intent);

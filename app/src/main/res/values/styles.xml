@@ -51,5 +51,4 @@
         <item name="android:layout_marginRight">50dp</item>
         <item name="android:textAlignment" tools:targetApi="jelly_bean_mr1">center</item>
     </style>
-
 </resources>

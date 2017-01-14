@@ -84,7 +84,8 @@ class GradePresenter implements GradeContract.Presenter {
                             Toast.makeText(mContext, R.string.no_grades_avail, Toast.LENGTH_SHORT).show();
                         } else {
                             mGrades = infos;
-                            mGradeFragment.onLoadGrades(mGrades);
+                            storeGrades();
+                            loadLocalGrades();
                         }
                     }
                 })
@@ -221,14 +222,12 @@ class GradePresenter implements GradeContract.Presenter {
 
     @Override
     public void storeGrades() {
-        Observable.create(new ObservableOnSubscribe() {
-            @Override
-            public void subscribe(ObservableEmitter e) throws Exception {
-                DBManger manger = DBManger.getInstance(mContext);
-                manger.updateGradeInfos(mGrades);
-                e.onComplete();
-            }
-        }).subscribeOn(Schedulers.newThread()).subscribe();
+        try {
+            DBManger manger = DBManger.getInstance(mContext);
+            manger.updateGradeInfos(mGrades);
+        } catch (Exception e) {
+            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

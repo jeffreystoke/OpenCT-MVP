@@ -197,4 +197,22 @@
     <string name="creating_class_ical">正在创建课程日历文件</string>
     <string name="export_to_ical">导出到iCal</string>
     <string name="classes">课程表</string>
+    <string name="optional">可选项</string>
+    <string name="compulsory">重要</string>
+    <string name="yes">是</string>
+    <string name="compulsory_num">重要(数字)</string>
+    <string name="optional_re">可选(正则式)</string>
+    <string name="school_info">学校信息</string>
+    <string name="abbr">简拼</string>
+    <string name="school_abbr">学校缩写</string>
+    <string name="full_name">全称</string>
+    <string name="school_name">学校名称</string>
+    <string name="jwgl">教务管理</string>
+    <string name="system">系统</string>
+    <string name="address">地址</string>
+    <string name="cms_addr">教务系统地址</string>
+    <string name="dyn_addr">动态地址</string>
+    <string name="captcha">验证码</string>
+    <string name="inner_protected">限内部访问</string>
+    <string name="lib_addr">图书馆系统地址</string>
 </resources>

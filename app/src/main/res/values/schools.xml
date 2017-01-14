@@ -9,6 +9,26 @@
         <item>丛书名</item>
     </string-array>
 
+    <string-array name="school_cms">
+        <item>杭州正方</item>
+        <item>南京苏文</item>
+        <item>湖南强智(测试, 2013+)</item>
+    </string-array>
+
+    <string-array name="school_cms_values">
+        <item>zfsoft</item>
+        <item>njsuwen</item>
+        <item>qzdatasoft</item>
+    </string-array>
+
+    <string-array name="school_lib">
+        <item>江苏汇文</item>
+    </string-array>
+
+    <string-array name="school_lib_values">
+        <item>libsys</item>
+    </string-array>
+
     <string-array name="pref_school_names">
         <item>安庆师范学院</item>
         <item>北京理工大学珠海学院</item>
@@ -23,6 +43,7 @@
         <item>淮阴工学院</item>
         <item>江南大学</item>
         <item>江苏大学</item>
+        <item>江苏科技大学</item>
         <item>江苏理工学院</item>
         <item>金陵科技学院</item>
         <item>南京工程学院</item>
@@ -51,6 +72,7 @@
         <item>HYIT</item>
         <item>JIANGNAN</item>
         <item>UJS</item>
+        <item>JUST</item>
         <item>JSTU</item>
         <item>JIT</item>
         <item>NJIT</item>

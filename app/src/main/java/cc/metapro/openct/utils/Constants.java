@@ -49,7 +49,8 @@ public final class Constants {
     // preference related
     public static final String PREF_INITED = "pref_inited";
 
-    public static final String PREF_SCHOOL_NAME_KEY = "pref_school_name";
+    public static final String PREF_SCHOOL_ABBR_KEY = "pref_school_abbr";
+    public static final String PREF_USE_CUSTOM = "pref_use_custom";
 
     public static final String PREF_CMS_USERNAME_KEY = "pref_cms_username";
     public static final String PREF_CMS_PASSWORD_KEY = "pref_cms_password";
@@ -66,6 +67,7 @@ public final class Constants {
     // school cms
     public static final String ZFSOFT = "zfsoft";
     public static final String NJSUWEN = "njsuwen";
+    public static final String QZDATASOFT = "qzdatasoft";
 
     // library system
     public static final String LIBSYS = "libsys";

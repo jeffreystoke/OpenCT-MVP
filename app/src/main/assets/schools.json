@@ -936,5 +936,19 @@
     "cmsDynURL": true,
     "cmsCaptcha": true,
     "cmsInnerAccess": false
+  },
+  {
+    "abbr": "JUST",
+    "name": "江苏科技大学",
+    "cmsURL": "http://jwgl.just.edu.cn:8080/",
+    "cmsSys": "QZDATASOFT",
+    "cmsDynURL": false,
+    "cmsCaptcha": true,
+    "cmsInnerAccess": false,
+    "libURL": "http://lib.just.edu.cn:8080",
+    "libSys": "LIBSYS",
+    "libDynURl": false,
+    "libCaptcha": true,
+    "libInnerAccess": false
   }
 ]

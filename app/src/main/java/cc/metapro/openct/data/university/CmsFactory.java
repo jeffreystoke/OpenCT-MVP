@@ -27,10 +27,9 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.security.auth.login.LoginException;
 
@@ -49,6 +48,10 @@ public class CmsFactory extends UniversityFactory {
         mService = service;
         mClassTableInfo = cmsInfo.mClassTableInfo;
         mGradeTableInfo = cmsInfo.mGradeTableInfo;
+
+        if (!cmsInfo.mCmsURL.endsWith("/")) {
+            cmsInfo.mCmsURL += "/";
+        }
         mURLFactory = new CmsURLFactory(cmsInfo.mCmsSys, cmsInfo.mCmsURL);
     }
 
@@ -61,17 +64,14 @@ public class CmsFactory extends UniversityFactory {
      * @throws LoginException
      */
     @NonNull
-    public List<ClassInfo>
-    getClasses(Map<String, String> loginMap) throws Exception {
-
+    public List<ClassInfo> getClasses(Map<String, String> loginMap) throws Exception {
         String page = login(loginMap);
         String tableURL = null;
         String tablePage;
-        if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.NJSUWEN)) {
-            tablePage = mService.getPage(mURLFactory.CLASS_URL, mCMSInfo.mCmsURL)
-                    .execute().body();
+        if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.NJSUWEN) || mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
+            tablePage = mService.getPage(mURLFactory.CLASS_URL, mCMSInfo.mCmsURL).execute().body();
             if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-            return generateClasses(tablePage.replaceAll("◇", Constants.BR_REPLACER));
+            return UniversityFactory.generateClasses(tablePage.replaceAll("◇|<br>|-{3,}", Constants.BR_REPLACER), mClassTableInfo);
         } else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.ZFSOFT)) {
             Document doc = Jsoup.parse(page, mCMSInfo.mCmsURL);
             Elements addresses = doc.select("a");
@@ -84,7 +84,7 @@ public class CmsFactory extends UniversityFactory {
             if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
             tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
             if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-            return generateClasses(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
+            return UniversityFactory.generateClasses(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER), mClassTableInfo);
         } else {
             return new ArrayList<>(0);
         }
@@ -99,123 +99,49 @@ public class CmsFactory extends UniversityFactory {
      * @throws LoginException
      */
     @NonNull
-    public List<GradeInfo>
-    getGrades(Map<String, String> loginMap) throws Exception {
+    public List<GradeInfo> getGrades(Map<String, String> loginMap) throws Exception {
         String page = login(loginMap);
         String tableURL = null;
-        String tablePage;
-        switch (mCMSInfo.mCmsSys) {
-            case Constants.NJSUWEN:
-                tablePage = mService
-                        .getPage(mURLFactory.GRADE_URL, mCMSInfo.mCmsURL)
-                        .execute().body();
-                if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-                return generateGrades(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
-
-            case Constants.ZFSOFT:
-                Document doc = Jsoup.parse(page, mCMSInfo.mCmsURL);
-                Elements ele = doc.select("a");
-                for (Element e : ele) {
-                    if ("GetMc('平时成绩查询');".equals(e.attr("onclick"))) {
-                        tableURL = mCMSInfo.mCmsURL + e.attr("href");
-                        break;
-                    }
-                }
-                if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
-                tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
-                if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-                return generateGrades(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER));
-
-            default:
-                return new ArrayList<>(0);
-        }
-    }
-
-    /**
-     * use this to generate class info, don't handle it by yourself
-     *
-     * @param html of class page
-     * @return a list of generated class info
-     */
-    @NonNull
-    private List<ClassInfo>
-    generateClasses(String html) {
-        Document doc = Jsoup.parse(html, mCMSInfo.mCmsURL);
-        Elements tables = doc.select("table");
-        Element targetTable = null;
-        for (Element table : tables) {
-            if (table.attr("id").equals(mClassTableInfo.mClassTableID)) {
-                targetTable = table;
-            }
-        }
-
-        if (targetTable == null) return new ArrayList<>(0);
-
-        Pattern pattern = Pattern.compile(mClassTableInfo.mClassInfoStart);
-        List<ClassInfo> classes = new ArrayList<>(mClassTableInfo.mDailyClasses * 7);
-
-        for (Element tr : targetTable.select("tr")) {
-            Elements tds = tr.select("td");
-            Element td = tds.first();
-
-            boolean found = false;
-            while (td != null) {
-                Matcher matcher = pattern.matcher(td.text());
-                if (matcher.find()) {
-                    td = td.nextElementSibling();
-                    found = true;
+        String tablePage = null;
+        if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.NJSUWEN)) {
+            tablePage = mService.getPage(mURLFactory.GRADE_URL, mCMSInfo.mCmsURL).execute().body();
+        } else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.ZFSOFT)) {
+            Document doc = Jsoup.parse(page, mCMSInfo.mCmsURL);
+            Elements ele = doc.select("a");
+            for (Element e : ele) {
+                if ("GetMc('平时成绩查询');".equals(e.attr("onclick"))) {
+                    tableURL = mCMSInfo.mCmsURL + e.attr("href");
                     break;
                 }
-                td = td.nextElementSibling();
             }
-            if (!found) continue;
-
-            // add class
-            int i = 0;
-            while (td != null) {
-                i++;
-                classes.add(new ClassInfo(td.text(), mClassTableInfo));
-                td = td.nextElementSibling();
+            if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
+            tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
+        } else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
+            mService.getPage(mCMSInfo.mCmsURL + "jsxsd/framework/blankPage.jsp", mURLFactory.USERCENTER_URL).execute();
+            Document document = Jsoup.parse(page, mCMSInfo.mCmsURL);
+            Elements links = document.select("a");
+            String queryURL = null;
+            for (Element e : links) {
+                if ("课程成绩查询".equals(e.text())) {
+                    queryURL = e.absUrl("href");
+                    break;
+                }
             }
-
-            // make up to 7 classes in one tr
-            for (; i < 7; i++) {
-                classes.add(new ClassInfo());
+            if (Strings.isNullOrEmpty(queryURL)) {
+                return new ArrayList<>(0);
             }
+            String queryPage = mService.getPage(queryURL, mURLFactory.USERCENTER_URL).execute().body();
+            document = Jsoup.parse(queryPage);
+            String kksj = document.select("form").get(0).select("option").get(2).attr("value");
+            Map<String, String> postMap = new HashMap<>(3);
+            postMap.put("kksj", kksj);
+            postMap.put("kcxz", "");
+            postMap.put("kcmc", "");
+            postMap.put("xsfs", "all");
+            tablePage = mService.post(queryURL, queryURL, postMap).execute().body();
         }
-        return classes;
-    }
-
-    /**
-     * use this to generate grade info, don't handle it by yourself
-     *
-     * @param html of grade page
-     * @return a list of generated grade info
-     */
-    @NonNull
-    private List<GradeInfo>
-    generateGrades(String html) {
-        Document doc = Jsoup.parse(html, mCMSInfo.mCmsURL);
-        Elements tables = doc.select("table");
-        Element targetTable = null;
-        for (Element table : tables) {
-            if (mGradeTableInfo.mGradeTableID.equals(table.attr("id"))) {
-                targetTable = table;
-                break;
-            }
-        }
-
-        if (targetTable == null) return new ArrayList<>(0);
-
-        List<GradeInfo> grades = new ArrayList<>();
-
-        Elements trs = targetTable.select("tr");
-        trs.remove(0);
-        for (Element tr : trs) {
-            Elements tds = tr.select("td");
-            grades.add(new GradeInfo(tds, mGradeTableInfo));
-        }
-        return grades;
+        if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
+        return UniversityFactory.generateGrades(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER), mGradeTableInfo);
     }
 
     @Override
@@ -281,29 +207,34 @@ public class CmsFactory extends UniversityFactory {
                 mTeacherRE, mPlaceRE;
     }
 
-    private class CmsURLFactory {
+    private static class CmsURLFactory {
         String
                 LOGIN_URL, LOGIN_REF,
                 CLASS_URL, GRADE_URL,
-                CAPTCHA_URL;
+                CAPTCHA_URL, USERCENTER_URL;
 
         CmsURLFactory(@NonNull String cmsSys, @NonNull String cmsBaseURL) {
-            if (!cmsBaseURL.endsWith("/")) {
-                cmsBaseURL += "/";
-            }
-
-            // NJSuWen
+            // 南京苏文软件
             if (Constants.NJSUWEN.equalsIgnoreCase(cmsSys)) {
                 LOGIN_URL = cmsBaseURL;
                 LOGIN_REF = cmsBaseURL;
                 CLASS_URL = cmsBaseURL + "public/kebiaoall.aspx";
                 GRADE_URL = cmsBaseURL + "student/chengji.aspx";
             }
-            // ZFSoft
+            // 正方教务系统
             else if (Constants.ZFSOFT.equalsIgnoreCase(cmsSys)) {
                 LOGIN_URL = cmsBaseURL;
                 LOGIN_REF = cmsBaseURL;
                 CAPTCHA_URL = cmsBaseURL + "CheckCode.aspx";
+            }
+            // 湖南强智科技
+            else if (Constants.QZDATASOFT.equalsIgnoreCase(cmsSys)) {
+                LOGIN_URL = cmsBaseURL;
+                LOGIN_REF = cmsBaseURL;
+                CAPTCHA_URL = cmsBaseURL + "verifycode.servlet";
+                CLASS_URL = cmsBaseURL + "jsxsd/xskb/xskb_list.do";
+                GRADE_URL = cmsBaseURL + "jsxsd/kscj/cjcx_query";
+                USERCENTER_URL = cmsBaseURL + "jsxsd/framework/xsMain.jsp";
             }
         }
     }

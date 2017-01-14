@@ -21,4 +21,12 @@
             <!--android:title="@string/empty_room_query"/>-->
         </menu>
     </item>
+    <item android:title="测试功能">
+        <menu>
+            <item
+                android:id="@+id/nav_custom"
+                android:icon="@drawable/ic_custom"
+                android:title="自定义学校"/>
+        </menu>
+    </item>
 </menu>

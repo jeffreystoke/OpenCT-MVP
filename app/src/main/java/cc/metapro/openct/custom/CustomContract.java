@@ -1,7 +1,7 @@
-package cc.metapro.openct;
+package cc.metapro.openct.custom;
 
 /*
- *  Copyright 2015 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 metapro.cc Jeffctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,25 @@ package cc.metapro.openct;
  * limitations under the License.
  */
 
-import android.app.Application;
+import cc.metapro.openct.BasePresenter;
+import cc.metapro.openct.BaseView;
+import cc.metapro.openct.data.university.UniversityInfo;
 
-import com.google.common.base.Strings;
+public interface CustomContract {
 
-import cc.metapro.openct.utils.ActivityUtils;
-import cc.metapro.openct.utils.Constants;
+    interface View extends BaseView<Presenter> {
 
-public class OpenCT extends Application {
+        UniversityInfo.SchoolInfo getCustomFactory();
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        if (Strings.isNullOrEmpty(Constants.CAPTCHA_FILE)) {
-            Constants.CAPTCHA_FILE = getCacheDir().getPath() + "/" + Constants.CAPTCHA_FILENAME;
-        }
-        ActivityUtils.encryptionCheck(OpenCT.this);
+        void showProfile(UniversityInfo.SchoolInfo info);
+
+    }
+
+    interface Presenter extends BasePresenter {
+
+        void storeProfile(boolean enable);
+
+        void loadProfile();
+
     }
 }

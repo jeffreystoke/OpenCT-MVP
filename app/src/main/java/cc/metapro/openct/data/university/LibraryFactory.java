@@ -117,9 +117,7 @@ public class LibraryFactory extends UniversityFactory {
         String borrowPage = null;
         switch (mLibraryInfo.mLibSys) {
             case Constants.LIBSYS:
-                borrowPage = mService
-                        .getPage(mURLFactory.BORROW_URL, mURLFactory.USER_HOME_URL)
-                        .execute().body();
+                borrowPage = mService.getPage(mURLFactory.BORROW_URL, mURLFactory.USER_HOME_URL).execute().body();
                 break;
         }
         return Strings.isNullOrEmpty(borrowPage) ? new ArrayList<BorrowInfo>(0) : parseBorrow(borrowPage);

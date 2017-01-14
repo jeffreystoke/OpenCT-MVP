@@ -43,19 +43,19 @@ public class Loader {
     private static UniversityService service;
 
     public static LibraryFactory getLibrary() {
-        if (service == null) {
-            service = ServiceGenerator
-                    .createService(UniversityService.class, ServiceGenerator.HTML);
-        }
+        checkService();
         return new LibraryFactory(service, university.mLibraryInfo);
     }
 
     public static CmsFactory getCms() {
-        if (service == null) {
-            service = ServiceGenerator
-                    .createService(UniversityService.class, ServiceGenerator.HTML);
-        }
+        checkService();
         return new CmsFactory(service, university.mCMSInfo);
+    }
+
+    private static void checkService() {
+        if (service == null) {
+            service = ServiceGenerator.createService(UniversityService.class, ServiceGenerator.HTML);
+        }
     }
 
     @NonNull
@@ -115,35 +115,46 @@ public class Loader {
     }
 
     public static void loadUniversity(final Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        DBManger manger = DBManger.getInstance(context);
-        String school = preferences.getString(Constants.PREF_SCHOOL_NAME_KEY, context.getResources().getStringArray(R.array.pref_school_values)[0]);
-        university = manger.getUniversity(school);
-
-        assert university != null;
-
-        // update current week
-        int lastSetWeek = Integer.parseInt(preferences.getString(Constants.PREF_WEEK_SET_KEY, "1"));
-        Calendar cal = Calendar.getInstance(Locale.CHINA);
-        cal.setFirstDayOfWeek(Calendar.MONDAY);
-        int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
-        int currentWeek = Integer.parseInt(preferences.getString(Constants.PREF_CURRENT_WEEK_KEY, "1"));
-        if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
-            if (lastSetWeek == 53) {
-                currentWeek += weekOfYearWhenSetCurrentWeek;
+        try {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            boolean custom = preferences.getBoolean(Constants.PREF_USE_CUSTOM, false);
+            DBManger manger = DBManger.getInstance(context);
+            if (custom) {
+                UniversityInfo.SchoolInfo info = manger.getCustomSchoolInfo();
+                if (info != null) {
+                    university = manger.getUniversity(info);
+                } else {
+                    university = manger.getUniversity(preferences.getString(Constants.PREF_SCHOOL_ABBR_KEY, context.getResources().getStringArray(R.array.pref_school_values)[0]));
+                }
             } else {
-                currentWeek += (52 - lastSetWeek) + weekOfYearWhenSetCurrentWeek;
+                university = manger.getUniversity(preferences.getString(Constants.PREF_SCHOOL_ABBR_KEY, context.getResources().getStringArray(R.array.pref_school_values)[0]));
             }
-        } else {
-            currentWeek += (weekOfYearWhenSetCurrentWeek - lastSetWeek);
+
+            // update current week
+            int lastSetWeek = Integer.parseInt(preferences.getString(Constants.PREF_WEEK_SET_KEY, "1"));
+            Calendar cal = Calendar.getInstance(Locale.CHINA);
+            cal.setFirstDayOfWeek(Calendar.MONDAY);
+            int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
+            int currentWeek = Integer.parseInt(preferences.getString(Constants.PREF_CURRENT_WEEK_KEY, "1"));
+            if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
+                if (lastSetWeek == 53) {
+                    currentWeek += weekOfYearWhenSetCurrentWeek;
+                } else {
+                    currentWeek += (52 - lastSetWeek) + weekOfYearWhenSetCurrentWeek;
+                }
+            } else {
+                currentWeek += (weekOfYearWhenSetCurrentWeek - lastSetWeek);
+            }
+            if (currentWeek >= 30) {
+                currentWeek = 1;
+            }
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(Constants.PREF_CURRENT_WEEK_KEY, currentWeek + "");
+            editor.putString(Constants.PREF_WEEK_SET_KEY, weekOfYearWhenSetCurrentWeek + "");
+            editor.apply();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        if (currentWeek >= 30) {
-            currentWeek = 1;
-        }
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(Constants.PREF_CURRENT_WEEK_KEY, currentWeek + "");
-        editor.putString(Constants.PREF_WEEK_SET_KEY, weekOfYearWhenSetCurrentWeek + "");
-        editor.apply();
     }
 
 }
