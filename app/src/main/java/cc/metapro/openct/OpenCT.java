@@ -31,6 +31,5 @@ public class OpenCT extends Application {
         if (Strings.isNullOrEmpty(Constants.CAPTCHA_FILE)) {
             Constants.CAPTCHA_FILE = getCacheDir().getPath() + "/" + Constants.CAPTCHA_FILENAME;
         }
-        ActivityUtils.encryptionCheck(OpenCT.this);
     }
 }

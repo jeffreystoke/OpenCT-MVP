@@ -194,7 +194,7 @@ class GradePresenter implements GradeContract.Presenter {
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter e) throws Exception {
-                        Loader.getCms().getCAPTCHA(Constants.CAPTCHA_FILE);
+                        Loader.getCms().getCAPTCHA();
                         e.onComplete();
                     }
                 })

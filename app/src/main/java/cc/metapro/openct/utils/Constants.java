@@ -49,7 +49,7 @@ public final class Constants {
     // preference related
     public static final String PREF_INITED = "pref_inited";
 
-    public static final String PREF_SCHOOL_ABBR_KEY = "pref_school_abbr";
+    public static final String PREF_SCHOOL_ABBR_KEY = "pref_school_name";
     public static final String PREF_USE_CUSTOM = "pref_use_custom";
 
     public static final String PREF_CMS_USERNAME_KEY = "pref_cms_username";

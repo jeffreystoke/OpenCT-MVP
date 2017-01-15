@@ -83,7 +83,9 @@ public class LibBorrowActivity extends AppCompatActivity {
         mToolbar.setOverflowIcon(ContextCompat.getDrawable(this, R.drawable.ic_filter));
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         // add fragment
         FragmentManager fm = getSupportFragmentManager();

@@ -69,42 +69,37 @@ public class ActivityUtils {
     }
 
     public static void encryptionCheck(final Context context) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                boolean cmsPasswordEncrypted = preferences.getBoolean(Constants.PREF_CMS_PASSWORD_ENCRYPTED, false);
-                if (!cmsPasswordEncrypted) {
-                    String cmsPassword = preferences.getString(Constants.PREF_CMS_PASSWORD_KEY, "");
-                    try {
-                        if (!Strings.isNullOrEmpty(cmsPassword)) {
-                            cmsPassword = EncryptionUtils.encrypt(Constants.seed, cmsPassword);
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putString(Constants.PREF_CMS_PASSWORD_KEY, cmsPassword);
-                            editor.putBoolean(Constants.PREF_CMS_PASSWORD_ENCRYPTED, true);
-                            editor.apply();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean cmsPasswordEncrypted = preferences.getBoolean(Constants.PREF_CMS_PASSWORD_ENCRYPTED, false);
+        if (!cmsPasswordEncrypted) {
+            String cmsPassword = preferences.getString(Constants.PREF_CMS_PASSWORD_KEY, "");
+            try {
+                if (!Strings.isNullOrEmpty(cmsPassword)) {
+                    cmsPassword = EncryptionUtils.encrypt(Constants.seed, cmsPassword);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString(Constants.PREF_CMS_PASSWORD_KEY, cmsPassword);
+                    editor.putBoolean(Constants.PREF_CMS_PASSWORD_ENCRYPTED, true);
+                    editor.apply();
                 }
-                boolean libPasswordEncrypted = preferences.getBoolean(Constants.PREF_LIB_PASSWORD_ENCRYPTED, false);
-                if (!libPasswordEncrypted) {
-                    try {
-                        String libPassword = preferences.getString(Constants.PREF_LIB_PASSWORD_KEY, "");
-                        if (!Strings.isNullOrEmpty(libPassword)) {
-                            libPassword = EncryptionUtils.encrypt(Constants.seed, libPassword);
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putString(Constants.PREF_LIB_PASSWORD_KEY, libPassword);
-                            editor.putBoolean(Constants.PREF_LIB_PASSWORD_ENCRYPTED, true);
-                            editor.apply();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }).start();
+        }
+        boolean libPasswordEncrypted = preferences.getBoolean(Constants.PREF_LIB_PASSWORD_ENCRYPTED, false);
+        if (!libPasswordEncrypted) {
+            try {
+                String libPassword = preferences.getString(Constants.PREF_LIB_PASSWORD_KEY, "");
+                if (!Strings.isNullOrEmpty(libPassword)) {
+                    libPassword = EncryptionUtils.encrypt(Constants.seed, libPassword);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString(Constants.PREF_LIB_PASSWORD_KEY, libPassword);
+                    editor.putBoolean(Constants.PREF_LIB_PASSWORD_ENCRYPTED, true);
+                    editor.apply();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static class CaptchaDialogHelper {

@@ -216,10 +216,10 @@ public abstract class UniversityFactory {
         }
     }
 
-    public void getCAPTCHA(@NonNull String path) throws IOException {
+    public void getCAPTCHA() throws IOException {
         getDynPart();
         ResponseBody body = mService.getCAPTCHA(getCaptchaURL()).execute().body();
-        StoreHelper.storeBytes(path, body.byteStream());
+        StoreHelper.storeBytes(Constants.CAPTCHA_FILE, body.byteStream());
     }
 
     protected abstract String getCaptchaURL();

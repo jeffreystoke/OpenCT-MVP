@@ -12,13 +12,11 @@
     <string-array name="school_cms">
         <item>杭州正方</item>
         <item>南京苏文</item>
-        <item>湖南强智(测试, 2013+)</item>
     </string-array>
 
     <string-array name="school_cms_values">
         <item>zfsoft</item>
         <item>njsuwen</item>
-        <item>qzdatasoft</item>
     </string-array>
 
     <string-array name="school_lib">

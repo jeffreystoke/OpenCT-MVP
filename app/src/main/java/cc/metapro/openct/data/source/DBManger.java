@@ -63,16 +63,15 @@ public class DBManger {
         }
     }
 
-    public boolean updateCustomSchoolInfo(UniversityInfo.SchoolInfo info) {
+    public void updateCustomSchoolInfo(UniversityInfo.SchoolInfo info) {
         mDatabase.beginTransaction();
         try {
             mDatabase.delete(DBHelper.CUSTOM_TABLE, null, null);
-            mDatabase.execSQL("INSERT INTO " + DBHelper.CUSTOM_TABLE + " VALUES(null, ?)", new Object[]{info.toString()});
+            String json = info.toString();
+            mDatabase.execSQL("INSERT INTO " + DBHelper.CUSTOM_TABLE + " VALUES(null, ?)", new Object[]{json});
             mDatabase.setTransactionSuccessful();
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         } finally {
             mDatabase.endTransaction();
         }
@@ -125,8 +124,8 @@ public class DBManger {
 
     UniversityInfo getUniversity(UniversityInfo.SchoolInfo schoolInfo) {
         UniversityInfo universityInfo = new UniversityInfo();
-        String cmsJson = null;
-        String libJson = null;
+        String cmsJson = "";
+        String libJson = "";
         Cursor cmsCursor = mDatabase.query(
                 DBHelper.CMS_TABLE, null,
                 DBHelper.SYS_NAME + "=? COLLATE NOCASE",
@@ -140,35 +139,34 @@ public class DBManger {
         cmsCursor.moveToFirst();
         libCursor.moveToFirst();
 
-        String[] titles = libCursor.getColumnNames();
-        int i = 0;
-        for (String s : titles) {
-            if (s.equalsIgnoreCase(DBHelper.JSON)) {
-                cmsJson = cmsCursor.getString(i);
-                libJson = libCursor.getString(i);
-                break;
-            }
-            i++;
-        }
-        cmsCursor.close();
-        libCursor.close();
-
         Gson gson = new Gson();
-        UniversityInfo.CMSInfo cmsInfo = gson.fromJson(cmsJson, UniversityInfo.CMSInfo.class);
-        cmsInfo.mCmsURL = schoolInfo.cmsURL;
-        cmsInfo.mDynLoginURL = schoolInfo.cmsDynURL;
-        cmsInfo.mNeedCAPTCHA = schoolInfo.cmsCaptcha;
 
-        UniversityInfo.LibraryInfo libraryInfo = gson.fromJson(libJson, UniversityInfo.LibraryInfo.class);
-        libraryInfo.mLibURL = schoolInfo.libURL;
-        libraryInfo.mNeedCAPTCHA = schoolInfo.libCaptcha;
+        try {
+            cmsJson = cmsCursor.getString(2);
+            cmsCursor.close();
+            UniversityInfo.CMSInfo cmsInfo = gson.fromJson(cmsJson, UniversityInfo.CMSInfo.class);
+            cmsInfo.mCmsURL = schoolInfo.cmsURL;
+            cmsInfo.mDynLoginURL = schoolInfo.cmsDynURL;
+            cmsInfo.mNeedCAPTCHA = schoolInfo.cmsCaptcha;
+            universityInfo.mCMSInfo = cmsInfo;
+        } catch (Exception e) {
 
-        universityInfo.mCMSInfo = cmsInfo;
-        universityInfo.mLibraryInfo = libraryInfo;
+        }
+
+        try {
+            libJson = libCursor.getString(2);
+            libCursor.close();
+            UniversityInfo.LibraryInfo libraryInfo = gson.fromJson(libJson, UniversityInfo.LibraryInfo.class);
+            libraryInfo.mLibURL = schoolInfo.libURL;
+            libraryInfo.mNeedCAPTCHA = schoolInfo.libCaptcha;
+            universityInfo.mLibraryInfo = libraryInfo;
+        } catch (Exception e) {
+
+        }
         return universityInfo;
     }
 
-    public UniversityInfo getUniversity(String abbr) {
+    UniversityInfo getUniversity(String abbr) {
         UniversityInfo.SchoolInfo schoolInfo = getSchoolInfo(abbr);
         return getUniversity(schoolInfo);
     }

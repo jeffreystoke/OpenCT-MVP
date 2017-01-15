@@ -93,9 +93,9 @@ public class MainActivity extends AppCompatActivity
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean(Constants.PREF_INITED, true);
             editor.apply();
+        } else {
+            Loader.loadUniversity(this);
         }
-
-        Loader.loadUniversity(this);
 
         // add class fragment
         FragmentManager fm = getSupportFragmentManager();
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity
             return true;
         } else if (id == R.id.refresh_classes) {
             Map<String, String> map = Loader.getCmsStuInfo(this);
-            if (map.size() == 0) {
+            if (map.size() < 2) {
                 Toast.makeText(this, R.string.enrich_cms_info, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        ActivityUtils.encryptionCheck(this);
+//        Loader.loadUniversity(this);
         super.onResume();
     }
 

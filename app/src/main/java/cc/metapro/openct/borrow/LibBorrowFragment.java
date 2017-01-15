@@ -51,19 +51,11 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_lib_borrow, container, false);
-        mContext = getContext();
         ButterKnife.bind(this, view);
-
+        mContext = getContext();
         mBorrowAdapter = new BorrowAdapter(mContext);
         RecyclerViewHelper.setRecyclerView(mContext, mRecyclerView, mBorrowAdapter);
-
         return view;
-    }
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -79,24 +71,32 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
 
     @Override
     public void showDue(List<BorrowInfo> infos) {
-        if (infos != null) {
-            List<BorrowInfo> dueInfo = new ArrayList<>(infos.size());
-            for (BorrowInfo b : infos) {
-                if (b.isExceeded()) {
-                    dueInfo.add(b);
+        try {
+            if (infos != null) {
+                List<BorrowInfo> dueInfo = new ArrayList<>(infos.size());
+                for (BorrowInfo b : infos) {
+                    if (b.isExceeded()) {
+                        dueInfo.add(b);
+                    }
                 }
+                mBorrowAdapter.setNewBorrows(dueInfo);
+                mBorrowAdapter.notifyDataSetChanged();
             }
-            mBorrowAdapter.setNewBorrows(dueInfo);
-            mBorrowAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
+
         }
     }
 
     @Override
     public void onLoadBorrows(List<BorrowInfo> infos) {
-        mBorrowAdapter.setNewBorrows(infos);
-        mBorrowAdapter.notifyDataSetChanged();
-        ActivityUtils.dismissProgressDialog();
-        Toast.makeText(mContext, "共有 " + infos.size() + " 条借阅信息", Toast.LENGTH_SHORT).show();
+        try {
+            mBorrowAdapter.setNewBorrows(infos);
+            mBorrowAdapter.notifyDataSetChanged();
+            ActivityUtils.dismissProgressDialog();
+            Toast.makeText(mContext, "共有 " + infos.size() + " 条借阅信息", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+
+        }
     }
 
 }

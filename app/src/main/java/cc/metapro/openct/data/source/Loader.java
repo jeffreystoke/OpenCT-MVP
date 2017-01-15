@@ -22,11 +22,14 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import com.google.common.base.Strings;
+import com.google.common.util.concurrent.FakeTimeLimiter;
 
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.crypto.KeyGenerator;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.openctservice.ServiceGenerator;
@@ -64,7 +67,6 @@ public class Loader {
         try {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
             String password = preferences.getString(Constants.PREF_LIB_PASSWORD_KEY, "");
-
             String decryptedCode = EncryptionUtils.decrypt(Constants.seed, password);
             if (!Strings.isNullOrEmpty(decryptedCode)) {
                 map.put(Constants.USERNAME_KEY, preferences.getString(Constants.PREF_LIB_USERNAME_KEY, ""));
@@ -94,11 +96,19 @@ public class Loader {
     }
 
     public static int getDailyClasses() {
-        return university.mCMSInfo.mClassTableInfo.mDailyClasses;
+        try {
+            return university.mCMSInfo.mClassTableInfo.mDailyClasses;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public static int getClassLength() {
-        return university.mCMSInfo.mClassTableInfo.mClassLength;
+        try {
+            return university.mCMSInfo.mClassTableInfo.mClassLength;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public static int getCurrentWeek(Context context) {
@@ -107,11 +117,19 @@ public class Loader {
     }
 
     public static boolean cmsNeedCAPTCHA() {
-        return university.mCMSInfo.mNeedCAPTCHA;
+        try {
+            return university.mCMSInfo.mNeedCAPTCHA;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public static boolean libNeedCAPTCHA() {
-        return university.mLibraryInfo.mNeedCAPTCHA;
+        try {
+            return university.mLibraryInfo.mNeedCAPTCHA;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public static void loadUniversity(final Context context) {

@@ -141,7 +141,7 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter e) throws Exception {
-                        Loader.getLibrary().getCAPTCHA(Constants.CAPTCHA_FILE);
+                        Loader.getLibrary().getCAPTCHA();
                         e.onComplete();
                     }
                 })

@@ -82,14 +82,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + SCHOOL_TABLE + SCHOOL_TITLES);
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + CLASS_TABLE + CLASS_TITLES);
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + GRADE_TABLE + GRADE_TITLES);
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + BORROW_TABLE + BORROW_TITLES);
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + CMS_TABLE + CMS_TITLES);
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + LIB_TABLE + LIB_TITLES);
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + CUSTOM_TABLE + CUSTOM_TITLES);
-
+        createTables(db);
         updateSchools(db);
         updateCmsSys(db);
         updateLibSys(db);
@@ -97,9 +90,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+        createTables(db);
         updateSchools(db);
         updateCmsSys(db);
         updateLibSys(db);
+    }
+
+    private void createTables(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + SCHOOL_TABLE + SCHOOL_TITLES);
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + CLASS_TABLE + CLASS_TITLES);
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + GRADE_TABLE + GRADE_TITLES);
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + BORROW_TABLE + BORROW_TITLES);
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + CMS_TABLE + CMS_TITLES);
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + LIB_TABLE + LIB_TITLES);
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + CUSTOM_TABLE + CUSTOM_TITLES);
     }
 
     private void updateSchools(SQLiteDatabase db) {

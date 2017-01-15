@@ -43,9 +43,7 @@ public class CustomPresenter implements CustomContract.Presenter {
         try {
             UniversityInfo.SchoolInfo schoolInfo = mView.getCustomFactory();
             DBManger manger = DBManger.getInstance(mContext);
-            if (!manger.updateCustomSchoolInfo(schoolInfo)) {
-                Toast.makeText(mContext, "保存失败: 需要唯一的简拼!", Toast.LENGTH_LONG).show();
-            }
+            manger.updateCustomSchoolInfo(schoolInfo);
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
             SharedPreferences.Editor editor = preferences.edit();
             if (enable) {

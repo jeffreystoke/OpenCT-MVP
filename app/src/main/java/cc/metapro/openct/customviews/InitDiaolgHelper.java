@@ -25,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,12 +32,6 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 public class InitDiaolgHelper {
 
@@ -63,7 +56,7 @@ public class InitDiaolgHelper {
     public AlertDialog getInitDialog() {
         AlertDialog.Builder ab = new AlertDialog.Builder(mContext);
 
-        View view = LayoutInflater.from(mContext).inflate(R.layout.info_init_dialog_layout, null);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_init_layout, null);
 
         ButterKnife.bind(this, view);
 
@@ -90,25 +83,7 @@ public class InitDiaolgHelper {
                 alertDialog.show();
 
                 ActivityUtils.encryptionCheck(mContext);
-
-                Observable
-                        .create(new ObservableOnSubscribe<Integer>() {
-                            @Override
-                            public void subscribe(ObservableEmitter<Integer> e) throws Exception {
-                                Loader.loadUniversity(mContext);
-                                e.onComplete();
-                            }
-                        })
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .onErrorReturn(new Function<Throwable, Integer>() {
-                            @Override
-                            public Integer apply(Throwable throwable) throws Exception {
-                                Toast.makeText(mContext, "FATAL: 加载学校信息失败", Toast.LENGTH_LONG).show();
-                                return 0;
-                            }
-                        })
-                        .subscribe();
+                Loader.loadUniversity(mContext);
             }
         });
         ab.setTitle("初始化个人信息");

@@ -220,6 +220,7 @@ public class CmsFactory extends UniversityFactory {
                 LOGIN_REF = cmsBaseURL;
                 CLASS_URL = cmsBaseURL + "public/kebiaoall.aspx";
                 GRADE_URL = cmsBaseURL + "student/chengji.aspx";
+                CAPTCHA_URL = cmsBaseURL + "yzm.aspx";
             }
             // 正方教务系统
             else if (Constants.ZFSOFT.equalsIgnoreCase(cmsSys)) {

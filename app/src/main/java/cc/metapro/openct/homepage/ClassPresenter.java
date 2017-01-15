@@ -116,6 +116,7 @@ class ClassPresenter implements ClassContract.Presenter {
                     Toast.makeText(mContext, R.string.no_local_classes_avail, Toast.LENGTH_LONG).show();
                 }
             } else {
+                Loader.loadUniversity(mContext);
                 mClassView.updateClasses(mClasses);
             }
         } catch (Exception e) {
@@ -130,7 +131,7 @@ class ClassPresenter implements ClassContract.Presenter {
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter e) throws Exception {
-                        Loader.getCms().getCAPTCHA(Constants.CAPTCHA_FILE);
+                        Loader.getCms().getCAPTCHA();
                         e.onComplete();
                     }
                 })

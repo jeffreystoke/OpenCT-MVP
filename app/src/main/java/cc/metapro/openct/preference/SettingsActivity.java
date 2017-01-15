@@ -56,7 +56,9 @@ public class SettingsActivity extends AppCompatActivity {
         // setup toolbar
         setSupportActionBar(mToolbar);
         ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.pref_container, new SchoolPreferenceFragment())
@@ -137,6 +139,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         private void passwordOperation(Preference preference) {
+            if (preference == null) return;
             preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
             sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                     PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
