@@ -26,11 +26,11 @@ import android.widget.TextView;
 import com.google.common.base.Strings;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.ClassInfo;
+import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 
 class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassViewHolder> {
 
@@ -61,29 +61,19 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
         return mClasses.size();
     }
 
-    void setNewTodayClasses(List<ClassInfo> classes, int week) {
-        if (classes == null || classes.size() == 0) {
-            mClasses = new ArrayList<>(0);
-        } else {
-            mClasses = classes;
-            Calendar now = Calendar.getInstance();
-            boolean isFirstSunday = (now.getFirstDayOfWeek() == Calendar.SUNDAY);
-            int weekDay = now.get(Calendar.DAY_OF_WEEK);
-            if (isFirstSunday) {
-                weekDay = weekDay - 1;
-                if (weekDay == 0) {
-                    weekDay = 7;
+    void updateTodayClasses(List<EnrichedClassInfo> classes, int week) {
+        mClasses = new ArrayList<>(0);
+        if (classes != null && classes.size() != 0) {
+            for (EnrichedClassInfo info : classes) {
+                if (info.isToday()) {
+                    List<ClassInfo> infos = info.getAllClasses();
+                    for (ClassInfo c : infos) {
+                        if (c.hasClass(week)) {
+                            mClasses.add(c);
+                        }
+                    }
                 }
             }
-            weekDay--;
-            List<ClassInfo> tmpClasses = new ArrayList<>();
-            for (int i = 0; i < classes.size() / 7; i++) {
-                ClassInfo c = mClasses.get(7 * i + weekDay);
-                if (c != null && c.hasClass(week)) {
-                    tmpClasses.add(c);
-                }
-            }
-            mClasses = tmpClasses;
         }
     }
 

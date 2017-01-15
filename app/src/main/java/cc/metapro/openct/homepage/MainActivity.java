@@ -196,21 +196,4 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
-    protected void onResume() {
-//        Loader.loadUniversity(this);
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-//        DBManger.closeDB();
-        super.onDestroy();
-    }
 }

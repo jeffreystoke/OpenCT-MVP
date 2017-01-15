@@ -20,12 +20,12 @@ import java.util.List;
 
 import cc.metapro.openct.BaseView;
 import cc.metapro.openct.LoginPresenter;
-import cc.metapro.openct.data.university.item.ClassInfo;
+import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 
 public interface ClassContract {
     interface View extends BaseView<Presenter> {
 
-        void updateClasses(List<ClassInfo> classes);
+        void updateClasses(List<EnrichedClassInfo> classes);
 
     }
 

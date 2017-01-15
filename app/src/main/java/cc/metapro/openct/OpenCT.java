@@ -20,7 +20,6 @@ import android.app.Application;
 
 import com.google.common.base.Strings;
 
-import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 
 public class OpenCT extends Application {

@@ -31,7 +31,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.utils.ActivityUtils;

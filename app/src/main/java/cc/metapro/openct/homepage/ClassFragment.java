@@ -25,7 +25,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -43,44 +42,34 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.item.ClassInfo;
-import cc.metapro.openct.utils.ActivityUtils;
-import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
 public class ClassFragment extends Fragment implements ClassContract.View {
 
+    private static boolean showedPrompt;
     @BindView(R.id.class_view_pager)
     ViewPager mViewPager;
-
     private ClassContract.Presenter mPresenter;
     private Context mContext;
     private List<View> mViewList;
     private Map<String, View> mViewMap;
     private DailyClassAdapter mTodayClassAdapter;
     private String[] mTitles = {"今日课表", "本周课表", "学期课表"};
-
-    private static boolean showedPrompt;
-
-    private int height, width;
-    private int colorIndex;
+    private int height;
     private int classLength;
     private int dailyClasses;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_class, container, false);
+        ButterKnife.bind(this, view);
         mContext = getContext();
-        View mainView = inflater.inflate(R.layout.fragment_class, container, false);
-
-        ButterKnife.bind(this, mainView);
-
-        initViewPager(mainView);
+        initViewPager(view);
         DisplayMetrics metrics = getResources().getDisplayMetrics();
-        width = (int) Math.round(metrics.widthPixels * (2.0 / 15.0));
         height = (int) Math.round(metrics.heightPixels * (1.0 / 15.0));
-
-        return mainView;
+        return view;
     }
 
     @Override
@@ -168,90 +157,30 @@ public class ClassFragment extends Fragment implements ClassContract.View {
         }
     }
 
-    private void addContentView(ViewGroup content, List<ClassInfo> classes, boolean onlyOneWeek, int thisWeek) {
+    private void addContentView(ViewGroup content, List<EnrichedClassInfo> classes, int thisWeek) {
+        if (content == null) return;
         content.removeAllViews();
-        if (classes.size() < 7 * dailyClasses) return;
-        for (int i = 0; i < 7; i++) {
-            colorIndex = i;
-            if (colorIndex > Constants.colorString.length) {
-                colorIndex /= 3;
-            }
-            for (int j = 0; j < dailyClasses; j++) {
-                colorIndex++;
-                if (colorIndex >= Constants.colorString.length) {
-                    colorIndex = 0;
-                }
-                ClassInfo classInfo = classes.get(j * 7 + i);
-                if (classInfo == null) {
-                    continue;
-                }
-
-                int x = i * width;
-                int y = j * height * classLength;
-                if (onlyOneWeek) {
-                    if (classInfo.hasClass(thisWeek)) {
-                        addClassInfoView(content, classInfo, x, y);
-                    }
-                    while (classInfo.hasSubClass()) {
-                        classInfo = classInfo.getSubClassInfo();
-                        if (classInfo.hasClass(thisWeek)) {
-                            addClassInfoView(content, classInfo, x, y);
-                        }
-                    }
-                } else {
-                    addClassInfoView(content, classInfo, x, y);
-                }
-            }
+        for (EnrichedClassInfo info : classes) {
+            // 仅显示本周
+            info.addViewTo(content, mContext, mPresenter, thisWeek);
         }
     }
 
-    private void addClassInfoView(final ViewGroup content, final ClassInfo classInfo, int x, int y) {
-        // exclude empty classInfo
-        if (classInfo.isEmpty()) return;
-
-        final CardView cardView = (CardView) LayoutInflater.from(mContext).inflate(R.layout.item_class_info, null);
-        TextView classInfoView = (TextView) cardView.findViewById(R.id.class_name);
-        classInfoView.setText(classInfo.getName() + "@" + classInfo.getPlace());
-
-        int h = classInfo.getLength() * height;
-
-        if (h < 0 || h >= classLength * dailyClasses * height)
-            h = height * classLength;
-
-        cardView.setX(x);
-        cardView.setY(y);
-
-        cardView.setCardBackgroundColor(Constants.getColor(colorIndex));
-
-        cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                classInfo.getAlertDialog(mContext, mPresenter).show();
-            }
-        });
-
-        content.addView(cardView);
-
-        ViewGroup.LayoutParams params = cardView.getLayoutParams();
-        params.width = width;
-        params.height = h;
-    }
-
     @Override
-    public void updateClasses(List<ClassInfo> classes) {
+    public void updateClasses(List<EnrichedClassInfo> classes) {
         classLength = Loader.getClassLength();
         dailyClasses = Loader.getDailyClasses();
         int week = Loader.getCurrentWeek(mContext);
         mTitles[1] = "本周 (第" + week + "周)";
 
-        mTodayClassAdapter.setNewTodayClasses(classes, week);
+        mTodayClassAdapter.updateTodayClasses(classes, week);
         mTodayClassAdapter.notifyDataSetChanged();
 
         View view = mViewMap.get("ts");
         ViewGroup seq = (ViewGroup) view.findViewById(R.id.sem_class_seq);
         ViewGroup con = (ViewGroup) view.findViewById(R.id.sem_class_content);
         addSeqViews(seq);
-        addContentView(con, classes, false, -1);
+        addContentView(con, classes, -1);
         showSelectedWeek(classes, week);
 
         if (!showedPrompt) {
@@ -265,12 +194,12 @@ public class ClassFragment extends Fragment implements ClassContract.View {
         }
     }
 
-    private void showSelectedWeek(List<ClassInfo> classes, int week) {
+    private void showSelectedWeek(List<EnrichedClassInfo> classes, int week) {
         View view = mViewMap.get("tw");
         ViewGroup seq = (ViewGroup) view.findViewById(R.id.class_seq);
         ViewGroup con = (ViewGroup) view.findViewById(R.id.class_content);
         addSeqViews(seq);
-        addContentView(con, classes, true, week);
+        addContentView(con, classes, week);
     }
 
     @Override

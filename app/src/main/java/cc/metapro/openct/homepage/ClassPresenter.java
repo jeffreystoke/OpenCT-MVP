@@ -21,6 +21,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.util.DisplayMetrics;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +42,7 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.ClassInfo;
+import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.widget.DailyClassWidget;
@@ -55,14 +57,15 @@ import io.reactivex.schedulers.Schedulers;
 
 class ClassPresenter implements ClassContract.Presenter {
 
-    private ClassContract.View mClassView;
-    private List<ClassInfo> mClasses;
-    private Context mContext;
     private static boolean showedNotice;
+    private ClassContract.View mView;
+    private List<ClassInfo> mClasses;
+    private List<EnrichedClassInfo> mEnrichedClasses;
+    private Context mContext;
 
     ClassPresenter(@NonNull ClassContract.View view, Context context) {
-        mClassView = view;
-        mClassView.setPresenter(this);
+        mView = view;
+        mView.setPresenter(this);
         mContext = context;
     }
 
@@ -70,33 +73,35 @@ class ClassPresenter implements ClassContract.Presenter {
     public void loadOnline(final String code) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_class_infos).show();
         Observable
-                .create(new ObservableOnSubscribe<List<ClassInfo>>() {
+                .create(new ObservableOnSubscribe<List<EnrichedClassInfo>>() {
                     @Override
-                    public void subscribe(ObservableEmitter<List<ClassInfo>> e) throws Exception {
+                    public void subscribe(ObservableEmitter<List<EnrichedClassInfo>> e) throws Exception {
                         Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
                         loginMap.put(Constants.CAPTCHA_KEY, code);
-                        e.onNext(Loader.getCms().getClasses(loginMap));
+                        List<ClassInfo> list = Loader.getCms().getClasses(loginMap);
+                        List<EnrichedClassInfo> source = prepareEnrichedClasses(list);
+                        e.onNext(source);
                         e.onComplete();
                     }
                 })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<List<ClassInfo>>() {
+                .doOnNext(new Consumer<List<EnrichedClassInfo>>() {
                     @Override
-                    public void accept(List<ClassInfo> classes) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
+                    public void accept(List<EnrichedClassInfo> classes) throws Exception {
                         if (classes.size() == 0) {
                             Toast.makeText(mContext, R.string.no_classes_avail, Toast.LENGTH_SHORT).show();
                         } else {
-                            mClasses = classes;
+                            mEnrichedClasses = classes;
                             storeClasses();
                             loadLocalClasses();
                         }
+                        ActivityUtils.dismissProgressDialog();
                     }
                 })
-                .onErrorReturn(new Function<Throwable, List<ClassInfo>>() {
+                .onErrorReturn(new Function<Throwable, List<EnrichedClassInfo>>() {
                     @Override
-                    public List<ClassInfo> apply(Throwable throwable) throws Exception {
+                    public List<EnrichedClassInfo> apply(Throwable throwable) throws Exception {
                         ActivityUtils.dismissProgressDialog();
                         Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         return new ArrayList<>(0);
@@ -109,20 +114,63 @@ class ClassPresenter implements ClassContract.Presenter {
     public void loadLocalClasses() {
         try {
             DBManger manger = DBManger.getInstance(mContext);
-            mClasses = manger.getClassInfos();
-            if (mClasses.size() == 0) {
+            mEnrichedClasses = manger.getClassInfos();
+            if (mEnrichedClasses.size() == 0) {
                 if (!showedNotice) {
                     showedNotice = true;
                     Toast.makeText(mContext, R.string.no_local_classes_avail, Toast.LENGTH_LONG).show();
                 }
             } else {
                 Loader.loadUniversity(mContext);
-                mClassView.updateClasses(mClasses);
+                mView.updateClasses(mEnrichedClasses);
             }
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private List<EnrichedClassInfo>
+    prepareEnrichedClasses(@NonNull List<ClassInfo> classes) {
+        List<EnrichedClassInfo> enrichedClasses = new ArrayList<>(classes.size());
+        int dailyClasses = classes.size() / 7;
+        int baseLength = Loader.getClassLength();
+        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+        final int width = (int) Math.round(metrics.widthPixels * (2.0 / 15.0));
+        final int baseHeight = (int) Math.round(metrics.heightPixels * (1.0 / 15.0));
+        final int classLength = Loader.getClassLength();
+
+        for (int i = 0; i < 7; i++) {
+            int colorIndex = i;
+            if (colorIndex > Constants.colorString.length) {
+                colorIndex /= 3;
+            }
+            for (int j = 0; j < dailyClasses; j++) {
+                colorIndex++;
+                if (colorIndex >= Constants.colorString.length) {
+                    colorIndex = 0;
+                }
+                ClassInfo classInfo = classes.get(j * 7 + i);
+                if (classInfo == null) {
+                    continue;
+                }
+                // 计算坐标
+                int x = i * width;
+                int y = j * baseHeight * classLength;
+
+                if (!classInfo.isEmpty()) {
+                    int h = classInfo.getLength() * baseHeight;
+                    if (h <= 0 || h > dailyClasses * baseHeight) {
+                        h = baseHeight * baseLength;
+                    }
+                    enrichedClasses.add(new EnrichedClassInfo
+                            (classInfo, x, y, Constants.getColor(colorIndex), width, h, i + 1));
+
+                }
+            }
+        }
+
+        return enrichedClasses;
     }
 
     @Override
@@ -161,7 +209,7 @@ class ClassPresenter implements ClassContract.Presenter {
     public void storeClasses() {
         try {
             DBManger manger = DBManger.getInstance(mContext);
-            manger.updateClassInfos(mClasses);
+            manger.updateClassInfos(mEnrichedClasses);
             DailyClassWidget.update(mContext);
         } catch (Exception e) {
             Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();

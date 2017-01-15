@@ -22,7 +22,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.common.base.Strings;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ import java.util.Map;
 
 import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.data.university.item.BorrowInfo;
-import cc.metapro.openct.data.university.item.ClassInfo;
+import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
 
 public class DBManger {
@@ -94,10 +93,10 @@ public class DBManger {
         }
     }
 
-    private UniversityInfo.SchoolInfo getSchoolInfo(String abbr) {
+    private UniversityInfo.SchoolInfo getSchoolInfo(String name) {
         Cursor cursor = mDatabase.query(
                 DBHelper.SCHOOL_TABLE, null,
-                DBHelper.ABBR + "=? COLLATE NOCASE", new String[]{abbr},
+                DBHelper.SCHOOL_NAME + "=? COLLATE NOCASE", new String[]{name},
                 null, null, null);
         int n = cursor.getColumnCount();
         String[] content = cursor.getColumnNames();
@@ -166,16 +165,16 @@ public class DBManger {
         return universityInfo;
     }
 
-    UniversityInfo getUniversity(String abbr) {
-        UniversityInfo.SchoolInfo schoolInfo = getSchoolInfo(abbr);
+    UniversityInfo getUniversity(String name) {
+        UniversityInfo.SchoolInfo schoolInfo = getSchoolInfo(name);
         return getUniversity(schoolInfo);
     }
 
-    public void updateClassInfos(List<ClassInfo> classInfos) {
+    public void updateClassInfos(List<EnrichedClassInfo> classInfos) {
         mDatabase.beginTransaction();
         try {
             mDatabase.delete(DBHelper.CLASS_TABLE, null, null);
-            for (ClassInfo c : classInfos) {
+            for (EnrichedClassInfo c : classInfos) {
                 mDatabase.execSQL(
                         "INSERT INTO " + DBHelper.CLASS_TABLE + " VALUES(null, ?)",
                         new Object[]{c.toString()}
@@ -188,13 +187,13 @@ public class DBManger {
     }
 
     @NonNull
-    public List<ClassInfo> getClassInfos() {
+    public List<EnrichedClassInfo> getClassInfos() {
         Cursor cursor = mDatabase.query(DBHelper.CLASS_TABLE, null, null, null, null, null, null);
         cursor.moveToFirst();
-        List<ClassInfo> classInfos = new ArrayList<>();
+        List<EnrichedClassInfo> classInfos = new ArrayList<>();
         Gson gson = new Gson();
         while (!cursor.isAfterLast()) {
-            classInfos.add(gson.fromJson(cursor.getString(1), ClassInfo.class));
+            classInfos.add(gson.fromJson(cursor.getString(1), EnrichedClassInfo.class));
             cursor.moveToNext();
         }
         cursor.close();

@@ -42,7 +42,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.GradeInfo;

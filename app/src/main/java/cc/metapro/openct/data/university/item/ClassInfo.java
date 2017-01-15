@@ -52,9 +52,10 @@ public class ClassInfo implements Serializable {
     private final static Pattern oddPattern = Pattern.compile("单周?");
     private final static Pattern evenPattern = Pattern.compile("双周?");
 
-    private String mName, mType, mTime, mDuring, mTeacher, mPlace;
+    String mName, mType, mTime, mDuring, mTeacher, mPlace;
+    boolean mInactive;
     private ClassInfo mSubClassInfo;
-    private boolean mOddWeek, mEvenWeek, mInactive;
+    private boolean mOddWeek, mEvenWeek;
 
     public ClassInfo() {
     }
@@ -63,16 +64,37 @@ public class ClassInfo implements Serializable {
         String[] classes = content.split(Constants.BR_REPLACER + Constants.BR_REPLACER + "+");
         String s = classes[0];
         String[] tmp = s.split(Constants.BR_REPLACER);
-        if (tmp.length == info.mClassStringCount) {
-            mName = infoParser(info.mNameRE, tmp[info.mNameIndex]);
-            mType = infoParser(info.mTypeRE, tmp[info.mTypeIndex]);
-            mTeacher = infoParser(info.mTeacherRE, tmp[info.mTeacherIndex]);
-            mPlace = infoParser(info.mPlaceRE, tmp[info.mPlaceIndex]);
-            mTime = infoParser(info.mTimeRE, tmp[info.mTimeIndex]);
-            mDuring = infoParser(info.mDuringRE, tmp[info.mDuringIndex]);
-
-            mOddWeek = oddPattern.matcher(tmp[info.mTimeIndex]).find();
-            mEvenWeek = evenPattern.matcher(tmp[info.mTimeIndex]).find();
+        if (tmp.length <= info.mClassStringCount) {
+            int duringIndex = info.mDuringIndex;
+            int placeIndex = info.mPlaceIndex;
+            int timeIndex = info.mTimeIndex;
+            int teacherIndex = info.mTeacherIndex;
+            if (tmp.length == info.mClassStringCount - 1) {
+                duringIndex--;
+                placeIndex--;
+                timeIndex--;
+                teacherIndex--;
+            }
+            if (info.mNameIndex < tmp.length) {
+                mName = infoParser(info.mNameRE, tmp[info.mNameIndex]);
+            }
+            if (info.mTypeIndex < tmp.length) {
+                mType = infoParser(info.mTypeRE, tmp[info.mTypeIndex]);
+            }
+            if (teacherIndex < tmp.length) {
+                mTeacher = infoParser(info.mTeacherRE, tmp[teacherIndex]);
+            }
+            if (placeIndex < tmp.length) {
+                mPlace = infoParser(info.mPlaceRE, tmp[placeIndex]);
+            }
+            if (teacherIndex < tmp.length) {
+                mTime = infoParser(info.mTimeRE, tmp[timeIndex]);
+                mOddWeek = oddPattern.matcher(tmp[timeIndex]).find();
+                mEvenWeek = evenPattern.matcher(tmp[timeIndex]).find();
+            }
+            if (duringIndex < tmp.length) {
+                mDuring = infoParser(info.mDuringRE, tmp[duringIndex]);
+            }
         }
 
         // create all subclass
@@ -114,7 +136,9 @@ public class ClassInfo implements Serializable {
         if (Strings.isNullOrEmpty(mTime)) return 1;
         int[] startEnd = RE.getStartEnd(mTime);
         try {
-            if (startEnd[0] == -1) return Integer.parseInt(mTime);
+            if (startEnd[0] == -1) {
+                return Integer.parseInt(mTime);
+            }
         } catch (Exception e) {
             return 1;
         }
@@ -132,7 +156,7 @@ public class ClassInfo implements Serializable {
     }
 
     public boolean isEmpty() {
-        return Strings.isNullOrEmpty(mName);
+        return RE.isEmpty(mName);
     }
 
     public boolean hasSubClass() {
@@ -179,6 +203,13 @@ public class ClassInfo implements Serializable {
         return StoreHelper.getJsonText(this);
     }
 
+    /**
+     * 根据课表信息, 设定的当前周, 当前时间生成iCal日历事件
+     *
+     * @param week    第几周
+     * @param weekDay 星期几
+     * @return iCal日历事件
+     */
     @Nullable
     public VEvent getEvent(int week, int weekDay) {
         if (isEmpty() || mInactive)
@@ -238,7 +269,7 @@ public class ClassInfo implements Serializable {
         }
     }
 
-    public AlertDialog getAlertDialog(final Context mContext, final ClassContract.Presenter mPresenter) {
+    AlertDialog getAlertDialog(final Context mContext, final ClassContract.Presenter mPresenter) {
         AlertDialog.Builder a = new AlertDialog.Builder(mContext);
         a.setMessage(toFullString());
         a.setCancelable(true);

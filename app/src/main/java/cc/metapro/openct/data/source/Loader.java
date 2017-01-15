@@ -22,14 +22,11 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import com.google.common.base.Strings;
-import com.google.common.util.concurrent.FakeTimeLimiter;
 
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.crypto.KeyGenerator;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.openctservice.ServiceGenerator;
@@ -95,14 +92,6 @@ public class Loader {
         return map;
     }
 
-    public static int getDailyClasses() {
-        try {
-            return university.mCMSInfo.mClassTableInfo.mDailyClasses;
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
     public static int getClassLength() {
         try {
             return university.mCMSInfo.mClassTableInfo.mClassLength;
@@ -111,9 +100,12 @@ public class Loader {
         }
     }
 
-    public static int getCurrentWeek(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return Integer.parseInt(preferences.getString(Constants.PREF_CURRENT_WEEK_KEY, "1"));
+    public static int getDailyClasses() {
+        try {
+            return university.mCMSInfo.mClassTableInfo.mDailyClasses;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public static boolean cmsNeedCAPTCHA() {
@@ -132,20 +124,27 @@ public class Loader {
         }
     }
 
+    public static int getCurrentWeek(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String week = preferences.getString(Constants.PREF_CURRENT_WEEK_KEY, "第1周");
+        return Integer.parseInt(week.replaceAll("[^\\x00-\\xff]", ""));
+    }
+
     public static void loadUniversity(final Context context) {
         try {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
             boolean custom = preferences.getBoolean(Constants.PREF_USE_CUSTOM, false);
             DBManger manger = DBManger.getInstance(context);
+            String defaultSchool = context.getResources().getStringArray(R.array.pref_school_names)[0];
             if (custom) {
                 UniversityInfo.SchoolInfo info = manger.getCustomSchoolInfo();
                 if (info != null) {
                     university = manger.getUniversity(info);
                 } else {
-                    university = manger.getUniversity(preferences.getString(Constants.PREF_SCHOOL_ABBR_KEY, context.getResources().getStringArray(R.array.pref_school_values)[0]));
+                    university = manger.getUniversity(preferences.getString(Constants.PREF_SCHOOL_NAME_KEY, defaultSchool));
                 }
             } else {
-                university = manger.getUniversity(preferences.getString(Constants.PREF_SCHOOL_ABBR_KEY, context.getResources().getStringArray(R.array.pref_school_values)[0]));
+                university = manger.getUniversity(preferences.getString(Constants.PREF_SCHOOL_NAME_KEY, defaultSchool));
             }
 
             // update current week
@@ -153,7 +152,8 @@ public class Loader {
             Calendar cal = Calendar.getInstance(Locale.CHINA);
             cal.setFirstDayOfWeek(Calendar.MONDAY);
             int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
-            int currentWeek = Integer.parseInt(preferences.getString(Constants.PREF_CURRENT_WEEK_KEY, "1"));
+            String week = preferences.getString(Constants.PREF_CURRENT_WEEK_KEY, "第1周");
+            int currentWeek = Integer.parseInt(week.replaceAll("[^\\x00-\\xff]", ""));
             if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
                 if (lastSetWeek == 53) {
                     currentWeek += weekOfYearWhenSetCurrentWeek;
@@ -167,7 +167,7 @@ public class Loader {
                 currentWeek = 1;
             }
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(Constants.PREF_CURRENT_WEEK_KEY, currentWeek + "");
+            editor.putString(Constants.PREF_CURRENT_WEEK_KEY, "第" + currentWeek + "周");
             editor.putString(Constants.PREF_WEEK_SET_KEY, weekOfYearWhenSetCurrentWeek + "");
             editor.apply();
         } catch (Exception e) {

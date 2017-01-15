@@ -63,11 +63,11 @@ public class InitDiaolgHelper {
         ab.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                String school = mContext.getResources().getStringArray(R.array.pref_school_values)[schoolSpinner.getSelectedItemPosition()];
-                String week = mContext.getResources().getStringArray(R.array.pref_week_seq_values)[weekSpinner.getSelectedItemPosition()];
+                String school = schoolSpinner.getSelectedItem().toString();
+                String week = weekSpinner.getSelectedItem().toString();
                 SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(mContext);
                 SharedPreferences.Editor editor = p.edit();
-                editor.putString(Constants.PREF_SCHOOL_ABBR_KEY, school);
+                editor.putString(Constants.PREF_SCHOOL_NAME_KEY, school);
                 editor.putString(Constants.PREF_CURRENT_WEEK_KEY, week);
                 editor.putString(Constants.PREF_CMS_USERNAME_KEY, cmsUsername.getText().toString());
                 editor.putString(Constants.PREF_CMS_PASSWORD_KEY, cmsPassword.getText().toString());

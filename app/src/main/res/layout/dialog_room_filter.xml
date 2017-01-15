@@ -19,7 +19,7 @@
         style="@style/Widget.AppCompat.Spinner.MySpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/pref_week_seq_titles">
+        android:entries="@array/pref_week_seqs">
 
     </Spinner>
 

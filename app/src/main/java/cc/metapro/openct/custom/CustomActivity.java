@@ -16,7 +16,6 @@ package cc.metapro.openct.custom;
  * limitations under the License.
  */
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -26,7 +25,6 @@ import android.support.v7.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 
 public class CustomActivity extends AppCompatActivity {

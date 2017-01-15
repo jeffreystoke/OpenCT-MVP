@@ -16,15 +16,12 @@ package cc.metapro.openct.data.university;
  * limitations under the License.
  */
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 
 import java.util.Map;
 
 import cc.metapro.openct.data.source.DBHelper;
 import cc.metapro.openct.data.source.StoreHelper;
-import cc.metapro.openct.utils.Constants;
 
 public class UniversityInfo {
 

@@ -1,82 +1,75 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/basic_info">
-        <ListPreference
-            android:defaultValue="@string/pref_default_school_name"
-            android:entries="@array/pref_school_names"
-            android:entryValues="@array/pref_school_values"
-            android:key="pref_school_name"
+    <ListPreference
+        android:defaultValue="@string/pref_default_school_name"
+        android:entries="@array/pref_school_names"
+        android:entryValues="@array/pref_school_names"
+        android:key="pref_school_name"
+        android:maxLines="1"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/school"/>
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/pref_week_seqs"
+        android:entryValues="@array/pref_week_seqs"
+        android:key="current_week_seq"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_current_week"/>
+    <PreferenceScreen
+        android:summary="@string/pref_cms_summary"
+        android:title="@string/jwxt">
+        <EditTextPreference
+            android:defaultValue="@null"
+            android:inputType="text"
+            android:key="pref_cms_username"
             android:maxLines="1"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/school"/>
+            android:title="@string/username"/>
 
-        <ListPreference
-            android:defaultValue="1"
-            android:entries="@array/pref_week_seq_titles"
-            android:entryValues="@array/pref_week_seq_values"
-            android:key="current_week_seq"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="@string/pref_title_current_week"/>
-    </PreferenceCategory>
+        <EditTextPreference
+            android:defaultValue="@null"
+            android:inputType="textPassword"
+            android:key="pref_cms_password"
+            android:maxLines="1"
+            android:password="true"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/password"/>
+        <Preference
+            android:summary="@string/password_notice"
+            android:title="@string/notice"/>
+    </PreferenceScreen>
 
-    <PreferenceCategory android:title="@string/user_info">
+    <PreferenceScreen
+        android:summary="@string/pref_lib_summary"
+        android:title="@string/library">
+        <EditTextPreference
+            android:defaultValue="@null"
+            android:inputType="text"
+            android:key="pref_lib_username"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/username"/>
 
-        <PreferenceScreen
-            android:summary="@string/pref_cms_summary"
-            android:title="@string/jwxt">
-            <EditTextPreference
-                android:defaultValue="@null"
-                android:inputType="textCapWords"
-                android:key="pref_cms_username"
-                android:maxLines="1"
-                android:selectAllOnFocus="true"
-                android:singleLine="true"
-                android:title="@string/username"/>
-
-            <EditTextPreference
-                android:defaultValue="@null"
-                android:inputType="textPassword"
-                android:key="pref_cms_password"
-                android:maxLines="1"
-                android:password="true"
-                android:selectAllOnFocus="true"
-                android:singleLine="true"
-                android:title="@string/password"/>
-            <Preference
-                android:summary="@string/password_notice"
-                android:title="@string/notice"/>
-        </PreferenceScreen>
-
-        <PreferenceScreen
-            android:summary="@string/pref_lib_summary"
-            android:title="@string/library">
-            <EditTextPreference
-                android:defaultValue="@null"
-                android:inputType="textCapWords"
-                android:key="pref_lib_username"
-                android:maxLines="1"
-                android:selectAllOnFocus="true"
-                android:singleLine="true"
-                android:title="@string/username"/>
-
-            <EditTextPreference
-                android:defaultValue="@null"
-                android:inputType="textPassword"
-                android:key="pref_lib_password"
-                android:maxLines="1"
-                android:password="true"
-                android:selectAllOnFocus="true"
-                android:singleLine="true"
-                android:title="@string/password"/>
-            <Preference
-                android:summary="@string/password_notice"
-                android:title="@string/notice"/>
-        </PreferenceScreen>
-    </PreferenceCategory>
+        <EditTextPreference
+            android:defaultValue="@null"
+            android:inputType="textPassword"
+            android:key="pref_lib_password"
+            android:maxLines="1"
+            android:password="true"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/password"/>
+        <Preference
+            android:summary="@string/password_notice"
+            android:title="@string/notice"/>
+    </PreferenceScreen>
     <PreferenceCategory
         android:title="Open Source License">
         <Preference
@@ -86,8 +79,6 @@
                 android:action="android.intent.action.VIEW"
                 android:data="https://www.apache.org/licenses/LICENSE-2.0"/>
         </Preference>
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_about_openct">
         <Preference
             android:summary="github.com/jeffreystoke/openct-mvp"
             android:title="项目地址">
@@ -95,8 +86,6 @@
                 android:action="android.intent.action.VIEW"
                 android:data="https://github.com/jeffreystoke/openct-mvp"/>
         </Preference>
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_about_author">
         <Preference
             android:summary="jeffctor@gmail.com"
             android:title="Gmail"/>

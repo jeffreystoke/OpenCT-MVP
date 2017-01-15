@@ -1,6 +1,6 @@
 [
   {
-    "mCmsSys": "zfsoft",
+    "mCmsSys": "zfsoft2012",
     "mClassTableInfo": {
       "mClassLength": 1,
       "mDailyClasses": 11,
@@ -28,6 +28,37 @@
       "mGradeMidExamIndex": 8,
       "mGradeFinalExamIndex": 9,
       "mGradeMakeupIndex": 12
+    }
+  },
+  {
+    "mCmsSys": "zfsoft2008",
+    "mClassTableInfo": {
+      "mClassLength": 1,
+      "mDailyClasses": 11,
+      "mClassTableID": "Table6",
+      "mClassInfoStart": "^第.*节$",
+      "mClassStringCount": 4,
+      "mNameIndex": 0,
+      "mTypeIndex": 0,
+      "mTimeIndex": 1,
+      "mDuringIndex": 1,
+      "mTeacherIndex": 2,
+      "mPlaceIndex": 3,
+      "mDuringRE": "^\\d+.*?\\d+(?=(\\())",
+      "mTimeRE": "(?<=(\\())\\d+,\\d+"
+    },
+    "mGradeTableInfo": {
+      "mGradeTableID": "Datagrid1",
+      "mClassCodeIndex": 2,
+      "mClassNameIndex": 3,
+      "mClassTypeIndex": 4,
+      "mPointsIndex": 6,
+      "mGradeSummaryIndex": 8,
+      "mGradePracticeIndex": 8,
+      "mGradeCommonIndex": 8,
+      "mGradeMidExamIndex": 8,
+      "mGradeFinalExamIndex": 8,
+      "mGradeMakeupIndex": 10
     }
   },
   {

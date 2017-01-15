@@ -25,7 +25,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,12 +33,6 @@ import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.widget.DailyClassWidget;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -122,7 +115,7 @@ public class SettingsActivity extends AppCompatActivity {
             addPreferencesFromResource(R.xml.pref_school);
             setHasOptionsMenu(false);
 
-            bindSummaryToValue(findPreference(Constants.PREF_SCHOOL_ABBR_KEY));
+            bindSummaryToValue(findPreference(Constants.PREF_SCHOOL_NAME_KEY));
             bindSummaryToValue(findPreference(Constants.PREF_CURRENT_WEEK_KEY));
             bindSummaryToValue(findPreference(Constants.PREF_CMS_USERNAME_KEY));
             bindSummaryToValue(findPreference(Constants.PREF_LIB_USERNAME_KEY));

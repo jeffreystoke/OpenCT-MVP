@@ -56,10 +56,11 @@ public class CmsFactory extends UniversityFactory {
     }
 
     /**
-     * tend to get class info page
+     * 解析用户中心页面时提供的 BaseURL 由 URLFactory 生成
+     * 即使用 mURLFactory.LOGIN_URL 作为页面解析的 BaseURL
      *
-     * @param loginMap - cms user info and captcha code (if needed)
-     * @return a list of class info
+     * @param loginMap - 教务网登录信息, 包含用户名, 密码, 验证码(如果需要的话)
+     * @return 解析完成的课程信息
      * @throws IOException
      * @throws LoginException
      */
@@ -67,17 +68,26 @@ public class CmsFactory extends UniversityFactory {
     public List<ClassInfo> getClasses(Map<String, String> loginMap) throws Exception {
         String page = login(loginMap);
         String tableURL = null;
-        String tablePage;
+        String tablePage = null;
+        // 苏文
         if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.NJSUWEN) || mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
-            tablePage = mService.getPage(mURLFactory.CLASS_URL, mCMSInfo.mCmsURL).execute().body();
+            tablePage = mService.getPage(mURLFactory.CLASS_URL, mURLFactory.LOGIN_URL).execute().body();
             if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-            return UniversityFactory.generateClasses(tablePage.replaceAll("◇|<br>|-{3,}", Constants.BR_REPLACER), mClassTableInfo);
-        } else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.ZFSOFT)) {
-            Document doc = Jsoup.parse(page, mCMSInfo.mCmsURL);
+            return UniversityFactory.generateClasses(tablePage.replaceAll("◇", Constants.BR_REPLACER), mClassTableInfo);
+        }
+        // 强智
+        else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
+            // TODO: 17/1/15 获取强智成绩
+//            if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
+//            return UniversityFactory.generateClasses(tablePage.replaceAll("<br>|-{3,}", Constants.BR_REPLACER), mClassTableInfo);
+        }
+        // 正方2012
+        else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.ZFSOFT2012)) {
+            Document doc = Jsoup.parse(page, mURLFactory.LOGIN_URL);
             Elements addresses = doc.select("a");
             for (Element e : addresses) {
                 if ("GetMc('学生个人课表');".equals(e.attr("onclick"))) {
-                    tableURL = mCMSInfo.mCmsURL + e.attr("href");
+                    tableURL = e.absUrl("href");
                     break;
                 }
             }
@@ -85,9 +95,28 @@ public class CmsFactory extends UniversityFactory {
             tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
             if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
             return UniversityFactory.generateClasses(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER), mClassTableInfo);
-        } else {
-            return new ArrayList<>(0);
         }
+        // 正方2008
+        else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.ZFSOFT2008)) {
+            Document doc = Jsoup.parse(page, mURLFactory.LOGIN_URL);
+            Elements addresses = doc.select("a");
+            for (Element e : addresses) {
+                if ("GetMc('课程介绍查询');".equals(e.attr("onclick"))) {
+                    tableURL = e.absUrl("href");
+                    break;
+                }
+            }
+            if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
+            tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
+            if (!Strings.isNullOrEmpty(tablePage)) {
+                // TODO: 17/1/15 获取正方2008版成绩
+            } else {
+                return new ArrayList<>(0);
+            }
+            return UniversityFactory.generateClasses(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER), mClassTableInfo);
+        }
+        // 未支持的院校
+        return new ArrayList<>(0);
     }
 
     /**
@@ -105,7 +134,9 @@ public class CmsFactory extends UniversityFactory {
         String tablePage = null;
         if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.NJSUWEN)) {
             tablePage = mService.getPage(mURLFactory.GRADE_URL, mCMSInfo.mCmsURL).execute().body();
-        } else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.ZFSOFT)) {
+        }
+        // 正方2012
+        else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.ZFSOFT2012)) {
             Document doc = Jsoup.parse(page, mCMSInfo.mCmsURL);
             Elements ele = doc.select("a");
             for (Element e : ele) {
@@ -116,6 +147,20 @@ public class CmsFactory extends UniversityFactory {
             }
             if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
             tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
+        }
+        // 正方2008
+        else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.ZFSOFT2008)) {
+            Document doc = Jsoup.parse(page, mCMSInfo.mCmsURL);
+            Elements ele = doc.select("a");
+            for (Element e : ele) {
+                if ("GetMc('学生成绩查询');".equals(e.attr("onclick"))) {
+                    tableURL = mCMSInfo.mCmsURL + e.attr("href");
+                    break;
+                }
+            }
+            if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
+            tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
+
         } else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
             mService.getPage(mCMSInfo.mCmsURL + "jsxsd/framework/blankPage.jsp", mURLFactory.USERCENTER_URL).execute();
             Document document = Jsoup.parse(page, mCMSInfo.mCmsURL);
@@ -223,7 +268,7 @@ public class CmsFactory extends UniversityFactory {
                 CAPTCHA_URL = cmsBaseURL + "yzm.aspx";
             }
             // 正方教务系统
-            else if (Constants.ZFSOFT.equalsIgnoreCase(cmsSys)) {
+            else if (Constants.ZFSOFT2012.equalsIgnoreCase(cmsSys) || Constants.ZFSOFT2008.equalsIgnoreCase(cmsSys)) {
                 LOGIN_URL = cmsBaseURL;
                 LOGIN_REF = cmsBaseURL;
                 CAPTCHA_URL = cmsBaseURL + "CheckCode.aspx";

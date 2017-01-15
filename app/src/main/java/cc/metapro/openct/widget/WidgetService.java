@@ -22,13 +22,13 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.ClassInfo;
+import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 
 public class WidgetService extends RemoteViewsService {
 
@@ -53,25 +53,21 @@ public class WidgetService extends RemoteViewsService {
         @Override
         public void onDataSetChanged() {
             DBManger manger = DBManger.getInstance(mContext);
-            List<ClassInfo> allClasses = manger.getClassInfos();
-            Calendar now = Calendar.getInstance();
-            boolean isFirstSunday = (now.getFirstDayOfWeek() == Calendar.SUNDAY);
-            int weekDay = now.get(Calendar.DAY_OF_WEEK);
-            if (isFirstSunday) {
-                weekDay = weekDay - 1;
-                if (weekDay == 0) {
-                    weekDay = 7;
+            int week = Loader.getCurrentWeek(mContext);
+            List<EnrichedClassInfo> allClasses = manger.getClassInfos();
+            mDailyClasses = new ArrayList<>(0);
+            if (allClasses.size() != 0) {
+                for (EnrichedClassInfo info : allClasses) {
+                    if (info.isToday()) {
+                        List<ClassInfo> infos = info.getAllClasses();
+                        for (ClassInfo c : infos) {
+                            if (c.hasClass(week)) {
+                                mDailyClasses.add(c);
+                            }
+                        }
+                    }
                 }
             }
-            weekDay--;
-            List<ClassInfo> infos = new ArrayList<>();
-            for (int i = 0; i < allClasses.size() / 7; i++) {
-                ClassInfo c = allClasses.get(7 * i + weekDay);
-                if (c != null && c.hasClass(Loader.getCurrentWeek(mContext))) {
-                    infos.add(c);
-                }
-            }
-            mDailyClasses = infos;
         }
 
         @Override
