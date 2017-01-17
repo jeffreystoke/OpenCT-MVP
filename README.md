@@ -4,27 +4,26 @@
 开源图书馆与课程表应用
 
 
-## 软件截图
+## ScreenShots
 
+<img src="./screenshots/features.jpg?raw=true" width="200">
+<img src="./screenshots/class_table_day.jpg?raw=true" width="200">
+<img src="./screenshots/class_table_week.jpg?raw=true" width="200">
+<img src="./screenshots/borrow_info.jpg?raw=true" width="200">
+<img src="./screenshots/search_result.jpg?raw=true" width="200">
+<img src="./screenshots/custom.jpg?raw=true" width="200">
 
-<img src="./screenshots/features.JPG?raw=true" width="200">
-<img src="./screenshots/class_table.JPG?raw=true" width="200">
-<img src="./screenshots/borrow_info.JPG?raw=true" width="200">
-<img src="./screenshots/search_result.JPG?raw=true" width="200">
-
-
-## 依赖
+## Dependency
 
 
 - Jsoup 1.10.1
-- android support v4, v7, design, cardview-v7
-- Gson
-- Guava, (for null check)
-- Retrofit with Converter-gson and Converter-scalars
-- Recyclerview-Animators
-- ButterKnife
-- RxJava 2.0.3
-- RxAndroid 2.0.1
+- Google Gson 2.7, Guava 20.0 // Dagger 2.8 (not used now)
+- Android Support v4/v7/Design/CardView-v7 25.1
+- ReactiveX RxJava 2.0.3, RxAndroid 2.0.1
+- Squareup Retrofit 2.1.0, Converter-Gson 2.1.0, Converter-Scalars 2.1.0
+- Jakewharton ButterKnife 8.4.0
+- Mnode iCal4j 2.0.0
+- jp.wasabeef:recyclerview-animators 2.2.4
 
 
 ## 功能
@@ -39,30 +38,23 @@
 ## 特性
 
 
-自动解析登录表单 (理论上所有`用户名-密码(-验证码)`的登录表单结构均可自动解析)
+自动解析并填写表单 (包括 搜索表单, 用户登录表单)
 
 
-软件内教务系统以及图书馆均为自动解析登录
+支持 `不使用Js做加密处理的` `用户名 - 密码 ( - 验证码)` 的登录表单结构
 
 
-自动解析图书搜索表单 (汇文软件OPACv4.5+测试通过)
-
-
-用户名密码本地加密存储
-
+(使用Js作加密处理的后续版本会提供解决)
 
 ## 开发进度
 
 
-正在向 Dagger 迁移
+1. 正在向 Dagger 迁移
+2. 正在开发 空教室查询
+3. 服务端正在开发中(提供空教室查询服务)
 
 
-正在开发 `空教室查询功能`
-
-
-服务端正在开发中(提供空教室查询服务)
-
-## 自定义功能配置示例
+## 自定义功能地址配置示例
 
 
 如 `武汉工程大学`
