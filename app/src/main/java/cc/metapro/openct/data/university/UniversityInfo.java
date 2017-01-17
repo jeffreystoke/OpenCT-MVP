@@ -59,10 +59,7 @@ public class UniversityInfo {
 
     public static class SchoolInfo {
 
-        public String
-                abbr, name,
-                cmsSys, cmsURL,
-                libSys, libURL;
+        public String name, cmsSys, cmsURL, libSys, libURL;
 
         public boolean
                 cmsDynURL, cmsCaptcha, cmsInnerAccess,
@@ -74,7 +71,6 @@ public class UniversityInfo {
 
         public SchoolInfo(Map<String, String> stringMap, Map<String, Boolean> booleanMap) {
             try {
-                abbr = stringMap.get(DBHelper.ABBR);
                 name = stringMap.get(DBHelper.SCHOOL_NAME);
             } catch (Exception e) {
                 e.printStackTrace();

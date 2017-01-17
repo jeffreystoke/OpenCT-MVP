@@ -20,7 +20,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -35,6 +35,8 @@ import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
 
 public class DBManger {
+
+    private static final String TAG = "DBMANAGER";
 
     private static SQLiteDatabase mDatabase;
 
@@ -56,12 +58,11 @@ public class DBManger {
         return manger;
     }
 
-    public static void closeDB() {
-        if (mDatabase != null) {
-            mDatabase.close();
-        }
-    }
-
+    /**
+     * 更新自定义的学校基本信息
+     *
+     * @param info 新的自定义学校信息
+     */
     public void updateCustomSchoolInfo(UniversityInfo.SchoolInfo info) {
         mDatabase.beginTransaction();
         try {
@@ -70,13 +71,18 @@ public class DBManger {
             mDatabase.execSQL("INSERT INTO " + DBHelper.CUSTOM_TABLE + " VALUES(null, ?)", new Object[]{json});
             mDatabase.setTransactionSuccessful();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
         } finally {
             mDatabase.endTransaction();
         }
     }
 
-    public UniversityInfo.SchoolInfo getCustomSchoolInfo() {
+    /**
+     * 获取自定义学校的基本信息
+     *
+     * @return 自定义学校的基本信息
+     */
+    UniversityInfo.SchoolInfo getCustomSchoolInfo() {
         Cursor cursor = null;
         try {
             cursor = mDatabase.query(DBHelper.CUSTOM_TABLE, null, null, null, null, null, null);
@@ -84,7 +90,7 @@ public class DBManger {
             Gson gson = new Gson();
             return gson.fromJson(cursor.getString(1), UniversityInfo.SchoolInfo.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
             return null;
         } finally {
             if (cursor != null) {
@@ -93,6 +99,12 @@ public class DBManger {
         }
     }
 
+    /**
+     * 根据学校中文名称获取学校基本信息
+     *
+     * @param name 学校名称
+     * @return 学校基本信息
+     */
     private UniversityInfo.SchoolInfo getSchoolInfo(String name) {
         Cursor cursor = mDatabase.query(
                 DBHelper.SCHOOL_TABLE, null,
@@ -121,26 +133,27 @@ public class DBManger {
         return new UniversityInfo.SchoolInfo(strKvs, boolKvs);
     }
 
+    /**
+     * 根据学校基本信息返回学校完整信息
+     *
+     * @param schoolInfo 学校基本信息
+     * @return 学校完整信息
+     */
     UniversityInfo getUniversity(UniversityInfo.SchoolInfo schoolInfo) {
         UniversityInfo universityInfo = new UniversityInfo();
-        String cmsJson = "";
-        String libJson = "";
-        Cursor cmsCursor = mDatabase.query(
-                DBHelper.CMS_TABLE, null,
-                DBHelper.SYS_NAME + "=? COLLATE NOCASE",
-                new String[]{schoolInfo.cmsSys}, null, null, null
-        );
-        Cursor libCursor = mDatabase.query(
-                DBHelper.LIB_TABLE, null,
-                DBHelper.SYS_NAME + "=? COLLATE NOCASE",
-                new String[]{schoolInfo.libSys}, null, null, null
-        );
-        cmsCursor.moveToFirst();
-        libCursor.moveToFirst();
+        String cmsJson;
+        String libJson;
+
 
         Gson gson = new Gson();
-
+        Cursor cmsCursor = null;
         try {
+            cmsCursor = mDatabase.query(
+                    DBHelper.CMS_TABLE, null,
+                    DBHelper.SYS_NAME + "=? COLLATE NOCASE",
+                    new String[]{schoolInfo.cmsSys}, null, null, null
+            );
+            cmsCursor.moveToFirst();
             cmsJson = cmsCursor.getString(2);
             cmsCursor.close();
             UniversityInfo.CMSInfo cmsInfo = gson.fromJson(cmsJson, UniversityInfo.CMSInfo.class);
@@ -149,10 +162,21 @@ public class DBManger {
             cmsInfo.mNeedCAPTCHA = schoolInfo.cmsCaptcha;
             universityInfo.mCMSInfo = cmsInfo;
         } catch (Exception e) {
-
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            if (cmsCursor != null) {
+                cmsCursor.close();
+            }
         }
 
+        Cursor libCursor = null;
         try {
+            libCursor = mDatabase.query(
+                    DBHelper.LIB_TABLE, null,
+                    DBHelper.SYS_NAME + "=? COLLATE NOCASE",
+                    new String[]{schoolInfo.libSys}, null, null, null
+            );
+            libCursor.moveToFirst();
             libJson = libCursor.getString(2);
             libCursor.close();
             UniversityInfo.LibraryInfo libraryInfo = gson.fromJson(libJson, UniversityInfo.LibraryInfo.class);
@@ -160,21 +184,36 @@ public class DBManger {
             libraryInfo.mNeedCAPTCHA = schoolInfo.libCaptcha;
             universityInfo.mLibraryInfo = libraryInfo;
         } catch (Exception e) {
-
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            if (libCursor != null) {
+                libCursor.close();
+            }
         }
         return universityInfo;
     }
 
+    /**
+     * 根据学校中文名称返回学校信息
+     *
+     * @param name 学校名称 (全称, 中文)
+     * @return 学校完整信息
+     */
     UniversityInfo getUniversity(String name) {
         UniversityInfo.SchoolInfo schoolInfo = getSchoolInfo(name);
         return getUniversity(schoolInfo);
     }
 
-    public void updateClassInfos(List<EnrichedClassInfo> classInfos) {
+    /**
+     * 更新课程信息
+     *
+     * @param classes 新的课程信息
+     */
+    public void updateClasses(@NonNull List<EnrichedClassInfo> classes) {
         mDatabase.beginTransaction();
         try {
             mDatabase.delete(DBHelper.CLASS_TABLE, null, null);
-            for (EnrichedClassInfo c : classInfos) {
+            for (EnrichedClassInfo c : classes) {
                 mDatabase.execSQL(
                         "INSERT INTO " + DBHelper.CLASS_TABLE + " VALUES(null, ?)",
                         new Object[]{c.toString()}
@@ -200,14 +239,16 @@ public class DBManger {
         return classInfos;
     }
 
-    public void updateGradeInfos(@Nullable List<GradeInfo> gradeInfos) {
-        if (gradeInfos == null) {
-            return;
-        }
+    /**
+     * 更新成绩信息
+     *
+     * @param grades 新的成绩信息
+     */
+    public void updateGradeInfos(@NonNull List<GradeInfo> grades) {
         mDatabase.beginTransaction();
         try {
             mDatabase.delete(DBHelper.GRADE_TABLE, null, null);
-            for (GradeInfo g : gradeInfos) {
+            for (GradeInfo g : grades) {
                 mDatabase.execSQL(
                         "INSERT INTO " + DBHelper.GRADE_TABLE + " VALUES(null, ?)",
                         new Object[]{g.toString()}
@@ -233,12 +274,17 @@ public class DBManger {
         return gradeInfos;
     }
 
-    public void updateBorrowInfos(List<BorrowInfo> borrowInfos) {
+    /**
+     * 更新借阅信息
+     *
+     * @param borrow 新的借阅信息
+     */
+    public void updateBorrowInfos(List<BorrowInfo> borrow) {
         mDatabase.beginTransaction();
         try {
             mDatabase.delete(DBHelper.BORROW_TABLE, null, null);
-            if (borrowInfos != null) {
-                for (BorrowInfo b : borrowInfos) {
+            if (borrow != null) {
+                for (BorrowInfo b : borrow) {
                     mDatabase.execSQL(
                             "INSERT INTO " + DBHelper.BORROW_TABLE + " VALUES(null, ?)",
                             new Object[]{b.toString()}

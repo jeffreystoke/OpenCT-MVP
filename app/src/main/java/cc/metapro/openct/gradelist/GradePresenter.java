@@ -233,6 +233,7 @@ class GradePresenter implements GradeContract.Presenter {
     @Override
     public void clearGrades() {
         mGrades = new ArrayList<>(0);
+        storeGrades();
     }
 
     @Override

@@ -40,14 +40,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.LibBorrowActivity;
-import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.customviews.InitDiaolgHelper;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.gradelist.GradeActivity;
 import cc.metapro.openct.preference.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
 import cc.metapro.openct.utils.ActivityUtils;
-import cc.metapro.openct.utils.Constants;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -86,12 +84,13 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         mNavigationView.setNavigationItemSelectedListener(this);
 
+        String initStr = getString(R.string.pref_init);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean inited = preferences.getBoolean(Constants.PREF_INITED, false);
-        if (!inited) {
+        boolean init = preferences.getBoolean(initStr, false);
+        if (!init) {
             new InitDiaolgHelper(this).getInitDialog().show();
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean(Constants.PREF_INITED, true);
+            editor.putBoolean(initStr, true);
             editor.apply();
         } else {
             Loader.loadUniversity(this);
@@ -183,9 +182,6 @@ public class MainActivity extends AppCompatActivity
                 intent = new Intent(this, LibBorrowActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.nav_custom:
-                intent = new Intent(this, CustomActivity.class);
-                startActivity(intent);
 //            case R.id.nav_empty_room:
 //                intent = new Intent(this, RoomActivity.class);
 //                startActivity(intent);

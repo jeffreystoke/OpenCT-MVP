@@ -59,7 +59,6 @@ class ClassPresenter implements ClassContract.Presenter {
 
     private static boolean showedNotice;
     private ClassContract.View mView;
-    private List<ClassInfo> mClasses;
     private List<EnrichedClassInfo> mEnrichedClasses;
     private Context mContext;
 
@@ -209,7 +208,7 @@ class ClassPresenter implements ClassContract.Presenter {
     public void storeClasses() {
         try {
             DBManger manger = DBManger.getInstance(mContext);
-            manger.updateClassInfos(mEnrichedClasses);
+            manger.updateClasses(mEnrichedClasses);
             DailyClassWidget.update(mContext);
         } catch (Exception e) {
             Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -230,29 +229,12 @@ class ClassPresenter implements ClassContract.Presenter {
                             calendar.getProperties().add(new ProdId("-//OpenCT Jeff//iCal4j 2.0//EN"));
                             calendar.getProperties().add(Version.VERSION_2_0);
                             calendar.getProperties().add(CalScale.GREGORIAN);
-                            java.util.Calendar calendar1 = java.util.Calendar.getInstance();
-                            int factor = calendar1.getFirstDayOfWeek();
-                            if (factor == java.util.Calendar.SUNDAY) {
-                                factor++;
-                            }
-                            for (int i = 0; i < 7; i++) {
-                                for (int j = 0; j < mClasses.size() / 7; j++) {
-                                    ClassInfo c = mClasses.get(7 * j + i);
-                                    ClassInfo classInfo = c;
-                                    VEvent vEvent;
-
-                                    // add all subclass events
-                                    while (classInfo.hasSubClass()) {
-                                        classInfo = classInfo.getSubClassInfo();
-                                        vEvent = classInfo.getEvent(week, i + factor);
-                                        if (vEvent != null) {
-                                            calendar.getComponents().add(vEvent);
-                                        }
-                                    }
-
-                                    vEvent = c.getEvent(week, i + factor);
-                                    if (vEvent != null) {
-                                        calendar.getComponents().add(vEvent);
+                            for (EnrichedClassInfo c : mEnrichedClasses) {
+                                List<ClassInfo> classes = c.getAllClasses();
+                                for (ClassInfo classInfo : classes) {
+                                    VEvent event = classInfo.getEvent(week, c.getWeekDay());
+                                    if (event != null) {
+                                        calendar.getComponents().add(event);
                                     }
                                 }
                             }

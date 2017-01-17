@@ -16,6 +16,9 @@ package cc.metapro.openct.utils;
  * limitations under the License.
  */
 
+import android.text.TextUtils;
+import android.util.Base64;
+
 import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
@@ -26,58 +29,72 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class EncryptionUtils {
 
-    private final static String HEX = "0123456789ABCDEF";
-
-    public static String encrypt(String seed, String cleartext)
-            throws Exception {
-        byte[] rawKey = getRawKey(seed.getBytes());
-        byte[] result = encrypt(rawKey, cleartext.getBytes());
-        return toHex(result);
-    }
-
-    public static String decrypt(String seed, String encrypted)
-            throws Exception {
-        byte[] rawKey = getRawKey(seed.getBytes());
-        byte[] enc = toByte(encrypted);
-        byte[] result = decrypt(rawKey, enc);
-        return new String(result);
-    }
+    private static final String HEX = "0123456789ABCDEF";
+    private static final String CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
+    private static final String AES = "AES";
+    private static final String SHA1PRNG = "SHA1PRNG";
 
     private static byte[] getRawKey(byte[] seed) throws Exception {
-        KeyGenerator kgen = KeyGenerator.getInstance("AES");
-        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "Crypto");
+        KeyGenerator kgen = KeyGenerator.getInstance(AES);
+        SecureRandom sr = null;
+        if (android.os.Build.VERSION.SDK_INT >= 17) {
+            sr = SecureRandom.getInstance(SHA1PRNG, "Crypto");
+        } else {
+            sr = SecureRandom.getInstance(SHA1PRNG);
+        }
         sr.setSeed(seed);
         kgen.init(128, sr);
         SecretKey skey = kgen.generateKey();
         return skey.getEncoded();
     }
 
-    private static byte[] encrypt(byte[] raw, byte[] clear) throws Exception {
-        SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+    static String encrypt(String key, String cleartext) {
+        if (TextUtils.isEmpty(cleartext)) {
+            return cleartext;
+        }
+        try {
+            byte[] result = encrypt(key, cleartext.getBytes());
+            return toHex(Base64.encode(result, Base64.DEFAULT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static byte[] encrypt(String key, byte[] clear) throws Exception {
+        byte[] raw = getRawKey(key.getBytes());
+        SecretKeySpec skeySpec = new SecretKeySpec(raw, AES);
+        Cipher cipher = Cipher.getInstance(CBC_PKCS5_PADDING);
+        cipher.init(Cipher.ENCRYPT_MODE, skeySpec, new IvParameterSpec(new byte[cipher.getBlockSize()]));
         return cipher.doFinal(clear);
     }
 
-    private static byte[] decrypt(byte[] raw, byte[] encrypted)
-            throws Exception {
-        SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-        Cipher cipher = Cipher.getInstance("AES");
+
+    public static String decrypt(String key, String encrypted) {
+        if (TextUtils.isEmpty(encrypted)) {
+            return encrypted;
+        }
+        try {
+            byte[] enc = Base64.decode(encrypted, Base64.DEFAULT);
+            byte[] result = decrypt(key, enc);
+            return new String(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static byte[] decrypt(String key, byte[] encrypted) throws Exception {
+        byte[] raw = getRawKey(key.getBytes());
+        SecretKeySpec skeySpec = new SecretKeySpec(raw, AES);
+        Cipher cipher = Cipher.getInstance(CBC_PKCS5_PADDING);
         cipher.init(Cipher.DECRYPT_MODE, skeySpec, new IvParameterSpec(new byte[cipher.getBlockSize()]));
         return cipher.doFinal(encrypted);
     }
 
-    private static byte[] toByte(String hexString) {
-        int len = hexString.length() / 2;
-        byte[] result = new byte[len];
-        for (int i = 0; i < len; i++) {
-            result[i] = Integer.valueOf(hexString.substring(2 * i, 2 * i + 2), 16).byteValue();
-        }
-        return result;
-    }
-
     private static String toHex(byte[] buf) {
-        if (buf == null) return "";
+        if (buf == null)
+            return "";
         StringBuffer result = new StringBuffer(2 * buf.length);
         for (byte aBuf : buf) {
             appendHex(result, aBuf);

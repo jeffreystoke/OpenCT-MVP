@@ -115,11 +115,10 @@ public class LibraryFactory extends UniversityFactory {
     ) throws Exception {
         String page = login(loginMap);
         String borrowPage = null;
-        switch (mLibraryInfo.mLibSys) {
-            case Constants.LIBSYS:
-                borrowPage = mService.getPage(mURLFactory.BORROW_URL, mURLFactory.USER_HOME_URL).execute().body();
-                break;
+        if (Constants.LIBSYS.equalsIgnoreCase(mLibraryInfo.mLibSys)) {
+            borrowPage = mService.getPage(mURLFactory.BORROW_URL, mURLFactory.USER_HOME_URL).execute().body();
         }
+
         return Strings.isNullOrEmpty(borrowPage) ? new ArrayList<BorrowInfo>(0) : parseBorrow(borrowPage);
     }
 

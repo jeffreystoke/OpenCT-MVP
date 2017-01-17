@@ -143,16 +143,16 @@ public class EnrichedClassInfo {
         params.height = height;
     }
 
-    public ClassInfo getClassInfo() {
-        return mClassInfo;
-    }
-
     public boolean isToday() {
         Calendar calendar = Calendar.getInstance();
-        return weekDaySwitch(mDayOfWeek) == calendar.get(Calendar.DAY_OF_WEEK);
+        return weekDayTrans(mDayOfWeek) == calendar.get(Calendar.DAY_OF_WEEK);
     }
 
-    private int weekDaySwitch(int i) {
+    public int getWeekDay() {
+        return weekDayTrans(mDayOfWeek);
+    }
+
+    private int weekDayTrans(int i) {
         if (i > 0 && i < 8) {
             switch (i) {
                 case 1:

@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import aQute.lib.io.IO;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
@@ -44,6 +45,7 @@ import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.utils.HTMLUtils.FormHandler;
 import cc.metapro.openct.utils.HTMLUtils.FormUtils;
 import okhttp3.ResponseBody;
+import retrofit2.Response;
 
 
 public abstract class UniversityFactory {
@@ -68,19 +70,19 @@ public abstract class UniversityFactory {
         Document doc = Jsoup.parse(classTablePage);
         // 根据标准Id 获取 表格
         Elements tables = doc.select("table[id=" + classTableInfo.mClassTableID + "]");
-        Element targetTable = tables.get(0);
-        // 不是标准Id, 使用课程开始获取表格
-        if (targetTable == null) {
-            Pattern pattern = Pattern.compile(classTableInfo.mClassInfoStart);
-            tables = doc.select("table");
-            for (Element table : tables) {
-                String str = table.text();
-                if (pattern.matcher(str).find()) {
+        Element targetTable = tables.first();
 
-                }
-            }
+        // 不是标准Id, 使用表头匹配
+        if (targetTable == null) {
+            tables = doc.select("table:matches((星期\\w)|周\\w)");
+            targetTable = tables.first();
         }
 
+        if (targetTable == null) {
+            return new ArrayList<>(0);
+        }
+
+        // 解析课程表
         Pattern pattern = Pattern.compile(classTableInfo.mClassInfoStart);
         List<ClassInfo> classes = new ArrayList<>(classTableInfo.mDailyClasses * 7);
         for (Element tr : targetTable.select("tr")) {
@@ -88,25 +90,23 @@ public abstract class UniversityFactory {
             Element td = tds.first();
             boolean found = false;
             while (td != null) {
-                Matcher matcher = pattern.matcher(td.text());
-                if (matcher.find()) {
+                if (pattern.matcher(td.text()).find()) {
                     td = td.nextElementSibling();
                     found = true;
                     break;
                 }
                 td = td.nextElementSibling();
             }
-            if (!found) continue;
-
-            // add class
+            if (!found) {
+                continue;
+            }
             int i = 0;
             while (td != null) {
                 i++;
                 classes.add(new ClassInfo(td.text(), classTableInfo));
                 td = td.nextElementSibling();
             }
-
-            // make up to 7 classes in one tr
+            // 补足七天
             for (; i < 7; i++) {
                 classes.add(new ClassInfo());
             }
@@ -117,19 +117,20 @@ public abstract class UniversityFactory {
     @NonNull
     static List<GradeInfo> generateGrades(String classTablePage, CmsFactory.GradeTableInfo gradeTableInfo) {
         Document doc = Jsoup.parse(classTablePage);
-        Elements tables = doc.select("table");
-        Element targetTable = null;
-        for (Element table : tables) {
-            if (gradeTableInfo.mGradeTableID.equals(table.attr("id"))) {
-                targetTable = table;
-                break;
-            }
+        Elements tables = doc.select("table[id=" + gradeTableInfo.mGradeTableID + "]");
+        Element targetTable = tables.first();
+
+        // 不是标准Id, 使用表头匹配
+        if (targetTable == null) {
+            tables = doc.select("table:matches(绩)");
+            targetTable = tables.first();
         }
 
-        if (targetTable == null) return new ArrayList<>(0);
+        if (targetTable == null) {
+            return new ArrayList<>(0);
+        }
 
         List<GradeInfo> grades = new ArrayList<>();
-
         Elements trs = targetTable.select("tr");
         trs.remove(0);
         for (Element tr : trs) {
@@ -144,50 +145,50 @@ public abstract class UniversityFactory {
         getDynPart();
         String loginPageHtml = mService.getPage(getLoginURL(), null).execute().body();
         String userCenter = null;
-
+        // 教务网登录
         if (mCMSInfo != null) {
             // TODO: 17/1/14 针对强智系统进行处理
             // 强智教务系统 (特殊处理)
-            if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
-                String serverResponse = mService.login(mCMSInfo.mCmsURL + "Logon.do?method=logon&flag=sess", getLoginURL(), new HashMap<String, String>(0)).execute().body();
-                // 加密登录 (模拟网页JS代码)
-                String scode = serverResponse.split("#")[0];
-                String sxh = serverResponse.split("#")[1];
-                String code = loginMap.get(Constants.USERNAME_KEY) + "%%%" + loginMap.get(Constants.PASSWORD_KEY);
-                String encoded = "";
-                for (int i = 0; i < code.length(); i++) {
-                    if (i < 20) {
-                        encoded = encoded + code.substring(i, i + 1) + scode.substring(0, Integer.parseInt(sxh.substring(i, i + 1)));
-                        scode = scode.substring(Integer.parseInt(sxh.substring(i, i + 1)), scode.length());
-                    } else {
-                        encoded = encoded + code.substring(i, code.length());
-                        i = code.length();
-                    }
-                }
-                Map<String, String> map = new HashMap<>(3);
-                map.put("useDogCode", "");
-                map.put("encoded", encoded);
-                map.put("RANDOMCODE", loginMap.get(Constants.CAPTCHA_KEY));
-                Document document = Jsoup.parse(loginPageHtml, mCMSInfo.mCmsURL);
-                String action = document.select("form").get(0).absUrl("action");
-                userCenter = mService.login(action, getLoginRefer(), map).execute().body();
-            }
+//            if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
+//                String serverResponse = mService.login(mCMSInfo.mCmsURL + "Logon.do?method=logon&flag=sess", getLoginURL(), new HashMap<String, String>(0)).execute().body();
+//                // 加密登录 (模拟网页JS代码)
+//                String scode = serverResponse.split("#")[0];
+//                String sxh = serverResponse.split("#")[1];
+//                String code = loginMap.get(Constants.USERNAME_KEY) + "%%%" + loginMap.get(Constants.PASSWORD_KEY);
+//                String encoded = "";
+//                for (int i = 0; i < code.length(); i++) {
+//                    if (i < 20) {
+//                        encoded = encoded + code.substring(i, i + 1) + scode.substring(0, Integer.parseInt(sxh.substring(i, i + 1)));
+//                        scode = scode.substring(Integer.parseInt(sxh.substring(i, i + 1)), scode.length());
+//                    } else {
+//                        encoded = encoded + code.substring(i, code.length());
+//                        i = code.length();
+//                    }
+//                }
+//                Map<String, String> map = new HashMap<>(3);
+//                map.put("useDogCode", "");
+//                map.put("encoded", encoded);
+//                map.put("RANDOMCODE", loginMap.get(Constants.CAPTCHA_KEY));
+//                Document document = Jsoup.parse(loginPageHtml, mCMSInfo.mCmsURL);
+//                String action = document.select("form").get(0).absUrl("action");
+//                userCenter = mService.login(action, getLoginRefer(), map).execute().body();
+//            }
             // 一般系统
-            else {
-                FormHandler handler = new FormHandler(loginPageHtml, getLoginURL());
-                Form form = handler.getForm(0);
-                if (form == null) {
-                    throw new Exception("学校服务器好像出了点问题~\n要不等下再试试?");
-                }
-                Map<String, String> res = FormUtils.getLoginFiledMap(form, loginMap, true);
-                String action = res.get(Constants.ACTION);
-                res.remove(Constants.ACTION);
-                userCenter = mService.login(action, getLoginURL(), res).execute().body();
-                if (userCenter.length() < 100) {
-                    Thread.sleep(5 * 1000);
-                    userCenter = mService.login(action, getLoginURL(), res).execute().body();
-                }
-            }
+        }
+
+        FormHandler handler = new FormHandler(loginPageHtml, getLoginURL());
+        Form form = handler.getForm(0);
+        if (form == null) {
+            throw new Exception("学校服务器好像出了点问题~\n要不等下再试试?");
+        }
+        Map<String, String> res = FormUtils.getLoginFiledMap(form, loginMap, true);
+        String action = res.get(Constants.ACTION);
+        res.remove(Constants.ACTION);
+        Response<String> stringResponse = mService.login(action, getLoginURL(), res).execute();
+        userCenter = stringResponse.body();
+        if (userCenter.length() < 100) {
+            Thread.sleep(6 * 1000);
+            userCenter = mService.login(action, getLoginURL(), res).execute().body();
         }
 
         // 登录完成, 检测结果
@@ -213,7 +214,6 @@ public abstract class UniversityFactory {
                             Matcher m = pattern.matcher(dynURL);
                             if (m.find()) {
                                 dynPart = m.group();
-
                             }
                         }
                     }
@@ -231,7 +231,8 @@ public abstract class UniversityFactory {
 
     public void getCAPTCHA() throws IOException {
         getDynPart();
-        ResponseBody body = mService.getCAPTCHA(getCaptchaURL()).execute().body();
+        Response<ResponseBody> bodyResponse = mService.getCAPTCHA(getCaptchaURL()).execute();
+        ResponseBody body = bodyResponse.body();
         StoreHelper.storeBytes(Constants.CAPTCHA_FILE, body.byteStream());
     }
 

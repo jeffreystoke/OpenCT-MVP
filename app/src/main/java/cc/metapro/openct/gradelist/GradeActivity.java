@@ -45,7 +45,9 @@ public class GradeActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
         ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
 
         FragmentManager fm = getSupportFragmentManager();
         mGradeFragment =

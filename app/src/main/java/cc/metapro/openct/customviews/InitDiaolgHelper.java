@@ -26,12 +26,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import java.util.Calendar;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
-import cc.metapro.openct.utils.Constants;
 
 public class InitDiaolgHelper {
 
@@ -67,12 +68,13 @@ public class InitDiaolgHelper {
                 String week = weekSpinner.getSelectedItem().toString();
                 SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(mContext);
                 SharedPreferences.Editor editor = p.edit();
-                editor.putString(Constants.PREF_SCHOOL_NAME_KEY, school);
-                editor.putString(Constants.PREF_CURRENT_WEEK_KEY, week);
-                editor.putString(Constants.PREF_CMS_USERNAME_KEY, cmsUsername.getText().toString());
-                editor.putString(Constants.PREF_CMS_PASSWORD_KEY, cmsPassword.getText().toString());
-                editor.putString(Constants.PREF_LIB_USERNAME_KEY, libUsername.getText().toString());
-                editor.putString(Constants.PREF_LIB_PASSWORD_KEY, libPassword.getText().toString());
+                editor.putString(mContext.getString(R.string.pref_school_name), school);
+                editor.putString(mContext.getString(R.string.pref_current_week), week);
+                editor.putString(mContext.getString(R.string.pref_week_set_week), Calendar.getInstance().get(Calendar.WEEK_OF_YEAR) + "");
+                editor.putString(mContext.getString(R.string.pref_cms_username), cmsUsername.getText().toString());
+                editor.putString(mContext.getString(R.string.pref_cms_password), cmsPassword.getText().toString());
+                editor.putString(mContext.getString(R.string.pref_lib_username), libUsername.getText().toString());
+                editor.putString(mContext.getString(R.string.pref_lib_password), libPassword.getText().toString());
                 editor.apply();
 
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);

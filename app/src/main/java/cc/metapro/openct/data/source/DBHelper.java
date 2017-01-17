@@ -34,12 +34,12 @@ import cc.metapro.openct.data.university.UniversityInfo;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String
-            ABBR = "abbr", SCHOOL_NAME = "school_name",
+            SCHOOL_NAME = "school_name",
             CMS_SYS = "cms_sys", CMS_URL = "cms_url", CMS_CAPTCHA = "cms_captcha",
             CMS_DYN_URL = "cms_dyn_url", CMS_INNER_ACCESS = "cms_inner_access",
             LIB_SYS = "lib_sys", LIB_URL = "lib_url", LIB_CAPTCHA = "lib_captcha",
             LIB_DYN_URL = "lib_dyn_url", LIB_INNER_ACCESS = "lib_inner_access";
-    static final String JSON = "json";
+    private static final String JSON = "json";
     static final String CLASS_TABLE = "classes";
     static final String SCHOOL_TABLE = "schools";
     static final String SYS_NAME = "sys_name";
@@ -48,15 +48,17 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String GRADE_TABLE = "grades";
     static final String BORROW_TABLE = "borrows";
     static final String CUSTOM_TABLE = "custom";
-    private static final String DB_NAME = "openct.db";
+    private static final String DB_NAME = "openct-1.db";
 
     private static final String SCHOOL_TITLES =
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    ABBR + " TEXT," + SCHOOL_NAME + " TEXT, " +
+                    SCHOOL_NAME + " TEXT, " +
                     CMS_SYS + " TEXT, " + CMS_URL + " TEXT, " +
-                    CMS_DYN_URL + " BOOLEAN, " + CMS_CAPTCHA + " BOOLEAN, " + CMS_INNER_ACCESS + " BOOLEAN, " +
+                    CMS_DYN_URL + " BOOLEAN, " + CMS_CAPTCHA + " BOOLEAN, " +
+                    CMS_INNER_ACCESS + " BOOLEAN, " +
                     LIB_SYS + " TEXT, " + LIB_URL + " TEXT, " +
-                    LIB_DYN_URL + " BOOLEAN, " + LIB_CAPTCHA + " BOOLEAN, " + LIB_INNER_ACCESS + " BOOLEAN)";
+                    LIB_DYN_URL + " BOOLEAN, " + LIB_CAPTCHA + " BOOLEAN, " +
+                    LIB_INNER_ACCESS + " BOOLEAN)";
 
     private static final String LIB_TITLES =
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " + SYS_NAME + " TEXT, " + JSON + " TEXT)";
@@ -71,7 +73,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String CUSTOM_TITLES =
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " + JSON + " TEXT)";
 
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 10;
 
     private Context mContext;
 
@@ -123,10 +125,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 for (UniversityInfo.SchoolInfo info : schoolInfos) {
                     db.execSQL(
                             "INSERT INTO " + DBHelper.SCHOOL_TABLE +
-                                    " VALUES(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                    " VALUES(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                             new Object[]{
-                                    info.abbr, info.name,
-                                    info.cmsSys, info.cmsURL,
+                                    info.name, info.cmsSys, info.cmsURL,
                                     info.cmsDynURL, info.cmsCaptcha, info.cmsInnerAccess,
                                     info.libSys, info.libURL,
                                     info.libDynURL, info.libCaptcha, info.libInnerAccess

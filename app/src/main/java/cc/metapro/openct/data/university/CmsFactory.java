@@ -26,10 +26,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.security.auth.login.LoginException;
 
@@ -37,11 +36,12 @@ import cc.metapro.openct.data.university.UniversityInfo.CMSInfo;
 import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.HTMLUtils.PageStringUtils;
 
 public class CmsFactory extends UniversityFactory {
 
     private CmsURLFactory mURLFactory;
+
+    private static final String BR = "<\\s*?br\\s*?/?>";
 
     public CmsFactory(UniversityService service, CMSInfo cmsInfo) {
         mCMSInfo = cmsInfo;
@@ -55,6 +55,39 @@ public class CmsFactory extends UniversityFactory {
         mURLFactory = new CmsURLFactory(cmsInfo.mCmsSys, cmsInfo.mCmsURL);
     }
 
+    private String getTablePage(Map<String, String> loginMap, String pattern) throws Exception {
+        // 登录获取用户中心页面
+        String userCenter = login(loginMap);
+
+        // 从用户中心页面解析获取课表链接
+        String tableURL = null;
+        Pattern contentPattern = Pattern.compile(pattern);
+        Document doc = Jsoup.parse(userCenter, mURLFactory.LOGIN_URL);
+        Elements links = doc.select("a");
+        for (Element a : links) {
+            // 根据界面上的文字提示进行判断
+            if (contentPattern.matcher(a.text()).find()) {
+                tableURL = a.absUrl("href");
+                break;
+            }
+        }
+
+        // 没有解析到课表链接
+        if (Strings.isNullOrEmpty(tableURL)) {
+            throw new Exception("很抱歉, 没能解析到链接\n请联系 OpenCT 开发人员添加");
+        }
+
+        // 解析到课表链接后获取课表页面
+        String tablePage = mService.getPage(tableURL, mURLFactory.LOGIN_URL).execute().body();
+
+        // 课表页面为空
+        if (Strings.isNullOrEmpty(tablePage)) {
+            throw new Exception("很抱歉, 没能根据链接获取到页面");
+        }
+
+        return tablePage;
+    }
+
     /**
      * 解析用户中心页面时提供的 BaseURL 由 URLFactory 生成
      * 即使用 mURLFactory.LOGIN_URL 作为页面解析的 BaseURL
@@ -66,57 +99,30 @@ public class CmsFactory extends UniversityFactory {
      */
     @NonNull
     public List<ClassInfo> getClasses(Map<String, String> loginMap) throws Exception {
-        String page = login(loginMap);
-        String tableURL = null;
-        String tablePage = null;
+        // 获取课程表页面
+        String tablePage = getTablePage(loginMap, mURLFactory.CLASS_URL_PATTERN);
+
+        // 定义要被替代的符号, 解决BR等被解析成为空格
+        String toReplace = BR;
+
+        // 各教务系统细节操作
+
         // 苏文
-        if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.NJSUWEN) || mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
-            tablePage = mService.getPage(mURLFactory.CLASS_URL, mURLFactory.LOGIN_URL).execute().body();
-            if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-            return UniversityFactory.generateClasses(tablePage.replaceAll("◇", Constants.BR_REPLACER), mClassTableInfo);
+        if (Constants.NJSUWEN.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
+            toReplace = "◇";
         }
         // 强智
-        else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
-            // TODO: 17/1/15 获取强智成绩
-//            if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-//            return UniversityFactory.generateClasses(tablePage.replaceAll("<br>|-{3,}", Constants.BR_REPLACER), mClassTableInfo);
+        else if (Constants.QZDATASOFT.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
+            // TODO: 17/1/15 获取强智教务网成绩
         }
-        // 正方2012
-        else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.ZFSOFT2012)) {
-            Document doc = Jsoup.parse(page, mURLFactory.LOGIN_URL);
-            Elements addresses = doc.select("a");
-            for (Element e : addresses) {
-                if ("GetMc('学生个人课表');".equals(e.attr("onclick"))) {
-                    tableURL = e.absUrl("href");
-                    break;
-                }
-            }
-            if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
-            tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
-            if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-            return UniversityFactory.generateClasses(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER), mClassTableInfo);
+        // 青果
+        else if (Constants.KINGOSOFT.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
+            // TODO: 17/1/16 获取青果教务网成绩
         }
-        // 正方2008
-        else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.ZFSOFT2008)) {
-            Document doc = Jsoup.parse(page, mURLFactory.LOGIN_URL);
-            Elements addresses = doc.select("a");
-            for (Element e : addresses) {
-                if ("GetMc('课程介绍查询');".equals(e.attr("onclick"))) {
-                    tableURL = e.absUrl("href");
-                    break;
-                }
-            }
-            if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
-            tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
-            if (!Strings.isNullOrEmpty(tablePage)) {
-                // TODO: 17/1/15 获取正方2008版成绩
-            } else {
-                return new ArrayList<>(0);
-            }
-            return UniversityFactory.generateClasses(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER), mClassTableInfo);
-        }
-        // 未支持的院校
-        return new ArrayList<>(0);
+
+        // 替换标识符, 生成课程
+        tablePage = tablePage.replaceAll(toReplace, Constants.BR_REPLACER);
+        return UniversityFactory.generateClasses(tablePage, mClassTableInfo);
     }
 
     /**
@@ -129,64 +135,19 @@ public class CmsFactory extends UniversityFactory {
      */
     @NonNull
     public List<GradeInfo> getGrades(Map<String, String> loginMap) throws Exception {
-        String page = login(loginMap);
-        String tableURL = null;
-        String tablePage = null;
-        if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.NJSUWEN)) {
-            tablePage = mService.getPage(mURLFactory.GRADE_URL, mCMSInfo.mCmsURL).execute().body();
-        }
-        // 正方2012
-        else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.ZFSOFT2012)) {
-            Document doc = Jsoup.parse(page, mCMSInfo.mCmsURL);
-            Elements ele = doc.select("a");
-            for (Element e : ele) {
-                if ("GetMc('平时成绩查询');".equals(e.attr("onclick"))) {
-                    tableURL = mCMSInfo.mCmsURL + e.attr("href");
-                    break;
-                }
-            }
-            if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
-            tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
-        }
-        // 正方2008
-        else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.ZFSOFT2008)) {
-            Document doc = Jsoup.parse(page, mCMSInfo.mCmsURL);
-            Elements ele = doc.select("a");
-            for (Element e : ele) {
-                if ("GetMc('学生成绩查询');".equals(e.attr("onclick"))) {
-                    tableURL = mCMSInfo.mCmsURL + e.attr("href");
-                    break;
-                }
-            }
-            if (Strings.isNullOrEmpty(tableURL)) return new ArrayList<>(0);
-            tablePage = mService.getPage(tableURL, mCMSInfo.mCmsURL).execute().body();
+        // 获取课程表页面
+        String tablePage = getTablePage(loginMap, mURLFactory.GRADE_URL_PATTERN);
 
-        } else if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
-            mService.getPage(mCMSInfo.mCmsURL + "jsxsd/framework/blankPage.jsp", mURLFactory.USERCENTER_URL).execute();
-            Document document = Jsoup.parse(page, mCMSInfo.mCmsURL);
-            Elements links = document.select("a");
-            String queryURL = null;
-            for (Element e : links) {
-                if ("课程成绩查询".equals(e.text())) {
-                    queryURL = e.absUrl("href");
-                    break;
-                }
-            }
-            if (Strings.isNullOrEmpty(queryURL)) {
-                return new ArrayList<>(0);
-            }
-            String queryPage = mService.getPage(queryURL, mURLFactory.USERCENTER_URL).execute().body();
-            document = Jsoup.parse(queryPage);
-            String kksj = document.select("form").get(0).select("option").get(2).attr("value");
-            Map<String, String> postMap = new HashMap<>(3);
-            postMap.put("kksj", kksj);
-            postMap.put("kcxz", "");
-            postMap.put("kcmc", "");
-            postMap.put("xsfs", "all");
-            tablePage = mService.post(queryURL, queryURL, postMap).execute().body();
+        // 定义要被替代的符号, 解决BR等被解析成为空格
+        String toReplace = BR;
+
+        if (Constants.QZDATASOFT.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
+            // TODO: 17/1/16 强智教务系统需要根据页面表单 Post 获取最新成绩
+        } else if (Constants.ZFSOFT2008.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
+            // TODO: 17/1/16 正方2008教务系统需要根据页面表单 Get 获取最新成绩
         }
-        if (Strings.isNullOrEmpty(tablePage)) return new ArrayList<>(0);
-        return UniversityFactory.generateGrades(PageStringUtils.replaceAllBrWith(tablePage, Constants.BR_REPLACER), mGradeTableInfo);
+        tablePage = tablePage.replaceAll(toReplace, Constants.BR_REPLACER);
+        return UniversityFactory.generateGrades(tablePage, mGradeTableInfo);
     }
 
     @Override
@@ -209,7 +170,7 @@ public class CmsFactory extends UniversityFactory {
 
     @Override
     protected void resetURLFactory() {
-        mURLFactory = new CmsURLFactory(mCMSInfo.mCmsSys, mCMSInfo.mCmsURL + "/" + dynPart + "/");
+        mURLFactory = new CmsURLFactory(mCMSInfo.mCmsSys, mCMSInfo.mCmsURL + dynPart + "/");
     }
 
     public static class GradeTableInfo {
@@ -256,9 +217,14 @@ public class CmsFactory extends UniversityFactory {
         String
                 LOGIN_URL, LOGIN_REF,
                 CLASS_URL, GRADE_URL,
-                CAPTCHA_URL, USERCENTER_URL;
+                CAPTCHA_URL, USER_CENTER_URL;
+
+        String CLASS_URL_PATTERN, GRADE_URL_PATTERN;
 
         CmsURLFactory(@NonNull String cmsSys, @NonNull String cmsBaseURL) {
+            if (!cmsBaseURL.endsWith("/")) {
+                cmsBaseURL += "/";
+            }
             // 南京苏文软件
             if (Constants.NJSUWEN.equalsIgnoreCase(cmsSys)) {
                 LOGIN_URL = cmsBaseURL;
@@ -266,12 +232,24 @@ public class CmsFactory extends UniversityFactory {
                 CLASS_URL = cmsBaseURL + "public/kebiaoall.aspx";
                 GRADE_URL = cmsBaseURL + "student/chengji.aspx";
                 CAPTCHA_URL = cmsBaseURL + "yzm.aspx";
+                CLASS_URL_PATTERN = "班级课表查询";
+                GRADE_URL_PATTERN = "课程成绩查询";
             }
-            // 正方教务系统
-            else if (Constants.ZFSOFT2012.equalsIgnoreCase(cmsSys) || Constants.ZFSOFT2008.equalsIgnoreCase(cmsSys)) {
+            // 正方教务系统 2012
+            else if (Constants.ZFSOFT2012.equalsIgnoreCase(cmsSys)) {
                 LOGIN_URL = cmsBaseURL;
                 LOGIN_REF = cmsBaseURL;
                 CAPTCHA_URL = cmsBaseURL + "CheckCode.aspx";
+                CLASS_URL_PATTERN = "学生个人课表";
+                GRADE_URL_PATTERN = "平时成绩查询";
+            }
+            // 正方教务系统 2008
+            else if (Constants.ZFSOFT2008.equalsIgnoreCase(cmsSys)) {
+                LOGIN_URL = cmsBaseURL;
+                LOGIN_REF = cmsBaseURL;
+                CAPTCHA_URL = cmsBaseURL + "CheckCode.aspx";
+                CLASS_URL_PATTERN = "课程介绍查询";
+                GRADE_URL_PATTERN = "学生成绩查询";
             }
             // 湖南强智科技
             else if (Constants.QZDATASOFT.equalsIgnoreCase(cmsSys)) {
@@ -280,7 +258,7 @@ public class CmsFactory extends UniversityFactory {
                 CAPTCHA_URL = cmsBaseURL + "verifycode.servlet";
                 CLASS_URL = cmsBaseURL + "jsxsd/xskb/xskb_list.do";
                 GRADE_URL = cmsBaseURL + "jsxsd/kscj/cjcx_query";
-                USERCENTER_URL = cmsBaseURL + "jsxsd/framework/xsMain.jsp";
+                USER_CENTER_URL = cmsBaseURL + "jsxsd/framework/xsMain.jsp";
             }
         }
     }

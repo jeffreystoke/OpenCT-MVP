@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.common.base.Strings;
 
@@ -36,8 +37,14 @@ import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.data.university.UniversityService;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.EncryptionUtils;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 public class Loader {
+    private static final String TAG = "LOADER";
 
     private static UniversityInfo university;
     private static UniversityService service;
@@ -61,16 +68,19 @@ public class Loader {
     @NonNull
     public static Map<String, String> getLibStuInfo(Context context) {
         Map<String, String> map = new HashMap<>(2);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.need_encryption), true);
         try {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            String password = preferences.getString(Constants.PREF_LIB_PASSWORD_KEY, "");
-            String decryptedCode = EncryptionUtils.decrypt(Constants.seed, password);
-            if (!Strings.isNullOrEmpty(decryptedCode)) {
-                map.put(Constants.USERNAME_KEY, preferences.getString(Constants.PREF_LIB_USERNAME_KEY, ""));
-                map.put(Constants.PASSWORD_KEY, decryptedCode);
+            String password = preferences.getString(context.getString(R.string.pref_lib_password), "");
+            if (needEncrypt) {
+                password = EncryptionUtils.decrypt(Constants.seed, password);
+            }
+            if (!Strings.isNullOrEmpty(password)) {
+                map.put(Constants.USERNAME_KEY, preferences.getString(context.getString(R.string.pref_lib_username), ""));
+                map.put(Constants.PASSWORD_KEY, password);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
         }
         return map;
     }
@@ -78,16 +88,19 @@ public class Loader {
     @NonNull
     public static Map<String, String> getCmsStuInfo(Context context) {
         Map<String, String> map = new HashMap<>(2);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.need_encryption), true);
         try {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            String password = preferences.getString(Constants.PREF_CMS_PASSWORD_KEY, "");
-            String decryptedCode = EncryptionUtils.decrypt(Constants.seed, password);
-            if (!Strings.isNullOrEmpty(decryptedCode)) {
-                map.put(Constants.USERNAME_KEY, preferences.getString(Constants.PREF_CMS_USERNAME_KEY, ""));
-                map.put(Constants.PASSWORD_KEY, decryptedCode);
+            String password = preferences.getString(context.getString(R.string.pref_cms_password), "");
+            if (needEncrypt) {
+                password = EncryptionUtils.decrypt(Constants.seed, password);
+            }
+            if (!Strings.isNullOrEmpty(password)) {
+                map.put(Constants.USERNAME_KEY, preferences.getString(context.getString(R.string.pref_cms_username), ""));
+                map.put(Constants.PASSWORD_KEY, password);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
         }
         return map;
     }
@@ -126,53 +139,61 @@ public class Loader {
 
     public static int getCurrentWeek(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String week = preferences.getString(Constants.PREF_CURRENT_WEEK_KEY, "第1周");
+        String week = preferences.getString(context.getString(R.string.pref_current_week), "第1周");
         return Integer.parseInt(week.replaceAll("[^\\x00-\\xff]", ""));
     }
 
     public static void loadUniversity(final Context context) {
-        try {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean custom = preferences.getBoolean(Constants.PREF_USE_CUSTOM, false);
-            DBManger manger = DBManger.getInstance(context);
-            String defaultSchool = context.getResources().getStringArray(R.array.pref_school_names)[0];
-            if (custom) {
-                UniversityInfo.SchoolInfo info = manger.getCustomSchoolInfo();
-                if (info != null) {
-                    university = manger.getUniversity(info);
-                } else {
-                    university = manger.getUniversity(preferences.getString(Constants.PREF_SCHOOL_NAME_KEY, defaultSchool));
-                }
-            } else {
-                university = manger.getUniversity(preferences.getString(Constants.PREF_SCHOOL_NAME_KEY, defaultSchool));
-            }
+        Observable
+                .create(new ObservableOnSubscribe<String>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<String> e) throws Exception {
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                        boolean custom = preferences.getBoolean(context.getString(R.string.pref_custom_enable), false);
+                        DBManger manger = DBManger.getInstance(context);
+                        String defaultSchool = context.getResources().getStringArray(R.array.pref_school_names)[0];
+                        if (custom) {
+                            UniversityInfo.SchoolInfo info = manger.getCustomSchoolInfo();
+                            if (info != null) {
+                                university = manger.getUniversity(info);
+                            } else {
+                                university = manger.getUniversity(preferences.getString(context.getString(R.string.pref_school_name), defaultSchool));
+                            }
+                        } else {
+                            university = manger.getUniversity(preferences.getString(context.getString(R.string.pref_school_name), defaultSchool));
+                        }
 
-            // update current week
-            int lastSetWeek = Integer.parseInt(preferences.getString(Constants.PREF_WEEK_SET_KEY, "1"));
-            Calendar cal = Calendar.getInstance(Locale.CHINA);
-            cal.setFirstDayOfWeek(Calendar.MONDAY);
-            int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
-            String week = preferences.getString(Constants.PREF_CURRENT_WEEK_KEY, "第1周");
-            int currentWeek = Integer.parseInt(week.replaceAll("[^\\x00-\\xff]", ""));
-            if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
-                if (lastSetWeek == 53) {
-                    currentWeek += weekOfYearWhenSetCurrentWeek;
-                } else {
-                    currentWeek += (52 - lastSetWeek) + weekOfYearWhenSetCurrentWeek;
-                }
-            } else {
-                currentWeek += (weekOfYearWhenSetCurrentWeek - lastSetWeek);
-            }
-            if (currentWeek >= 30) {
-                currentWeek = 1;
-            }
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(Constants.PREF_CURRENT_WEEK_KEY, "第" + currentWeek + "周");
-            editor.putString(Constants.PREF_WEEK_SET_KEY, weekOfYearWhenSetCurrentWeek + "");
-            editor.apply();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+                        int lastSetWeek = Integer.parseInt(preferences.getString(context.getString(R.string.pref_week_set_week), "1"));
+                        Calendar cal = Calendar.getInstance(Locale.CHINA);
+                        cal.setFirstDayOfWeek(Calendar.MONDAY);
+                        int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
+                        String week = preferences.getString(context.getString(R.string.pref_current_week), "第1周");
+                        int currentWeek = Integer.parseInt(week.replaceAll("[^\\x00-\\xff]", ""));
+                        if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
+                            if (lastSetWeek == 53) {
+                                currentWeek += weekOfYearWhenSetCurrentWeek;
+                            } else {
+                                currentWeek += (52 - lastSetWeek) + weekOfYearWhenSetCurrentWeek;
+                            }
+                        } else {
+                            currentWeek += (weekOfYearWhenSetCurrentWeek - lastSetWeek);
+                        }
+                        if (currentWeek >= 30) {
+                            currentWeek = 1;
+                        }
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString(context.getString(R.string.pref_current_week), "第" + currentWeek + "周");
+                        editor.putString(context.getString(R.string.pref_week_set_week), weekOfYearWhenSetCurrentWeek + "");
+                        editor.apply();
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .onErrorReturn(new Function<Throwable, String>() {
+                    @Override
+                    public String apply(Throwable throwable) throws Exception {
+                        return "";
+                    }
+                }).subscribe();
     }
 
 }
