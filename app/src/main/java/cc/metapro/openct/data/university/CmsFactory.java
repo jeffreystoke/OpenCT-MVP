@@ -39,9 +39,8 @@ import cc.metapro.openct.utils.Constants;
 
 public class CmsFactory extends UniversityFactory {
 
-    private CmsURLFactory mURLFactory;
-
     private static final String BR = "<\\s*?br\\s*?/?>";
+    private CmsURLFactory mURLFactory;
 
     public CmsFactory(UniversityService service, CMSInfo cmsInfo) {
         mCMSInfo = cmsInfo;

@@ -50,8 +50,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ActivityUtils {
 
-    private static ProgressDialog pd;
     private static final String TAG = "ENCRYPTION";
+    private static ProgressDialog pd;
 
     public static void addFragmentToActivity(@NonNull FragmentManager fragmentManager,
                                              @NonNull Fragment fragment, int frameId) {

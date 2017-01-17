@@ -30,13 +30,11 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import aQute.lib.io.IO;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;

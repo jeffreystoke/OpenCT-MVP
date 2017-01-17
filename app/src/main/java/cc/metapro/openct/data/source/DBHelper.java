@@ -39,7 +39,6 @@ public class DBHelper extends SQLiteOpenHelper {
             CMS_DYN_URL = "cms_dyn_url", CMS_INNER_ACCESS = "cms_inner_access",
             LIB_SYS = "lib_sys", LIB_URL = "lib_url", LIB_CAPTCHA = "lib_captcha",
             LIB_DYN_URL = "lib_dyn_url", LIB_INNER_ACCESS = "lib_inner_access";
-    private static final String JSON = "json";
     static final String CLASS_TABLE = "classes";
     static final String SCHOOL_TABLE = "schools";
     static final String SYS_NAME = "sys_name";
@@ -48,6 +47,7 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String GRADE_TABLE = "grades";
     static final String BORROW_TABLE = "borrows";
     static final String CUSTOM_TABLE = "custom";
+    private static final String JSON = "json";
     private static final String DB_NAME = "openct-1.db";
 
     private static final String SCHOOL_TITLES =
