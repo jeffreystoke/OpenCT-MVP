@@ -1,4 +1,4 @@
-package cc.metapro.openct.gradelist;
+package cc.metapro.openct.grades;
 
 
 /*

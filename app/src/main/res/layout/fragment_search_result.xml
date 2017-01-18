@@ -5,6 +5,7 @@
     android:id="@+id/search_coord"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/md_2"
     tools:context="cc.metapro.openct.search.SearchResultFragment">
 
     <LinearLayout

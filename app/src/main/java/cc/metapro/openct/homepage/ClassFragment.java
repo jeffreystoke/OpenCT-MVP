@@ -196,8 +196,8 @@ public class ClassFragment extends Fragment implements ClassContract.View {
 
     private void showSelectedWeek(List<EnrichedClassInfo> classes, int week) {
         View view = mViewMap.get("tw");
-        ViewGroup seq = (ViewGroup) view.findViewById(R.id.class_seq);
-        ViewGroup con = (ViewGroup) view.findViewById(R.id.class_content);
+        ViewGroup seq = (ViewGroup) view.findViewById(R.id.week_class_seq);
+        ViewGroup con = (ViewGroup) view.findViewById(R.id.week_class_content);
         addSeqViews(seq);
         addContentView(con, classes, week);
     }

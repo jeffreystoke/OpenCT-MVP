@@ -1,4 +1,4 @@
-package cc.metapro.openct.gradelist;
+package cc.metapro.openct.grades;
 
 /*
  *  Copyright 2015 2017 metapro.cc Jeffctor

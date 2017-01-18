@@ -25,8 +25,8 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/class_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:background="@drawable/md_2">
         <android.support.v4.view.PagerTabStrip
             android:id="@+id/class_view_pager_title"
             android:layout_width="match_parent"

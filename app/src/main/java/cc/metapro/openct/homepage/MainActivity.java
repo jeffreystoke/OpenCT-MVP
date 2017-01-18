@@ -42,7 +42,7 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.LibBorrowActivity;
 import cc.metapro.openct.customviews.InitDiaolgHelper;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.gradelist.GradeActivity;
+import cc.metapro.openct.grades.GradeActivity;
 import cc.metapro.openct.preference.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
 import cc.metapro.openct.utils.ActivityUtils;

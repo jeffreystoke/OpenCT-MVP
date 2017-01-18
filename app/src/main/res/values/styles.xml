@@ -16,15 +16,27 @@
 
     <style name="Toolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+
+    </style>
 
     <style name="Widget.AppCompat.Toolbar.MyToolbar" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">@color/colorPrimary</item>
         <item name="android:minHeight">?actionBarSize</item>
         <item name="android:theme">@style/Toolbar</item>
         <item name="android:fitsSystemWindows">true</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.SeqText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/materialWhite</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">2</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
 
     <style name="Widget.Design.FloatingActionButton.MyFab" parent="Widget.Design.FloatingActionButton">
