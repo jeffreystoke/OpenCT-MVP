@@ -5,7 +5,6 @@
     android:id="@+id/search_coord"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/md_2"
     tools:context="cc.metapro.openct.search.SearchResultFragment">
 
     <LinearLayout
@@ -21,8 +20,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/lib_result_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            </android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent"/>
         </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>
 

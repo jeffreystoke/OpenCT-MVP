@@ -1,7 +1,7 @@
 package cc.metapro.openct.search;
 
 /*
- *  Copyright 2015 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 metapro.cc Jeffctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package cc.metapro.openct.search;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -34,11 +35,14 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 class LibSearchPresenter implements LibSearchContract.Presenter {
+
+    private static final String TAG = "LIB_PRESENTER";
 
     private LibSearchContract.View mLibSearchView;
 
@@ -57,9 +61,9 @@ class LibSearchPresenter implements LibSearchContract.Presenter {
     }
 
     @Override
-    public void search() {
+    public Disposable search() {
         mLibSearchView.showOnSearching();
-        Observable
+        return Observable
                 .create(new ObservableOnSubscribe<List<BookInfo>>() {
                     @Override
                     public void subscribe(ObservableEmitter<List<BookInfo>> e) throws Exception {
@@ -81,19 +85,19 @@ class LibSearchPresenter implements LibSearchContract.Presenter {
                 .onErrorReturn(new Function<Throwable, List<BookInfo>>() {
                     @Override
                     public List<BookInfo> apply(Throwable throwable) throws Exception {
+                        Log.e(TAG, throwable.getMessage(), throwable);
                         Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         mLibSearchView.onSearchResult(new ArrayList<BookInfo>(0));
                         return new ArrayList<>();
                     }
                 })
                 .subscribe();
-
     }
 
     @Override
-    public void nextPage() {
+    public Disposable nextPage() {
         mLibSearchView.showOnSearching();
-        Observable
+        return Observable
                 .create(new ObservableOnSubscribe<List<BookInfo>>() {
                     @Override
                     public void subscribe(ObservableEmitter<List<BookInfo>> e) throws Exception {
@@ -113,6 +117,7 @@ class LibSearchPresenter implements LibSearchContract.Presenter {
                 .onErrorReturn(new Function<Throwable, List<BookInfo>>() {
                     @Override
                     public List<BookInfo> apply(Throwable throwable) throws Exception {
+                        Log.e(TAG, throwable.getMessage(), throwable);
                         Toast.makeText(mEditText.getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         mLibSearchView.onNextPageResult(new ArrayList<BookInfo>());
                         return new ArrayList<>();

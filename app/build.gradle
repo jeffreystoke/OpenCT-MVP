@@ -7,8 +7,8 @@ android {
         applicationId "cc.metapro.openct"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 8
-        versionName "0.3.3"
+        versionCode 9
+        versionName "0.3.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
@@ -45,6 +45,8 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
+    compile 'com.rengwuxian.materialedittext:library:2.1.4'
+    compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'jp.wasabeef:recyclerview-animators:2.2.4'
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'com.google.dagger:dagger:2.8'

@@ -1,7 +1,7 @@
 package cc.metapro.openct.search;
 
 /*
- *  Copyright 2015 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 metapro.cc Jeffctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.EndlessRecyclerOnScrollListener;
 import cc.metapro.openct.data.university.item.BookInfo;
 import cc.metapro.openct.utils.RecyclerViewHelper;
+import io.reactivex.disposables.Disposable;
 
 public class SearchResultFragment extends Fragment implements LibSearchContract.View {
 
@@ -45,16 +45,16 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
     @BindView(R.id.lib_result_refresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
     private Context mContext;
-    private Unbinder mUnbinder;
     private BooksAdapter mAdapter;
     private LibSearchContract.Presenter mPresenter;
+    private Disposable mTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_result, container, false);
 
-        mUnbinder = ButterKnife.bind(this, view);
+        ButterKnife.bind(this, view);
 
         mContext = getContext();
 
@@ -81,7 +81,7 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
                     mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
                         @Override
                         public void onLoadMore(int currentPage) {
-                            mPresenter.nextPage();
+                            mTask = mPresenter.nextPage();
                         }
                     });
                 }
@@ -91,7 +91,9 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
 
     @Override
     public void onDestroy() {
-        mUnbinder.unbind();
+        if (mTask != null) {
+            mTask.dispose();
+        }
         super.onDestroy();
     }
 

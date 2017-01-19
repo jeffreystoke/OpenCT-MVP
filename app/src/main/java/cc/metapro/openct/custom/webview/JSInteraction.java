@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.webview;
+package cc.metapro.openct.custom.webview;
 
 /*
  *  Copyright 2016 - 2017 metapro.cc Jeffctor
@@ -16,13 +16,28 @@ package cc.metapro.openct.data.webview;
  * limitations under the License.
  */
 
-import android.util.Log;
 import android.webkit.JavascriptInterface;
 
-public class InJavaScriptLocalObj {
+public class JSInteraction {
+
+    public static final String TAG = "HTML";
+
+    public static final String JSInterface = "openct";
+
+    private CallBack mCallBack;
+
+    public JSInteraction(CallBack callBack) {
+        mCallBack = callBack;
+    }
 
     @JavascriptInterface
-    public String getSource(String html) {
-        return html;
+    public void getClicked(String clicked) {
+        mCallBack.onClick(clicked);
+    }
+
+    public interface CallBack {
+
+        void onClick(String element);
+
     }
 }

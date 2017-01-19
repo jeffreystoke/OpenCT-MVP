@@ -4,17 +4,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:title="@string/class_table"
-        android:visible="true">
+        android:visible="true"
+        app:showAsAction="never">
         <menu>
             <item
                 android:id="@+id/refresh_classes"
                 android:title="@string/update_classes"
-                app:showAsAction="ifRoom|withText|collapseActionView"
-                />
+                app:showAsAction="never"/>
             <item
                 android:id="@+id/export_classes"
                 android:title="@string/export_to_ical"
-                app:showAsAction="ifRoom|withText|collapseActionView"/>
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/custom_cms_class"
+                android:title="自定义教务网课程表"
+                app:showAsAction="never"/>
         </menu>
     </item>
     <item

@@ -2,7 +2,7 @@ package cc.metapro.openct.grades;
 
 
 /*
- *  Copyright 2015 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 metapro.cc Jeffctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,9 +43,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
+import cc.metapro.openct.customviews.CaptchaDialog;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.GradeInfo;
-import cc.metapro.openct.preference.SettingsActivity;
+import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
@@ -55,17 +56,16 @@ public class GradeFragment extends Fragment implements GradeContract.View {
     @BindView(R.id.grade_recycler_view)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.fab_refresh)
+    @BindView(R.id.fab)
     FloatingActionButton fab;
 
     private Context mContext;
     private AlertDialog.Builder ab;
-    private AlertDialog mCaptchaDialog;
     private GradeAdapter mGradeAdapter;
     private GradeContract.Presenter mPresenter;
-    private ActivityUtils.CaptchaDialogHelper mCaptchaDialogHelper;
+    private CaptchaDialog mCaptchaDialog;
 
-    @OnClick(R.id.fab_refresh)
+    @OnClick(R.id.fab)
     public void refresh() {
         Map<String, String> map = Loader.getCmsStuInfo(mContext);
         if (map.size() == 0) {
@@ -74,8 +74,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
             startActivity(intent);
         } else {
             if (Loader.cmsNeedCAPTCHA()) {
-                mCaptchaDialog.show();
-                mPresenter.loadCaptcha(mCaptchaDialogHelper.getCaptchaView());
+                mCaptchaDialog.show(getFragmentManager(), "captcha_dialog");
             } else {
                 mPresenter.loadOnline("");
             }
@@ -89,9 +88,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
         ButterKnife.bind(this, view);
         mContext = getContext();
 
-        mCaptchaDialogHelper = new ActivityUtils.CaptchaDialogHelper(getContext(), mPresenter, "刷新");
-        mCaptchaDialog = mCaptchaDialogHelper.getCaptchaDialog();
-
+        mCaptchaDialog = CaptchaDialog.newInstance(mPresenter);
         mGradeAdapter = new GradeAdapter(mContext);
 
         RecyclerViewHelper.setRecyclerView(mContext, mRecyclerView, mGradeAdapter);

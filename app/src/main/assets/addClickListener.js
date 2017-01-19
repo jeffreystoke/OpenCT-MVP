@@ -1,0 +1,3 @@
+function() {
+var script = document.createElement('script');var node = document.createTextNode('function getClicked(e){var targ;if(!e){var e=window.event;}if(e.target){targ=e.target;}else if(e.srcElement){targ=e.srcElement;}if(targ.nodeType==3){targ=targ.parentNode;}var id;id=targ.id;if(id){id=targ.name;} window.openct.getClickedId(id);}');script.appendChild(node);var body = document.getElementsByTagName('body').item(0);body.setAttribute('onmousedown','getClicked(event)');var head = document.getElementsByTagName('head').item(0);head.appendChild(script);
+}

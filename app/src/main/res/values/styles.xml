@@ -39,6 +39,11 @@
         <item name="android:layout_height">match_parent</item>
     </style>
 
+    <style name="TextAppearance.AppCompat.InitialText" parent="TextAppearance.AppCompat">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="Widget.Design.FloatingActionButton.MyFab" parent="Widget.Design.FloatingActionButton">
         <item name="borderWidth">0dp</item>
         <item name="elevation">6dp</item>
@@ -62,5 +67,9 @@
         <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">50dp</item>
         <item name="android:layout_marginRight">50dp</item>
         <item name="android:textAlignment" tools:targetApi="jelly_bean_mr1">center</item>
+    </style>
+
+    <style name="Base.V7.ThemeOverlay.AppCompat.Dialog.FitSoftInput" parent="Base.V7.ThemeOverlay.AppCompat.Dialog">
+        <item name="android:windowSoftInputMode">adjustPan|stateAlwaysVisible</item>
     </style>
 </resources>

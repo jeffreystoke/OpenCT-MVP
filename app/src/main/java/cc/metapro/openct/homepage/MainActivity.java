@@ -1,7 +1,7 @@
 package cc.metapro.openct.homepage;
 
 /*
- *  Copyright 2015 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 metapro.cc Jeffctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -40,10 +39,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.LibBorrowActivity;
-import cc.metapro.openct.customviews.InitDiaolgHelper;
+import cc.metapro.openct.custom.CustomActivity;
+import cc.metapro.openct.customviews.CaptchaDialog;
+import cc.metapro.openct.customviews.InitDialog;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.grades.GradeActivity;
-import cc.metapro.openct.preference.SettingsActivity;
+import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
 import cc.metapro.openct.utils.ActivityUtils;
 
@@ -61,9 +62,7 @@ public class MainActivity extends AppCompatActivity
 
     private boolean mExitState;
 
-    private ActivityUtils.CaptchaDialogHelper mCaptchaHelper;
-
-    private AlertDialog mAlertDialog;
+    private CaptchaDialog mCaptchaDialog;
 
     private ClassContract.Presenter mPresenter;
 
@@ -88,10 +87,9 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean init = preferences.getBoolean(initStr, false);
         if (!init) {
-            new InitDiaolgHelper(this).getInitDialog().show();
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean(initStr, true);
-            editor.apply();
+            InitDialog fragment = InitDialog.newInstance();
+            fragment.setCancelable(false);
+            fragment.show(getSupportFragmentManager(), "init_dialog_fragment");
         } else {
             Loader.loadUniversity(this);
         }
@@ -107,8 +105,7 @@ public class MainActivity extends AppCompatActivity
         }
         mPresenter = new ClassPresenter(mClassFragment, this);
 
-        mCaptchaHelper = new ActivityUtils.CaptchaDialogHelper(this, mPresenter, "更新课表");
-        mAlertDialog = mCaptchaHelper.getCaptchaDialog();
+        mCaptchaDialog = CaptchaDialog.newInstance(mPresenter);
     }
 
     @Override
@@ -153,12 +150,15 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             } else {
                 if (Loader.cmsNeedCAPTCHA()) {
-                    mPresenter.loadCaptcha(mCaptchaHelper.getCaptchaView());
-                    mAlertDialog.show();
+                    mCaptchaDialog.show(getSupportFragmentManager(), "captcha_dialog");
                 } else {
                     mPresenter.loadOnline("");
                 }
             }
+            return true;
+        } else if (id == R.id.custom_cms_class) {
+            Intent intent = new Intent(this, CustomActivity.class);
+            startActivity(intent);
             return true;
         } else if (id == R.id.export_classes) {
             mPresenter.exportCLasses();
@@ -187,7 +187,6 @@ public class MainActivity extends AppCompatActivity
 //                startActivity(intent);
 //                break;
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

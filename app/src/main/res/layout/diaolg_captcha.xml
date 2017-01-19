@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:gravity="center"
@@ -12,18 +13,28 @@
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="@string/press_to_get_captcha"/>
+        android:text="@string/press_to_get_captcha"
+        android:textColor="@color/colorPrimary"/>
 
-    <EditText
+    <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/captcha_edit_text"
         android:layout_width="100dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
         android:gravity="center"
         android:hint="@string/enter_code"
         android:imeOptions="actionGo"
-        android:inputType="text"/>
+        android:inputType="text"
+        app:met_floatingLabel="normal"/>
+
+    <TextView
+        android:id="@+id/ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:padding="20dp"
+        android:text="开始"
+        android:textColor="@color/colorAccent"
+        android:textSize="15sp"/>
 </LinearLayout>

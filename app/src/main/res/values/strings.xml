@@ -116,7 +116,7 @@
     </string>
     <string name="search">检索</string>
     <string name="press_to_get_captcha">点击获取验证码</string>
-    <string name="enter_code">输入验证码</string>
+    <string name="enter_code">验证码</string>
     <string name="grade_query">成绩查询</string>
     <string name="clear">清空</string>
     <string name="monday">周一</string>
@@ -131,7 +131,7 @@
     <string name="update_classes">更新课表</string>
     <string name="show_all_borrows">所有借阅</string>
     <string name="show_exceeded">已超期</string>
-    <string name="app_description">开源课程表应用</string>
+    <string name="app_description">开源课程表与图书馆应用</string>
     <string name="show_raw">查看馆藏详情</string>
     <string name="password_notice">用户名密码都将保存在本地</string>
     <string name="notice">注意</string>
@@ -193,4 +193,6 @@
     <string name="encryption_tip">使用AES-128加密你的密码\n若完整填写教务网或图书馆信息之后仍提示补全信息, 你需要关闭该选项并重填密码确保正常使用</string>
     <string name="enable_encryption">启用加密</string>
     <string name="project_url">https://github.com/jeffreystoke/openct-mvp</string>
+    <string name="custom">自定义</string>
+    <string name="select_school">选择学校</string>
 </resources>

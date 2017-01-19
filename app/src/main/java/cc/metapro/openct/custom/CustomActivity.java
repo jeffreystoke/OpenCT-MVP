@@ -16,6 +16,7 @@ package cc.metapro.openct.custom;
  * limitations under the License.
  */
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
@@ -24,49 +25,45 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.webview.InJavaScriptLocalObj;
-import cc.metapro.openct.data.webview.SchoolWebViewClient;
+import cc.metapro.openct.custom.webview.JSInteraction;
+import cc.metapro.openct.custom.webview.SchoolWebViewClient;
+import cc.metapro.openct.customviews.ClickDialog;
 
 public class CustomActivity extends AppCompatActivity {
 
+    public static final String TAG = "CUSTOM";
+
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-
     @BindView(R.id.custom_web_view)
     WebView mWebView;
-
     @BindView(R.id.url_input)
     EditText mURL;
-
-    @BindView(R.id.fab_refresh)
+    @BindView(R.id.fab)
     FloatingActionButton mActionButton;
-
     @BindView(R.id.tips)
     TextView tipText;
 
-    @BindView(R.id.web_text_layout)
-    LinearLayout mLayout;
+    private List<Map<String, String>> nameOrId;
 
-    @OnClick(R.id.fab_refresh)
+    @OnClick(R.id.fab)
     public void start() {
         String url = getUrl(mURL.getText().toString());
-        mWebView.loadUrl(url);
         tipText.setVisibility(View.GONE);
-        mLayout.setVisibility(View.VISIBLE);
+        mWebView.setVisibility(View.VISIBLE);
+        mWebView.loadUrl(url);
     }
-
-    private static final String JS_OBJ = "local_obj";
-
-    private InJavaScriptLocalObj mLocalObj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,16 +77,41 @@ public class CustomActivity extends AppCompatActivity {
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
-
-        mLocalObj = new InJavaScriptLocalObj();
+        nameOrId = new ArrayList<>();
+        mWebView.requestFocus();
         mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.addJavascriptInterface(mLocalObj, JS_OBJ);
+        mWebView.getSettings().setSupportZoom(true);
+        mWebView.getSettings().setDomStorageEnabled(true);
+        mWebView.getSettings().setUseWideViewPort(true);
+        mWebView.getSettings().setLoadWithOverviewMode(true);
+        mWebView.getSettings().setBuiltInZoomControls(true);
         mWebView.setWebViewClient(new SchoolWebViewClient());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
+        mWebView.addJavascriptInterface(new JSInteraction(new JSInteraction.CallBack() {
+            @Override
+            public void onClick(String id) {
+                ClickDialog dialog = ClickDialog.newInstance(new ClickDialog.CallBack() {
+                    @Override
+                    public void setResult(final Map<String, String> map) {
+                        for (String s : map.keySet()) {
+                            if (!ClickDialog.NEED_CLICK.equals(s)) {
+                                String fun = map.get(s);
+                                mWebView.loadUrl(fun);
+                            }
+                        }
+                        nameOrId.add(map);
+                    }
+                }, id);
+                dialog.show(getSupportFragmentManager(), "click_dialog");
+            }
+        }), JSInteraction.JSInterface);
     }
 
     private String getUrl(String input) {
         Pattern pattern = Pattern.compile("^https?://");
-        if (!pattern.matcher(input).find()){
+        if (!pattern.matcher(input).find()) {
             input = "http://" + input;
         }
         return input;

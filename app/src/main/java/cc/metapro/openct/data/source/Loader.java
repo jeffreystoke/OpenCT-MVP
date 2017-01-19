@@ -1,7 +1,7 @@
 package cc.metapro.openct.data.source;
 
 /*
- *  Copyright 2015 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 metapro.cc Jeffctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public class Loader {
     public static Map<String, String> getLibStuInfo(Context context) {
         Map<String, String> map = new HashMap<>(2);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.need_encryption), true);
+        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.need_encryption), false);
         try {
             String password = preferences.getString(context.getString(R.string.pref_lib_password), "");
             if (needEncrypt) {
@@ -89,7 +89,7 @@ public class Loader {
     public static Map<String, String> getCmsStuInfo(Context context) {
         Map<String, String> map = new HashMap<>(2);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.need_encryption), true);
+        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.need_encryption), false);
         try {
             String password = preferences.getString(context.getString(R.string.pref_cms_password), "");
             if (needEncrypt) {
@@ -151,7 +151,7 @@ public class Loader {
                         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
                         boolean custom = preferences.getBoolean(context.getString(R.string.pref_custom_enable), false);
                         DBManger manger = DBManger.getInstance(context);
-                        String defaultSchool = context.getResources().getStringArray(R.array.pref_school_names)[0];
+                        String defaultSchool = context.getResources().getStringArray(R.array.school_names)[0];
                         if (custom) {
                             UniversityInfo.SchoolInfo info = manger.getCustomSchoolInfo();
                             if (info != null) {

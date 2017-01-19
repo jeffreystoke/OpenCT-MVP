@@ -1,7 +1,7 @@
 package cc.metapro.openct.utils.HTMLUtils;
 
 /*
- *  Copyright 2015 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 metapro.cc Jeffctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@ package cc.metapro.openct.utils.HTMLUtils;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import android.support.annotation.NonNull;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -30,7 +32,7 @@ public class FormHandler {
     // use linkedHashMap to ensure form seq
     private LinkedHashMap<String, List<Form>> mForms;
 
-    public FormHandler(String html, String baseURL) {
+    public FormHandler(@NonNull String html, String baseURL) {
         mForms = new LinkedHashMap<>();
         Document document = Jsoup.parse(html, baseURL);
         Elements elements = document.getElementsByTag("form");

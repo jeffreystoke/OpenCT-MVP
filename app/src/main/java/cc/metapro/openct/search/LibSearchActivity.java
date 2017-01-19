@@ -1,7 +1,7 @@
 package cc.metapro.openct.search;
 
 /*
- *  Copyright 2015 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 metapro.cc Jeffctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.ActivityUtils;
+import io.reactivex.disposables.Disposable;
 
 public class LibSearchActivity extends AppCompatActivity {
 
@@ -49,16 +50,17 @@ public class LibSearchActivity extends AppCompatActivity {
     @BindView(R.id.type_spinner)
     Spinner mSpinner;
     private LibSearchPresenter mLibSearchPresnter;
+    private Disposable mTask;
 
     @OnClick(R.id.fab_search)
     public void fabSearch() {
-        mLibSearchPresnter.search();
+        mTask = mLibSearchPresnter.search();
     }
 
     @OnEditorAction(R.id.lib_search_content_edittext)
     public boolean editorSearch(TextView textView, int i, KeyEvent keyEvent) {
         if (i == EditorInfo.IME_ACTION_SEARCH || (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-            mLibSearchPresnter.search();
+            mTask = mLibSearchPresnter.search();
             return true;
         }
         return false;
@@ -88,4 +90,11 @@ public class LibSearchActivity extends AppCompatActivity {
         mLibSearchPresnter = new LibSearchPresenter(resultFragment, mSpinner, mEditText);
     }
 
+    @Override
+    protected void onDestroy() {
+        if (mTask != null) {
+            mTask.dispose();
+        }
+        super.onDestroy();
+    }
 }

@@ -1,7 +1,7 @@
 package cc.metapro.openct.utils;
 
 /*
- *  Copyright 2015 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 metapro.cc Jeffctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,28 +18,17 @@ package cc.metapro.openct.utils;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.common.base.Strings;
 
-import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.StoreHelper;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -145,82 +134,4 @@ public class ActivityUtils {
                 }).subscribe();
     }
 
-    public static class CaptchaDialogHelper {
-
-        private TextView mTextView;
-
-        private LoginPresenter mLoginPresenter;
-
-        private AlertDialog mAlertDialog;
-
-        public CaptchaDialogHelper(final Context context, final LoginPresenter presenter, String positiveString) {
-            mLoginPresenter = presenter;
-            AlertDialog.Builder ab = new AlertDialog.Builder(context);
-
-            // set dialog view
-            View view = LayoutInflater.from(context).inflate(R.layout.diaolg_captcha, null);
-            final TextView textView = (TextView) view.findViewById(R.id.captcha_image);
-            final EditText editText = (EditText) view.findViewById(R.id.captcha_edit_text);
-            mTextView = textView;
-
-            // click to get captcha pic
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mLoginPresenter.loadCaptcha(textView);
-                }
-            });
-
-            final Toast toast = Toast.makeText(context, "请输入验证码", Toast.LENGTH_SHORT);
-
-            editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                    if (i == EditorInfo.IME_ACTION_GO || (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                        String code = editText.getText().toString();
-                        if (Strings.isNullOrEmpty(code)) {
-                            toast.show();
-                        } else {
-                            mLoginPresenter.loadOnline(code);
-                        }
-                        return true;
-                    }
-                    return false;
-                }
-            });
-
-            ab.setPositiveButton(positiveString, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    String code = editText.getText().toString();
-                    if (Strings.isNullOrEmpty(code)) {
-                        toast.show();
-                    } else {
-                        mLoginPresenter.loadOnline(code);
-                    }
-                }
-            });
-
-            ab.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialogInterface) {
-                    textView.setText(R.string.press_to_get_captcha);
-                    StoreHelper.delFile(Constants.CAPTCHA_FILE);
-                }
-            });
-
-            ab.setView(view);
-            mAlertDialog = ab.create();
-        }
-
-        @NonNull
-        public TextView getCaptchaView() {
-            return mTextView;
-        }
-
-        public AlertDialog getCaptchaDialog() {
-            return mAlertDialog;
-        }
-
-    }
 }

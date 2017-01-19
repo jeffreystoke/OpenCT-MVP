@@ -2,7 +2,7 @@ package cc.metapro.openct.data.university;
 
 
 /*
- *  Copyright 2015 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 metapro.cc Jeffctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package cc.metapro.openct.data.university;
  */
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.common.base.Strings;
 
@@ -40,6 +41,8 @@ import cc.metapro.openct.utils.HTMLUtils.FormUtils;
 
 public class LibraryFactory extends UniversityFactory {
 
+    private static final String TAG = "LIB_FACTORY";
+
     private static final Pattern nextPagePattern = Pattern.compile("(下一页)");
 
     private static String nextPageURL = "";
@@ -59,7 +62,16 @@ public class LibraryFactory extends UniversityFactory {
     @NonNull
     public List<BookInfo> search(@NonNull Map<String, String> searchMap) throws Exception {
         nextPageURL = "";
-        String searchPage = mService.getPage(mURLFactory.SEARCH_REF, null).execute().body();
+        String searchPage = null;
+        try {
+            searchPage = mService.getPage(mURLFactory.SEARCH_URL, null).execute().body();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
+
+        if (searchPage == null) {
+            return new ArrayList<>(0);
+        }
 
         FormHandler handler = new FormHandler(searchPage, mURLFactory.SEARCH_URL);
         Form form = handler.getForm(0);
@@ -237,16 +249,14 @@ public class LibraryFactory extends UniversityFactory {
                 libBaseURL += "/";
             }
 
-            switch (libSys) {
-                case Constants.LIBSYS:
-                    SEARCH_URL = libBaseURL + "opac/openlink.php?";
-                    SEARCH_REF = libBaseURL + "opac/search.php";
-                    CAPTCHA_URL = libBaseURL + "reader/captcha.php";
-                    LOGIN_URL = libBaseURL + "reader/redr_verify.php";
-                    LOGIN_REF = libBaseURL + "reader/login.php";
-                    USER_HOME_URL = libBaseURL + "reader/redr_info.php";
-                    BORROW_URL = libBaseURL + "reader/book_lst.php";
-                    break;
+            if (Constants.LIBSYS.equalsIgnoreCase(libSys)) {
+                SEARCH_URL = libBaseURL + "opac/search.php";
+                SEARCH_REF = libBaseURL + "opac/openlink.php?";
+                CAPTCHA_URL = libBaseURL + "reader/captcha.php";
+                LOGIN_URL = libBaseURL + "reader/redr_verify.php";
+                LOGIN_REF = libBaseURL + "reader/login.php";
+                USER_HOME_URL = libBaseURL + "reader/redr_info.php";
+                BORROW_URL = libBaseURL + "reader/book_lst.php";
             }
         }
     }

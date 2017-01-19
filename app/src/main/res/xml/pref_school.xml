@@ -16,15 +16,12 @@
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <ListPreference
-        android:entries="@array/pref_school_names"
-        android:entryValues="@array/pref_school_names"
-        android:key="@string/pref_school_name"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/school"/>
+    <Preference
+        android:title="@string/school"
+        android:key="@string/pref_school_name">
+        <intent
+            android:action="cc.metapro.openct.schoolselection"/>
+    </Preference>
     <ListPreference
         android:defaultValue="第1周"
         android:entries="@array/pref_week_seqs"

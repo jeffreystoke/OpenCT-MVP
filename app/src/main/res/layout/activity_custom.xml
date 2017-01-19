@@ -17,16 +17,19 @@
 
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_custom"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/md_2"
     tools:context="cc.metapro.openct.custom.CustomActivity">
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -37,54 +40,41 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
                 <EditText
                     android:id="@+id/url_input"
-                    android:inputType="textUri"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="输入地址"
                     android:gravity="start"
+                    android:hint="输入地址"
+                    android:inputType="textUri"
                     android:textAlignment="viewStart"/>
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
+
         <TextView
             android:id="@+id/tips"
-            android:text="在上方输入地址\n\n随后点击右下角按钮开始自定义\n\n到达目的页面后\n\n选择需要的内容\n\n随后点击右下角按钮结束自定义"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
+            android:layout_marginTop="40dp"
+            android:textColor="@color/materialWhite"
+            android:text="Tips: 在上方输入地址\n\n随后点击右下角按钮开始自定义或查看帮助"/>
+
+        <WebView
+            android:id="@+id/custom_web_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"/>
-
-        <LinearLayout
-            android:id="@+id/web_text_layout"
-            android:visibility="gone"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <WebView
-                android:id="@+id/custom_web_view"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-            </WebView>
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-                <TextView
-                    android:text="网页源代码"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextureView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-            </LinearLayout>
-        </LinearLayout>
+            android:visibility="gone">
+        </WebView>
     </LinearLayout>
+
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_refresh"
+        android:id="@+id/fab"
         style="@style/Widget.Design.FloatingActionButton.MyFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_start"/>
+        android:src="@drawable/ic_menu"
+        app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"/>
 </android.support.design.widget.CoordinatorLayout>

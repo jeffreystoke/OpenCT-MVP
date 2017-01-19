@@ -63,6 +63,7 @@
                 android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:orientation="vertical"/>
+
             <RelativeLayout
                 android:id="@+id/sem_class_content"
                 android:layout_width="0dp"
