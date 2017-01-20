@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.university.item;
+package cc.metapro.openct.data.university;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,19 +16,33 @@ package cc.metapro.openct.data.university.item;
  * limitations under the License.
  */
 
+import cc.metapro.openct.custom.CustomConfiguration;
 import cc.metapro.openct.data.source.StoreHelper;
 
-public final class BookInfo {
+public class AdvancedCustomInfo {
 
-    public String mTitle, mAuthor, mContent, mStoreInfo, mLink;
+    public CustomConfiguration mWebScriptConfiguration;
 
-    public BookInfo(String title, String author, String content,
-                    String storeInfo, String link) {
-        mTitle = title;
-        mAuthor = author;
-        mContent = content;
-        mStoreInfo = storeInfo;
-        mLink = link;
+    public CmsFactory.ClassTableInfo mClassTableInfo;
+
+    public String mCmsClassURL;
+
+    public String mCmsGradeURL;
+
+    public AdvancedCustomInfo() {
+
+    }
+
+    public void setClassTableInfo(CmsFactory.ClassTableInfo classTableInfo) {
+        mClassTableInfo = classTableInfo;
+    }
+
+    public void setWebScriptConfiguration(CustomConfiguration webScriptConfiguration) {
+        mWebScriptConfiguration = webScriptConfiguration;
+    }
+
+    public void setCmsClassURL(String cmsClassURL) {
+        mCmsClassURL = cmsClassURL;
     }
 
     @Override

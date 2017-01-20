@@ -1,7 +1,7 @@
 package cc.metapro.openct.custom;
 
 /*
- *  Copyright 2016 - 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,16 +23,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,18 +46,25 @@ import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.custom.webview.JSInteraction;
 import cc.metapro.openct.custom.webview.SchoolWebViewClient;
-import cc.metapro.openct.customviews.TableChooseDialog;
+import cc.metapro.openct.data.source.DBManger;
+import cc.metapro.openct.data.university.AdvancedCustomInfo;
+import cc.metapro.openct.data.university.CmsFactory;
+import cc.metapro.openct.data.university.item.EnrichedClassInfo;
+import cc.metapro.openct.utils.Constants;
 
 public class CustomActivity extends AppCompatActivity {
 
     public static final String TAG = "CUSTOM";
+
     public static final int CMS_CLASS = 1;
     public static final int CMS_GRADE = 2;
     public static final int LIB_SEARCH = 3;
     public static final int LIB_BORROW = 4;
 
     public static int CUSTOM_TYPE = CMS_CLASS;
-    public static CustomConfiguration config;
+    public static CmsFactory.ClassTableInfo classTableInfo;
+    public static CustomConfiguration webScriptConfig;
+    public static String cmsClassURL;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -65,8 +74,9 @@ public class CustomActivity extends AppCompatActivity {
     EditText mURL;
     @BindView(R.id.tips)
     TextView tipText;
+    @BindView(R.id.web_layout)
+    ViewGroup mViewGroup;
 
-    private List<Map<String, String>> mActions;
     private SchoolWebViewClient mClient;
 
     @OnClick(R.id.fab)
@@ -74,15 +84,22 @@ public class CustomActivity extends AppCompatActivity {
         SchoolWebViewClient.replayMode = false;
         String url = getUrl(mURL.getText().toString());
         tipText.setVisibility(View.GONE);
+        cmsClassURL = url;
         mWebView.setVisibility(View.VISIBLE);
+        webScriptConfig = new CustomConfiguration();
         mWebView.loadUrl(url);
     }
 
     @OnClick(R.id.fab_replay)
     public void replay() {
-        SchoolWebViewClient.replayMode = true;
-        // TODO: 17/1/20 添加回放处理
-        mWebView.loadUrl(getUrl(mURL.getText().toString()));
+        if (!webScriptConfig.isEmpty()) {
+            tipText.setVisibility(View.GONE);
+            mWebView.setVisibility(View.VISIBLE);
+            mWebView.loadUrl(getUrl(mURL.getText().toString()));
+            mClient.performActions(webScriptConfig, getSupportFragmentManager(), mWebView);
+        } else {
+            Toast.makeText(this, "还没有自定义过, 请点击开始自定义", Toast.LENGTH_LONG).show();
+        }
     }
 
     @OnClick(R.id.fab_ok)
@@ -109,8 +126,25 @@ public class CustomActivity extends AppCompatActivity {
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
-        config = new CustomConfiguration();
-        mActions = new ArrayList<>();
+        DBManger manger = DBManger.getInstance(this);
+        AdvancedCustomInfo customInfo = manger.getAdvancedCustomInfo();
+        if (customInfo != null) {
+            cmsClassURL = customInfo.mCmsClassURL;
+            if (!TextUtils.isEmpty(cmsClassURL)) {
+                mURL.setText(cmsClassURL);
+            }
+            webScriptConfig = customInfo.mWebScriptConfiguration;
+            if (webScriptConfig == null) {
+                webScriptConfig = new CustomConfiguration();
+            }
+            classTableInfo = customInfo.mClassTableInfo;
+            if (classTableInfo == null) {
+                classTableInfo = new CmsFactory.ClassTableInfo();
+            }
+        } else {
+            webScriptConfig = new CustomConfiguration();
+            classTableInfo = new CmsFactory.ClassTableInfo();
+        }
         setWebView();
     }
 
@@ -123,6 +157,7 @@ public class CustomActivity extends AppCompatActivity {
         mWebView.getSettings().setUseWideViewPort(true);
         mWebView.getSettings().setLoadWithOverviewMode(true);
         mWebView.getSettings().setBuiltInZoomControls(true);
+        mWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         mWebView.setWebViewClient(mClient);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(true);
@@ -133,13 +168,11 @@ public class CustomActivity extends AppCompatActivity {
                     public void onClick(String id) {
                         ClickDialog dialog = ClickDialog.newInstance(new ClickDialog.CallBack() {
                             @Override
-                            public void setResult(final Map<String, String> map, String value) {
-                                for (String s : map.keySet()) {
-                                    String command = map.get(s);
-                                    command += TextUtils.isEmpty(value) ? "" : "\"" + value + "\");";
-                                    mWebView.loadUrl("javascript:" + command);
-                                }
-                                mActions.add(map);
+                            public void setResult(String key, String cmd, String value) {
+                                webScriptConfig.addAction(key, cmd);
+                                String command = cmd;
+                                command += TextUtils.isEmpty(value) ? "" : "\"" + value + "\");";
+                                mWebView.loadUrl("javascript:" + command);
                             }
                         }, id);
                         dialog.show(getSupportFragmentManager(), "click_dialog");
@@ -148,18 +181,27 @@ public class CustomActivity extends AppCompatActivity {
                 new JSInteraction.RawCallBack() {
                     @Override
                     public void onLoadRaw(String html) {
+                        html = html.replaceAll(Constants.BR, Constants.BR_REPLACER);
                         Document document = Jsoup.parse(html);
                         Elements tables = document.select("table");
-                        Map<String, String> tableMap = new HashMap<>();
+                        Map<String, Element> tableMap = new HashMap<>();
                         for (Element element : tables) {
                             String id = element.id();
                             if (TextUtils.isEmpty(id)) {
                                 id = element.className();
                             }
-                            tableMap.put(id, element.text());
+                            tableMap.put(id, element);
                         }
-                        TableChooseDialog tableDialog = TableChooseDialog.newInstance(tableMap);
-                        tableDialog.show(getSupportFragmentManager(), "table_choose");
+                        if (SchoolWebViewClient.replayMode && !TextUtils.isEmpty(classTableInfo.mClassTableID)) {
+                            List<Element> list = TableChooseDialog.getClasses(tableMap.get(classTableInfo.mClassTableID));
+                            List<EnrichedClassInfo> enrichedClasses = TableChooseDialog.generateClasses(list, classTableInfo, getResources().getDisplayMetrics());
+                            DBManger manger = DBManger.getInstance(CustomActivity.this);
+                            manger.updateClasses(enrichedClasses);
+                            Toast.makeText(CustomActivity.this, "获取课表成功, 请回到主界面查看课表", Toast.LENGTH_LONG).show();
+                        } else {
+                            TableChooseDialog tableDialog = TableChooseDialog.newInstance(tableMap);
+                            tableDialog.show(getSupportFragmentManager(), "table_choose");
+                        }
                     }
                 }), JSInteraction.JSInterface);
     }
@@ -172,14 +214,10 @@ public class CustomActivity extends AppCompatActivity {
         return input;
     }
 
-    private void setConfig() {
-        String commands = "";
-        for (Map<String, String> map : mActions) {
-            for (String type : map.keySet()) {
-                if (ClickDialog.USERNAME.equals(type) || ClickDialog.PASSWORD.equals(type)) {
-
-                }
-            }
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mViewGroup.removeAllViews();
+        mWebView.destroy();
     }
 }

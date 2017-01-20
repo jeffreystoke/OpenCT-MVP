@@ -1,7 +1,7 @@
 package cc.metapro.openct.custom;
 
 /*
- *  Copyright 2016 - 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ package cc.metapro.openct.custom;
  * limitations under the License.
  */
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -27,7 +26,6 @@ import android.widget.RadioButton;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -54,9 +52,6 @@ public class ClickDialog extends DialogFragment implements View.OnClickListener 
 
     // 点击了链接
     public static final String LINK = "link";
-
-    private static String mType;
-    private static String mHref;
     private static CallBack mCallBack;
     private static String mId;
     @BindView(R.id.captcha)
@@ -65,6 +60,7 @@ public class ClickDialog extends DialogFragment implements View.OnClickListener 
     RadioButton mRadioLogin;
     @BindView(R.id.value)
     MaterialEditText mValue;
+    private String mType = LINK;
     private Map<String, String> userPass;
 
     public static ClickDialog newInstance(CallBack callBack, String id) {
@@ -80,17 +76,21 @@ public class ClickDialog extends DialogFragment implements View.OnClickListener 
 
     @OnClick(R.id.ok)
     public void ok() {
-        final Map<String, String> map = new HashMap<>(1);
-        map.put(mType, generateValue(mType));
         if (CAPTCHA.equals(mType) || INPUT.equals(mType)) {
-            InputDialog.newInstance(new InputDialog.InputCallBack() {
+            String hint = "";
+            if (CAPTCHA.equals(mType)) {
+                hint = "请输入验证码";
+            } else if (INPUT.equals(mType)) {
+                hint = "请输入内容";
+            }
+            InputDialog.newInstance(hint, new InputDialog.InputCallBack() {
                 @Override
                 public void onConfirm(String result) {
-                    mCallBack.setResult(map, result);
+                    mCallBack.setResult(mType, generateValue(mType), result);
                 }
             }).show(getFragmentManager(), "input_dialog");
         } else {
-            mCallBack.setResult(map, null);
+            mCallBack.setResult(mType, generateValue(mType), null);
         }
         dismiss();
     }
@@ -117,11 +117,6 @@ public class ClickDialog extends DialogFragment implements View.OnClickListener 
                 userPass = Loader.getLibStuInfo(getActivity());
                 break;
         }
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
     }
 
     @Override
@@ -162,29 +157,30 @@ public class ClickDialog extends DialogFragment implements View.OnClickListener 
 
     private String generateValue(String type) {
         if (USERNAME.equals(type) || PASSWORD.equals(type)) {
-            return "var openCTNode=document.getElementById(\"" + mId + "\");" +
+            // 正方 需要一个 count 变量才能输入验证码
+            return "var count=1;var openCTNode=document.getElementById(\"" + mId + "\");" +
                     "if(!openCTNode){openCTNode=document.getElementsByName(\"" + mId + "\")[0];}" +
                     "openCTNode.setAttribute(\"value\",\"" + mValue.getText() + "\");";
         } else if (CAPTCHA.equals(type)) {
-            // 正方 需要一个count变量才能输入验证码
             // 准备填写验证码的JS代码, 调用时需要加上 验证码 和 ";"
-            return "var count=1;var openCTCaptchaText=document.getElementById(\"" + mId + "\");" +
+            return "var openCTCaptchaText=document.getElementById(\"" + mId + "\");" +
                     "if(!openCTCaptchaText){openCTCaptchaText=document.getElementsByName(\"" + mId + "\")[0];}" +
-                    "openCTCaptchaText.value=";
+                    "openCTCaptchaText.setAttribute(\"value\",";
         } else if (SUBMIT_BUTTON.equals(type)) {
             return "var openCTButton=document.getElementById(\"" + mId + "\");" +
                     "if(!openCTButton){openCTButton=document.getElementsByName(\"" + mId + "\")[0];}" +
                     "if(openCTButton){openCTButton.click();}";
         } else if (INPUT.equals(type)) {
-            // 需要填写内容的JS代码, 调用时需要加上 内容 和 ";"
+            // 需要填写内容的JS代码, 调用时需要加上 \" + yourValue + "\");"
             return "var openCTInputText=document.getElementById(\"" + mId + "\");" +
                     "if(!openCTInputText){captchaText=document.getElementsByName(\"" + mId + "\")[0];}" +
                     "openCTInputText.setAttribute(\"value\",";
         } else if (LINK.equals(type)) {
             // 链接, 检查当前页面中 href
+//            return mId.substring(mId.lastIndexOf("/"));
             return "var openCTLinks=document.getElementsByTagName(\"a\");" +
-                    "for(int i=0;i<openCTLinks.length;i++){" +
-                    "if(openCTLinks[i].href.indexOf(\"" + mId.substring(mId.lastIndexOf("/")) + "\")>=0){" +
+                    "for(var i=0;i<openCTLinks.length;i++){" +
+                    "if(openCTLinks[i].href.indexOf(\"" + mId.substring(mId.lastIndexOf("/") + 1) + "\")>=0){" +
                     "openCTLinks[i].click();}}";
         }
         return null;
@@ -192,7 +188,7 @@ public class ClickDialog extends DialogFragment implements View.OnClickListener 
 
     public interface CallBack {
 
-        void setResult(Map<String, String> map, String value);
+        void setResult(String key, String cmd, String value);
 
     }
 }

@@ -1,7 +1,7 @@
 package cc.metapro.openct.custom;
 
 /*
- *  Copyright 2016 - 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,13 @@ import cc.metapro.openct.R;
 public class InputDialog extends DialogFragment {
 
     private static InputCallBack mCallBack;
+    private static String mHint;
     @BindView(R.id.content)
     MaterialEditText mEditText;
 
-    public static InputDialog newInstance(InputCallBack callBack) {
+    public static InputDialog newInstance(String hint, InputCallBack callBack) {
         mCallBack = callBack;
+        mHint = hint;
         return new InputDialog();
     }
 
@@ -53,6 +55,7 @@ public class InputDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_input, container);
         ButterKnife.bind(this, view);
+        mEditText.setHint(mHint);
         return view;
     }
 

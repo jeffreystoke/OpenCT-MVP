@@ -1,7 +1,7 @@
 package cc.metapro.openct.data.source;
 
 /*
- *  Copyright 2016 - 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cc.metapro.openct.data.university.AdvancedCustomInfo;
 import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
@@ -59,7 +60,48 @@ public class DBManger {
     }
 
     /**
-     * 更新自定义的学校基本信息
+     * 更新高级自定义信息
+     *
+     * @param info 新的高级自定义信息
+     */
+    public void updateAdvancedCustomClassInfo(AdvancedCustomInfo info) {
+        mDatabase.beginTransaction();
+        try {
+            mDatabase.delete(DBHelper.ADV_CUSTOM_TABLE, null, null);
+            String json = info.toString();
+            mDatabase.execSQL("INSERT INTO " + DBHelper.ADV_CUSTOM_TABLE + " VALUES(null, ?)", new Object[]{json});
+            mDatabase.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            mDatabase.endTransaction();
+        }
+    }
+
+    /**
+     * 获取高级自定义信息
+     *
+     * @return
+     */
+    public AdvancedCustomInfo getAdvancedCustomInfo() {
+        Cursor cursor = null;
+        try {
+            cursor = mDatabase.query(DBHelper.ADV_CUSTOM_TABLE, null, null, null, null, null, null);
+            cursor.moveToFirst();
+            Gson gson = new Gson();
+            return gson.fromJson(cursor.getString(1), AdvancedCustomInfo.class);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+            return null;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    /**
+     * 更新基础自定义的学校基本信息
      *
      * @param info 新的自定义学校信息
      */

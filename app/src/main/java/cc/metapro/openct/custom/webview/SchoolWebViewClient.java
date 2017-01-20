@@ -1,7 +1,7 @@
 package cc.metapro.openct.custom.webview;
 
 /*
- *  Copyright 2016 - 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,14 @@ package cc.metapro.openct.custom.webview;
 import android.net.http.SslError;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.FragmentManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import java.util.List;
-
+import cc.metapro.openct.custom.CustomConfiguration;
 import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 
 public class SchoolWebViewClient extends WebViewClient {
 
@@ -43,31 +42,10 @@ public class SchoolWebViewClient extends WebViewClient {
                     "window." + JSInteraction.JSInterface + ".getClicked(id);}\"";
     public static boolean replayMode = false;
     private Observer<Integer> mObserver;
-    private int actionIndex;
 
-    public void setActions(final List<String> actions, final WebView webView) {
-        actionIndex = 0;
-        mObserver = new Observer<Integer>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(Integer integer) {
-                webView.loadUrl(actions.get(integer));
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        };
+    public void performActions(CustomConfiguration conf, FragmentManager manager, WebView webView) {
+        replayMode = true;
+        mObserver = conf.getCmdExe(manager, webView);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -101,7 +79,7 @@ public class SchoolWebViewClient extends WebViewClient {
                     "head.appendChild(script);");
         } else {
             if (mObserver != null) {
-                mObserver.onNext(actionIndex++);
+                mObserver.onNext(0);
             }
         }
         super.onPageFinished(view, url);

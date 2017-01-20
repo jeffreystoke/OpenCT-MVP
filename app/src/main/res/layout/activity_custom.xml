@@ -27,6 +27,7 @@
     tools:context="cc.metapro.openct.custom.CustomActivity">
 
     <LinearLayout
+        android:id="@+id/web_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">

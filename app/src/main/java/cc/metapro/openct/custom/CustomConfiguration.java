@@ -1,7 +1,7 @@
 package cc.metapro.openct.custom;
 
 /*
- *  Copyright 2016 - 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,60 +16,104 @@ package cc.metapro.openct.custom;
  * limitations under the License.
  */
 
+import android.support.v4.app.FragmentManager;
+import android.webkit.WebView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import cc.metapro.openct.data.source.StoreHelper;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+
 public class CustomConfiguration {
 
-    private String preLoginJS;
-    private String postLoginJS;
-    private String loginButtonJS;
-    private boolean needCaptcha;
-    private boolean needLogin;
+    private List<String> mTypes;
+    private List<String> mCmds;
+    private Observer<Integer> mObserver;
+    private int mIndex = 0;
 
     public CustomConfiguration() {
-
+        mTypes = new ArrayList<>();
+        mCmds = new ArrayList<>();
     }
 
-    public CustomConfiguration(String preLoginJS, String postLoginJS) {
-        this.preLoginJS = preLoginJS;
-        this.postLoginJS = postLoginJS;
+    public void addAction(String type, String cmd) {
+        mTypes.add(type);
+        mCmds.add(cmd);
     }
 
-    public void setNeedCaptcha(boolean needCaptcha) {
-        this.needCaptcha = needCaptcha;
+    private void showInputDialog(FragmentManager manager, final WebView view) {
+        String hint = "";
+        switch (mTypes.get(mIndex)) {
+            case ClickDialog.CAPTCHA:
+                hint = "请输入验证码";
+                break;
+            case ClickDialog.INPUT:
+                hint = "请输入内容";
+        }
+        InputDialog.newInstance(hint, new InputDialog.InputCallBack() {
+            @Override
+            public void onConfirm(String result) {
+                String cmd = "javascript:" + mCmds.get(mIndex++) + "\"" + result + "\");";
+                view.loadUrl(cmd);
+                mObserver.onNext(0);
+            }
+        }).show(manager, "input_dialog");
     }
 
-    public void setNeedLogin(boolean needLogin) {
-        this.needLogin = needLogin;
+    public Observer<Integer> getCmdExe(final FragmentManager manager, final WebView view) {
+        mIndex = 0;
+        mObserver = new Observer<Integer>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Integer integer) {
+                if (mIndex >= mTypes.size() || mIndex < 0) return;
+                String type = mTypes.get(mIndex);
+                switch (type) {
+                    case ClickDialog.CAPTCHA:
+                    case ClickDialog.INPUT:
+                        showInputDialog(manager, view);
+                        break;
+                    default:
+                        view.loadUrl("javascript:" + mCmds.get(mIndex++));
+                        if (mIndex < mTypes.size() && mIndex > 0) {
+                            try {
+                                if (!(ClickDialog.LINK.equals(mTypes.get(mIndex - 1)) && ClickDialog.SUBMIT_BUTTON.equals(mTypes.get(mIndex - 1)))) {
+                                    onNext(0);
+                                }
+                            } catch (Exception e) {
+                                onNext(0);
+                                e.printStackTrace();
+                            }
+                        }
+                        break;
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+        return mObserver;
     }
 
-    public boolean needCaptcha() {
-        return needCaptcha;
+    @Override
+    public String toString() {
+        return StoreHelper.getJsonText(this);
     }
 
-    public String getPostLoginJS() {
-        return postLoginJS;
-    }
-
-    public void setPostLoginJS(String postLoginJS) {
-        this.postLoginJS = postLoginJS;
-    }
-
-    public String getPreLoginJS() {
-        return preLoginJS;
-    }
-
-    public void setPreLoginJS(String preLoginJS) {
-        this.preLoginJS = preLoginJS;
-    }
-
-    public String getLoginButtonJS() {
-        return loginButtonJS;
-    }
-
-    public void setLoginButtonJS(String loginButtonJS) {
-        this.loginButtonJS = loginButtonJS;
-    }
-
-    public boolean needLogin() {
-        return needLogin;
+    public boolean isEmpty() {
+        return mTypes == null || mTypes.size() == 0;
     }
 }

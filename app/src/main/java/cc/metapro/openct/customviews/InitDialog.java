@@ -1,7 +1,7 @@
 package cc.metapro.openct.customviews;
 
 /*
- *  Copyright 2016 - 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,6 @@ import cc.metapro.openct.utils.ActivityUtils;
 
 public class InitDialog extends DialogFragment {
 
-    public static final int REQUEST_SCHOOL_NAME = 1;
-    public static final String RESULT_KEY = "school_name";
     @BindView(R.id.info_init_cms_username)
     MaterialEditText cmsUsername;
     @BindView(R.id.info_init_cms_password)
@@ -68,7 +66,7 @@ public class InitDialog extends DialogFragment {
     @OnClick(R.id.info_init_school)
     public void startSelection() {
         Intent intent = new Intent(getActivity(), SchoolSelectionActivity.class);
-        startActivityForResult(intent, REQUEST_SCHOOL_NAME);
+        startActivityForResult(intent, SchoolSelectionActivity.REQUEST_SCHOOL_NAME);
     }
 
     @OnClick(R.id.ok)
@@ -110,7 +108,7 @@ public class InitDialog extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
             if (data != null) {
-                schoolName = data.getStringExtra(RESULT_KEY);
+                schoolName = data.getStringExtra(SchoolSelectionActivity.RESULT_KEY);
                 schoolText.setText(schoolName);
             }
         }

@@ -17,8 +17,8 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <Preference
-        android:title="@string/school"
-        android:key="@string/pref_school_name">
+        android:key="@string/pref_school_name"
+        android:title="@string/school">
         <intent
             android:action="cc.metapro.openct.schoolselection"/>
     </Preference>
@@ -37,36 +37,127 @@
         android:title="@string/enable_encryption"/>
     <PreferenceScreen
         android:summary="@string/tip_not_exist"
-        android:title="@string/custom_school">
-        <Preference
-            android:title="课程表"
-            android:summary="自定义你的课程表获取方式">
-            <intent
-                android:action="cc.metapro.openct.custom"
-                android:data="cms_class"/>
-        </Preference>
-        <Preference
-            android:title="成绩查询"
-            android:summary="自定义你的成绩获取方式">
-            <intent
-                android:action="cc.metapro.openct.custom"
-                android:data="cms_grade"/>
-        </Preference>
-        <Preference
-            android:title="图书馆检索"
-            android:summary="自定义你的图书馆检索方式">
-            <intent
-                android:action="cc.metapro.openct.custom"
-                android:data="lib_search"/>
-        </Preference>
-        <Preference
-            android:title="借阅信息"
-            android:summary="自定义你的借阅信息获取方式">
-            <intent
-                android:action="cc.metapro.openct.custom"
-                android:data="lib_borrow"/>
-        </Preference>
+        android:title="基础自定义">
+        <PreferenceScreen
+            android:summary="自定义时遇到问题?"
+            android:title="帮助">
+            <Preference
+                android:summary="查看学校教务系统主页下方进行判断"
+                android:title="教务系统的选择"/>
+            <Preference
+                android:summary="查看学校图书馆检索页 (切记是 检索页, 不是主页) 下方进行判断"
+                android:title="图书管理系统的选择"/>
+            <Preference
+                android:summary="必须以 http:// 开头, 不需要路径名, 文件名, 动态部分"
+                android:title="地址的填写"/>
+            <Preference
+                android:summary="若在浏览器打开后出现诸如 (fath5dejk2robp45sfgikn45) 需要勾选"
+                android:title="动态地址"/>
+            <Preference
+                android:summary="请点击查看 OpenCT 项目页"
+                android:title="示例配置">
+                <intent
+                    android:action="android.intent.action.VIEW"
+                    android:data="@string/project_url"/>
+            </Preference>
+        </PreferenceScreen>
+        <CheckBoxPreference
+            android:key="@string/pref_custom_enable"
+            android:title="启用自定义学校"/>
+        <EditTextPreference
+            android:key="@string/pref_custom_school_name"
+            android:title="学校名称"/>
+        <PreferenceCategory
+            android:summary="教务网配置"
+            android:title="教务网">
+            <ListPreference
+                android:entries="@array/school_cms"
+                android:entryValues="@array/school_cms_values"
+                android:key="@string/pref_custom_cms_sys"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"
+                android:title="教务系统"/>
+            <EditTextPreference
+                android:defaultValue="http://"
+                android:inputType="textUri"
+                android:key="@string/pref_custom_cms_url"
+                android:title="地址"/>
+            <CheckBoxPreference
+                android:key="@string/pref_custom_cms_captcha"
+                android:summary="登录教务网需要验证码时勾选"
+                android:title="验证码"/>
+            <CheckBoxPreference
+                android:key="@string/pref_custom_cms_dyn_url"
+                android:summary="教务网地址在显示时会出现诸如勾选"
+                android:title="动态地址"/>
+            <CheckBoxPreference
+                android:key="@string/pref_custom_cms_inner"
+                android:summary="仅限校园网内部访问"
+                android:title="内部访问"/>
+        </PreferenceCategory>
+
+        <PreferenceCategory
+            android:summary="图书馆配置"
+            android:title="图书馆">
+            <ListPreference
+                android:entries="@array/school_lib"
+                android:entryValues="@array/school_lib_values"
+                android:key="@string/pref_custom_lib_sys"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"
+                android:title="图书管理系统"/>
+            <EditTextPreference
+                android:defaultValue="http://"
+                android:inputType="textUri"
+                android:key="@string/pref_custom_lib_url"
+                android:title="地址"/>
+            <CheckBoxPreference
+                android:key="@string/pref_custom_lib_captcha"
+                android:summary="登录图书馆需要验证码时勾选"
+                android:title="验证码"/>
+            <CheckBoxPreference
+                android:key="@string/pref_custom_lib_dyn_url"
+                android:summary="教务网地址在显示时会出现类似(asfbkahgbakvuhl)时勾选"
+                android:title="动态地址"/>
+            <CheckBoxPreference
+                android:key="@string/pref_custom_lib_inner"
+                android:summary="仅限校园网内部访问"
+                android:title="内部访问"/>
+        </PreferenceCategory>
     </PreferenceScreen>
+
+    <PreferenceScreen
+        android:summary="如果基础自定义学校不成功, 可以尝试高级自定义\n你将会执行完整的定义过程(暂时只支持自定义课程表)"
+        android:title="高级自定义(测试)">
+        <Preference
+            android:summary="自定义你的课程表获取方式"
+            android:title="课程表">
+            <intent
+                android:action="cc.metapro.openct.custom"/>
+        </Preference>
+        <!--<Preference-->
+        <!--android:title="成绩查询"-->
+        <!--android:summary="自定义你的成绩获取方式">-->
+        <!--<intent-->
+        <!--android:action="cc.metapro.openct.custom"-->
+        <!--android:data="cms_grade"/>-->
+        <!--</Preference>-->
+        <!--<Preference-->
+        <!--android:title="图书馆检索"-->
+        <!--android:summary="自定义你的图书馆检索方式">-->
+        <!--<intent-->
+        <!--android:action="cc.metapro.openct.custom"-->
+        <!--android:data="lib_search"/>-->
+        <!--</Preference>-->
+        <!--<Preference-->
+        <!--android:title="借阅信息"-->
+        <!--android:summary="自定义你的借阅信息获取方式">-->
+        <!--<intent-->
+        <!--android:action="cc.metapro.openct.custom"-->
+        <!--android:data="lib_borrow"/>-->
+        <!--</Preference>-->
+    </PreferenceScreen>
+
     <PreferenceScreen
         android:summary="@string/pref_cms_summary"
         android:title="@string/jwxt">

@@ -1,7 +1,7 @@
 package cc.metapro.openct.data.university;
 
 /*
- *  Copyright 2016 - 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,6 @@ import cc.metapro.openct.utils.Constants;
 
 public class CmsFactory extends UniversityFactory {
 
-    private static final String BR = "<\\s*?br\\s*?/?>";
     private CmsURLFactory mURLFactory;
 
     public CmsFactory(UniversityService service, CMSInfo cmsInfo) {
@@ -102,7 +101,7 @@ public class CmsFactory extends UniversityFactory {
         String tablePage = getTablePage(loginMap, mURLFactory.CLASS_URL_PATTERN);
 
         // 定义要被替代的符号, 解决BR等被解析成为空格
-        String toReplace = BR;
+        String toReplace = Constants.BR;
 
         // 各教务系统细节操作
 
@@ -138,7 +137,7 @@ public class CmsFactory extends UniversityFactory {
         String tablePage = getTablePage(loginMap, mURLFactory.GRADE_URL_PATTERN);
 
         // 定义要被替代的符号, 解决BR等被解析成为空格
-        String toReplace = BR;
+        String toReplace = Constants.BR;
 
         if (Constants.QZDATASOFT.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
             // TODO: 17/1/16 强智教务系统需要根据页面表单 Post 获取最新成绩

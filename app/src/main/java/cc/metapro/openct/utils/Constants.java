@@ -1,7 +1,7 @@
 package cc.metapro.openct.utils;
 
 /*
- *  Copyright 2016 - 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import android.graphics.Color;
 public final class Constants {
 
     public static final String ACTION = "action";
+
+    public static final String BR = "<\\s*?br\\s*?/?>";
 
     // encryption seed
     public static final String seed =

@@ -1,7 +1,7 @@
 package cc.metapro.openct.data.source;
 
 /*
- *  Copyright 2016 - 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ public class DBHelper extends SQLiteOpenHelper {
             CMS_DYN_URL = "cms_dyn_url", CMS_INNER_ACCESS = "cms_inner_access",
             LIB_SYS = "lib_sys", LIB_URL = "lib_url", LIB_CAPTCHA = "lib_captcha",
             LIB_DYN_URL = "lib_dyn_url", LIB_INNER_ACCESS = "lib_inner_access";
+
     static final String CLASS_TABLE = "classes";
     static final String SCHOOL_TABLE = "schools";
     static final String SYS_NAME = "sys_name";
@@ -47,6 +48,7 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String GRADE_TABLE = "grades";
     static final String BORROW_TABLE = "borrows";
     static final String CUSTOM_TABLE = "custom";
+    static final String ADV_CUSTOM_TABLE = "adv_custom";
     private static final String JSON = "json";
     private static final String DB_NAME = "openct-1.db";
 
@@ -72,8 +74,10 @@ public class DBHelper extends SQLiteOpenHelper {
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " + JSON + " TEXT)";
     private static final String CUSTOM_TITLES =
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " + JSON + " TEXT)";
+    private static final String ADV_CUSTOM_TITLES =
+            "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " + JSON + " TEXT)";
 
-    private static final int DB_VERSION = 10;
+    private static final int DB_VERSION = 11;
 
     private Context mContext;
 
@@ -85,6 +89,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         createTables(db);
+
         updateSchools(db);
         updateCmsSys(db);
         updateLibSys(db);
@@ -93,6 +98,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         createTables(db);
+
         updateSchools(db);
         updateCmsSys(db);
         updateLibSys(db);
@@ -106,6 +112,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + CMS_TABLE + CMS_TITLES);
         db.execSQL("CREATE TABLE IF NOT EXISTS " + LIB_TABLE + LIB_TITLES);
         db.execSQL("CREATE TABLE IF NOT EXISTS " + CUSTOM_TABLE + CUSTOM_TITLES);
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + ADV_CUSTOM_TABLE + ADV_CUSTOM_TITLES);
     }
 
     private void updateSchools(SQLiteDatabase db) {

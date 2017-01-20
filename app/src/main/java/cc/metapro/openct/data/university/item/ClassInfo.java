@@ -1,7 +1,7 @@
 package cc.metapro.openct.data.university.item;
 
 /*
- *  Copyright 2016 - 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ public class ClassInfo implements Serializable {
         String[] classes = content.split(Constants.BR_REPLACER + Constants.BR_REPLACER + "+");
         String s = classes[0];
         String[] tmp = s.split(Constants.BR_REPLACER);
-        if (tmp.length <= info.mClassStringCount) {
+        if (tmp.length > 0) {
             int duringIndex = info.mDuringIndex;
             int placeIndex = info.mPlaceIndex;
             int timeIndex = info.mTimeIndex;
@@ -87,7 +87,7 @@ public class ClassInfo implements Serializable {
             if (placeIndex < tmp.length) {
                 mPlace = infoParser(info.mPlaceRE, tmp[placeIndex]);
             }
-            if (teacherIndex < tmp.length) {
+            if (timeIndex < tmp.length) {
                 mTime = infoParser(info.mTimeRE, tmp[timeIndex]);
                 mOddWeek = oddPattern.matcher(tmp[timeIndex]).find();
                 mEvenWeek = evenPattern.matcher(tmp[timeIndex]).find();

@@ -1,7 +1,7 @@
 package cc.metapro.openct.data.source;
 
 /*
- *  Copyright 2016 - 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,17 +36,34 @@ public final class StoreHelper {
 
     @NonNull
     static String getAssetText(Context context, String filename) throws IOException {
-        InputStream fis = context.getAssets().open(filename);
-        BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-        StringBuilder sb = new StringBuilder();
-        String tmp = br.readLine();
-        while (tmp != null) {
-            sb.append(tmp);
-            tmp = br.readLine();
+        InputStream fis = null;
+        BufferedReader br = null;
+        try {
+            fis = context.getAssets().open(filename);
+            br = new BufferedReader(new InputStreamReader(fis));
+            StringBuilder sb = new StringBuilder();
+            String tmp = br.readLine();
+            while (tmp != null) {
+                sb.append(tmp);
+                tmp = br.readLine();
+            }
+            return sb.toString();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        br.close();
-        fis.close();
-        return sb.toString();
     }
 
     public static String getJsonText(Object infos) {
@@ -54,15 +71,32 @@ public final class StoreHelper {
     }
 
     public static void storeBytes(String path, InputStream in) throws IOException {
-        DataInputStream din = new DataInputStream(in);
-        DataOutputStream out = new DataOutputStream(new FileOutputStream(path));
-        byte[] buffer = new byte[2048];
-        int count;
-        while ((count = din.read(buffer)) > 0) {
-            out.write(buffer, 0, count);
+        DataInputStream din = null;
+        DataOutputStream out = null;
+        try {
+            din = new DataInputStream(in);
+            out = new DataOutputStream(new FileOutputStream(path));
+            byte[] buffer = new byte[2048];
+            int count;
+            while ((count = din.read(buffer)) > 0) {
+                out.write(buffer, 0, count);
+            }
+        } finally {
+            if (din != null) {
+                try {
+                    din.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        out.close();
-        din.close();
     }
 
     public static void delFile(String path) {

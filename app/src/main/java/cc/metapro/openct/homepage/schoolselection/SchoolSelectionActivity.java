@@ -1,7 +1,7 @@
 package cc.metapro.openct.homepage.schoolselection;
 
 /*
- *  Copyright 2016 - 2017 metapro.cc Jeffctor
+ *  Copyright 2016 - 2017 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,8 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 public class SchoolSelectionActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
+    public static final int REQUEST_SCHOOL_NAME = 1;
+    public static final String RESULT_KEY = "school_name";
     private static String result;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -62,12 +64,12 @@ public class SchoolSelectionActivity extends AppCompatActivity implements Search
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 result = mAdapter.getItem(position).toString();
                 Intent intent = new Intent();
-                intent.putExtra(InitDialog.RESULT_KEY, result);
+                intent.putExtra(RESULT_KEY, result);
                 setResult(RESULT_OK, intent);
-                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(SchoolSelectionActivity.this);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString(getString(R.string.pref_school_name), result);
-                editor.apply();
+//                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(SchoolSelectionActivity.this);
+//                SharedPreferences.Editor editor = pref.edit();
+//                editor.putString(getString(R.string.pref_school_name), result);
+//                editor.apply();
                 finish();
             }
         });
@@ -97,6 +99,10 @@ public class SchoolSelectionActivity extends AppCompatActivity implements Search
 
     @Override
     protected void onDestroy() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(SchoolSelectionActivity.this);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(getString(R.string.pref_school_name), result);
+        editor.apply();
         super.onDestroy();
     }
 }
