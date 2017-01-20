@@ -19,6 +19,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_custom"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -60,7 +61,7 @@
             android:textAlignment="center"
             android:layout_marginTop="40dp"
             android:textColor="@color/materialWhite"
-            android:text="Tips: 在上方输入地址\n\n随后点击右下角按钮开始自定义或查看帮助"/>
+            android:text="@string/custom_tip"/>
 
         <WebView
             android:id="@+id/custom_web_view"
@@ -70,11 +71,41 @@
         </WebView>
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        style="@style/Widget.Design.FloatingActionButton.MyFab"
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/menu_custom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_menu"
-        app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"/>
+        fab:menu_colorNormal="@color/colorAccent"
+        fab:menu_colorPressed="@color/colorAccent"
+        fab:menu_colorRipple="@color/colorAccent"
+        fab:menu_labels_maxLines="2"
+        android:layout_margin="16dp"
+        android:layout_gravity="bottom|end"
+        fab:menu_labels_position="left">
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_start"
+            fab:fab_label="开始"/>
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_dest_ok"
+            fab:fab_label="结束"/>
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_replay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_replay"
+            fab:fab_label="回放"/>
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_help"
+            fab:fab_label="帮助"/>
+    </com.github.clans.fab.FloatingActionMenu>
 </android.support.design.widget.CoordinatorLayout>

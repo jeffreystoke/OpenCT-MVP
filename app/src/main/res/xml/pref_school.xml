@@ -36,94 +36,36 @@
         android:summary="@string/encryption_tip"
         android:title="@string/enable_encryption"/>
     <PreferenceScreen
-        android:summary="如果你的学校不在列表中, 可以尝试自定义功能"
-        android:title="自定义学校">
-        <PreferenceScreen
-            android:title="帮助"
-            android:summary="自定义时遇到问题?">
-            <Preference
-                android:title="教务系统的选择"
-                android:summary="查看学校教务系统主页下方进行判断"/>
-            <Preference
-                android:title="图书管理系统的选择"
-                android:summary="查看学校图书馆检索页 (切记是 检索页, 不是主页) 下方进行判断"/>
-            <Preference
-                android:title="地址的填写"
-                android:summary="必须以 http:// 开头, 不需要路径名, 文件名, 动态部分"/>
-            <Preference
-                android:title="动态地址"
-                android:summary="若在浏览器打开后出现诸如 (fath5dejk2robp45sfgikn45) 需要勾选"/>
-            <Preference
-                android:title="示例配置"
-                android:summary="请点击查看 OpenCT 项目页">
-                <intent
-                    android:action="android.intent.action.VIEW"
-                    android:data="@string/project_url"/>
-            </Preference>
-        </PreferenceScreen>
-        <CheckBoxPreference
-            android:key="@string/pref_custom_enable"
-            android:title="启用自定义学校"/>
-        <EditTextPreference
-            android:key="@string/pref_custom_school_name"
-            android:title="学校名称"/>
-        <PreferenceCategory
-            android:summary="教务网配置"
-            android:title="教务网">
-            <ListPreference
-                android:entries="@array/school_cms"
-                android:entryValues="@array/school_cms_values"
-                android:key="@string/pref_custom_cms_sys"
-                android:negativeButtonText="@null"
-                android:positiveButtonText="@null"
-                android:title="教务系统"/>
-            <EditTextPreference
-                android:key="@string/pref_custom_cms_url"
-                android:title="地址"
-                android:defaultValue="http://"
-                android:inputType="textUri"/>
-            <CheckBoxPreference
-                android:key="@string/pref_custom_cms_captcha"
-                android:summary="登录教务网需要验证码时勾选"
-                android:title="验证码"/>
-            <CheckBoxPreference
-                android:key="@string/pref_custom_cms_dyn_url"
-                android:summary="教务网地址在显示时会出现诸如勾选"
-                android:title="动态地址"/>
-            <CheckBoxPreference
-                android:key="@string/pref_custom_cms_inner"
-                android:summary="仅限校园网内部访问"
-                android:title="内部访问"/>
-        </PreferenceCategory>
-
-        <PreferenceCategory
-            android:summary="图书馆配置"
-            android:title="图书馆">
-            <ListPreference
-                android:entries="@array/school_lib"
-                android:entryValues="@array/school_lib_values"
-                android:key="@string/pref_custom_lib_sys"
-                android:negativeButtonText="@null"
-                android:positiveButtonText="@null"
-                android:title="图书管理系统"/>
-            <EditTextPreference
-                android:key="@string/pref_custom_lib_url"
-                android:title="地址"
-                android:defaultValue="http://"
-                android:inputType="textUri"/>
-            <CheckBoxPreference
-                android:key="@string/pref_custom_lib_captcha"
-                android:summary="登录图书馆需要验证码时勾选"
-                android:title="验证码"/>
-            <CheckBoxPreference
-                android:key="@string/pref_custom_lib_dyn_url"
-                android:summary="教务网地址在显示时会出现诸如勾选"
-                android:title="动态地址"/>
-            <CheckBoxPreference
-                android:key="@string/pref_custom_lib_inner"
-                android:summary="仅限校园网内部访问"
-                android:title="内部访问"/>
-        </PreferenceCategory>
+        android:summary="@string/tip_not_exist"
+        android:title="@string/custom_school">
+        <Preference
+            android:title="课程表"
+            android:summary="自定义你的课程表获取方式">
+            <intent
+                android:action="cc.metapro.openct.custom"
+                android:data="cms_class"/>
+        </Preference>
+        <Preference
+            android:title="成绩查询"
+            android:summary="自定义你的成绩获取方式">
+            <intent
+                android:action="cc.metapro.openct.custom"
+                android:data="cms_grade"/>
+        </Preference>
+        <Preference
+            android:title="图书馆检索"
+            android:summary="自定义你的图书馆检索方式">
+            <intent
+                android:action="cc.metapro.openct.custom"
+                android:data="lib_search"/>
+        </Preference>
+        <Preference
+            android:title="借阅信息"
+            android:summary="自定义你的借阅信息获取方式">
+            <intent
+                android:action="cc.metapro.openct.custom"
+                android:data="lib_borrow"/>
+        </Preference>
     </PreferenceScreen>
     <PreferenceScreen
         android:summary="@string/pref_cms_summary"
@@ -176,27 +118,23 @@
             android:title="@string/notice"/>
     </PreferenceScreen>
     <PreferenceCategory
-        android:title="关于 OpenCT">
+        android:title="@string/about_openct">
         <Preference
             android:summary="@string/pref_licience_info"
-            android:title="开源许可">
+            android:title="@string/open_source_license">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://www.apache.org/licenses/LICENSE-2.0"/>
+                android:data="@string/apache_license_2_url"/>
         </Preference>
         <Preference
             android:summary="@string/project_url"
-            android:title="项目地址">
+            android:title="@string/project_addr">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="@string/project_url"/>
         </Preference>
         <Preference
-            android:summary="jeffctor@gmail.com"
-            android:title="联系作者">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="mailto:jeffctor@gmail.com"/>
-        </Preference>
+            android:summary="@string/mail_addr"
+            android:title="@string/contact_author"/>
     </PreferenceCategory>
 </PreferenceScreen>

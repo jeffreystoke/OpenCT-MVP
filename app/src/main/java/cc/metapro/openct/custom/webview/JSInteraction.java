@@ -24,20 +24,34 @@ public class JSInteraction {
 
     public static final String JSInterface = "openct";
 
-    private CallBack mCallBack;
+    private ClickCallBack mClickCallBack;
 
-    public JSInteraction(CallBack callBack) {
-        mCallBack = callBack;
+    private RawCallBack mRawCallBack;
+
+    public JSInteraction(ClickCallBack clickCallBack, RawCallBack rawCallBack) {
+        mClickCallBack = clickCallBack;
+        mRawCallBack = rawCallBack;
     }
 
     @JavascriptInterface
-    public void getClicked(String clicked) {
-        mCallBack.onClick(clicked);
+    public void getRaw(String html) {
+        mRawCallBack.onLoadRaw(html);
     }
 
-    public interface CallBack {
+    @JavascriptInterface
+    public void getClicked(String id) {
+        mClickCallBack.onClick(id);
+    }
 
-        void onClick(String element);
+    public interface ClickCallBack {
+
+        void onClick(String id);
+
+    }
+
+    public interface RawCallBack {
+
+        void onLoadRaw(String html);
 
     }
 }

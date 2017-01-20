@@ -19,7 +19,6 @@ package cc.metapro.openct.pref;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -181,7 +180,7 @@ public class SettingsActivity extends AppCompatActivity {
                 ListPreference listPreference = (ListPreference) preference;
                 int index = listPreference.findIndexOfValue(stringValue);
                 preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
-            } else if (preference instanceof EditTextPreference) {
+            } else {
                 preference.setSummary(stringValue);
             }
 

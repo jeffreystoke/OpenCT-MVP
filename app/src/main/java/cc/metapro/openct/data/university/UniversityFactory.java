@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -64,7 +65,7 @@ public abstract class UniversityFactory {
     UniversityService mService;
     private boolean gotDynPart;
 
-    static List<ClassInfo> generateClasses(String classTablePage, CmsFactory.ClassTableInfo classTableInfo) {
+    public static List<ClassInfo> generateClasses(String classTablePage, CmsFactory.ClassTableInfo classTableInfo) {
         Document doc = Jsoup.parse(classTablePage);
         // 根据标准Id 获取 表格
         Elements tables = doc.select("table[id=" + classTableInfo.mClassTableID + "]");
@@ -113,7 +114,7 @@ public abstract class UniversityFactory {
     }
 
     @NonNull
-    static List<GradeInfo> generateGrades(String classTablePage, CmsFactory.GradeTableInfo gradeTableInfo) {
+    public static List<GradeInfo> generateGrades(String classTablePage, CmsFactory.GradeTableInfo gradeTableInfo) {
         Document doc = Jsoup.parse(classTablePage);
         Elements tables = doc.select("table[id=" + gradeTableInfo.mGradeTableID + "]");
         Element targetTable = tables.first();
@@ -143,35 +144,35 @@ public abstract class UniversityFactory {
         getDynPart();
         String loginPageHtml = mService.getPage(getLoginURL(), null).execute().body();
         String userCenter = null;
+
         // 教务网登录
         if (mCMSInfo != null) {
             // TODO: 17/1/14 针对强智系统进行处理
             // 强智教务系统 (特殊处理)
-//            if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
-//                String serverResponse = mService.login(mCMSInfo.mCmsURL + "Logon.do?method=logon&flag=sess", getLoginURL(), new HashMap<String, String>(0)).execute().body();
-//                // 加密登录 (模拟网页JS代码)
-//                String scode = serverResponse.split("#")[0];
-//                String sxh = serverResponse.split("#")[1];
-//                String code = loginMap.get(Constants.USERNAME_KEY) + "%%%" + loginMap.get(Constants.PASSWORD_KEY);
-//                String encoded = "";
-//                for (int i = 0; i < code.length(); i++) {
-//                    if (i < 20) {
-//                        encoded = encoded + code.substring(i, i + 1) + scode.substring(0, Integer.parseInt(sxh.substring(i, i + 1)));
-//                        scode = scode.substring(Integer.parseInt(sxh.substring(i, i + 1)), scode.length());
-//                    } else {
-//                        encoded = encoded + code.substring(i, code.length());
-//                        i = code.length();
-//                    }
-//                }
-//                Map<String, String> map = new HashMap<>(3);
-//                map.put("useDogCode", "");
-//                map.put("encoded", encoded);
-//                map.put("RANDOMCODE", loginMap.get(Constants.CAPTCHA_KEY));
-//                Document document = Jsoup.parse(loginPageHtml, mCMSInfo.mCmsURL);
-//                String action = document.select("form").get(0).absUrl("action");
-//                userCenter = mService.login(action, getLoginRefer(), map).execute().body();
-//            }
-            // 一般系统
+            if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
+                String serverResponse = mService.login(mCMSInfo.mCmsURL + "Logon.do?method=logon&flag=sess", getLoginURL(), new HashMap<String, String>(0)).execute().body();
+                // 加密登录 (模拟网页JS代码)
+                String scode = serverResponse.split("#")[0];
+                String sxh = serverResponse.split("#")[1];
+                String code = loginMap.get(Constants.USERNAME_KEY) + "%%%" + loginMap.get(Constants.PASSWORD_KEY);
+                String encoded = "";
+                for (int i = 0; i < code.length(); i++) {
+                    if (i < 20) {
+                        encoded = encoded + code.substring(i, i + 1) + scode.substring(0, Integer.parseInt(sxh.substring(i, i + 1)));
+                        scode = scode.substring(Integer.parseInt(sxh.substring(i, i + 1)), scode.length());
+                    } else {
+                        encoded = encoded + code.substring(i, code.length());
+                        i = code.length();
+                    }
+                }
+                Map<String, String> map = new HashMap<>(3);
+                map.put("useDogCode", "");
+                map.put("encoded", encoded);
+                map.put("RANDOMCODE", loginMap.get(Constants.CAPTCHA_KEY));
+                Document document = Jsoup.parse(loginPageHtml, mCMSInfo.mCmsURL);
+                String action = document.select("form").get(0).absUrl("action");
+                userCenter = mService.login(action, getLoginRefer(), map).execute().body();
+            }
         }
 
         FormHandler handler = new FormHandler(loginPageHtml, getLoginURL());

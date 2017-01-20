@@ -16,15 +16,10 @@ package cc.metapro.openct.data.openctservice;
  * limitations under the License.
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Cookie;
-import okhttp3.CookieJar;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -36,27 +31,19 @@ public class ServiceGenerator {
 
     private static final String API_BASE_URL = "http://openct.metapro.cc/";
 
-    private static Map<String, List<Cookie>> cookieStore = new HashMap<>();
+    private static CookieManager manager = new CookieManager() {{
+        setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+    }};
 
-    private static OkHttpClient client =
-            new OkHttpClient.Builder().cookieJar(new CookieJar() {
-                @Override
-                public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                    cookieStore.put(url.host(), cookies);
-                }
-
-                @Override
-                public List<Cookie> loadForRequest(HttpUrl url) {
-                    List<Cookie> cookies = cookieStore.get(url.host());
-                    return cookies != null ? cookies : new ArrayList<Cookie>();
-                }
-            }).followRedirects(true).connectTimeout(20, TimeUnit.SECONDS).build();
+    private static final OkHttpClient client =
+            new OkHttpClient.Builder()
+                    .cookieJar(new QuotePreservingCookieJar(manager))
+                    .followRedirects(true)
+                    .connectTimeout(20, TimeUnit.SECONDS)
+                    .build();
 
     public static <S> S createService(Class<S> serviceClass, String convertType) {
-        Retrofit.Builder builder =
-                new Retrofit.Builder()
-                        .baseUrl(API_BASE_URL)
-                        .client(client);
+        Retrofit.Builder builder = new Retrofit.Builder().baseUrl(API_BASE_URL).client(client);
 
         Retrofit retrofit = null;
 

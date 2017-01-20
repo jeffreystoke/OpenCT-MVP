@@ -17,7 +17,7 @@ package cc.metapro.openct.grades;
  */
 
 import android.content.Context;
-import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -100,12 +100,12 @@ class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHolder> {
             try {
                 int i = Integer.parseInt(grade);
                 if (i < 60) {
-                    mGradeSummary.setTextColor(Color.parseColor("#FF4081"));
+                    mGradeSummary.setTextColor(ContextCompat.getColor(mGradeSummary.getContext(), R.color.colorAccent));
                 } else {
-                    mGradeSummary.setTextColor(Color.parseColor("#3F51B5"));
+                    mGradeSummary.setTextColor(ContextCompat.getColor(mGradeSummary.getContext(), R.color.colorPrimary));
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                mGradeSummary.setTextColor(ContextCompat.getColor(mGradeSummary.getContext(), R.color.colorPrimary));
             }
         }
 

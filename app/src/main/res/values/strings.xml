@@ -195,4 +195,13 @@
     <string name="project_url">https://github.com/jeffreystoke/openct-mvp</string>
     <string name="custom">自定义</string>
     <string name="select_school">选择学校</string>
+    <string name="custom_tip">Tips: 在上方输入地址\n\n随后点击右下角按钮开始自定义或查看帮助\n\n答应我, 一定要如实选择并填写哦~</string>
+    <string name="project_addr">项目地址</string>
+    <string name="contact_author">联系作者</string>
+    <string name="open_source_license">开源许可</string>
+    <string name="about_openct">关于 OpenCT</string>
+    <string name="apache_license_2_url">https://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="mail_addr">jeffctor@gmail.com</string>
+    <string name="tip_not_exist">如果你的学校不在列表中, 可以尝试自定义功能</string>
+    <string name="custom_school">自定义学校</string>
 </resources>
