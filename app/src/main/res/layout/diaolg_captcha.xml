@@ -13,8 +13,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="@string/press_to_get_captcha"
-        android:textColor="@color/colorPrimary"/>
+        android:text="@string/press_to_get_captcha"/>
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/captcha_edit_text"

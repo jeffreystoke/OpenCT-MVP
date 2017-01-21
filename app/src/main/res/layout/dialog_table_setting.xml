@@ -23,11 +23,14 @@
     android:padding="20dp">
     <TextView
         android:id="@+id/info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:padding="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
     <TextView
         android:text="上面显示的是 ?"
-        android:textSize="15dp"
+        android:textSize="15sp"
+        android:padding="10dp"
         android:textColor="@color/colorAccent"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
@@ -42,7 +45,8 @@
     <TextView
         android:id="@+id/ok"
         android:text="确定"
-        android:textSize="15dp"
+        android:textSize="15sp"
+        android:padding="10dp"
         android:textColor="@color/colorAccent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

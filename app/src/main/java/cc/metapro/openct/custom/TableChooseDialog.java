@@ -91,6 +91,8 @@ public class TableChooseDialog extends DialogFragment {
                     info.mDuringIndex = indexMap.get(TableSettingDialog.DURING);
                     info.mPlaceIndex = indexMap.get(TableSettingDialog.PLACE);
                     info.mTeacherIndex = indexMap.get(TableSettingDialog.TEACHER);
+                    info.mTypeIndex = indexMap.get(TableSettingDialog.TYPE);
+
                     info.mClassTableID = tableId;
                     info.mDailyClasses = rawInfoList.size() / 7;
                     info.mDuringRE = "(?<=(\\{第))\\d+.*?\\d+(?=(周))";

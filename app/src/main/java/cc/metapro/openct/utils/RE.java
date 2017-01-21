@@ -16,6 +16,8 @@ package cc.metapro.openct.utils;
  * limitations under the License.
  */
 
+import android.text.TextUtils;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -42,7 +44,7 @@ public class RE {
     }
 
     public static boolean isEmpty(String s) {
-        if (s == null) return true;
+        if (TextUtils.isEmpty(s)) return true;
         Matcher m = empty.matcher(s);
         return m.find();
     }

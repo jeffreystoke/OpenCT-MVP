@@ -42,9 +42,11 @@ public class TableSettingDialog extends DialogFragment {
 
     public static final String NAME = "课程名称";
     public static final String TIME = "上课时间";
+    public static final String TYPE = "课程类型";
     public static final String DURING = "课程周期";
     public static final String PLACE = "上课地点";
     public static final String TEACHER = "授课教师";
+
     private static String[] mStrings;
     private static TableSettingCallBack mCallBack;
     @BindView(R.id.info)
@@ -68,6 +70,7 @@ public class TableSettingDialog extends DialogFragment {
         for (CheckBox box : mCheckBoxes) {
             if (box.isChecked()) {
                 mIndexMap.put(box.getText().toString(), mIndex);
+                box.setVisibility(View.GONE);
             }
             box.setChecked(false);
         }
@@ -105,6 +108,12 @@ public class TableSettingDialog extends DialogFragment {
         name.setGravity(Gravity.CENTER);
         mCheckBoxes.add(name);
         mViewGroup.addView(name);
+
+        CheckBox type = new CheckBox(getActivity());
+        type.setText(TYPE);
+        type.setGravity(Gravity.CENTER);
+        mCheckBoxes.add(type);
+        mViewGroup.addView(type);
 
         CheckBox time = new CheckBox(getActivity());
         time.setText(TIME);

@@ -23,7 +23,7 @@
     android:id="@+id/activity_custom"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/md_2"
+    android:background="@color/materialDark"
     tools:context="cc.metapro.openct.custom.CustomActivity">
 
     <LinearLayout
@@ -40,8 +40,7 @@
                 android:id="@+id/toolbar"
                 style="@style/Widget.AppCompat.Toolbar.MyToolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                android:layout_height="wrap_content">
 
                 <EditText
                     android:id="@+id/url_input"
@@ -89,24 +88,41 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_start"
-            fab:fab_label="开始"/>
+            fab:fab_label="开始"
+            app:fab_size="mini"
+            fab:fab_colorNormal="@color/colorAccent"
+            fab:fab_colorPressed="@color/colorAccent"
+            fab:fab_colorRipple="@color/colorAccent"/>
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_dest_ok"
-            fab:fab_label="结束"/>
+            fab:fab_label="结束"
+            app:fab_size="mini"
+            fab:fab_colorNormal="@color/colorAccent"
+            fab:fab_colorPressed="@color/colorAccent"
+            fab:fab_colorRipple="@color/colorAccent"/>
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_replay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_replay"
-            fab:fab_label="回放"/>
+            fab:fab_label="回放"
+            app:fab_size="mini"
+            fab:fab_colorNormal="@color/colorAccent"
+            fab:fab_colorPressed="@color/colorAccent"
+            fab:fab_colorRipple="@color/colorAccent"/>
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_help"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_help"
-            fab:fab_label="帮助"/>
+            android:visibility="gone"
+            fab:fab_label="帮助"
+            app:fab_size="mini"
+            fab:fab_colorNormal="@color/colorAccent"
+            fab:fab_colorPressed="@color/colorAccent"
+            fab:fab_colorRipple="@color/colorAccent"/>
     </com.github.clans.fab.FloatingActionMenu>
 </android.support.design.widget.CoordinatorLayout>

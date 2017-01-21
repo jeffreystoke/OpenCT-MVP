@@ -195,7 +195,7 @@
     <string name="project_url">https://github.com/jeffreystoke/openct-mvp</string>
     <string name="custom">自定义</string>
     <string name="select_school">选择学校</string>
-    <string name="custom_tip">Tips: 在上方输入地址\n\n随后点击右下角按钮开始自定义或查看帮助\n\n答应我, 一定要如实选择并填写哦~</string>
+    <string name="custom_tip">Tips: \n\n1.初次定制:\n\n1)在上方输入地址\n\n2)随后点击右下角菜单 -> 开始按钮\n\n3)到达课表界面后点击结束\n\n4)根据提示选择课表并设定课表参数\n\n\n\n2.成功录制后使用该功能\n\n1)点击右下角菜单 -> 回放按钮\n\n2)到达课表界面后点击结束即可生成</string>
     <string name="project_addr">项目地址</string>
     <string name="contact_author">联系作者</string>
     <string name="open_source_license">开源许可</string>

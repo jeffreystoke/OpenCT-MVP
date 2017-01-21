@@ -101,11 +101,9 @@ class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHolder> {
                 int i = Integer.parseInt(grade);
                 if (i < 60) {
                     mGradeSummary.setTextColor(ContextCompat.getColor(mGradeSummary.getContext(), R.color.colorAccent));
-                } else {
-                    mGradeSummary.setTextColor(ContextCompat.getColor(mGradeSummary.getContext(), R.color.colorPrimary));
                 }
             } catch (Exception e) {
-                mGradeSummary.setTextColor(ContextCompat.getColor(mGradeSummary.getContext(), R.color.colorPrimary));
+                e.printStackTrace();
             }
         }
 

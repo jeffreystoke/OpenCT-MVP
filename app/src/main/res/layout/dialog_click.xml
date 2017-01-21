@@ -38,32 +38,32 @@
         android:layout_gravity="center">
         <RadioButton
             android:id="@+id/username"
-            android:text="用户名输入"
+            android:text="用户名输入框"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <RadioButton
             android:id="@+id/password"
-            android:text="密码输入"
+            android:text="密码输入框"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <RadioButton
             android:id="@+id/captcha"
-            android:text="验证码输入"
+            android:text="验证码输入框"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <RadioButton
             android:id="@+id/submit"
-            android:text="按钮"
+            android:text="登录按钮"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <RadioButton
             android:id="@+id/input"
-            android:text="输入框"
+            android:text="普通输入框"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <RadioButton
             android:id="@+id/link"
-            android:text="点了一个链接"
+            android:text="普通链接"
             android:checked="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

@@ -28,6 +28,8 @@ import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
@@ -83,12 +85,15 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
 
     static class ClassViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView mClassName, mTimePlace;
+        @BindView(R.id.class_name)
+        TextView mClassName;
+
+        @BindView(R.id.class_place_time)
+        TextView mTimePlace;
 
         ClassViewHolder(View itemView) {
             super(itemView);
-            mClassName = (TextView) itemView.findViewById(R.id.class_name);
-            mTimePlace = (TextView) itemView.findViewById(R.id.class_place_time);
+            ButterKnife.bind(this, itemView);
         }
 
         void setClassName(String className) {

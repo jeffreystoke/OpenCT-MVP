@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/md_2"
     tools:context="cc.metapro.openct.search.LibSearchActivity">
 
     <LinearLayout
@@ -20,8 +19,7 @@
                 android:id="@+id/toolbar"
                 style="@style/Widget.AppCompat.Toolbar.MyToolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -64,5 +62,6 @@
         style="@style/Widget.Design.FloatingActionButton.MyFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_search"/>
+        android:src="@drawable/ic_search"
+        app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"/>
 </android.support.design.widget.CoordinatorLayout>

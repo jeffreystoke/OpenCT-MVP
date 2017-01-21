@@ -16,7 +16,7 @@
             android:id="@+id/grade_class_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/materialDark"
             android:textSize="18sp"/>
 
         <TextView

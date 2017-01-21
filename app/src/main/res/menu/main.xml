@@ -15,10 +15,6 @@
                 android:id="@+id/export_classes"
                 android:title="@string/export_to_ical"
                 app:showAsAction="never"/>
-            <item
-                android:id="@+id/custom_cms_class"
-                android:title="自定义教务网课程表"
-                app:showAsAction="never"/>
         </menu>
     </item>
     <item

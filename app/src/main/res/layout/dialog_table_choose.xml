@@ -32,7 +32,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
-            android:textColor="@color/colorAccent"
             android:layout_gravity="center"
             android:textAlignment="center"/>
 
@@ -44,7 +43,7 @@
                 android:id="@+id/view_pager_title"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@color/colorPrimary"
+                android:background="@color/materialDark"
                 android:gravity="center">
 
             </android.support.v4.view.PagerTabStrip>

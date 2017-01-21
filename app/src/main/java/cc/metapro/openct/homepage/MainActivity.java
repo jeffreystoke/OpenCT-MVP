@@ -156,10 +156,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             return true;
-        } else if (id == R.id.custom_cms_class) {
-            Intent intent = new Intent(this, CustomActivity.class);
-            startActivity(intent);
-            return true;
         } else if (id == R.id.export_classes) {
             mPresenter.exportCLasses();
         }
