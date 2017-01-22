@@ -18,87 +18,99 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:padding="20dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
     <TextView
-        android:text="刚刚点击的是?"
-        android:textSize="15sp"
-        android:paddingBottom="10dp"
-        android:textColor="@color/colorAccent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textAlignment="center"/>
+        android:paddingBottom="10dp"
+        android:text="刚刚点击的是?"
+        android:textAlignment="center"
+        android:textColor="@color/colorAccent"
+        android:textSize="15sp"/>
+
     <RadioGroup
-        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
         <RadioButton
             android:id="@+id/username"
-            android:text="用户名输入框"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="用户名输入框"/>
+
         <RadioButton
             android:id="@+id/password"
-            android:text="密码输入框"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="密码输入框"/>
+
         <RadioButton
             android:id="@+id/captcha"
-            android:text="验证码输入框"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="验证码输入框"/>
+
         <RadioButton
             android:id="@+id/submit"
-            android:text="登录按钮"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="登录按钮"/>
+
         <RadioButton
             android:id="@+id/input"
-            android:text="普通输入框"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="普通输入框"/>
+
         <RadioButton
             android:id="@+id/link"
-            android:text="普通链接"
-            android:checked="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="普通链接"/>
     </RadioGroup>
+
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/value"
-        app:met_floatingLabel="normal"
-        android:hint="填写对应的值"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="填写对应的值"
+        android:visibility="gone"
+        app:met_floatingLabel="normal"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:padding="10dp">
+
         <TextView
             android:id="@+id/cancel"
-            android:text="不在以上范围, 继续"
-            android:textSize="15sp"
-            android:textColor="@color/colorAccent"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_weight="1"
+            android:text="不在以上范围, 继续"
             android:textAlignment="textStart"
-            android:layout_gravity="start"/>
+            android:textColor="@color/colorAccent"
+            android:textSize="15sp"/>
+
         <TextView
             android:id="@+id/ok"
-            android:text="确定"
-            android:textSize="15sp"
-            android:textColor="@color/colorAccent"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_weight="1"
+            android:text="确定"
             android:textAlignment="textEnd"
-            android:layout_gravity="end"/>
+            android:textColor="@color/colorAccent"
+            android:textSize="15sp"/>
     </LinearLayout>
 </LinearLayout>

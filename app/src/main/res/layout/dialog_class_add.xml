@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~  Copyright 2016 - 2017 OpenCT open source class table
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="10dp"
+            android:text="添加课程信息"
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp"/>
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/class_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="课程名称"
+            app:met_floatingLabel="normal"/>
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/class_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="课程类型"
+            app:met_floatingLabel="normal"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="10dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="10dp"
+                android:paddingStart="0dp"
+                android:text="上课时间"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/week"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:hint="星期"
+                android:inputType="numberDecimal"
+                app:met_floatingLabel="normal"
+                app:met_helperText="数字"
+                app:met_helperTextAlwaysShown="true"/>
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="10dp"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/time_start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:hint="开始"
+                android:inputType="numberDecimal"
+                app:met_floatingLabel="normal"
+                app:met_helperText="数字"
+                app:met_helperTextAlwaysShown="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingStart="10dp"
+                android:text="到"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/time_end"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:hint="结束"
+                android:inputType="numberDecimal"
+                app:met_floatingLabel="normal"
+                app:met_helperText="数字"
+                app:met_helperTextAlwaysShown="true"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="10dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="10dp"
+                android:paddingStart="0dp"
+                android:text="课程周期"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/week_start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:hint="开始周"
+                android:inputType="numberDecimal"
+                app:met_floatingLabel="normal"
+                app:met_helperText="数字"
+                app:met_helperTextAlwaysShown="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingStart="10dp"
+                android:text="到"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/week_end"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:hint="结束周"
+                android:inputType="numberDecimal"
+                app:met_floatingLabel="normal"
+                app:met_helperText="数字"
+                app:met_helperTextAlwaysShown="true"/>
+        </LinearLayout>
+
+        <RadioGroup
+            android:id="@+id/even_odd_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/odd"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="单周"/>
+
+            <RadioButton
+                android:id="@+id/even"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="双周"/>
+        </RadioGroup>
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/class_teacher"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="授课教师"
+            app:met_floatingLabel="normal"/>
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/class_place"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="上课地点"
+            app:met_floatingLabel="normal"/>
+
+        <Spinner
+            android:id="@+id/color_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+        </Spinner>
+
+        <TextView
+            android:id="@+id/ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:padding="10dp"
+            android:text="确定"
+            android:textColor="@color/colorAccent"
+            android:textSize="15sp"/>
+    </LinearLayout>
+
+</ScrollView>

@@ -17,7 +17,6 @@
 
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_school_selection"
     android:layout_width="match_parent"
@@ -44,8 +43,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="搜索并选中学校"
-                    android:lines="1"
-                    android:inputType="text"/>
+                    android:inputType="text"
+                    android:lines="1"/>
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
 

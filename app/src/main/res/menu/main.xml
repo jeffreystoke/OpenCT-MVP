@@ -12,6 +12,10 @@
                 android:title="@string/update_classes"
                 app:showAsAction="never"/>
             <item
+                android:id="@+id/add_class"
+                android:title="添加课程"
+                app:showAsAction="never"/>
+            <item
                 android:id="@+id/export_classes"
                 android:title="@string/export_to_ical"
                 app:showAsAction="never"/>

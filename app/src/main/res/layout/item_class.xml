@@ -17,8 +17,8 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingTop="10dp"
-            android:textSize="18sp"
-            android:textColor="@color/materialDark"/>
+            android:textColor="@color/materialDark"
+            android:textSize="18sp"/>
 
         <TextView
             android:id="@+id/class_place_time"

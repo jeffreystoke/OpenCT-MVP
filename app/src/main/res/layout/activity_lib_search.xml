@@ -8,9 +8,10 @@
     tools:context="cc.metapro.openct.search.LibSearchActivity">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -51,6 +52,7 @@
                 </LinearLayout>
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
+
         <FrameLayout
             android:id="@+id/search_result_fragment_continer"
             android:layout_width="match_parent"
