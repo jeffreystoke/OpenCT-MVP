@@ -23,22 +23,16 @@ import com.google.common.base.Strings;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cc.metapro.openct.data.source.StoreHelper;
-import cc.metapro.openct.data.university.item.ClassInfo;
-import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.utils.HTMLUtils.FormHandler;
@@ -64,80 +58,6 @@ public abstract class UniversityFactory {
     String dynPart;
     UniversityService mService;
     private boolean gotDynPart;
-
-    public static List<ClassInfo> generateClasses(String classTablePage, CmsFactory.ClassTableInfo classTableInfo) {
-        Document doc = Jsoup.parse(classTablePage);
-        // 根据标准Id 获取 表格
-        Elements tables = doc.select("table[id=" + classTableInfo.mClassTableID + "]");
-        Element targetTable = tables.first();
-
-        // 不是标准Id, 使用表头匹配
-        if (targetTable == null) {
-            tables = doc.select("table:matches((星期\\w)|周\\w)");
-            targetTable = tables.first();
-        }
-
-        if (targetTable == null) {
-            return new ArrayList<>(0);
-        }
-
-        // 解析课程表
-        Pattern pattern = Pattern.compile(classTableInfo.mClassInfoStart);
-        List<ClassInfo> classes = new ArrayList<>(classTableInfo.mDailyClasses * 7);
-        for (Element tr : targetTable.select("tr")) {
-            Elements tds = tr.select("td");
-            Element td = tds.first();
-            boolean found = false;
-            while (td != null) {
-                if (pattern.matcher(td.text()).find()) {
-                    td = td.nextElementSibling();
-                    found = true;
-                    break;
-                }
-                td = td.nextElementSibling();
-            }
-            if (!found) {
-                continue;
-            }
-            int i = 0;
-            while (td != null) {
-                i++;
-                classes.add(new ClassInfo(td.text(), classTableInfo));
-                td = td.nextElementSibling();
-            }
-            // 补足七天
-            for (; i < 7; i++) {
-                classes.add(new ClassInfo());
-            }
-        }
-        return classes;
-    }
-
-    @NonNull
-    public static List<GradeInfo> generateGrades(String classTablePage, CmsFactory.GradeTableInfo gradeTableInfo) {
-        Document doc = Jsoup.parse(classTablePage);
-        Elements tables = doc.select("table[id=" + gradeTableInfo.mGradeTableID + "]");
-        Element targetTable = tables.first();
-
-        // 不是标准Id, 使用表头匹配
-        if (targetTable == null) {
-            tables = doc.select("table:matches(绩)");
-            targetTable = tables.first();
-        }
-
-        if (targetTable == null) {
-            return new ArrayList<>(0);
-        }
-
-        List<GradeInfo> grades = new ArrayList<>();
-        Elements trs = targetTable.select("tr");
-        trs.remove(0);
-        for (Element tr : trs) {
-            Elements tds = tr.select("td");
-            grades.add(new GradeInfo(tds, gradeTableInfo));
-        }
-        return grades;
-    }
 
     @Nullable
     String login(@NonNull Map<String, String> loginMap) throws Exception {

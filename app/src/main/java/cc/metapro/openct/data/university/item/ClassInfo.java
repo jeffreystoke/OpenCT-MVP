@@ -49,15 +49,29 @@ import cc.metapro.openct.utils.RE;
 
 public class ClassInfo implements Serializable {
 
-    private final static Pattern oddPattern = Pattern.compile("单周?");
-    private final static Pattern evenPattern = Pattern.compile("双周?");
-
-    String mName, mType, mTime, mDuring, mTeacher, mPlace;
-    boolean mInactive;
+    private final static String oddPatternString = "(单周?)";
+    private final static String evenPatternString = "(双周?)";
+    private final static String doubleWidthString = "[^\\x00-\\xff]";
+    private String mName;
+    private String mType;
+    private String mTime;
+    private String mDuring;
+    private String mTeacher;
+    private String mPlace;
+    private boolean mInactive;
+    private boolean mOddWeek;
+    private boolean mEvenWeek;
     private ClassInfo mSubClassInfo;
-    private boolean mOddWeek, mEvenWeek;
 
-    public ClassInfo() {
+    public ClassInfo(String name, String type, String time, String during, String teacher, String place, boolean oddWeek, boolean evenWeek) {
+        mName = name;
+        mType = type;
+        mTime = time;
+        mDuring = during;
+        mTeacher = teacher;
+        mPlace = place;
+        mOddWeek = oddWeek;
+        mEvenWeek = evenWeek;
     }
 
     public ClassInfo(String content, CmsFactory.ClassTableInfo info) {
@@ -89,11 +103,17 @@ public class ClassInfo implements Serializable {
             }
             if (timeIndex < tmp.length) {
                 mTime = infoParser(info.mTimeRE, tmp[timeIndex]);
-                mOddWeek = oddPattern.matcher(tmp[timeIndex]).find();
-                mEvenWeek = evenPattern.matcher(tmp[timeIndex]).find();
+                if (!RE.isEmpty(mTime)) {
+                    mTime = mTime.replaceAll(doubleWidthString, "");
+                    mOddWeek = Pattern.compile(oddPatternString).matcher(tmp[timeIndex]).find();
+                    mEvenWeek = Pattern.compile(evenPatternString).matcher(tmp[timeIndex]).find();
+                }
             }
             if (duringIndex < tmp.length) {
                 mDuring = infoParser(info.mDuringRE, tmp[duringIndex]);
+                if (RE.isEmpty(mDuring)) {
+                    mDuring = mDuring.replaceAll(doubleWidthString, "");
+                }
             }
         }
 
@@ -146,7 +166,7 @@ public class ClassInfo implements Serializable {
     }
 
     @Nullable
-    private String getDuring() {
+    public String getDuring() {
         return Strings.isNullOrEmpty(mDuring) ? null : mDuring;
     }
 
@@ -167,8 +187,20 @@ public class ClassInfo implements Serializable {
         return mSubClassInfo;
     }
 
+    void setSubClassInfo(ClassInfo info) {
+        mSubClassInfo = info;
+    }
+
     public String getName() {
         return Strings.isNullOrEmpty(mName) ? "" : mName;
+    }
+
+    public String getTeacher() {
+        return mTeacher;
+    }
+
+    public String getType() {
+        return mType;
     }
 
     public String getPlace() {
@@ -203,8 +235,30 @@ public class ClassInfo implements Serializable {
         return StoreHelper.getJsonText(this);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof ClassInfo) {
+            ClassInfo c = (ClassInfo) obj;
+            if (c.getName().equals(mName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isOddWeek() {
+        return mOddWeek;
+    }
+
+    public boolean isEvenWeek() {
+        return mEvenWeek;
+    }
+
     /**
-     * 根据课表信息, 设定的当前周, 当前时间生成iCal日历事件
+     * 根据课表信息, 设定的当前周以及当前时间 生成iCal日历事件
      *
      * @param week    第几周
      * @param weekDay 星期几
@@ -269,7 +323,7 @@ public class ClassInfo implements Serializable {
         }
     }
 
-    AlertDialog getAlertDialog(final Context mContext, final ClassContract.Presenter mPresenter) {
+    AlertDialog.Builder getAlertDialog(final Context mContext, final ClassContract.Presenter mPresenter) {
         AlertDialog.Builder a = new AlertDialog.Builder(mContext);
         a.setMessage(toFullString());
         a.setCancelable(true);
@@ -293,7 +347,7 @@ public class ClassInfo implements Serializable {
             }
         });
         a.setTitle("课程信息");
-        return a.create();
+        return a;
     }
 
 }

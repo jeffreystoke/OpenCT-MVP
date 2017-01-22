@@ -35,6 +35,10 @@ public interface ClassContract {
 
         void storeClasses();
 
-        void exportCLasses();
+        void exportClasses();
+
+        void onClassEdited(EnrichedClassInfo info);
+
+        void loadFromExcel();
     }
 }

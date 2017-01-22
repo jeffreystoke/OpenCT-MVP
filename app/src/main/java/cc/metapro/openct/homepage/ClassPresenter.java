@@ -21,7 +21,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.util.DisplayMetrics;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,9 +76,8 @@ class ClassPresenter implements ClassContract.Presenter {
                     public void subscribe(ObservableEmitter<List<EnrichedClassInfo>> e) throws Exception {
                         Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
                         loginMap.put(Constants.CAPTCHA_KEY, code);
-                        List<ClassInfo> list = Loader.getCms().getClasses(loginMap);
-                        List<EnrichedClassInfo> source = prepareEnrichedClasses(list);
-                        e.onNext(source);
+                        List<EnrichedClassInfo> list = Loader.getCms().getClasses(loginMap);
+                        e.onNext(list);
                         e.onComplete();
                     }
                 })
@@ -129,49 +127,6 @@ class ClassPresenter implements ClassContract.Presenter {
         }
     }
 
-    private List<EnrichedClassInfo>
-    prepareEnrichedClasses(@NonNull List<ClassInfo> classes) {
-        List<EnrichedClassInfo> enrichedClasses = new ArrayList<>(classes.size());
-        int dailyClasses = classes.size() / 7;
-        int baseLength = Loader.getClassLength();
-        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-        final int width = (int) Math.round(metrics.widthPixels * (2.0 / 15.0));
-        final int baseHeight = (int) Math.round(metrics.heightPixels * (1.0 / 15.0));
-        final int classLength = Loader.getClassLength();
-
-        for (int i = 0; i < 7; i++) {
-            int colorIndex = i;
-            if (colorIndex > Constants.colorString.length) {
-                colorIndex /= 3;
-            }
-            for (int j = 0; j < dailyClasses; j++) {
-                colorIndex++;
-                if (colorIndex >= Constants.colorString.length) {
-                    colorIndex = 0;
-                }
-                ClassInfo classInfo = classes.get(j * 7 + i);
-                if (classInfo == null) {
-                    continue;
-                }
-                // 计算坐标
-                int x = i * width;
-                int y = j * baseHeight * classLength;
-
-                if (!classInfo.isEmpty()) {
-                    int h = classInfo.getLength() * baseHeight;
-                    if (h <= 0 || h > dailyClasses * baseHeight) {
-                        h = baseHeight * baseLength;
-                    }
-                    enrichedClasses.add(new EnrichedClassInfo
-                            (classInfo, x, y, Constants.getColor(colorIndex), width, h, i + 1));
-
-                }
-            }
-        }
-
-        return enrichedClasses;
-    }
-
     @Override
     public void loadCaptcha(final TextView view) {
         Observable
@@ -217,7 +172,7 @@ class ClassPresenter implements ClassContract.Presenter {
     }
 
     @Override
-    public void exportCLasses() {
+    public void exportClasses() {
         ActivityUtils.getProgressDialog(mContext, R.string.creating_class_ical).show();
         Observable
                 .create(new ObservableOnSubscribe<Calendar>() {
@@ -283,6 +238,42 @@ class ClassPresenter implements ClassContract.Presenter {
                     }
                 })
                 .subscribe();
+    }
+
+    @Override
+    public void onClassEdited(EnrichedClassInfo info) {
+        boolean found = false;
+        for (EnrichedClassInfo classInfo : mEnrichedClasses) {
+            if (classInfo.equals(info)) {
+                mEnrichedClasses.remove(classInfo);
+
+                boolean modify = false;
+                List<ClassInfo> list = classInfo.getAllClasses();
+                for (ClassInfo c : list) {
+                    if (c.equals(info.getFirstClassInfo())) {
+                        classInfo.replaceClassInfo(c, info.getFirstClassInfo());
+                        modify = true;
+                    }
+                }
+                if (!modify) {
+                    classInfo.addClassInfo(info.getFirstClassInfo());
+                    mEnrichedClasses.add(classInfo);
+                    found = true;
+                }
+                break;
+            }
+        }
+        if (!found) {
+            mEnrichedClasses.add(info);
+        }
+
+        storeClasses();
+        loadLocalClasses();
+    }
+
+    @Override
+    public void loadFromExcel() {
+
     }
 
     @Override

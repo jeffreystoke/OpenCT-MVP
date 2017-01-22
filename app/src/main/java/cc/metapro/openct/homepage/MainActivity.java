@@ -39,10 +39,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.LibBorrowActivity;
-import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.customviews.CaptchaDialog;
 import cc.metapro.openct.customviews.InitDialog;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.grades.GradeActivity;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
@@ -157,7 +157,14 @@ public class MainActivity extends AppCompatActivity
             }
             return true;
         } else if (id == R.id.export_classes) {
-            mPresenter.exportCLasses();
+            mPresenter.exportClasses();
+        } else if (id == R.id.add_class) {
+            ClassAddDialog.newInstance("添加课程", null, new ClassAddDialog.ClassAddCallBack() {
+                @Override
+                public void onAdded(EnrichedClassInfo classInfo) {
+                    mPresenter.onClassEdited(classInfo);
+                }
+            }).show(getSupportFragmentManager(), "class_add_dialog");
         }
         return super.onOptionsItemSelected(item);
     }

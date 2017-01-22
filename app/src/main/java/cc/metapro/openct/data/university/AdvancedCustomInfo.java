@@ -27,8 +27,6 @@ public class AdvancedCustomInfo {
 
     public String mCmsClassURL;
 
-    public String mCmsGradeURL;
-
     public AdvancedCustomInfo() {
 
     }

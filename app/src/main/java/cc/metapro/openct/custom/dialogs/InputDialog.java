@@ -1,4 +1,4 @@
-package cc.metapro.openct.custom;
+package cc.metapro.openct.custom.dialogs;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table

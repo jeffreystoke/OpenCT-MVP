@@ -16,8 +16,9 @@ package cc.metapro.openct.data.university.item;
  * limitations under the License.
  */
 
-import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
@@ -31,7 +32,9 @@ import java.util.List;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.StoreHelper;
+import cc.metapro.openct.homepage.ClassAddDialog;
 import cc.metapro.openct.homepage.ClassContract;
+import cc.metapro.openct.utils.Constants;
 
 public class EnrichedClassInfo {
 
@@ -46,7 +49,7 @@ public class EnrichedClassInfo {
     private int x, y;
 
     /**
-     * 所有课程信息组件的基础长度, 基础宽度, 最大高度
+     * 所有课程信息组件的基础长度, 宽度, 高度
      */
     private int width, height;
 
@@ -61,21 +64,21 @@ public class EnrichedClassInfo {
     private int mDayOfWeek;
 
     /**
-     * @param classInfo 课程信息
-     * @param x         坐标 x
-     * @param y         坐标 y
-     * @param color     背景色
-     * @param width     基础宽度
-     * @param height    基础高度
+     * 用于用户创建课程信息
+     *
+     * @param classInfo 基础课程信息 - 显示的信息
      * @param dayOfWeek 星期几
+     * @param dailySeq  第几节课
+     * @param color     背景色
      */
-    public EnrichedClassInfo(ClassInfo classInfo, int x, int y, int color, int width, int height, int dayOfWeek) {
+    public EnrichedClassInfo(ClassInfo classInfo, int dayOfWeek, int dailySeq, int color) {
         mClassInfo = classInfo;
-        this.x = x;
-        this.y = y;
+        this.x = Constants.CLASS_WIDTH * (dayOfWeek - 1);
+        this.y = Constants.CLASS_BASE_HEIGHT * (dailySeq - 1);
         this.color = color;
-        this.width = width;
-        this.height = height;
+        this.width = Constants.CLASS_WIDTH;
+        this.height = Constants.CLASS_BASE_HEIGHT * classInfo.getLength();
+
         mDayOfWeek = dayOfWeek;
     }
 
@@ -85,7 +88,8 @@ public class EnrichedClassInfo {
      * @return a list of class info
      */
     @NonNull
-    public List<ClassInfo> getAllClasses() {
+    public List<ClassInfo>
+    getAllClasses() {
         List<ClassInfo> list = new ArrayList<>();
         list.add(mClassInfo);
         ClassInfo c = mClassInfo;
@@ -96,6 +100,25 @@ public class EnrichedClassInfo {
         return list;
     }
 
+
+    public ClassInfo
+    getFirstClassInfo() {
+        return mClassInfo;
+    }
+
+    public void
+    addClassInfo(ClassInfo info) {
+        if (mClassInfo.hasSubClass()) {
+            ClassInfo sub = mClassInfo.getSubClassInfo();
+            while (sub.hasSubClass()) {
+                sub = sub.getSubClassInfo();
+            }
+            sub.setSubClassInfo(info);
+        } else {
+            mClassInfo.setSubClassInfo(info);
+        }
+    }
+
     /**
      * 生成课程信息的视图
      *
@@ -103,10 +126,8 @@ public class EnrichedClassInfo {
      * @param presenter 用于删除课程
      * @param week      第几周 (<= 0 表示不比较周数, 直接添加)
      */
-    public void addViewTo(ViewGroup viewGroup,
-                          final Context context,
-                          final ClassContract.Presenter presenter,
-                          int week) {
+    public void
+    addViewTo(ViewGroup viewGroup, final FragmentActivity context, final ClassContract.Presenter presenter, int week) {
         ClassInfo target = null;
         if (week > 0) {
             List<ClassInfo> infoList = getAllClasses();
@@ -129,30 +150,49 @@ public class EnrichedClassInfo {
         card.setY(y);
         card.setCardBackgroundColor(color);
 
-        final AlertDialog dialog = target.getAlertDialog(context, presenter);
+        final AlertDialog.Builder builder = target.getAlertDialog(context, presenter);
+        builder.setNegativeButton("修改", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ClassAddDialog.newInstance("修改课程信息", EnrichedClassInfo.this, new ClassAddDialog.ClassAddCallBack() {
+                    @Override
+                    public void onAdded(EnrichedClassInfo classInfo) {
+                        presenter.onClassEdited(classInfo);
+                    }
+                }).show(context.getSupportFragmentManager(), "class_modify_dialog");
+            }
+        });
         card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialog.show();
+                builder.show();
             }
         });
 
         viewGroup.addView(card);
         ViewGroup.LayoutParams params = card.getLayoutParams();
+        int length = mClassInfo.getLength();
         params.width = width;
-        params.height = height;
+        params.height = length >= 1 ? length * Constants.CLASS_BASE_HEIGHT : height;
     }
 
-    public boolean isToday() {
+    public boolean
+    isToday() {
         Calendar calendar = Calendar.getInstance();
         return weekDayTrans(mDayOfWeek) == calendar.get(Calendar.DAY_OF_WEEK);
     }
 
-    public int getWeekDay() {
+    public int getDayOfWeek() {
+        return mDayOfWeek;
+    }
+
+    public int
+    getWeekDay() {
         return weekDayTrans(mDayOfWeek);
     }
 
-    private int weekDayTrans(int i) {
+    private int
+    weekDayTrans(int i) {
         if (i > 0 && i < 8) {
             switch (i) {
                 case 1:
@@ -174,9 +214,47 @@ public class EnrichedClassInfo {
         return -1;
     }
 
+    public int
+    getColor() {
+        return color;
+    }
+
+    public void replaceClassInfo(ClassInfo oldInfo, ClassInfo newInfo) {
+        if (mClassInfo.equals(oldInfo)) {
+            newInfo.setSubClassInfo(mClassInfo.getSubClassInfo());
+            mClassInfo = newInfo;
+        } else if (mClassInfo.hasSubClass()) {
+            ClassInfo parent = mClassInfo;
+            while (parent.hasSubClass() && !parent.getSubClassInfo().equals(oldInfo)) {
+                parent = parent.getSubClassInfo();
+            }
+            newInfo.setSubClassInfo(parent.getSubClassInfo().getSubClassInfo());
+            parent.setSubClassInfo(newInfo);
+        }
+    }
 
     @Override
-    public String toString() {
+    public String
+    toString() {
         return StoreHelper.getJsonText(this);
+    }
+
+    /**
+     * 拥有相同的坐标即为相等
+     */
+    @Override
+    public boolean
+    equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (obj instanceof EnrichedClassInfo) {
+            EnrichedClassInfo classInfo = (EnrichedClassInfo) obj;
+            if (classInfo.x == this.x && classInfo.y == this.y) {
+                return true;
+            }
+        }
+        return false;
     }
 }

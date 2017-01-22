@@ -17,6 +17,7 @@ package cc.metapro.openct;
  */
 
 import android.app.Application;
+import android.util.DisplayMetrics;
 
 import com.google.common.base.Strings;
 
@@ -29,6 +30,12 @@ public class OpenCT extends Application {
         super.onCreate();
         if (Strings.isNullOrEmpty(Constants.CAPTCHA_FILE)) {
             Constants.CAPTCHA_FILE = getCacheDir().getPath() + "/" + Constants.CAPTCHA_FILENAME;
+        }
+
+        if (Constants.CLASS_BASE_HEIGHT == 0) {
+            DisplayMetrics metrics = getResources().getDisplayMetrics();
+            Constants.CLASS_WIDTH = (int) Math.round(metrics.widthPixels * (2.0 / 15.0));
+            Constants.CLASS_BASE_HEIGHT = (int) Math.round(metrics.heightPixels * (1.0 / 15.0));
         }
     }
 }

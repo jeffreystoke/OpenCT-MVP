@@ -105,5 +105,4 @@ public final class StoreHelper {
             file.delete();
         }
     }
-
 }

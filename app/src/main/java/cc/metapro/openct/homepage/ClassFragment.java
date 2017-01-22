@@ -16,11 +16,11 @@ package cc.metapro.openct.homepage;
  * limitations under the License.
  */
 
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.PagerTabStrip;
@@ -50,8 +50,10 @@ public class ClassFragment extends Fragment implements ClassContract.View {
     private static boolean showedPrompt;
     @BindView(R.id.class_view_pager)
     ViewPager mViewPager;
+    private TextView mEmptyView;
+    private RecyclerView todayRecyclerView;
     private ClassContract.Presenter mPresenter;
-    private Context mContext;
+    private FragmentActivity mContext;
     private List<View> mViewList;
     private Map<String, View> mViewMap;
     private DailyClassAdapter mTodayClassAdapter;
@@ -65,7 +67,7 @@ public class ClassFragment extends Fragment implements ClassContract.View {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_class, container, false);
         ButterKnife.bind(this, view);
-        mContext = getContext();
+        mContext = getActivity();
         initViewPager(view);
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         height = (int) Math.round(metrics.heightPixels * (1.0 / 15.0));
@@ -93,7 +95,8 @@ public class ClassFragment extends Fragment implements ClassContract.View {
         LayoutInflater layoutInflater = getLayoutInflater(getArguments());
 
         View td = layoutInflater.inflate(R.layout.viewpager_class_today, null);
-        RecyclerView todayRecyclerView = (RecyclerView) td.findViewById(R.id.class_today_recycler_view);
+        todayRecyclerView = (RecyclerView) td.findViewById(R.id.class_today_recycler_view);
+        mEmptyView = (TextView) td.findViewById(R.id.empty_view);
         mTodayClassAdapter = new DailyClassAdapter(mContext);
         RecyclerViewHelper.setRecyclerView(mContext, todayRecyclerView, mTodayClassAdapter);
         mViewList.add(td);
@@ -183,12 +186,19 @@ public class ClassFragment extends Fragment implements ClassContract.View {
         addContentView(con, classes, -1);
         showSelectedWeek(classes, week);
 
-        if (!showedPrompt) {
-            showedPrompt = true;
-            if (mTodayClassAdapter.hasClassToday()) {
-                int count = mTodayClassAdapter.getItemCount();
+        if (mTodayClassAdapter.hasClassToday()) {
+            int count = mTodayClassAdapter.getItemCount();
+            mEmptyView.setVisibility(View.GONE);
+            todayRecyclerView.setVisibility(View.VISIBLE);
+            if (!showedPrompt) {
+                showedPrompt = true;
                 Snackbar.make(mViewPager, "今天有 " + count + " 节课", Snackbar.LENGTH_SHORT).show();
-            } else {
+            }
+        } else {
+            mEmptyView.setVisibility(View.VISIBLE);
+            todayRecyclerView.setVisibility(View.GONE);
+            if (!showedPrompt) {
+                showedPrompt = true;
                 Snackbar.make(mViewPager, "今天没有课, 好好休息一下吧~", Snackbar.LENGTH_SHORT).show();
             }
         }

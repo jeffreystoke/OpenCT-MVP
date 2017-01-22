@@ -65,7 +65,7 @@ public class CaptchaDialog extends DialogFragment {
     public void go() {
         String code = mEditText.getText().toString();
         if (Strings.isNullOrEmpty(code)) {
-            Toast.makeText(getActivity(), "请输入验证码", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.enter_captcha, Toast.LENGTH_SHORT).show();
         } else {
             dismiss();
             mPresenter.loadOnline(code);
@@ -77,7 +77,7 @@ public class CaptchaDialog extends DialogFragment {
         if (i == EditorInfo.IME_ACTION_GO || (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
             String code = mEditText.getText().toString();
             if (Strings.isNullOrEmpty(code)) {
-                Toast.makeText(getActivity(), "请输入验证码", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.enter_captcha, Toast.LENGTH_SHORT).show();
             } else {
                 dismiss();
                 mPresenter.loadOnline(code);
@@ -111,6 +111,7 @@ public class CaptchaDialog extends DialogFragment {
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         mTextView.setText(R.string.press_to_get_captcha);
+        mTextView.setBackground(null);
         StoreHelper.delFile(Constants.CAPTCHA_FILE);
     }
 }

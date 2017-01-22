@@ -1,4 +1,4 @@
-package cc.metapro.openct.custom;
+package cc.metapro.openct.custom.dialogs;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -22,7 +22,6 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -32,6 +31,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
+import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.Constants;
 
@@ -40,24 +40,19 @@ public class ClickDialog extends DialogFragment implements View.OnClickListener 
     // 用户输入用户名密码, 回放时将直接填写
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
-
-    // 用户输入验证码, 在回放时执行到此项应出现对话框输入验证码
+    // 用户输入验证码, 在回放时执行到此项出现对话框输入验证码
     public static final String CAPTCHA = "captcha";
-
     // 点击登录, 若有此项将会区分登录前登陆后操作
     public static final String SUBMIT_BUTTON = "login_button";
-
-    // 输入框, 需要弹出窗口
+    // 输入框, 在回放时需要弹出窗口供用户输入值
     public static final String INPUT = "input";
-
     // 点击了链接
     public static final String LINK = "link";
+
+
     private static CallBack mCallBack;
     private static String mId;
-    @BindView(R.id.captcha)
-    RadioButton mRadioCaptcha;
-    @BindView(R.id.submit)
-    RadioButton mRadioLogin;
+
     @BindView(R.id.value)
     MaterialEditText mValue;
     private String mType = LINK;
@@ -162,7 +157,7 @@ public class ClickDialog extends DialogFragment implements View.OnClickListener 
                     "if(!openCTNode){openCTNode=document.getElementsByName(\"" + mId + "\")[0];}" +
                     "openCTNode.setAttribute(\"value\",\"" + mValue.getText() + "\");";
         } else if (CAPTCHA.equals(type)) {
-            // 准备填写验证码的JS代码, 调用时需要加上 验证码 和 ";"
+            // 准备填写验证码的JS代码, 调用时需要补全
             return "var openCTCaptchaText=document.getElementById(\"" + mId + "\");" +
                     "if(!openCTCaptchaText){openCTCaptchaText=document.getElementsByName(\"" + mId + "\")[0];}" +
                     "openCTCaptchaText.setAttribute(\"value\",";
@@ -171,13 +166,12 @@ public class ClickDialog extends DialogFragment implements View.OnClickListener 
                     "if(!openCTButton){openCTButton=document.getElementsByName(\"" + mId + "\")[0];}" +
                     "if(openCTButton){openCTButton.click();}";
         } else if (INPUT.equals(type)) {
-            // 需要填写内容的JS代码, 调用时需要加上 \" + yourValue + "\");"
+            // 需要填写内容的JS代码, 调用时需要补全
             return "var openCTInputText=document.getElementById(\"" + mId + "\");" +
                     "if(!openCTInputText){captchaText=document.getElementsByName(\"" + mId + "\")[0];}" +
                     "openCTInputText.setAttribute(\"value\",";
         } else if (LINK.equals(type)) {
             // 链接, 检查当前页面中 href
-//            return mId.substring(mId.lastIndexOf("/"));
             return "var openCTLinks=document.getElementsByTagName(\"a\");" +
                     "for(var i=0;i<openCTLinks.length;i++){" +
                     "if(openCTLinks[i].href.indexOf(\"" + mId.substring(mId.lastIndexOf("/") + 1) + "\")>=0){" +

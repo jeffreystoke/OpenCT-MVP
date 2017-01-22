@@ -25,22 +25,23 @@ import java.util.regex.Pattern;
 
 public class RE {
 
-    private static Pattern time_during_pattern = Pattern.compile("[0-9]{1,2}");
+    private static String timeDuringPattern = "[0-9]{1,2}";
+    private static String lastNumberPattern = "[0-9]+(?=[^0-9]*$)";
     private static Pattern empty = Pattern.compile("^\\s+$");
 
-
     public static int[] getStartEnd(String s) {
-        int[] res = {-1, -1};
-        Matcher m = time_during_pattern.matcher(s);
-        for (int i = 0; i < res.length; i++) {
-            if (m.find()) {
-                res[i] = Integer.parseInt(m.group());
+        Matcher first = Pattern.compile(timeDuringPattern).matcher(s);
+        if (first.find()) {
+            int start = Integer.parseInt(first.group());
+            Matcher last = Pattern.compile(lastNumberPattern).matcher(s);
+            int end = start;
+            if (last.find()) {
+                end = Integer.parseInt(last.group());
             }
-        }
-        if (res[0] > res[1]) {
+            return new int[]{start, end};
+        } else {
             return new int[]{-1, -1};
         }
-        return res;
     }
 
     public static boolean isEmpty(String s) {

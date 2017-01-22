@@ -30,7 +30,6 @@ import android.widget.AdapterView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.customviews.InitDialog;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 public class SchoolSelectionActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {

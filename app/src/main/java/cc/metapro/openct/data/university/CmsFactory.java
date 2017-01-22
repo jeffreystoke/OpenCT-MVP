@@ -26,6 +26,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -33,7 +34,7 @@ import java.util.regex.Pattern;
 import javax.security.auth.login.LoginException;
 
 import cc.metapro.openct.data.university.UniversityInfo.CMSInfo;
-import cc.metapro.openct.data.university.item.ClassInfo;
+import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.utils.Constants;
 
@@ -96,11 +97,12 @@ public class CmsFactory extends UniversityFactory {
      * @throws LoginException
      */
     @NonNull
-    public List<ClassInfo> getClasses(Map<String, String> loginMap) throws Exception {
+    public List<EnrichedClassInfo>
+    getClasses(Map<String, String> loginMap) throws Exception {
         // 获取课程表页面
         String tablePage = getTablePage(loginMap, mURLFactory.CLASS_URL_PATTERN);
 
-        // 定义要被替代的符号, 解决BR等被解析成为空格
+        // 定义要被替代的符号, 解决课程信息中BR等被解析成为空格产生误解
         String toReplace = Constants.BR;
 
         // 各教务系统细节操作
@@ -111,16 +113,37 @@ public class CmsFactory extends UniversityFactory {
         }
         // 强智
         else if (Constants.QZDATASOFT.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
-            // TODO: 17/1/15 获取强智教务网成绩
+            // TODO: 17/1/15 获取强智教务网课表
+            toReplace = "(\\-)|(" + Constants.BR + ")";
         }
         // 青果
         else if (Constants.KINGOSOFT.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
-            // TODO: 17/1/16 获取青果教务网成绩
+            // TODO: 17/1/16 获取青果教务网课表
         }
 
         // 替换标识符, 生成课程
         tablePage = tablePage.replaceAll(toReplace, Constants.BR_REPLACER);
-        return UniversityFactory.generateClasses(tablePage, mClassTableInfo);
+        Document doc = Jsoup.parse(tablePage);
+
+        // 第一次匹配, 根据标准Id 获取 表格
+        Elements tables = doc.select("table[id=" + mClassTableInfo.mClassTableID + "]");
+        Element targetTable = tables.first();
+
+        // 第一次匹配失败, 第二次匹配, 使用关键字匹配
+        if (targetTable == null) {
+            tables = doc.select("table:matches((星期)|(周)|(课程))");
+            targetTable = tables.first();
+        }
+
+        // 两次匹配失败, 返回
+        if (targetTable == null) {
+            return new ArrayList<>(0);
+        }
+
+        // 从表格中获取课程信息
+        List<Element> classes = UniversityUtils.getRawClasses(targetTable);
+
+        return UniversityUtils.generateClasses(classes, mClassTableInfo);
     }
 
     /**
@@ -144,8 +167,10 @@ public class CmsFactory extends UniversityFactory {
         } else if (Constants.ZFSOFT2008.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
             // TODO: 17/1/16 正方2008教务系统需要根据页面表单 Get 获取最新成绩
         }
+
         tablePage = tablePage.replaceAll(toReplace, Constants.BR_REPLACER);
-        return UniversityFactory.generateGrades(tablePage, mGradeTableInfo);
+
+        return UniversityUtils.generateGrades(tablePage, mGradeTableInfo);
     }
 
     @Override

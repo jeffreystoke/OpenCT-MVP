@@ -44,11 +44,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
+import cc.metapro.openct.custom.dialogs.ClickDialog;
+import cc.metapro.openct.custom.dialogs.TableChooseDialog;
 import cc.metapro.openct.custom.webview.JSInteraction;
 import cc.metapro.openct.custom.webview.SchoolWebViewClient;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
 import cc.metapro.openct.data.university.CmsFactory;
+import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.utils.Constants;
 
@@ -193,8 +196,8 @@ public class CustomActivity extends AppCompatActivity {
                             tableMap.put(id, element);
                         }
                         if (SchoolWebViewClient.replayMode && !TextUtils.isEmpty(classTableInfo.mClassTableID)) {
-                            List<Element> list = TableChooseDialog.getClasses(tableMap.get(classTableInfo.mClassTableID));
-                            List<EnrichedClassInfo> enrichedClasses = TableChooseDialog.generateClasses(list, classTableInfo, getResources().getDisplayMetrics());
+                            List<Element> list = UniversityUtils.getRawClasses(tableMap.get(classTableInfo.mClassTableID));
+                            List<EnrichedClassInfo> enrichedClasses = UniversityUtils.generateClasses(list, classTableInfo);
                             DBManger manger = DBManger.getInstance(CustomActivity.this);
                             manger.updateClasses(enrichedClasses);
                             Toast.makeText(CustomActivity.this, "获取课表成功, 请回到主界面查看课表", Toast.LENGTH_LONG).show();

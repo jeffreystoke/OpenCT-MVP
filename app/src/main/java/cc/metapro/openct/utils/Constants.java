@@ -50,10 +50,14 @@ public final class Constants {
     public static final String CET_GRADE_KEY = "cet_grade";
 
     // school cms
+    // 正方系列
     public static final String ZFSOFT2012 = "zfsoft2012";
     public static final String ZFSOFT2008 = "zfsoft2008";
+    // 苏文
     public static final String NJSUWEN = "njsuwen";
+    // 强智
     public static final String QZDATASOFT = "qzdatasoft";
+    // 青果
     public static final String KINGOSOFT = "kingosoft";
 
     // library system
@@ -69,6 +73,10 @@ public final class Constants {
     public static final String[] colorString = {
             "#8BC34A", "#03A9F4", "#FF9800", "#C5CAE9", "#FFCDD2", "#009688", "#536DFE"
     };
+
+    public static int CLASS_WIDTH = 0;
+    public static int CLASS_BASE_HEIGHT = 0;
+
     public static String CAPTCHA_FILE;
 
     public static int getColor(int seq) {

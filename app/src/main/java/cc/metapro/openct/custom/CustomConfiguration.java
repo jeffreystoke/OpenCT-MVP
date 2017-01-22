@@ -22,6 +22,8 @@ import android.webkit.WebView;
 import java.util.ArrayList;
 import java.util.List;
 
+import cc.metapro.openct.custom.dialogs.ClickDialog;
+import cc.metapro.openct.custom.dialogs.InputDialog;
 import cc.metapro.openct.data.source.StoreHelper;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
