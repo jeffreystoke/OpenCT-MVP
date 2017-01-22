@@ -17,6 +17,7 @@ package cc.metapro.openct.data.university;
  */
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.google.common.base.Strings;
 
@@ -27,6 +28,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -37,6 +39,8 @@ import cc.metapro.openct.data.university.UniversityInfo.CMSInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.HTMLUtils.Form;
+import cc.metapro.openct.utils.HTMLUtils.FormHandler;
 
 public class CmsFactory extends UniversityFactory {
 
@@ -54,30 +58,36 @@ public class CmsFactory extends UniversityFactory {
         mURLFactory = new CmsURLFactory(cmsInfo.mCmsSys, cmsInfo.mCmsURL);
     }
 
-    private String getTablePage(Map<String, String> loginMap, String pattern) throws Exception {
+    private String getTablePage(Map<String, String> loginMap, String pattern, String URL) throws Exception {
         // 登录获取用户中心页面
         String userCenter = login(loginMap);
 
-        // 从用户中心页面解析获取课表链接
         String tableURL = null;
-        Pattern contentPattern = Pattern.compile(pattern);
-        Document doc = Jsoup.parse(userCenter, mURLFactory.LOGIN_URL);
-        Elements links = doc.select("a");
-        for (Element a : links) {
-            // 根据界面上的文字提示进行判断
-            if (contentPattern.matcher(a.text()).find()) {
-                tableURL = a.absUrl("href");
-                break;
+        // 第一次, 从用户中心页面解析获取课表链接
+        if (!TextUtils.isEmpty(pattern)) {
+            Pattern contentPattern = Pattern.compile(pattern);
+            Document doc = Jsoup.parse(userCenter, mURLFactory.LOGIN_URL);
+            Elements links = doc.select("a");
+            for (Element a : links) {
+                // 根据界面上的文字提示进行判断
+                if (contentPattern.matcher(a.text()).find()) {
+                    tableURL = a.absUrl("href");
+                    break;
+                }
             }
         }
 
-        // 没有解析到课表链接
-        if (Strings.isNullOrEmpty(tableURL)) {
-            throw new Exception("很抱歉, 没能解析到链接\n请联系 OpenCT 开发人员添加");
+        String tablePage = null;
+        // 解析到了课表链接
+        if (!TextUtils.isEmpty(tableURL)) {
+            // 解析到课表链接后获取课表页面
+            tablePage = mService.getPage(tableURL, mURLFactory.LOGIN_URL).execute().body();
+        } else {
+            // 第二次, 根据 URLFactory 生成的地址获取
+            if (!TextUtils.isEmpty(URL)) {
+                tablePage = mService.getPage(URL, mURLFactory.LOGIN_URL).execute().body();
+            }
         }
-
-        // 解析到课表链接后获取课表页面
-        String tablePage = mService.getPage(tableURL, mURLFactory.LOGIN_URL).execute().body();
 
         // 课表页面为空
         if (Strings.isNullOrEmpty(tablePage)) {
@@ -100,7 +110,7 @@ public class CmsFactory extends UniversityFactory {
     public List<EnrichedClassInfo>
     getClasses(Map<String, String> loginMap) throws Exception {
         // 获取课程表页面
-        String tablePage = getTablePage(loginMap, mURLFactory.CLASS_URL_PATTERN);
+        String tablePage = getTablePage(loginMap, mURLFactory.CLASS_URL_PATTERN, mURLFactory.CLASS_URL);
 
         // 定义要被替代的符号, 解决课程信息中BR等被解析成为空格产生误解
         String toReplace = Constants.BR;
@@ -114,7 +124,7 @@ public class CmsFactory extends UniversityFactory {
         // 强智
         else if (Constants.QZDATASOFT.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
             // TODO: 17/1/15 获取强智教务网课表
-            toReplace = "(\\-)|(" + Constants.BR + ")";
+            toReplace = "(----)|(" + Constants.BR + ")";
         }
         // 青果
         else if (Constants.KINGOSOFT.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
@@ -157,15 +167,28 @@ public class CmsFactory extends UniversityFactory {
     @NonNull
     public List<GradeInfo> getGrades(Map<String, String> loginMap) throws Exception {
         // 获取课程表页面
-        String tablePage = getTablePage(loginMap, mURLFactory.GRADE_URL_PATTERN);
+        String tablePage = getTablePage(loginMap, mURLFactory.GRADE_URL_PATTERN, mURLFactory.GRADE_URL);
 
         // 定义要被替代的符号, 解决BR等被解析成为空格
         String toReplace = Constants.BR;
 
         if (Constants.QZDATASOFT.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
-            // TODO: 17/1/16 强智教务系统需要根据页面表单 Post 获取最新成绩
-        } else if (Constants.ZFSOFT2008.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
-            // TODO: 17/1/16 正方2008教务系统需要根据页面表单 Get 获取最新成绩
+            Map<String, String> map = new LinkedHashMap<>(4);
+            map.put("kksj", "");
+            map.put("kcxz", "");
+            map.put("kcmc", "");
+            map.put("xsfs", "all");
+            tablePage = mService.post(mURLFactory.GRADE_URL, mURLFactory.GRADE_URL, map).execute().body();
+        } else if (Constants.ZFSOFT2008.equalsIgnoreCase(mCMSInfo.mCmsSys) || Constants.ZFSOFT2012.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
+            FormHandler handler = new FormHandler(tablePage, mURLFactory.LOGIN_URL);
+            Form form = handler.getForm(0);
+            String action = form.getAction();
+            Map<String, Elements> map = form.getFormItems();
+            Map<String, String> res = new LinkedHashMap<>(map.size());
+            for (String s : map.keySet()) {
+                res.put(s, map.get(s).attr("value"));
+            }
+            tablePage = mService.post(action, mURLFactory.LOGIN_URL, res).execute().body();
         }
 
         tablePage = tablePage.replaceAll(toReplace, Constants.BR_REPLACER);
@@ -280,7 +303,7 @@ public class CmsFactory extends UniversityFactory {
                 LOGIN_REF = cmsBaseURL;
                 CAPTCHA_URL = cmsBaseURL + "verifycode.servlet";
                 CLASS_URL = cmsBaseURL + "jsxsd/xskb/xskb_list.do";
-                GRADE_URL = cmsBaseURL + "jsxsd/kscj/cjcx_query";
+                GRADE_URL = cmsBaseURL + "jsxsd/kscj/cjcx_list";
                 USER_CENTER_URL = cmsBaseURL + "jsxsd/framework/xsMain.jsp";
             }
         }

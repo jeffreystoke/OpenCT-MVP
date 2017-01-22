@@ -35,7 +35,7 @@ import cc.metapro.openct.utils.Constants;
 
 public class UniversityUtils {
 
-    private static final String CLASS_TABLE_PATTERN = "(\\d+.*\\d+节$)|(\\d+节$)";
+    private static final String CLASS_TABLE_PATTERN = "(\\d+.*\\d+节$)|(\\d+节$)|(\\d)";
 
     /**
      * 从网页课表表格中获取所有课程信息单元 (td - 按格显示课程, tr - 按行显示课程)

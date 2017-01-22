@@ -67,7 +67,6 @@ public abstract class UniversityFactory {
 
         // 教务网登录
         if (mCMSInfo != null) {
-            // TODO: 17/1/14 针对强智系统进行处理
             // 强智教务系统 (特殊处理)
             if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
                 String serverResponse = mService.login(mCMSInfo.mCmsURL + "Logon.do?method=logon&flag=sess", getLoginURL(), new HashMap<String, String>(0)).execute().body();
@@ -92,6 +91,11 @@ public abstract class UniversityFactory {
                 Document document = Jsoup.parse(loginPageHtml, mCMSInfo.mCmsURL);
                 String action = document.select("form").get(0).absUrl("action");
                 userCenter = mService.login(action, getLoginRefer(), map).execute().body();
+                if (!Strings.isNullOrEmpty(userCenter) && LOGIN_SUCCESS.matcher(userCenter).find()) {
+                    return userCenter;
+                } else {
+                    throw new Exception("登录失败, 请检查您的用户名和密码\n(以及验证码)");
+                }
             }
         }
 

@@ -10,12 +10,14 @@
     </string-array>
 
     <string-array name="school_cms">
+        <item>强智科技</item>
         <item>正方-2012</item>
         <item>正方-2008</item>
         <item>苏文</item>
     </string-array>
 
     <string-array name="school_cms_values">
+        <item>qzdatasoft</item>
         <item>zfsoft2012</item>
         <item>zfsoft2008</item>
         <item>njsuwen</item>
@@ -31,34 +33,36 @@
 
     <string-array name="school_names">
         <item>安徽大学(仅教务网)</item>
+        <item>安徽工程大学(仅教务网)</item>
         <item>安徽工业大学</item>
         <item>安徽国防科技职业学院(仅教务网)</item>
         <item>安徽建筑大学(仅教务网)</item>
         <item>安徽科技学院</item>
-        <item>安徽理工大学(仅教务网)</item>
+        <item>安徽理工大学(仅图书馆)</item>
         <item>安徽农业大学</item>
         <item>安庆师范学院</item>
-        <item>鞍山师范学院(仅图书馆)</item>
         <item>北方工业大学(仅图书馆)</item>
         <item>北华大学(仅图书馆)</item>
-        <item>北京城市学院(仅图书馆)</item>
+        <item>北京城市学院</item>
         <item>北京工业大学(仅教务网)</item>
         <item>北京科技大学(仅图书馆)</item>
         <item>北京理工大学(仅图书馆)</item>
         <item>北京理工大学珠海学院</item>
-        <item>北京林业大学(仅图书馆)</item>
+        <item>北京林业大学</item>
         <item>北京农学院(仅图书馆)</item>
+        <item>北京师范大学珠海分校(仅教务网)</item>
         <item>北京体育大学(仅图书馆)</item>
         <item>北京信息科技大学</item>
         <item>渤海大学(仅图书馆)</item>
         <item>昌吉学院</item>
         <item>常州大学(仅图书馆)</item>
         <item>常州工学院</item>
-        <item>常州轻工职业技术学院(仅图书馆)</item>
+        <item>常州轻工职业技术学院</item>
         <item>常州信息职业技术学院</item>
+        <item>成都大学</item>
         <item>成都信息工程大学(仅图书馆)</item>
         <item>大连大学</item>
-        <item>大连工业大学(仅图书馆)</item>
+        <item>大连工业大学</item>
         <item>大连海洋大学</item>
         <item>大连理工大学(仅图书馆)</item>
         <item>大连民族大学(仅图书馆)</item>
@@ -66,48 +70,52 @@
         <item>电子科技大学中山学院</item>
         <item>东北财经大学(仅图书馆)</item>
         <item>东北大学秦皇岛分校(仅图书馆)</item>
-        <item>东北林业大学(仅图书馆)</item>
+        <item>东北林业大学</item>
         <item>东北农业大学(仅图书馆)</item>
+        <item>东华大学(仅图书馆)</item>
         <item>东南大学(仅图书馆)</item>
         <item>东南大学成贤学院(仅图书馆)</item>
-        <item>福建工程学院(仅教务网)</item>
-        <item>福建教育学院(仅图书馆)</item>
         <item>福建农林大学</item>
-        <item>福建师范大学</item>
-        <item>福建医科大学(仅教务网)</item>
+        <item>广东财经大学</item>
         <item>广东第二师范学院(仅教务网)</item>
         <item>广东工业大学(仅教务网)</item>
         <item>广东海洋大学(仅教务网)</item>
         <item>广西大学(仅教务网)</item>
+        <item>哈尔滨工程大学(仅图书馆)</item>
         <item>哈尔滨工业大学(威海)(仅图书馆)</item>
         <item>海南大学(仅教务网)</item>
+        <item>合肥工业大学(仅图书馆)</item>
         <item>河北地质大学(仅图书馆)</item>
+        <item>河北建材职业技术学院(仅教务网)</item>
+        <item>河北经贸大学(仅教务网)</item>
+        <item>湖北经济学院(仅教务网)</item>
         <item>湖北师范大学(仅教务网)</item>
         <item>湖南师范大学(仅教务网)</item>
+        <item>华北科技学院(仅图书馆)</item>
+        <item>华东政法大学(仅图书馆)</item>
         <item>华南理工大学广州学院(仅教务网)</item>
         <item>华中农业大学(仅教务网)</item>
+        <item>淮北师范大学</item>
         <item>淮阴工学院</item>
-        <item>吉林财经大学(仅图书馆)</item>
         <item>吉林财经大学(仅图书馆)</item>
         <item>吉林大学珠海学院</item>
         <item>济南职业学院(仅教务网)</item>
+        <item>嘉兴学院(仅教务网)</item>
+        <item>江汉大学(仅图书馆)</item>
         <item>江南大学</item>
         <item>江苏大学</item>
-        <item>江苏科技大学(仅图书馆)</item>
+        <item>江苏科技大学</item>
         <item>江苏理工学院</item>
-        <item>江苏师范大学(仅图书馆)</item>
-        <item>金陵科技学院</item>
-        <item>辽宁石油化工大学(仅图书馆)</item>
+        <item>江苏师范大学</item>
         <item>岭南师范学院(仅教务网)</item>
-        <item>茂名职业技术学院(仅教务网)</item>
-        <item>南昌大学(仅图书馆)</item>
+        <item>南昌大学</item>
+        <item>南京财经大学</item>
         <item>南京城市职业学院</item>
         <item>南京大学金陵学院(仅图书馆)</item>
         <item>南京工程学院</item>
         <item>南京工业大学</item>
-        <item>南京工业职业技术学院(仅图书馆)</item>
         <item>南京航空航天大学(仅图书馆)</item>
-        <item>南京理工大学(仅图书馆)</item>
+        <item>南京理工大学</item>
         <item>南京林业大学(仅图书馆)</item>
         <item>南京农业大学(仅图书馆)</item>
         <item>南京森林警察学院(仅图书馆)</item>
@@ -115,40 +123,42 @@
         <item>南京特殊教育师范学院</item>
         <item>南京晓庄学院(仅图书馆)</item>
         <item>南京信息工程大学(仅图书馆)</item>
-        <item>南京信息工程大学滨江学院(仅图书馆)</item>
+        <item>南京信息工程大学滨江学院</item>
         <item>南京医科大学(仅图书馆)</item>
         <item>南京邮电大学</item>
         <item>南开大学(仅图书馆)</item>
+        <item>宁夏大学(仅图书馆)</item>
         <item>山东财经大学</item>
         <item>山东大学(仅图书馆)</item>
+        <item>山东管理学院(仅教务网)</item>
         <item>山东农业大学(仅图书馆)</item>
         <item>山东师范大学</item>
         <item>山东中医药大学(仅教务网)</item>
-        <item>沈阳工程学院(仅图书馆)</item>
+        <item>山西财经大学(仅教务网)</item>
+        <item>上海对外经贸大学(仅图书馆)</item>
         <item>沈阳理工大学(仅教务网)</item>
         <item>四川大学锦城学院(仅教务网)</item>
-        <item>苏州大学</item>
-        <item>苏州科技大学</item>
+        <item>四川理工学院(仅教务网)</item>
+        <item>台州学院(仅教务网)</item>
+        <item>太原理工大学(仅图书馆)</item>
         <item>温州医科大学</item>
+        <item>无锡职业技术学院(仅图书馆)</item>
+        <item>武汉纺织大学(仅教务网)</item>
+        <item>武汉工程大学(仅教务网)</item>
         <item>武汉软件工程职业学院(仅教务网)</item>
-        <item>西安工业大学(仅图书馆)</item>
-        <item>西安科技大学(仅图书馆)</item>
-        <item>西北大学(仅教务网)</item>
-        <item>西北工业大学(仅图书馆)</item>
-        <item>西华大学</item>
         <item>新疆医科大学(仅图书馆)</item>
         <item>新乡学院(仅图书馆)</item>
+        <item>徐州工业职业技术学院(仅图书馆)</item>
         <item>盐城师范学院</item>
-        <item>长安大学(仅图书馆)</item>
-        <item>长春大学(仅图书馆)</item>
-        <item>长春理工大学(仅图书馆)</item>
-        <item>长春中医药大学(仅图书馆)</item>
+        <item>燕山大学</item>
         <item>浙江工贸职业技术学院(仅教务网)</item>
-        <item>浙江工贸职业技术学院(仅教务网)</item>
-        <item>郑州轻工业学院(仅图书馆)</item>
+        <item>浙江中医药大学</item>
+        <item>中国财经政法大学(仅教务网)</item>
         <item>中国传媒大学南广学院</item>
         <item>中国地质大学(武汉)(仅教务网)</item>
         <item>中国科学技术大学(仅图书馆)</item>
         <item>中国矿业大学</item>
+        <item>中南大学(仅教务网)</item>
+        <item>中南民族大学(仅图书馆)</item>
     </string-array>
 </resources>

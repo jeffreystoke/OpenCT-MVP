@@ -77,7 +77,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String ADV_CUSTOM_TITLES =
             "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " + JSON + " TEXT)";
 
-    private static final int DB_VERSION = 20;
+    private static final int DB_VERSION = 27;
 
     private Context mContext;
 
