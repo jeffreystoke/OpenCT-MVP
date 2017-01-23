@@ -16,12 +16,15 @@ package cc.metapro.openct.data.university.item;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
+
 import org.jsoup.select.Elements;
 
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.data.university.CmsFactory;
-import cc.metapro.openct.utils.RE;
+import cc.metapro.openct.utils.REHelper;
 
+@Keep
 public class GradeInfo {
     private String
             mClassCode, mClassName, mClassType, mPoints,
@@ -53,20 +56,20 @@ public class GradeInfo {
 
     public String toFullString() {
         StringBuilder sb = new StringBuilder();
-        if (!RE.isEmpty(mClassName)) sb.append("名称: ").append(mClassName).append("\n\n");
-        if (!RE.isEmpty(mClassType)) sb.append("类型: ").append(mClassType).append("\n\n");
-        if (!RE.isEmpty(mPoints)) sb.append("学分: ").append(mPoints).append("\n\n");
-        if (!RE.isEmpty(mGradeSummary))
+        if (!REHelper.isEmpty(mClassName)) sb.append("名称: ").append(mClassName).append("\n\n");
+        if (!REHelper.isEmpty(mClassType)) sb.append("类型: ").append(mClassType).append("\n\n");
+        if (!REHelper.isEmpty(mPoints)) sb.append("学分: ").append(mPoints).append("\n\n");
+        if (!REHelper.isEmpty(mGradeSummary))
             sb.append("成绩: ").append(mGradeSummary).append("\n\n");
-        if (!RE.isEmpty(mGradeCommon))
+        if (!REHelper.isEmpty(mGradeCommon))
             sb.append("平时成绩: ").append(mGradeCommon).append("\n\n");
-        if (!RE.isEmpty(mGradePractice))
+        if (!REHelper.isEmpty(mGradePractice))
             sb.append("实践成绩: ").append(mGradePractice).append("\n\n");
-        if (!RE.isEmpty(mGradeMidExam))
+        if (!REHelper.isEmpty(mGradeMidExam))
             sb.append("期中成绩: ").append(mGradeMidExam).append("\n\n");
-        if (!RE.isEmpty(mGradeFinalExam))
+        if (!REHelper.isEmpty(mGradeFinalExam))
             sb.append("期末成绩: ").append(mGradeFinalExam).append("\n\n");
-        if (!RE.isEmpty(mGradeMakeup))
+        if (!REHelper.isEmpty(mGradeMakeup))
             sb.append("补考成绩: ").append(mGradeMakeup).append("\n\n");
 
         if (sb.charAt(sb.length() - 1) == '\n') {

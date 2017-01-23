@@ -18,6 +18,7 @@ package cc.metapro.openct.borrow;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -39,6 +40,7 @@ import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.utils.ActivityUtils;
 
+@Keep
 public class LibBorrowActivity extends AppCompatActivity {
 
     @BindView(R.id.lib_borrow_toolbar)

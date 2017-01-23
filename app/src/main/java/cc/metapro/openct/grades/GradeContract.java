@@ -16,6 +16,8 @@ package cc.metapro.openct.grades;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
+
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +25,7 @@ import cc.metapro.openct.BaseView;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.data.university.item.GradeInfo;
 
+@Keep
 interface GradeContract {
 
     interface View extends BaseView<Presenter> {

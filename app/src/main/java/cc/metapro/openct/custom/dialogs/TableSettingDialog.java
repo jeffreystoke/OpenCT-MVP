@@ -17,6 +17,7 @@ package cc.metapro.openct.custom.dialogs;
  */
 
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.Gravity;
@@ -37,7 +38,7 @@ import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.Constants;
 
-
+@Keep
 public class TableSettingDialog extends DialogFragment {
 
     public static final String NAME = "课程名称";
@@ -78,7 +79,7 @@ public class TableSettingDialog extends DialogFragment {
         if (mIndex < mStrings.length) {
             mInfo.setText(mStrings[mIndex]);
         } else {
-            mCallBack.onFinsih(mIndexMap);
+            mCallBack.onFinish(mIndexMap);
             dismiss();
         }
     }
@@ -141,6 +142,6 @@ public class TableSettingDialog extends DialogFragment {
     }
 
     public interface TableSettingCallBack {
-        void onFinsih(Map<String, Integer> indexMap);
+        void onFinish(Map<String, Integer> indexMap);
     }
 }

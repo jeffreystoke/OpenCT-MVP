@@ -17,6 +17,7 @@ package cc.metapro.openct.search;
  */
 
 import android.content.Context;
+import android.support.annotation.Keep;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +32,8 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.BookInfo;
 
-final class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewHolder> {
+@Keep
+class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewHolder> {
 
     private Context mContext;
 

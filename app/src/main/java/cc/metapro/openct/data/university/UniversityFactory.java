@@ -16,10 +16,10 @@ package cc.metapro.openct.data.university;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
-import com.google.common.base.Strings;
+import android.text.TextUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -40,7 +40,7 @@ import cc.metapro.openct.utils.HTMLUtils.FormUtils;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 
-
+@Keep
 public abstract class UniversityFactory {
 
     private static final Pattern LOGIN_SUCCESS = Pattern.compile("(当前借阅)|(个人信息)");
@@ -91,7 +91,7 @@ public abstract class UniversityFactory {
                 Document document = Jsoup.parse(loginPageHtml, mCMSInfo.mCmsURL);
                 String action = document.select("form").get(0).absUrl("action");
                 userCenter = mService.login(action, getLoginRefer(), map).execute().body();
-                if (!Strings.isNullOrEmpty(userCenter) && LOGIN_SUCCESS.matcher(userCenter).find()) {
+                if (!TextUtils.isEmpty(userCenter) && LOGIN_SUCCESS.matcher(userCenter).find()) {
                     return userCenter;
                 } else {
                     throw new Exception("登录失败, 请检查您的用户名和密码\n(以及验证码)");
@@ -115,7 +115,7 @@ public abstract class UniversityFactory {
         }
 
         // 登录完成, 检测结果
-        if (!Strings.isNullOrEmpty(userCenter) && LOGIN_SUCCESS.matcher(userCenter).find()) {
+        if (!TextUtils.isEmpty(userCenter) && LOGIN_SUCCESS.matcher(userCenter).find()) {
             return userCenter;
         } else {
             throw new Exception("登录失败, 请检查您的用户名和密码\n(以及验证码)");
@@ -132,7 +132,7 @@ public abstract class UniversityFactory {
                     conn.setInstanceFollowRedirects(false);
                     if (conn.getResponseCode() == 302) {
                         dynURL = conn.getHeaderField("Location");
-                        if (!Strings.isNullOrEmpty(dynURL)) {
+                        if (!TextUtils.isEmpty(dynURL)) {
                             Pattern pattern = Pattern.compile("\\(.*\\)+");
                             Matcher m = pattern.matcher(dynURL);
                             if (m.find()) {
@@ -144,7 +144,7 @@ public abstract class UniversityFactory {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if (!Strings.isNullOrEmpty(dynPart)) {
+                if (!TextUtils.isEmpty(dynPart)) {
                     resetURLFactory();
                     gotDynPart = true;
                 }

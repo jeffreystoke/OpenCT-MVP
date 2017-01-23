@@ -37,6 +37,7 @@ public class SchoolSelectionActivity extends AppCompatActivity implements Search
     public static final int REQUEST_SCHOOL_NAME = 1;
     public static final String RESULT_KEY = "school_name";
     private static String result;
+    private static String[] values;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.school_name)
@@ -53,6 +54,9 @@ public class SchoolSelectionActivity extends AppCompatActivity implements Search
 
         setSupportActionBar(mToolbar);
         setViews();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.getString(getString(R.string.pref_school_name), "");
+        values = getResources().getStringArray(R.array.school_names_values);
     }
 
     private void setViews() {
@@ -62,13 +66,15 @@ public class SchoolSelectionActivity extends AppCompatActivity implements Search
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 result = mAdapter.getItem(position).toString();
+                for (String s : values) {
+                    if (result.startsWith(s)) {
+                        result = s;
+                        break;
+                    }
+                }
                 Intent intent = new Intent();
                 intent.putExtra(RESULT_KEY, result);
                 setResult(RESULT_OK, intent);
-//                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(SchoolSelectionActivity.this);
-//                SharedPreferences.Editor editor = pref.edit();
-//                editor.putString(getString(R.string.pref_school_name), result);
-//                editor.apply();
                 finish();
             }
         });

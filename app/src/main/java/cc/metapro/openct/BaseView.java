@@ -16,6 +16,9 @@ package cc.metapro.openct;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
+
+@Keep
 public interface BaseView<T> {
 
     void setPresenter(T presenter);

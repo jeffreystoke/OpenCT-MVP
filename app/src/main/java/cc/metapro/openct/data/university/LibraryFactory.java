@@ -17,10 +17,10 @@ package cc.metapro.openct.data.university;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
-
-import com.google.common.base.Strings;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -39,6 +39,7 @@ import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.utils.HTMLUtils.FormHandler;
 import cc.metapro.openct.utils.HTMLUtils.FormUtils;
 
+@Keep
 public class LibraryFactory extends UniversityFactory {
 
     private static final String TAG = "LIB_FACTORY";
@@ -85,13 +86,13 @@ public class LibraryFactory extends UniversityFactory {
         String resultPage = mService.searchLibrary(action, action, res).execute().body();
 
         prepareNextPageURL(resultPage);
-        return Strings.isNullOrEmpty(resultPage) ? new ArrayList<BookInfo>(0) : parseBook(resultPage);
+        return TextUtils.isEmpty(resultPage) ? new ArrayList<BookInfo>(0) : parseBook(resultPage);
     }
 
     @NonNull
     public List<BookInfo> getNextPage() throws Exception {
         String resultPage = null;
-        if (Strings.isNullOrEmpty(nextPageURL)) {
+        if (TextUtils.isEmpty(nextPageURL)) {
             return new ArrayList<>(0);
         }
         switch (mLibraryInfo.mLibSys) {
@@ -101,7 +102,7 @@ public class LibraryFactory extends UniversityFactory {
         }
         nextPageURL = "";
         prepareNextPageURL(resultPage);
-        return Strings.isNullOrEmpty(resultPage) ?
+        return TextUtils.isEmpty(resultPage) ?
                 new ArrayList<BookInfo>(0) : parseBook(resultPage);
     }
 
@@ -131,7 +132,7 @@ public class LibraryFactory extends UniversityFactory {
             borrowPage = mService.getPage(mURLFactory.BORROW_URL, mURLFactory.USER_HOME_URL).execute().body();
         }
 
-        return Strings.isNullOrEmpty(borrowPage) ? new ArrayList<BorrowInfo>(0) : parseBorrow(borrowPage);
+        return TextUtils.isEmpty(borrowPage) ? new ArrayList<BorrowInfo>(0) : parseBorrow(borrowPage);
     }
 
     @NonNull
@@ -165,7 +166,7 @@ public class LibraryFactory extends UniversityFactory {
             String title = els_title.select("a").text();
             String href = els_title.select("a").get(0).absUrl("href");
 
-            if (Strings.isNullOrEmpty(title)) return new ArrayList<>(0);
+            if (TextUtils.isEmpty(title)) return new ArrayList<>(0);
 
             title = title.split("\\.")[1];
             String[] tmps = tmp_1.split(" ");

@@ -19,6 +19,7 @@ package cc.metapro.openct.data.source;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.Keep;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -31,6 +32,7 @@ import java.util.List;
 
 import cc.metapro.openct.data.university.UniversityInfo;
 
+@Keep
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String

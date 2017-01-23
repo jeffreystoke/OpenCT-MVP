@@ -17,6 +17,7 @@ package cc.metapro.openct.data.source;
  */
 
 import android.content.Context;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+@Keep
 public final class StoreHelper {
 
     private final static Gson gson = new Gson();

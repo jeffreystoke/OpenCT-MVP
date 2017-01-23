@@ -19,6 +19,7 @@ package cc.metapro.openct.homepage;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -40,9 +41,9 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.RE;
+import cc.metapro.openct.utils.REHelper;
 
-
+@Keep
 public class ClassAddDialog extends DialogFragment {
 
     private static ClassAddCallBack mCallBack;
@@ -93,7 +94,7 @@ public class ClassAddDialog extends DialogFragment {
         String name = mName.getText().toString();
         String during = mWeekStart.getText().toString() + " - " + mWeekEnd.getText().toString();
         String time = mTimeStart.getText().toString() + " - " + mTimeEnd.getText().toString() + " 节";
-        if (!RE.isEmpty(name) && !RE.isEmpty(during) && !RE.isEmpty(time)) {
+        if (!REHelper.isEmpty(name) && !REHelper.isEmpty(during) && !REHelper.isEmpty(time)) {
             String type = mType.getText().toString();
             String teacher = mTeacher.getText().toString();
             String place = mClassPlace.getText().toString();
@@ -135,11 +136,11 @@ public class ClassAddDialog extends DialogFragment {
             mTeacher.setText(mClassInfo.getTeacher());
 
             mWeekDay.setText(mDayOfWeek + "");
-            int[] timeStartEnd = RE.getStartEnd(mClassInfo.getTime());
+            int[] timeStartEnd = REHelper.getStartEnd(mClassInfo.getTime());
             mTimeStart.setText(timeStartEnd[0] + "");
             mTimeEnd.setText(timeStartEnd[1] + "");
 
-            int[] duringStartEnd = RE.getStartEnd(mClassInfo.getDuring());
+            int[] duringStartEnd = REHelper.getStartEnd(mClassInfo.getDuring());
             mWeekStart.setText(duringStartEnd[0] + "");
             mWeekEnd.setText(duringStartEnd[1] + "");
 

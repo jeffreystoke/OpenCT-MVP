@@ -1,5 +1,7 @@
 package cc.metapro.openct;
 
+import android.support.annotation.Keep;
+
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
  *
@@ -16,6 +18,7 @@ package cc.metapro.openct;
  * limitations under the License.
  */
 
+@Keep
 public interface BasePresenter {
 
     void start();

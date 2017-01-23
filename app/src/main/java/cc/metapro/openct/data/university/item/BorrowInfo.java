@@ -16,7 +16,8 @@ package cc.metapro.openct.data.university.item;
  * limitations under the License.
  */
 
-import com.google.common.base.Strings;
+import android.support.annotation.Keep;
+import android.text.TextUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,6 +26,7 @@ import java.util.Locale;
 
 import cc.metapro.openct.data.source.StoreHelper;
 
+@Keep
 public class BorrowInfo {
     private String mBarCode, mAuthor, mBookTitle, mContent, mBorrowDate, mDueDate;
 
@@ -51,12 +53,12 @@ public class BorrowInfo {
 
     public String toFullString() {
         StringBuilder sb = new StringBuilder();
-        if (!Strings.isNullOrEmpty(mBarCode)) sb.append("条码编号: ").append(mBarCode);
-        if (!Strings.isNullOrEmpty(mBookTitle))
+        if (!TextUtils.isEmpty(mBarCode)) sb.append("条码编号: ").append(mBarCode);
+        if (!TextUtils.isEmpty(mBookTitle))
             sb.append("\n\n").append("书籍信息: ").append(mBookTitle);
-        if (!Strings.isNullOrEmpty(mBorrowDate))
+        if (!TextUtils.isEmpty(mBorrowDate))
             sb.append("\n\n").append("借阅日期: ").append(mBorrowDate);
-        if (!Strings.isNullOrEmpty(mDueDate)) sb.append("\n\n").append("到期时间: ").append(mDueDate);
+        if (!TextUtils.isEmpty(mDueDate)) sb.append("\n\n").append("到期时间: ").append(mDueDate);
         return sb.toString();
     }
 

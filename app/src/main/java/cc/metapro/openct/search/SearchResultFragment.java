@@ -18,6 +18,7 @@ package cc.metapro.openct.search;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,6 +38,7 @@ import cc.metapro.openct.data.university.item.BookInfo;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 import io.reactivex.disposables.Disposable;
 
+@Keep
 public class SearchResultFragment extends Fragment implements LibSearchContract.View {
 
     @BindView(R.id.lib_result_recycler_view)

@@ -17,6 +17,7 @@ package cc.metapro.openct.borrow;
  */
 
 import android.content.Context;
+import android.support.annotation.Keep;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,13 +32,14 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 
-public class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowViewHolder> {
+@Keep
+class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowViewHolder> {
 
     private List<BorrowInfo> mBorrows;
 
     private Context mContext;
 
-    public BorrowAdapter(Context context) {
+    BorrowAdapter(Context context) {
         mContext = context;
         mBorrows = new ArrayList<>(0);
     }
@@ -63,7 +65,7 @@ public class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowView
         return mBorrows.size();
     }
 
-    public void setNewBorrows(List<BorrowInfo> borrows) {
+    void setNewBorrows(List<BorrowInfo> borrows) {
         if (borrows == null || borrows.size() == 0) {
             mBorrows = new ArrayList<>(0);
         } else {
@@ -71,7 +73,7 @@ public class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowView
         }
     }
 
-    public static class BorrowViewHolder extends RecyclerView.ViewHolder {
+    static class BorrowViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.lib_borrow_item_title)
         TextView mTitle;
@@ -88,7 +90,7 @@ public class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowView
         @BindView(R.id.lib_borrow_item_due_time)
         TextView mDueTime;
 
-        public BorrowViewHolder(View itemView) {
+        BorrowViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -105,11 +107,11 @@ public class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowView
             mContent.setText(content);
         }
 
-        public void setBorrowTime(String borrowTime) {
+        void setBorrowTime(String borrowTime) {
             mBorrowTime.setText(borrowTime);
         }
 
-        public void setDueTime(String dueTime) {
+        void setDueTime(String dueTime) {
             mDueTime.setText(dueTime);
         }
     }

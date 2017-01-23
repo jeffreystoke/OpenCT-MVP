@@ -17,6 +17,7 @@ package cc.metapro.openct.grades;
  */
 
 import android.content.Context;
+import android.support.annotation.Keep;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +34,7 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.GradeInfo;
 
+@Keep
 class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHolder> {
 
     private List<GradeInfo> mGradeInfos;

@@ -17,6 +17,7 @@ package cc.metapro.openct.custom.dialogs;
  */
 
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.Constants;
 
+@Keep
 public class ClickDialog extends DialogFragment implements View.OnClickListener {
 
     // 用户输入用户名密码, 回放时将直接填写

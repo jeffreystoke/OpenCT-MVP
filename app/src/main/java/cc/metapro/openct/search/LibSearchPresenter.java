@@ -17,6 +17,7 @@ package cc.metapro.openct.search;
  */
 
 import android.content.Context;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.EditText;
@@ -40,6 +41,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
+@Keep
 class LibSearchPresenter implements LibSearchContract.Presenter {
 
     private static final String TAG = "LIB_PRESENTER";

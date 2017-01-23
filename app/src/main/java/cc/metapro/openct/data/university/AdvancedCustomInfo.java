@@ -16,9 +16,12 @@ package cc.metapro.openct.data.university;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
+
 import cc.metapro.openct.custom.CustomConfiguration;
 import cc.metapro.openct.data.source.StoreHelper;
 
+@Keep
 public class AdvancedCustomInfo {
 
     public CustomConfiguration mWebScriptConfiguration;

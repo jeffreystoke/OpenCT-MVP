@@ -18,10 +18,10 @@ package cc.metapro.openct.data.university.item;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-
-import com.google.common.base.Strings;
+import android.text.TextUtils;
 
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.ParameterFactoryImpl;
@@ -36,7 +36,6 @@ import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.util.UidGenerator;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,22 +44,21 @@ import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.homepage.ClassContract;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.RE;
+import cc.metapro.openct.utils.DateHelper;
+import cc.metapro.openct.utils.REHelper;
 
-public class ClassInfo implements Serializable {
+@Keep
+public class ClassInfo {
 
-    private final static String oddPatternString = "(单周?)";
-    private final static String evenPatternString = "(双周?)";
-    private final static String doubleWidthString = "[^\\x00-\\xff]";
     private String mName;
     private String mType;
     private String mTime;
     private String mDuring;
     private String mTeacher;
     private String mPlace;
-    private boolean mInactive;
     private boolean mOddWeek;
     private boolean mEvenWeek;
+    private boolean mInactive;
     private ClassInfo mSubClassInfo;
 
     public ClassInfo(String name, String type, String time, String during, String teacher, String place, boolean oddWeek, boolean evenWeek) {
@@ -103,16 +101,16 @@ public class ClassInfo implements Serializable {
             }
             if (timeIndex < tmp.length) {
                 mTime = infoParser(info.mTimeRE, tmp[timeIndex]);
-                if (!RE.isEmpty(mTime)) {
-                    mTime = mTime.replaceAll(doubleWidthString, "");
-                    mOddWeek = Pattern.compile(oddPatternString).matcher(tmp[timeIndex]).find();
-                    mEvenWeek = Pattern.compile(evenPatternString).matcher(tmp[timeIndex]).find();
+                if (!REHelper.isEmpty(mTime)) {
+                    mTime = REHelper.delDoubleWidthChar(mTime);
+                    mOddWeek = REHelper.isOddWeek(mTime);
+                    mEvenWeek = REHelper.isEvenWeek(mTime);
                 }
             }
             if (duringIndex < tmp.length) {
                 mDuring = infoParser(info.mDuringRE, tmp[duringIndex]);
-                if (RE.isEmpty(mDuring)) {
-                    mDuring = mDuring.replaceAll(doubleWidthString, "");
+                if (REHelper.isEmpty(mDuring)) {
+                    mDuring = REHelper.delDoubleWidthChar(mDuring);
                 }
             }
         }
@@ -132,7 +130,7 @@ public class ClassInfo implements Serializable {
     }
 
     private String infoParser(String re, String content) {
-        if (!Strings.isNullOrEmpty(re)) {
+        if (!TextUtils.isEmpty(re)) {
             Pattern pattern = Pattern.compile(re);
             Matcher m = pattern.matcher(content);
             if (m.find()) content = m.group();
@@ -142,8 +140,8 @@ public class ClassInfo implements Serializable {
 
     public boolean hasClass(int week) {
         if (mInactive) return false;
-        if (Strings.isNullOrEmpty(mDuring)) return false;
-        int[] startEnd = RE.getStartEnd(mDuring);
+        if (TextUtils.isEmpty(mDuring)) return false;
+        int[] startEnd = REHelper.getStartEnd(mDuring);
         if (week >= startEnd[0] && week <= startEnd[1]) {
             if (mOddWeek && (week % 2 == 1)) return true;
             if (mEvenWeek && (week % 2 == 0)) return true;
@@ -153,8 +151,8 @@ public class ClassInfo implements Serializable {
     }
 
     public int getLength() {
-        if (Strings.isNullOrEmpty(mTime)) return 1;
-        int[] startEnd = RE.getStartEnd(mTime);
+        if (TextUtils.isEmpty(mTime)) return 1;
+        int[] startEnd = REHelper.getStartEnd(mTime);
         try {
             if (startEnd[0] == -1) {
                 return Integer.parseInt(mTime);
@@ -167,16 +165,16 @@ public class ClassInfo implements Serializable {
 
     @Nullable
     public String getDuring() {
-        return Strings.isNullOrEmpty(mDuring) ? null : mDuring;
+        return TextUtils.isEmpty(mDuring) ? null : mDuring;
     }
 
     @Nullable
     public String getTime() {
-        return Strings.isNullOrEmpty(mTime) ? null : mTime;
+        return TextUtils.isEmpty(mTime) ? null : mTime;
     }
 
     public boolean isEmpty() {
-        return RE.isEmpty(mName);
+        return REHelper.isEmpty(mName);
     }
 
     public boolean hasSubClass() {
@@ -192,7 +190,7 @@ public class ClassInfo implements Serializable {
     }
 
     public String getName() {
-        return Strings.isNullOrEmpty(mName) ? "" : mName;
+        return TextUtils.isEmpty(mName) ? "" : mName;
     }
 
     public String getTeacher() {
@@ -204,23 +202,23 @@ public class ClassInfo implements Serializable {
     }
 
     public String getPlace() {
-        return Strings.isNullOrEmpty(mPlace) ? "" : mPlace;
+        return TextUtils.isEmpty(mPlace) ? "" : mPlace;
     }
 
     private String toFullString() {
         StringBuilder sb = new StringBuilder();
 
-        if (!RE.isEmpty(mName)) sb.append("课程名称: ").append(mName).append("\n\n");
-        if (!RE.isEmpty(mType)) sb.append("课程类型: ").append(mType).append("\n\n");
+        if (!REHelper.isEmpty(mName)) sb.append("课程名称: ").append(mName).append("\n\n");
+        if (!REHelper.isEmpty(mType)) sb.append("课程类型: ").append(mType).append("\n\n");
 
         String time = getTime();
-        if (!RE.isEmpty(time)) sb.append("上课时间: ").append(time).append("\n\n");
+        if (!REHelper.isEmpty(time)) sb.append("上课时间: ").append(time).append("\n\n");
 
-        if (!RE.isEmpty(mPlace)) sb.append("上课地点: ").append(mPlace).append("\n\n");
-        if (!RE.isEmpty(mTeacher)) sb.append("授课教师: ").append(mTeacher).append("\n\n");
+        if (!REHelper.isEmpty(mPlace)) sb.append("上课地点: ").append(mPlace).append("\n\n");
+        if (!REHelper.isEmpty(mTeacher)) sb.append("授课教师: ").append(mTeacher).append("\n\n");
 
         String during = getDuring();
-        if (!RE.isEmpty(during)) sb.append("课程周期: ").append(during).append("\n\n");
+        if (!REHelper.isEmpty(during)) sb.append("课程周期: ").append(during).append("\n\n");
 
         if (hasSubClass()) sb.append("\n\n").append(mSubClassInfo.toFullString());
 
@@ -271,13 +269,13 @@ public class ClassInfo implements Serializable {
         try {
             // set end Date
             Calendar now = Calendar.getInstance();
-            int[] startEnd = RE.getStartEnd(mDuring);
+            int[] startEnd = REHelper.getStartEnd(mDuring);
 
             int dayAfter = (now.get(Calendar.WEEK_OF_YEAR) + startEnd[1] - week - 1) * 7;
 
             // repeat every week until endDate
             Recur recur = new Recur(Recur.WEEKLY,
-                    new DateTime(RE.getDateAfter(now.getTime(), dayAfter)));
+                    new DateTime(DateHelper.getDateAfter(now.getTime(), dayAfter)));
             recur.setInterval(1);
             RRule rule = new RRule(recur);
 
@@ -286,14 +284,14 @@ public class ClassInfo implements Serializable {
                     (now.get(Calendar.WEEK_OF_YEAR) + startEnd[0] - week - 1) * 7);
 
             Calendar dailyStart = Calendar.getInstance();
-            dailyStart.setTime(RE.getDateBefore(now.getTime(), dayBefore));
+            dailyStart.setTime(DateHelper.getDateBefore(now.getTime(), dayBefore));
             dailyStart.set(Calendar.HOUR_OF_DAY, 8);
             dailyStart.set(Calendar.MINUTE, 0);
             dailyStart.set(Calendar.DAY_OF_WEEK, weekDay);
             DateTime start = new DateTime(dailyStart.getTime());
 
             Calendar dailyEnd = Calendar.getInstance();
-            dailyEnd.setTime(RE.getDateBefore(now.getTime(), dayBefore));
+            dailyEnd.setTime(DateHelper.getDateBefore(now.getTime(), dayBefore));
             dailyEnd.set(Calendar.HOUR_OF_DAY, 17);
             dailyEnd.set(Calendar.MINUTE, 0);
             dailyEnd.set(Calendar.DAY_OF_WEEK, weekDay);

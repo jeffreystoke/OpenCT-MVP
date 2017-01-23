@@ -17,18 +17,19 @@ package cc.metapro.openct;
  */
 
 import android.app.Application;
+import android.support.annotation.Keep;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
-
-import com.google.common.base.Strings;
 
 import cc.metapro.openct.utils.Constants;
 
+@Keep
 public class OpenCT extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
-        if (Strings.isNullOrEmpty(Constants.CAPTCHA_FILE)) {
+        if (TextUtils.isEmpty(Constants.CAPTCHA_FILE)) {
             Constants.CAPTCHA_FILE = getCacheDir().getPath() + "/" + Constants.CAPTCHA_FILENAME;
         }
 

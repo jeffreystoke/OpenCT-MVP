@@ -17,6 +17,7 @@ package cc.metapro.openct.search;
  */
 
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -36,6 +37,7 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.utils.ActivityUtils;
 import io.reactivex.disposables.Disposable;
 
+@Keep
 public class LibSearchActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar)

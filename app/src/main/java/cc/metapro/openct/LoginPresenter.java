@@ -16,8 +16,10 @@ package cc.metapro.openct;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
 import android.widget.TextView;
 
+@Keep
 public interface LoginPresenter extends BasePresenter {
 
     void loadCaptcha(final TextView view);

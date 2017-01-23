@@ -19,6 +19,7 @@ package cc.metapro.openct.data.source;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -35,6 +36,7 @@ import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
 
+@Keep
 public class DBManger {
 
     private static final String TAG = "DBMANAGER";

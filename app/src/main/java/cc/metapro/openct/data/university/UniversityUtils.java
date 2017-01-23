@@ -16,6 +16,7 @@ package cc.metapro.openct.data.university;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 
 import org.jsoup.Jsoup;
@@ -33,6 +34,7 @@ import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.utils.Constants;
 
+@Keep
 public class UniversityUtils {
 
     private static final String CLASS_TABLE_PATTERN = "(\\d+.*\\d+节$)|(\\d+节$)|(\\d)";

@@ -16,6 +16,7 @@ package cc.metapro.openct.utils;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
 import android.text.TextUtils;
 import android.util.Base64;
 
@@ -27,7 +28,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-public class EncryptionUtils {
+@Keep
+public final class EncryptionUtils {
 
     private static final String HEX = "0123456789ABCDEF";
     private static final String CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding";

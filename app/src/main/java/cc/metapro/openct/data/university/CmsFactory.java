@@ -16,10 +16,9 @@ package cc.metapro.openct.data.university;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-
-import com.google.common.base.Strings;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -42,6 +41,7 @@ import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.utils.HTMLUtils.FormHandler;
 
+@Keep
 public class CmsFactory extends UniversityFactory {
 
     private CmsURLFactory mURLFactory;
@@ -90,7 +90,7 @@ public class CmsFactory extends UniversityFactory {
         }
 
         // 课表页面为空
-        if (Strings.isNullOrEmpty(tablePage)) {
+        if (TextUtils.isEmpty(tablePage)) {
             throw new Exception("很抱歉, 没能根据链接获取到页面");
         }
 

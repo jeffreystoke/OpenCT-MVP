@@ -19,6 +19,7 @@ package cc.metapro.openct.borrow;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +43,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
-
+@Keep
 class LibBorrowPresenter implements LibBorrowContract.Presenter {
 
     private LibBorrowContract.View mLibBorrowView;

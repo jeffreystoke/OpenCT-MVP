@@ -17,7 +17,9 @@ package cc.metapro.openct.utils;
  */
 
 import android.graphics.Color;
+import android.support.annotation.Keep;
 
+@Keep
 public final class Constants {
 
     public static final String ACTION = "action";

@@ -16,11 +16,13 @@ package cc.metapro.openct.data.university.item;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Keep
 public class RoomInfo {
 
     private String mPlace;

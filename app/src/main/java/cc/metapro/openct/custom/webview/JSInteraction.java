@@ -16,8 +16,10 @@ package cc.metapro.openct.custom.webview;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
 import android.webkit.JavascriptInterface;
 
+@Keep
 public class JSInteraction {
 
     public static final String TAG = "HTML";

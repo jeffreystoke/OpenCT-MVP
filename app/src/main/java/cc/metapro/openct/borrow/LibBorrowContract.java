@@ -16,19 +16,22 @@ package cc.metapro.openct.borrow;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
+
 import java.util.List;
 
 import cc.metapro.openct.BaseView;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 
+@Keep
 interface LibBorrowContract {
 
     interface View extends BaseView<Presenter> {
 
-        void showDue(List<BorrowInfo> infos);
+        void showDue(List<BorrowInfo> borrows);
 
-        void onLoadBorrows(List<BorrowInfo> infos);
+        void onLoadBorrows(List<BorrowInfo> borrows);
 
     }
 

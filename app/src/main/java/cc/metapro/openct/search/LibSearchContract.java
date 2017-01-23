@@ -16,6 +16,8 @@ package cc.metapro.openct.search;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
+
 import java.util.List;
 
 import cc.metapro.openct.BasePresenter;
@@ -23,6 +25,7 @@ import cc.metapro.openct.BaseView;
 import cc.metapro.openct.data.university.item.BookInfo;
 import io.reactivex.disposables.Disposable;
 
+@Keep
 interface LibSearchContract {
 
     interface View extends BaseView<Presenter> {

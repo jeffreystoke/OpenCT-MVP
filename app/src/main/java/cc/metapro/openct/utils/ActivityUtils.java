@@ -20,13 +20,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.util.Log;
-
-import com.google.common.base.Strings;
 
 import cc.metapro.openct.R;
 import io.reactivex.Observable;
@@ -35,17 +35,14 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-public class ActivityUtils {
+@Keep
+public final class ActivityUtils {
 
     private static final String TAG = "ENCRYPTION";
     private static ProgressDialog pd;
 
     public static void addFragmentToActivity(@NonNull FragmentManager fragmentManager,
                                              @NonNull Fragment fragment, int frameId) {
-        checkNotNull(fragmentManager);
-        checkNotNull(fragment);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(frameId, fragment);
         transaction.commit();
@@ -96,7 +93,7 @@ public class ActivityUtils {
                             if (!cmsPasswordEncrypted) {
                                 String cmsPassword = preferences.getString(context.getString(R.string.pref_cms_password), "");
                                 try {
-                                    if (!Strings.isNullOrEmpty(cmsPassword)) {
+                                    if (!TextUtils.isEmpty(cmsPassword)) {
                                         cmsPassword = EncryptionUtils.encrypt(Constants.seed, cmsPassword);
                                         SharedPreferences.Editor editor = preferences.edit();
                                         editor.putString(context.getString(R.string.pref_cms_password), cmsPassword);
@@ -110,7 +107,7 @@ public class ActivityUtils {
                             if (!libPasswordEncrypted) {
                                 try {
                                     String libPassword = preferences.getString(context.getString(R.string.pref_lib_password), "");
-                                    if (!Strings.isNullOrEmpty(libPassword)) {
+                                    if (!TextUtils.isEmpty(libPassword)) {
                                         libPassword = EncryptionUtils.encrypt(Constants.seed, libPassword);
                                         SharedPreferences.Editor editor = preferences.edit();
                                         editor.putString(context.getString(R.string.pref_cms_password), libPassword);

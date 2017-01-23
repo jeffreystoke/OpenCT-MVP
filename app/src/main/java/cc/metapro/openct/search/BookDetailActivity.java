@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -40,6 +41,7 @@ import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.Constants;
 
+@Keep
 public class BookDetailActivity extends AppCompatActivity {
 
     @BindView(R.id.book_detail_toolbar)

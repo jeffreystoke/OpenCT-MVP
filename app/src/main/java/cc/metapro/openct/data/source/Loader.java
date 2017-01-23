@@ -19,10 +19,10 @@ package cc.metapro.openct.data.source;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
-
-import com.google.common.base.Strings;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -43,6 +43,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
+@Keep
 public class Loader {
     private static final String TAG = "LOADER";
 
@@ -75,7 +76,7 @@ public class Loader {
             if (needEncrypt) {
                 password = EncryptionUtils.decrypt(Constants.seed, password);
             }
-            if (!Strings.isNullOrEmpty(password)) {
+            if (!TextUtils.isEmpty(password)) {
                 map.put(Constants.USERNAME_KEY, preferences.getString(context.getString(R.string.pref_lib_username), ""));
                 map.put(Constants.PASSWORD_KEY, password);
             }
@@ -95,7 +96,7 @@ public class Loader {
             if (needEncrypt) {
                 password = EncryptionUtils.decrypt(Constants.seed, password);
             }
-            if (!Strings.isNullOrEmpty(password)) {
+            if (!TextUtils.isEmpty(password)) {
                 map.put(Constants.USERNAME_KEY, preferences.getString(context.getString(R.string.pref_cms_username), ""));
                 map.put(Constants.PASSWORD_KEY, password);
             }

@@ -18,6 +18,7 @@ package cc.metapro.openct.custom.dialogs;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
@@ -47,6 +48,7 @@ import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 
+@Keep
 public class TableChooseDialog extends DialogFragment {
 
     private static Map<String, Element> tables;
@@ -77,7 +79,7 @@ public class TableChooseDialog extends DialogFragment {
         if (sample != null) {
             TableSettingDialog.newInstance(sample.text(), new TableSettingDialog.TableSettingCallBack() {
                 @Override
-                public void onFinsih(Map<String, Integer> indexMap) {
+                public void onFinish(Map<String, Integer> indexMap) {
                     CmsFactory.ClassTableInfo info = new CmsFactory.ClassTableInfo();
                     info.mNameIndex = indexMap.get(TableSettingDialog.NAME);
                     info.mTimeIndex = indexMap.get(TableSettingDialog.TIME);

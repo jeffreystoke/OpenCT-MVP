@@ -16,6 +16,7 @@ package cc.metapro.openct.custom;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
 import android.support.v4.app.FragmentManager;
 import android.webkit.WebView;
 
@@ -28,6 +29,7 @@ import cc.metapro.openct.data.source.StoreHelper;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
+@Keep
 public class CustomConfiguration {
 
     private List<String> mTypes;
@@ -35,12 +37,12 @@ public class CustomConfiguration {
     private Observer<Integer> mObserver;
     private int mIndex = 0;
 
-    public CustomConfiguration() {
+    CustomConfiguration() {
         mTypes = new ArrayList<>();
         mCmds = new ArrayList<>();
     }
 
-    public void addAction(String type, String cmd) {
+    void addAction(String type, String cmd) {
         mTypes.add(type);
         mCmds.add(cmd);
     }

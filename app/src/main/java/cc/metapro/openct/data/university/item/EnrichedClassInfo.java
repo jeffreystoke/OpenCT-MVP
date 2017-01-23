@@ -17,6 +17,7 @@ package cc.metapro.openct.data.university.item;
  */
 
 import android.content.DialogInterface;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
@@ -36,6 +37,7 @@ import cc.metapro.openct.homepage.ClassAddDialog;
 import cc.metapro.openct.homepage.ClassContract;
 import cc.metapro.openct.utils.Constants;
 
+@Keep
 public class EnrichedClassInfo {
 
     /**

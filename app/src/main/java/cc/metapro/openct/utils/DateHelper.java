@@ -16,39 +16,14 @@ package cc.metapro.openct.utils;
  * limitations under the License.
  */
 
-import android.text.TextUtils;
+
+import android.support.annotation.Keep;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class RE {
-
-    private static String timeDuringPattern = "[0-9]{1,2}";
-    private static String lastNumberPattern = "[0-9]+(?=[^0-9]*$)";
-    private static Pattern empty = Pattern.compile("^\\s+$");
-
-    public static int[] getStartEnd(String s) {
-        Matcher first = Pattern.compile(timeDuringPattern).matcher(s);
-        if (first.find()) {
-            int start = Integer.parseInt(first.group());
-            Matcher last = Pattern.compile(lastNumberPattern).matcher(s);
-            int end = start;
-            if (last.find()) {
-                end = Integer.parseInt(last.group());
-            }
-            return new int[]{start, end};
-        } else {
-            return new int[]{-1, -1};
-        }
-    }
-
-    public static boolean isEmpty(String s) {
-        if (TextUtils.isEmpty(s)) return true;
-        Matcher m = empty.matcher(s);
-        return m.find();
-    }
+@Keep
+public final class DateHelper {
 
     public static Date getDateBefore(Date d, int day) {
         Calendar now = Calendar.getInstance();
@@ -63,5 +38,4 @@ public class RE {
         now.set(Calendar.DATE, now.get(Calendar.DATE) + day);
         return now.getTime();
     }
-
 }

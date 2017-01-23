@@ -18,8 +18,7 @@ package cc.metapro.openct.utils.HTMLUtils;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
-import com.google.common.base.Strings;
+import android.text.TextUtils;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -70,8 +69,8 @@ public class FormUtils {
                 res.put(key, value);
             } else if ("submit".equalsIgnoreCase(type)) {
                 // submit buttons
-                if (Strings.isNullOrEmpty(onclick) && !clicked) {
-                    if (!Strings.isNullOrEmpty(key)) {
+                if (TextUtils.isEmpty(onclick) && !clicked) {
+                    if (!TextUtils.isEmpty(key)) {
                         res.put(key, value);
                     }
                     clicked = true;
@@ -111,7 +110,7 @@ public class FormUtils {
                 loginMap.put(key, value);
             } else if ("submit".equalsIgnoreCase(type)) {
                 // submit buttons
-                if (Strings.isNullOrEmpty(onclick) && !clicked) {
+                if (TextUtils.isEmpty(onclick) && !clicked) {
                     if (needClick) {
                         loginMap.put(key, value);
                     }
@@ -124,13 +123,13 @@ public class FormUtils {
 
                 // 填写用户名
                 String userNameKey = prev.attr("name");
-                if (Strings.isNullOrEmpty(userNameKey)) {
+                if (TextUtils.isEmpty(userNameKey)) {
                     userNameKey = prev.attr("id");
                 }
                 loginMap.put(userNameKey, username);
 
                 // 填写密码
-                if (!Strings.isNullOrEmpty(key)) {
+                if (!TextUtils.isEmpty(key)) {
                     loginMap.put(key, password);
                 } else {
                     loginMap.put(id, password);
@@ -141,7 +140,7 @@ public class FormUtils {
                 // secret code text (after password)
                 if (prev != null && passwordOK) {
                     String code = kvs.get(Constants.CAPTCHA_KEY);
-                    if (!Strings.isNullOrEmpty(key)) {
+                    if (!TextUtils.isEmpty(key)) {
                         loginMap.put(key, code);
                     } else {
                         loginMap.put(id, code);
@@ -178,7 +177,7 @@ public class FormUtils {
     private static Element radio(@NonNull Elements radios, @Nullable String preferedValue) {
         for (Element r : radios) {
             if (r.hasAttr("checked")) {
-                if (!Strings.isNullOrEmpty(preferedValue)) {
+                if (!TextUtils.isEmpty(preferedValue)) {
                     r = r.attr("value", preferedValue);
                 }
                 return r;

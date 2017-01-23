@@ -18,6 +18,7 @@ package cc.metapro.openct.homepage;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -45,6 +46,7 @@ import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
+@Keep
 public class ClassFragment extends Fragment implements ClassContract.View {
 
     private static boolean showedPrompt;

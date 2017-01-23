@@ -18,8 +18,10 @@ package cc.metapro.openct.customviews;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +30,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.base.Strings;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import butterknife.BindView;
@@ -40,6 +41,7 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.Constants;
 
+@Keep
 public class CaptchaDialog extends DialogFragment {
 
     private static LoginPresenter mPresenter;
@@ -64,7 +66,7 @@ public class CaptchaDialog extends DialogFragment {
     @OnClick(R.id.ok)
     public void go() {
         String code = mEditText.getText().toString();
-        if (Strings.isNullOrEmpty(code)) {
+        if (TextUtils.isEmpty(code)) {
             Toast.makeText(getActivity(), R.string.enter_captcha, Toast.LENGTH_SHORT).show();
         } else {
             dismiss();
@@ -76,7 +78,7 @@ public class CaptchaDialog extends DialogFragment {
     public boolean onEnter(TextView textView, int i, KeyEvent keyEvent) {
         if (i == EditorInfo.IME_ACTION_GO || (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
             String code = mEditText.getText().toString();
-            if (Strings.isNullOrEmpty(code)) {
+            if (TextUtils.isEmpty(code)) {
                 Toast.makeText(getActivity(), R.string.enter_captcha, Toast.LENGTH_SHORT).show();
             } else {
                 dismiss();

@@ -16,8 +16,11 @@ package cc.metapro.openct.data.university.item;
  * limitations under the License.
  */
 
+import android.support.annotation.Keep;
+
 import cc.metapro.openct.data.source.StoreHelper;
 
+@Keep
 public final class BookInfo {
 
     public String mTitle, mAuthor, mContent, mStoreInfo, mLink;

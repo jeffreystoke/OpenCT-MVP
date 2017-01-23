@@ -18,6 +18,7 @@ package cc.metapro.openct.custom.webview;
 
 import android.net.http.SslError;
 import android.os.Build;
+import android.support.annotation.Keep;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentManager;
 import android.webkit.SslErrorHandler;
@@ -28,6 +29,7 @@ import android.webkit.WebViewClient;
 import cc.metapro.openct.custom.CustomConfiguration;
 import io.reactivex.Observer;
 
+@Keep
 public class SchoolWebViewClient extends WebViewClient {
 
     // 注入到加载的HTML文件中, 监听点击事件

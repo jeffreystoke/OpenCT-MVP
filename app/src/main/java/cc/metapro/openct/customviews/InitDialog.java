@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -43,6 +44,7 @@ import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.homepage.schoolselection.SchoolSelectionActivity;
 import cc.metapro.openct.utils.ActivityUtils;
 
+@Keep
 public class InitDialog extends DialogFragment {
 
     @BindView(R.id.info_init_cms_username)

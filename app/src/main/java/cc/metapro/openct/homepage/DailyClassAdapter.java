@@ -17,13 +17,13 @@ package cc.metapro.openct.homepage;
  */
 
 import android.content.Context;
+import android.support.annotation.Keep;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.google.common.base.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +34,7 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 
+@Keep
 class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassViewHolder> {
 
     private List<ClassInfo> mClasses;
@@ -102,8 +103,8 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
 
         void setTimePlace(String time, String place) {
             String content = "";
-            if (!Strings.isNullOrEmpty(time)) content += "今天 " + time + " 节 ";
-            if (!Strings.isNullOrEmpty(place)) content += "在 " + place;
+            if (!TextUtils.isEmpty(time)) content += "今天 " + time + " 节 ";
+            if (!TextUtils.isEmpty(place)) content += "在 " + place;
             mTimePlace.setText(content);
         }
     }

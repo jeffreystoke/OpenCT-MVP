@@ -21,10 +21,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,8 +34,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.common.base.Strings;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +51,7 @@ import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
+@Keep
 public class GradeFragment extends Fragment implements GradeContract.View {
 
     @BindView(R.id.grade_recycler_view)
@@ -120,7 +121,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
             public void onClick(DialogInterface dialogInterface, int i) {
                 String n = num.getText().toString();
                 String na = name.getText().toString();
-                if (!Strings.isNullOrEmpty(n) && !Strings.isNullOrEmpty(na)) {
+                if (!TextUtils.isEmpty(n) && !TextUtils.isEmpty(na)) {
                     Map<String, String> queryMap = new HashMap<>(2);
                     queryMap.put(Constants.CET_NUM_KEY, n);
                     queryMap.put(Constants.CET_NAME_KEY, na);
@@ -147,7 +148,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
 
         View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_cet_result, null);
         LinearLayout layout = (LinearLayout) view.findViewById(R.id.cet_result_layout);
-        if (!Strings.isNullOrEmpty(name)) {
+        if (!TextUtils.isEmpty(name)) {
             TextView textView = new TextView(mContext);
             textView.setText("姓名: " + name);
             textView.setTextSize(15);
@@ -155,7 +156,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
             layout.addView(textView);
         }
 
-        if (!Strings.isNullOrEmpty(school)) {
+        if (!TextUtils.isEmpty(school)) {
             TextView textView = new TextView(mContext);
             textView.setText("学校: " + school);
             textView.setTextSize(15);
@@ -163,7 +164,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
             layout.addView(textView);
         }
 
-        if (!Strings.isNullOrEmpty(type)) {
+        if (!TextUtils.isEmpty(type)) {
             TextView textView = new TextView(mContext);
             textView.setText("CET类型: " + type);
             textView.setTextSize(15);
@@ -171,7 +172,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
             layout.addView(textView);
         }
 
-        if (!Strings.isNullOrEmpty(num)) {
+        if (!TextUtils.isEmpty(num)) {
             TextView textView = new TextView(mContext);
             textView.setText("准考证号: " + num);
             textView.setTextSize(15);
@@ -179,7 +180,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
             layout.addView(textView);
         }
 
-        if (!Strings.isNullOrEmpty(time)) {
+        if (!TextUtils.isEmpty(time)) {
             TextView textView = new TextView(mContext);
             textView.setText("考试时间: " + time);
             textView.setTextSize(15);
@@ -187,7 +188,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
             layout.addView(textView);
         }
 
-        if (!Strings.isNullOrEmpty(grade)) {
+        if (!TextUtils.isEmpty(grade)) {
             TextView textView = new TextView(mContext);
             textView.setText("成绩: " + grade);
             textView.setTextSize(15);

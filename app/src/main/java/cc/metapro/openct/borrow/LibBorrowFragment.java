@@ -19,6 +19,7 @@ package cc.metapro.openct.borrow;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -36,7 +37,7 @@ import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
-
+@Keep
 public class LibBorrowFragment extends Fragment implements LibBorrowContract.View {
 
     @BindView(R.id.lib_borrow_recycler_view)
@@ -69,11 +70,11 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
     }
 
     @Override
-    public void showDue(List<BorrowInfo> infos) {
+    public void showDue(List<BorrowInfo> borrows) {
         try {
-            if (infos != null) {
-                List<BorrowInfo> dueInfo = new ArrayList<>(infos.size());
-                for (BorrowInfo b : infos) {
+            if (borrows != null) {
+                List<BorrowInfo> dueInfo = new ArrayList<>(borrows.size());
+                for (BorrowInfo b : borrows) {
                     if (b.isExceeded()) {
                         dueInfo.add(b);
                     }
@@ -87,12 +88,12 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
     }
 
     @Override
-    public void onLoadBorrows(List<BorrowInfo> infos) {
+    public void onLoadBorrows(List<BorrowInfo> borrows) {
         try {
-            mBorrowAdapter.setNewBorrows(infos);
+            mBorrowAdapter.setNewBorrows(borrows);
             mBorrowAdapter.notifyDataSetChanged();
             ActivityUtils.dismissProgressDialog();
-            Toast.makeText(mContext, "共有 " + infos.size() + " 条借阅信息", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "共有 " + borrows.size() + " 条借阅信息", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
 
         }

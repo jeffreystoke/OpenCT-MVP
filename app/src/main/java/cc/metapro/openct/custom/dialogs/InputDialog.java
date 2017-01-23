@@ -17,6 +17,7 @@ package cc.metapro.openct.custom.dialogs;
  */
 
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -30,7 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
 
-
+@Keep
 public class InputDialog extends DialogFragment {
 
     private static InputCallBack mCallBack;

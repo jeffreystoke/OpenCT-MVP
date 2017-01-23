@@ -17,6 +17,7 @@ package cc.metapro.openct.homepage.schoolselection;
  */
 
 import android.content.Context;
+import android.support.annotation.Keep;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,21 +31,21 @@ import java.util.List;
 import cc.metapro.openct.R;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
-
-public class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
+@Keep
+class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
 
     private List<String> mSchools;
     private LayoutInflater inflater;
     private String[] allSchools;
 
-    public SchoolAdapter(Context context) {
+    SchoolAdapter(Context context) {
         inflater = LayoutInflater.from(context);
         allSchools = context.getResources().getStringArray(R.array.school_names);
         mSchools = new ArrayList<>();
         mSchools.addAll(Arrays.asList(allSchools));
     }
 
-    public void setTextFilter(String filter) {
+    void setTextFilter(String filter) {
         List<String> targetList = new ArrayList<>();
         for (String s : allSchools) {
             if (s.contains(filter)) {
@@ -54,7 +55,7 @@ public class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapt
         mSchools = targetList;
     }
 
-    public void clearTextFilter() {
+    void clearTextFilter() {
         mSchools.clear();
         mSchools.addAll(Arrays.asList(allSchools));
     }
@@ -112,11 +113,11 @@ public class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapt
         return convertView;
     }
 
-    class HeaderViewHolder {
+    private class HeaderViewHolder {
         TextView headerText;
     }
 
-    class ViewHolder {
+    private class ViewHolder {
         TextView schoolText;
     }
 
