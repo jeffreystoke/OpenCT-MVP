@@ -16,16 +16,16 @@ package cc.metapro.openct;
  * limitations under the License.
  */
 
-import android.app.Application;
+import android.content.Context;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
 
 @Singleton
-@Component(modules = AppModule.class)
+@Component(modules = ApplicationModule.class)
 public interface AppComponent {
 
-    Application getApplication();
+    Context getContext();
 
 }

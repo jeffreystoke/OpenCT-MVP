@@ -79,7 +79,7 @@ public class EnrichedClassInfo {
         this.y = Constants.CLASS_BASE_HEIGHT * (dailySeq - 1);
         this.color = color;
         this.width = Constants.CLASS_WIDTH;
-        this.height = Constants.CLASS_BASE_HEIGHT * classInfo.getLength();
+        this.height = Constants.CLASS_BASE_HEIGHT * Constants.CLASS_LENGTH;
 
         mDayOfWeek = dayOfWeek;
     }
@@ -128,8 +128,7 @@ public class EnrichedClassInfo {
      * @param presenter 用于删除课程
      * @param week      第几周 (<= 0 表示不比较周数, 直接添加)
      */
-    public void
-    addViewTo(ViewGroup viewGroup, final FragmentActivity context, final ClassContract.Presenter presenter, int week) {
+    public void addViewTo(ViewGroup viewGroup, final FragmentActivity context, final ClassContract.Presenter presenter, int week) {
         ClassInfo target = null;
         if (week > 0) {
             List<ClassInfo> infoList = getAllClasses();
@@ -146,7 +145,17 @@ public class EnrichedClassInfo {
         }
         final CardView card = (CardView) LayoutInflater.from(context).inflate(R.layout.item_class_info, null);
         TextView textView = (TextView) card.findViewById(R.id.class_name);
-        textView.setText(target.getName() + "@" + target.getPlace());
+        int length = target.getLength();
+        if (length >= 5) {
+            length = 1;
+        }
+
+        if (length <= 1) {
+            length = 1;
+            textView.setText(target.getName());
+        } else {
+            textView.setText(target.getName() + "@" + target.getPlace());
+        }
 
         card.setX(x);
         card.setY(y);
@@ -173,13 +182,11 @@ public class EnrichedClassInfo {
 
         viewGroup.addView(card);
         ViewGroup.LayoutParams params = card.getLayoutParams();
-        int length = mClassInfo.getLength();
         params.width = width;
-        params.height = length >= 1 ? length * Constants.CLASS_BASE_HEIGHT : height;
+        params.height = length * Constants.CLASS_BASE_HEIGHT;
     }
 
-    public boolean
-    isToday() {
+    public boolean isToday() {
         Calendar calendar = Calendar.getInstance();
         return weekDayTrans(mDayOfWeek) == calendar.get(Calendar.DAY_OF_WEEK);
     }
@@ -188,13 +195,11 @@ public class EnrichedClassInfo {
         return mDayOfWeek;
     }
 
-    public int
-    getWeekDay() {
+    public int getWeekDay() {
         return weekDayTrans(mDayOfWeek);
     }
 
-    private int
-    weekDayTrans(int i) {
+    private int weekDayTrans(int i) {
         if (i > 0 && i < 8) {
             switch (i) {
                 case 1:
@@ -216,8 +221,7 @@ public class EnrichedClassInfo {
         return -1;
     }
 
-    public int
-    getColor() {
+    public int getColor() {
         return color;
     }
 
@@ -236,8 +240,7 @@ public class EnrichedClassInfo {
     }
 
     @Override
-    public String
-    toString() {
+    public String toString() {
         return StoreHelper.getJsonText(this);
     }
 
@@ -245,15 +248,14 @@ public class EnrichedClassInfo {
      * 拥有相同的坐标即为相等
      */
     @Override
-    public boolean
-    equals(Object obj) {
+    public boolean equals(Object obj) {
         if (obj == this) {
             return true;
         }
 
         if (obj instanceof EnrichedClassInfo) {
             EnrichedClassInfo classInfo = (EnrichedClassInfo) obj;
-            if (classInfo.x == this.x && classInfo.y == this.y) {
+            if (classInfo.getFirstClassInfo().equals(mClassInfo)) {
                 return true;
             }
         }

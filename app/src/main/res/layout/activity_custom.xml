@@ -55,12 +55,16 @@
 
         <TextView
             android:id="@+id/tips"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="start"
             android:layout_marginTop="40dp"
+            android:paddingEnd="0dp"
+            android:paddingLeft="40dp"
+            android:paddingRight="0dp"
+            android:paddingStart="40dp"
             android:text="@string/custom_tip"
-            android:textAlignment="center"
+            android:textAlignment="textStart"
             android:textColor="@color/materialWhite"/>
 
         <WebView
@@ -77,15 +81,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_menu"
         fab:menu_colorNormal="@color/colorAccent"
         fab:menu_colorPressed="@color/colorAccent"
         fab:menu_colorRipple="@color/colorAccent"
+        fab:menu_icon="@drawable/ic_menu"
         fab:menu_labels_maxLines="2"
         fab:menu_labels_position="left">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab"
+            android:id="@+id/fab_common"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_start"
@@ -93,7 +97,18 @@
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_colorPressed="@color/colorAccent"
             fab:fab_colorRipple="@color/colorAccent"
-            fab:fab_label="开始"/>
+            fab:fab_label="普通开始"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_record_start"
+            app:fab_size="mini"
+            fab:fab_colorNormal="@color/colorAccent"
+            fab:fab_colorPressed="@color/colorAccent"
+            fab:fab_colorRipple="@color/colorAccent"
+            fab:fab_label="录制开始"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_ok"
@@ -104,7 +119,7 @@
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_colorPressed="@color/colorAccent"
             fab:fab_colorRipple="@color/colorAccent"
-            fab:fab_label="结束"/>
+            fab:fab_label="到达页面"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_replay"
@@ -115,18 +130,17 @@
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_colorPressed="@color/colorAccent"
             fab:fab_colorRipple="@color/colorAccent"
-            fab:fab_label="回放"/>
+            fab:fab_label="录制回放"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_help"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_help"
-            android:visibility="gone"
             app:fab_size="mini"
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_colorPressed="@color/colorAccent"
             fab:fab_colorRipple="@color/colorAccent"
-            fab:fab_label="帮助"/>
+            fab:fab_label="无法填写内容?"/>
     </com.github.clans.fab.FloatingActionMenu>
 </android.support.design.widget.CoordinatorLayout>

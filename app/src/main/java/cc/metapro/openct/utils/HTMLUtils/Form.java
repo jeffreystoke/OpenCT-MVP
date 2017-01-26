@@ -24,12 +24,9 @@ import org.jsoup.select.Elements;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
-import cc.metapro.openct.utils.Constants;
-
 public class Form {
 
-    private final static Pattern
-            formItemPattern = Pattern.compile(Constants.FORM_ITEMS_RE);
+    private final static String FORM_ITEM_PATTERN = "(select)|(input)|(textarea)|(button)|(datalist)|(keygen)|(output)";
 
     private LinkedHashMap<String, Elements> mFormItems;
 
@@ -37,6 +34,10 @@ public class Form {
     private String mId;
     private String mMethod;
     private String mAction;
+
+    public Form() {
+
+    }
 
     Form(Element form) {
         mName = form.attr("name");
@@ -47,7 +48,7 @@ public class Form {
         mFormItems = new LinkedHashMap<>();
 
         for (Element e : form.getAllElements()) {
-            if (formItemPattern.matcher(e.tagName()).find()) {
+            if (Pattern.compile(FORM_ITEM_PATTERN).matcher(e.tagName()).find()) {
                 if ("select".equalsIgnoreCase(e.tagName())) {
                     Elements options = e.select("option");
                     if (options != null) {
@@ -75,6 +76,21 @@ public class Form {
         } else {
             stored.add(item);
         }
+    }
+
+    public Element getItemByIndex(int i) {
+        int j = 0;
+        for (Elements elements : mFormItems.values()) {
+            if (j == i) {
+                return elements.first();
+            }
+            j++;
+        }
+        return null;
+    }
+
+    public int size() {
+        return mFormItems.size();
     }
 
     public String getId() {

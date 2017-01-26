@@ -30,6 +30,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -48,10 +49,13 @@ import cc.metapro.openct.grades.GradeActivity;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
 import cc.metapro.openct.utils.ActivityUtils;
+import cc.metapro.openct.utils.Constants;
 
 @Keep
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    ClassContract.Presenter mPresenter;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -63,12 +67,6 @@ public class MainActivity extends AppCompatActivity
     NavigationView mNavigationView;
 
     private boolean mExitState;
-
-    private CaptchaDialog mCaptchaDialog;
-
-    private ClassContract.Presenter mPresenter;
-
-    private ClassFragment mClassFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,21 +91,17 @@ public class MainActivity extends AppCompatActivity
             fragment.setCancelable(false);
             fragment.show(getSupportFragmentManager(), "init_dialog_fragment");
         } else {
-            Loader.loadUniversity(this);
+            Loader.loadUniversity(this).subscribe();
         }
-
         // add class fragment
         FragmentManager fm = getSupportFragmentManager();
-        mClassFragment =
-                (ClassFragment) fm.findFragmentById(R.id.classes_container);
+        ClassFragment classFragment = (ClassFragment) fm.findFragmentById(R.id.classes_container);
 
-        if (mClassFragment == null) {
-            mClassFragment = new ClassFragment();
-            ActivityUtils.addFragmentToActivity(fm, mClassFragment, R.id.classes_container);
+        if (classFragment == null) {
+            classFragment = new ClassFragment();
+            ActivityUtils.addFragmentToActivity(fm, classFragment, R.id.classes_container);
         }
-        mPresenter = new ClassPresenter(mClassFragment, this);
-
-        mCaptchaDialog = CaptchaDialog.newInstance(mPresenter);
+        mPresenter = new ClassPresenter(classFragment, this);
     }
 
     @Override
@@ -152,7 +146,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             } else {
                 if (Loader.cmsNeedCAPTCHA()) {
-                    mCaptchaDialog.show(getSupportFragmentManager(), "captcha_dialog");
+                    CaptchaDialog.newInstance(mPresenter).show(getSupportFragmentManager(), "captcha_dialog");
                 } else {
                     mPresenter.loadOnline("");
                 }
@@ -195,5 +189,27 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initStatic();
+    }
+
+    private void initStatic() {
+        if (Constants.CLASS_BASE_HEIGHT == 0) {
+            DisplayMetrics metrics = getResources().getDisplayMetrics();
+            Constants.CLASS_WIDTH = (int) Math.round(metrics.widthPixels * (2.0 / 15.0));
+            Constants.CLASS_BASE_HEIGHT = (int) Math.round(metrics.heightPixels * (1.0 / 15.0));
+        }
+
+        Constants.CAPTCHA_FILE = getCacheDir().getPath() + "/captcha";
+        Constants.USERNAME_KEY = getString(R.string.key_username);
+        Constants.PASSWORD_KEY = getString(R.string.key_password);
+        Constants.CAPTCHA_KEY = getString(R.string.key_captcha);
+        Constants.ACTION_KEY = getString(R.string.key_action);
+        Constants.SEARCH_TYPE_KEY = getString(R.string.key_search_type);
+        Constants.SEARCH_CONTENT_KEY = getString(R.string.key_search_content);
     }
 }

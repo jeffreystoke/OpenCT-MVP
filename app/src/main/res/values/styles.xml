@@ -10,8 +10,62 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <!--<item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>-->
-        <!--<item name="actionBarTheme">@style/Toolbar</item>-->
+    </style>
+
+    <!--对话框输入组件默认样式-->
+    <style name="dialog_edit_margin" parent="Widget.AppCompat.EditText">
+        <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">20dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <!--标题文字样式-->
+    <style name="DialogTitleText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textAlignment" tools:targetApi="jelly_bean_mr1">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!--对话框的按钮文字样式-->
+    <style name="DialogButtonText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textAlignment" tools:targetApi="jelly_bean_mr1">center</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <!--RecyclerView Item 标题文字样式-->
+    <style name="ItemTitleText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/materialDark</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingEnd" tools:targetApi="jelly_bean_mr1">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingStart" tools:targetApi="jelly_bean_mr1">16dp</item>
+        <item name="android:paddingLeft">16dp</item>
+    </style>
+
+    <!--RecyclerView Item 详细文字样式-->
+    <style name="ItemContentText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/materialGray</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">16dp</item>
     </style>
 
     <style name="Toolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>

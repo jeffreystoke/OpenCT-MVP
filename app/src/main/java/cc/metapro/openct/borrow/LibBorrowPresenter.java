@@ -65,7 +65,7 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
                     @Override
                     public void subscribe(ObservableEmitter<List<BorrowInfo>> e) throws Exception {
                         Map<String, String> loginMap = Loader.getLibStuInfo(mContext);
-                        loginMap.put(Constants.CAPTCHA_KEY, code);
+                        loginMap.put(mContext.getString(R.string.key_captcha), code);
                         e.onNext(Loader.getLibrary().getBorrowInfo(loginMap));
                         e.onComplete();
                     }
@@ -94,6 +94,11 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
                     }
                 })
                 .subscribe();
+    }
+
+    @Override
+    public void loadQuery(final String actionURL, Map<String, String> queryMap) {
+
     }
 
     @Override

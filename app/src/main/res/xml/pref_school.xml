@@ -30,9 +30,70 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_current_week"/>
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/homepage_selections"
+        android:entryValues="@array/homepage_selections_values"
+        android:key="@string/pref_homepage_selection"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="首页显示"/>
+
+    <EditTextPreference
+        android:defaultValue="@string/default_motto"
+        android:key="@string/pref_empty_class_motto"
+        android:title="无课宣言"/>
+
+    <PreferenceScreen
+        android:summary="@string/pref_cms_summary"
+        android:title="@string/jwxt">
+        <EditTextPreference
+            android:defaultValue="@null"
+            android:inputType="text"
+            android:key="@string/pref_cms_username"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/username"/>
+        <EditTextPreference
+            android:defaultValue="@null"
+            android:inputType="text"
+            android:key="@string/pref_cms_password"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/password"/>
+        <Preference
+            android:summary="@string/password_notice"
+            android:title="@string/notice"/>
+    </PreferenceScreen>
+    <PreferenceScreen
+        android:summary="@string/pref_lib_summary"
+        android:title="@string/library">
+        <EditTextPreference
+            android:defaultValue="@null"
+            android:inputType="text"
+            android:key="@string/pref_lib_username"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/username"/>
+
+        <EditTextPreference
+            android:defaultValue="@null"
+            android:inputType="text"
+            android:key="@string/pref_lib_password"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/password"/>
+        <Preference
+            android:summary="@string/password_notice"
+            android:title="@string/notice"/>
+    </PreferenceScreen>
     <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="@string/need_encryption"
+        android:defaultValue="true"
+        android:key="@string/pref_need_encryption"
         android:summary="@string/encryption_tip"
         android:title="@string/enable_encryption"/>
     <PreferenceScreen
@@ -50,16 +111,6 @@
             <Preference
                 android:summary="必须以 http:// 开头, 不需要路径名, 文件名, 动态部分"
                 android:title="地址的填写"/>
-            <Preference
-                android:summary="若在浏览器打开后出现诸如 (fath5dejk2robp45sfgikn45) 需要勾选"
-                android:title="动态地址"/>
-            <Preference
-                android:summary="请点击查看 OpenCT 项目页"
-                android:title="示例配置">
-                <intent
-                    android:action="android.intent.action.VIEW"
-                    android:data="@string/project_url"/>
-            </Preference>
         </PreferenceScreen>
         <CheckBoxPreference
             android:key="@string/pref_custom_enable"
@@ -86,16 +137,7 @@
                 android:key="@string/pref_custom_cms_captcha"
                 android:summary="登录教务网需要验证码时勾选"
                 android:title="验证码"/>
-            <CheckBoxPreference
-                android:key="@string/pref_custom_cms_dyn_url"
-                android:summary="教务网地址在显示时会出现诸如勾选"
-                android:title="动态地址"/>
-            <CheckBoxPreference
-                android:key="@string/pref_custom_cms_inner"
-                android:summary="仅限校园网内部访问"
-                android:title="内部访问"/>
         </PreferenceCategory>
-
         <PreferenceCategory
             android:summary="图书馆配置"
             android:title="图书馆">
@@ -115,22 +157,14 @@
                 android:key="@string/pref_custom_lib_captcha"
                 android:summary="登录图书馆需要验证码时勾选"
                 android:title="验证码"/>
-            <CheckBoxPreference
-                android:key="@string/pref_custom_lib_dyn_url"
-                android:summary="教务网地址在显示时会出现类似(asfbkahgbakvuhl)时勾选"
-                android:title="动态地址"/>
-            <CheckBoxPreference
-                android:key="@string/pref_custom_lib_inner"
-                android:summary="仅限校园网内部访问"
-                android:title="内部访问"/>
         </PreferenceCategory>
     </PreferenceScreen>
 
     <PreferenceScreen
-        android:summary="如果基础自定义学校不成功, 可以尝试高级自定义\n你将会执行完整的定义过程(暂时只支持自定义课程表)"
-        android:title="高级自定义(测试)">
+        android:summary="@string/adv_custom_tip"
+        android:title="@string/abv_custom">
         <Preference
-            android:summary="自定义你的课程表获取方式"
+            android:summary="@string/custom_your_class_fetch_way"
             android:title="课程表">
             <intent
                 android:action="cc.metapro.openct.custom"/>
@@ -156,57 +190,6 @@
         <!--android:action="cc.metapro.openct.custom"-->
         <!--android:data="lib_borrow"/>-->
         <!--</Preference>-->
-    </PreferenceScreen>
-
-    <PreferenceScreen
-        android:summary="@string/pref_cms_summary"
-        android:title="@string/jwxt">
-        <EditTextPreference
-            android:defaultValue="@null"
-            android:inputType="text"
-            android:key="@string/pref_cms_username"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/username"/>
-
-        <EditTextPreference
-            android:defaultValue="@null"
-            android:inputType="textPassword"
-            android:key="@string/pref_cms_password"
-            android:maxLines="1"
-            android:password="true"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/password"/>
-        <Preference
-            android:summary="@string/password_notice"
-            android:title="@string/notice"/>
-    </PreferenceScreen>
-    <PreferenceScreen
-        android:summary="@string/pref_lib_summary"
-        android:title="@string/library">
-        <EditTextPreference
-            android:defaultValue="@null"
-            android:inputType="text"
-            android:key="@string/pref_lib_username"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/username"/>
-
-        <EditTextPreference
-            android:defaultValue="@null"
-            android:inputType="textPassword"
-            android:key="@string/pref_lib_password"
-            android:maxLines="1"
-            android:password="true"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/password"/>
-        <Preference
-            android:summary="@string/password_notice"
-            android:title="@string/notice"/>
     </PreferenceScreen>
     <PreferenceCategory
         android:title="@string/about_openct">

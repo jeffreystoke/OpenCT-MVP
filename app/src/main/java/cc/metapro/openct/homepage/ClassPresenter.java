@@ -45,6 +45,7 @@ import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.widget.DailyClassWidget;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -71,31 +72,70 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public void loadOnline(final String code) {
-        ActivityUtils.getProgressDialog(mContext, R.string.loading_class_infos).show();
-        Observable
-                .create(new ObservableOnSubscribe<List<EnrichedClassInfo>>() {
+        Loader.loadUniversity(mContext)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete(new Action() {
                     @Override
-                    public void subscribe(ObservableEmitter<List<EnrichedClassInfo>> e) throws Exception {
-                        Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
-                        loginMap.put(Constants.CAPTCHA_KEY, code);
-                        List<EnrichedClassInfo> list = Loader.getCms().getClasses(loginMap);
-                        e.onNext(list);
-                        e.onComplete();
+                    public void run() throws Exception {
+                        ActivityUtils.getProgressDialog(mContext, R.string.loading_class_page).show();
+                        Observable.create(new ObservableOnSubscribe<Form>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<Form> e) throws Exception {
+                                Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
+                                loginMap.put(mContext.getString(R.string.key_captcha), code);
+                                Form form = Loader.getCms().getClassPageFrom(loginMap);
+                                if (form != null) {
+                                    e.onNext(form);
+                                } else {
+                                    e.onComplete();
+                                }
+                            }
+                        })
+                                .subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .doOnNext(new Consumer<Form>() {
+                                    @Override
+                                    public void accept(Form classes) throws Exception {
+                                        ActivityUtils.dismissProgressDialog();
+                                        mView.showFormDialog(classes);
+                                    }
+                                })
+                                .onErrorReturn(new Function<Throwable, Form>() {
+                                    @Override
+                                    public Form apply(Throwable throwable) throws Exception {
+                                        ActivityUtils.dismissProgressDialog();
+                                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                                        return new Form();
+                                    }
+                                })
+                                .subscribe();
                     }
-                })
+                }).subscribe();
+    }
+
+    @Override
+    public void loadQuery(final String actionURL, final Map<String, String> queryMap) {
+        ActivityUtils.getProgressDialog(mContext, R.string.loading_class_infos).show();
+        Observable.create(new ObservableOnSubscribe<List<EnrichedClassInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<EnrichedClassInfo>> e) throws Exception {
+                e.onNext(Loader.getCms().getClasses(actionURL, queryMap));
+                e.onComplete();
+            }
+        })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<List<EnrichedClassInfo>>() {
                     @Override
-                    public void accept(List<EnrichedClassInfo> classes) throws Exception {
-                        if (classes.size() == 0) {
-                            Toast.makeText(mContext, R.string.no_classes_avail, Toast.LENGTH_SHORT).show();
+                    public void accept(List<EnrichedClassInfo> infos) throws Exception {
+                        ActivityUtils.dismissProgressDialog();
+                        if (infos.size() == 0) {
+                            Toast.makeText(mContext, R.string.no_grades_avail, Toast.LENGTH_SHORT).show();
                         } else {
-                            mEnrichedClasses = classes;
+                            mEnrichedClasses = infos;
                             storeClasses();
                             loadLocalClasses();
                         }
-                        ActivityUtils.dismissProgressDialog();
                     }
                 })
                 .onErrorReturn(new Function<Throwable, List<EnrichedClassInfo>>() {
@@ -105,8 +145,7 @@ class ClassPresenter implements ClassContract.Presenter {
                         Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         return new ArrayList<>(0);
                     }
-                })
-                .subscribe();
+                }).subscribe();
     }
 
     @Override
@@ -120,8 +159,14 @@ class ClassPresenter implements ClassContract.Presenter {
                     Toast.makeText(mContext, R.string.no_local_classes_avail, Toast.LENGTH_LONG).show();
                 }
             } else {
-                Loader.loadUniversity(mContext);
-                mView.updateClasses(mEnrichedClasses);
+                Loader.loadUniversity(mContext)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnComplete(new Action() {
+                            @Override
+                            public void run() throws Exception {
+                                mView.updateClasses(mEnrichedClasses);
+                            }
+                        }).subscribe();
             }
         } catch (Exception e) {
             e.printStackTrace();

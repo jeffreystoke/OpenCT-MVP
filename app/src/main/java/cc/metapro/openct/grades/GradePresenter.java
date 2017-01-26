@@ -41,6 +41,7 @@ import cc.metapro.openct.data.university.UniversityService;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.HTMLUtils.Form;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -65,17 +66,66 @@ class GradePresenter implements GradeContract.Presenter {
 
     @Override
     public void loadOnline(final String code) {
-        ActivityUtils.getProgressDialog(mContext, R.string.loading_grade_infos).show();
-        Observable
-                .create(new ObservableOnSubscribe<List<GradeInfo>>() {
+        ActivityUtils.getProgressDialog(mContext, R.string.loading_grade_page).show();
+        Loader.loadUniversity(mContext).doOnComplete(new Action() {
+            @Override
+            public void run() throws Exception {
+                Observable.create(new ObservableOnSubscribe<Form>() {
                     @Override
-                    public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
+                    public void subscribe(ObservableEmitter<Form> e) throws Exception {
                         Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
-                        loginMap.put(Constants.CAPTCHA_KEY, code);
-                        e.onNext(Loader.getCms().getGrades(loginMap));
-                        e.onComplete();
+                        loginMap.put(mContext.getString(R.string.key_captcha), code);
+                        Form form = Loader.getCms().getGradePageForm(loginMap);
+                        if (form != null) {
+                            e.onNext(form);
+                        } else {
+                            e.onComplete();
+                        }
                     }
                 })
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnNext(new Consumer<Form>() {
+                            @Override
+                            public void accept(Form form) throws Exception {
+                                ActivityUtils.dismissProgressDialog();
+                                if (form != null) {
+                                    mGradeFragment.showFormDialog(form);
+                                } else {
+                                    Toast.makeText(mContext, "获取成绩页面失败", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        })
+                        .onErrorReturn(new Function<Throwable, Form>() {
+                            @Override
+                            public Form apply(Throwable throwable) throws Exception {
+                                ActivityUtils.dismissProgressDialog();
+                                Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                                return new Form();
+                            }
+                        })
+                        .doOnComplete(new Action() {
+                            @Override
+                            public void run() throws Exception {
+                                ActivityUtils.dismissProgressDialog();
+                                Toast.makeText(mContext, "无法获取教务网课表页面", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .subscribe();
+            }
+        }).observeOn(AndroidSchedulers.mainThread()).subscribe();
+    }
+
+    @Override
+    public void loadQuery(final String actionURL, final Map<String, String> queryMap) {
+        ActivityUtils.getProgressDialog(mContext, R.string.loading_grade_infos).show();
+        Observable.create(new ObservableOnSubscribe<List<GradeInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
+                e.onNext(Loader.getCms().getGrades(actionURL, queryMap));
+                e.onComplete();
+            }
+        })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<List<GradeInfo>>() {
@@ -98,9 +148,7 @@ class GradePresenter implements GradeContract.Presenter {
                         Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         return new ArrayList<>(0);
                     }
-                })
-                .subscribe();
-
+                }).subscribe();
     }
 
     @Override
@@ -145,9 +193,10 @@ class GradePresenter implements GradeContract.Presenter {
                         UniversityService service = ServiceGenerator
                                 .createService(UniversityService.class, ServiceGenerator.HTML);
 
-                        String res = service.queryCET("http://www.chsi.com.cn/cet/",
-                                queryMap.get(Constants.CET_NUM_KEY),
-                                queryMap.get(Constants.CET_NAME_KEY), "t")
+                        String res = service.queryCET(
+                                "http://www.chsi.com.cn/cet/",
+                                queryMap.get(mContext.getString(R.string.key_ticket_num)),
+                                queryMap.get(mContext.getString(R.string.key_full_name)), "t")
                                 .execute().body();
 
                         Document document = Jsoup.parse(res);
@@ -162,12 +211,12 @@ class GradePresenter implements GradeContract.Presenter {
                         String grade = tds.get(5).text();
 
                         Map<String, String> results = new HashMap<>(6);
-                        results.put(Constants.CET_NAME_KEY, name);
-                        results.put(Constants.CET_SCHOOL_KEY, school);
-                        results.put(Constants.CET_TYPE_KEY, type);
-                        results.put(Constants.CET_NUM_KEY, num);
-                        results.put(Constants.CET_TIME_KEY, time);
-                        results.put(Constants.CET_GRADE_KEY, grade);
+                        results.put(mContext.getString(R.string.key_full_name), name);
+                        results.put(mContext.getString(R.string.key_school), school);
+                        results.put(mContext.getString(R.string.key_cet_type), type);
+                        results.put(mContext.getString(R.string.key_ticket_num), num);
+                        results.put(mContext.getString(R.string.key_cet_time), time);
+                        results.put(mContext.getString(R.string.key_cet_grade), grade);
 
                         e.onNext(results);
                     }

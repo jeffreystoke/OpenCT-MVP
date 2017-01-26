@@ -37,7 +37,7 @@ import cc.metapro.openct.utils.Constants;
 @Keep
 public class UniversityUtils {
 
-    private static final String CLASS_TABLE_PATTERN = "(\\d+.*\\d+节$)|(\\d+节$)|(\\d)";
+    private static final String CLASS_TABLE_PATTERN = "(\\d+.*\\d+节$)|(\\d+节$)|(\\d+)";
 
     /**
      * 从网页课表表格中获取所有课程信息单元 (td - 按格显示课程, tr - 按行显示课程)
@@ -46,13 +46,13 @@ public class UniversityUtils {
      * @return 课程信息的原始状态
      */
     @NonNull
-    public static List<Element>
-    getRawClasses(Element table) {
+    public static List<Element> getRawClasses(Element table) {
         // TODO: 17/1/22 判断课表信息是否在TD中, 并将TR中的课程信息转换到TD中
         Pattern pattern = Pattern.compile(CLASS_TABLE_PATTERN);
         List<Element> tdWithClassInfo = new ArrayList<>();
         for (Element tr : table.select("tr")) {
-            Elements tds = tr.select("td");
+            Elements tds = tr.select("th");
+            tds.addAll(tr.select("td"));
             Element td = tds.first();
             boolean found = false;
             while (td != null) {

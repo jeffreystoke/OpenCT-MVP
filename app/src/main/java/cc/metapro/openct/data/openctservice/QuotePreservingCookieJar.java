@@ -45,10 +45,10 @@ import static okhttp3.internal.Util.trimSubstring;
  * A cookie jar that delegates to a {@link java.net.CookieHandler}.
  */
 @Keep
-final class QuotePreservingCookieJar implements CookieJar {
+public final class QuotePreservingCookieJar implements CookieJar {
     private final CookieHandler cookieHandler;
 
-    QuotePreservingCookieJar(CookieHandler cookieHandler) {
+    public QuotePreservingCookieJar(CookieHandler cookieHandler) {
         this.cookieHandler = cookieHandler;
     }
 

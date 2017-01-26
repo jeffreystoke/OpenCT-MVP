@@ -20,12 +20,16 @@ import android.os.Bundle;
 import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+
+import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +51,8 @@ public class TableSettingDialog extends DialogFragment {
     public static final String DURING = "课程周期";
     public static final String PLACE = "上课地点";
     public static final String TEACHER = "授课教师";
-
+    public static final String[] titles = {NAME, TIME, TYPE, DURING, PLACE, TEACHER};
+    private static final String TAG = "openct_table_setting";
     private static String[] mStrings;
     private static TableSettingCallBack mCallBack;
     @BindView(R.id.info)
@@ -57,7 +62,8 @@ public class TableSettingDialog extends DialogFragment {
     private List<CheckBox> mCheckBoxes;
     private int mIndex = 0;
 
-    private Map<String, Integer> mIndexMap;
+    private Map<String, Integer> mResultIndexMap;
+    private Map<String, MaterialEditText> mEditTextMap;
 
     public static TableSettingDialog newInstance(String sample, TableSettingCallBack callBack) {
         sample = sample.split(Constants.BR_REPLACER + Constants.BR_REPLACER + "+")[0];
@@ -70,16 +76,24 @@ public class TableSettingDialog extends DialogFragment {
     public void confirm() {
         for (CheckBox box : mCheckBoxes) {
             if (box.isChecked()) {
-                mIndexMap.put(box.getText().toString(), mIndex);
+                mResultIndexMap.put(box.getText().toString(), mIndex);
                 box.setVisibility(View.GONE);
             }
             box.setChecked(false);
         }
         mIndex++;
         if (mIndex < mStrings.length) {
-            mInfo.setText(mStrings[mIndex]);
+            try {
+                mInfo.setText(mStrings[mIndex]);
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
         } else {
-            mCallBack.onFinish(mIndexMap);
+            Map<String, String> resultReMap = new HashMap<>(mEditTextMap.size());
+            for (String title : mEditTextMap.keySet()) {
+                resultReMap.put(title, mEditTextMap.get(title).getText().toString());
+            }
+            mCallBack.onFinish(mResultIndexMap, resultReMap);
             dismiss();
         }
     }
@@ -89,9 +103,9 @@ public class TableSettingDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_table_setting, container);
         ButterKnife.bind(this, view);
-        mInfo.setText(mStrings[mIndex]);
-        mCheckBoxes = new ArrayList<>();
-        mIndexMap = new HashMap<>();
+        mInfo.setText(mStrings[0]);
+        mResultIndexMap = new HashMap<>();
+        mEditTextMap = new HashMap<>();
         addClassTableOptions();
         setCancelable(false);
         return view;
@@ -104,44 +118,32 @@ public class TableSettingDialog extends DialogFragment {
     }
 
     private void addClassTableOptions() {
-        CheckBox name = new CheckBox(getActivity());
-        name.setText(NAME);
-        name.setGravity(Gravity.CENTER);
-        mCheckBoxes.add(name);
-        mViewGroup.addView(name);
-
-        CheckBox type = new CheckBox(getActivity());
-        type.setText(TYPE);
-        type.setGravity(Gravity.CENTER);
-        mCheckBoxes.add(type);
-        mViewGroup.addView(type);
-
-        CheckBox time = new CheckBox(getActivity());
-        time.setText(TIME);
-        time.setGravity(Gravity.CENTER);
-        mCheckBoxes.add(time);
-        mViewGroup.addView(time);
-
-        CheckBox during = new CheckBox(getActivity());
-        during.setText(DURING);
-        during.setGravity(Gravity.CENTER);
-        mCheckBoxes.add(during);
-        mViewGroup.addView(during);
-
-        CheckBox place = new CheckBox(getActivity());
-        place.setText(PLACE);
-        place.setGravity(Gravity.CENTER);
-        mCheckBoxes.add(place);
-        mViewGroup.addView(place);
-
-        CheckBox teacher = new CheckBox(getActivity());
-        teacher.setText(TEACHER);
-        teacher.setGravity(Gravity.CENTER);
-        mCheckBoxes.add(teacher);
-        mViewGroup.addView(teacher);
+        mCheckBoxes = new ArrayList<>();
+        for (final String title : titles) {
+            final CheckBox checkBox = new CheckBox(getContext());
+            checkBox.setText(title);
+            checkBox.setGravity(Gravity.CENTER);
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        MaterialEditText editText = new MaterialEditText(getContext());
+                        editText.setHint(title + "匹配 (正则式, 可选)");
+                        editText.setFloatingLabel(MaterialEditText.FLOATING_LABEL_NORMAL);
+                        mViewGroup.addView(editText);
+                        mEditTextMap.put(title, editText);
+                    } else {
+                        mViewGroup.removeView(mEditTextMap.get(title));
+                        mEditTextMap.remove(title);
+                    }
+                }
+            });
+            mCheckBoxes.add(checkBox);
+            mViewGroup.addView(checkBox);
+        }
     }
 
     public interface TableSettingCallBack {
-        void onFinish(Map<String, Integer> indexMap);
+        void onFinish(Map<String, Integer> indexMap, Map<String, String> reMap);
     }
 }

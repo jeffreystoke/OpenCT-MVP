@@ -18,25 +18,30 @@ package cc.metapro.openct;
 
 import android.app.Application;
 import android.support.annotation.Keep;
-import android.text.TextUtils;
-import android.util.DisplayMetrics;
 
-import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.data.source.DaggerNetComponent;
+import cc.metapro.openct.data.source.NetComponent;
+import cc.metapro.openct.data.source.NetModule;
 
 @Keep
 public class OpenCT extends Application {
 
+    private NetComponent mNetComponent;
+
     @Override
     public void onCreate() {
         super.onCreate();
-        if (TextUtils.isEmpty(Constants.CAPTCHA_FILE)) {
-            Constants.CAPTCHA_FILE = getCacheDir().getPath() + "/" + Constants.CAPTCHA_FILENAME;
-        }
+        createComponents();
+    }
 
-        if (Constants.CLASS_BASE_HEIGHT == 0) {
-            DisplayMetrics metrics = getResources().getDisplayMetrics();
-            Constants.CLASS_WIDTH = (int) Math.round(metrics.widthPixels * (2.0 / 15.0));
-            Constants.CLASS_BASE_HEIGHT = (int) Math.round(metrics.heightPixels * (1.0 / 15.0));
-        }
+    private void createComponents() {
+        mNetComponent = DaggerNetComponent.builder()
+                .applicationModule(new ApplicationModule(this))
+                .netModule(new NetModule())
+                .build();
+    }
+
+    public NetComponent getNetComponent() {
+        return mNetComponent;
     }
 }

@@ -1,4 +1,4 @@
-package cc.metapro.openct;
+package cc.metapro.openct.data;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,25 +16,14 @@ package cc.metapro.openct;
  * limitations under the License.
  */
 
-import android.app.Application;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-import javax.inject.Singleton;
+import javax.inject.Scope;
 
-import dagger.Module;
-import dagger.Provides;
-
-@Module
-public class AppModule {
-
-    private Application application;
-
-    public AppModule(Application application) {
-        this.application = application;
-    }
-
-    @Provides
-    @Singleton
-    public Application provideApplication() {
-        return application;
-    }
+@Documented
+@Scope
+@Retention(RetentionPolicy.RUNTIME)
+public @interface FragmentScoped {
 }

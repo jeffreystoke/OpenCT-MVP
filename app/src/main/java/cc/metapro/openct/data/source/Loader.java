@@ -24,19 +24,18 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.scottyab.aescrypt.AESCrypt;
+
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.openctservice.ServiceGenerator;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.LibraryFactory;
 import cc.metapro.openct.data.university.UniversityInfo;
-import cc.metapro.openct.data.university.UniversityService;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.EncryptionUtils;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -48,37 +47,28 @@ public class Loader {
     private static final String TAG = "LOADER";
 
     private static UniversityInfo university;
-    private static UniversityService service;
 
     public static LibraryFactory getLibrary() {
-        checkService();
-        return new LibraryFactory(service, university.mLibraryInfo);
+        return new LibraryFactory(university.mLibraryInfo);
     }
 
     public static CmsFactory getCms() {
-        checkService();
-        return new CmsFactory(service, university.mCMSInfo);
-    }
-
-    private static void checkService() {
-        if (service == null) {
-            service = ServiceGenerator.createService(UniversityService.class, ServiceGenerator.HTML);
-        }
+        return new CmsFactory(university.mCMSInfo);
     }
 
     @NonNull
     public static Map<String, String> getLibStuInfo(Context context) {
         Map<String, String> map = new HashMap<>(2);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.need_encryption), false);
+        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.pref_need_encryption), false);
         try {
             String password = preferences.getString(context.getString(R.string.pref_lib_password), "");
             if (needEncrypt) {
-                password = EncryptionUtils.decrypt(Constants.seed, password);
+                password = AESCrypt.decrypt(Constants.seed, password);
             }
             if (!TextUtils.isEmpty(password)) {
-                map.put(Constants.USERNAME_KEY, preferences.getString(context.getString(R.string.pref_lib_username), ""));
-                map.put(Constants.PASSWORD_KEY, password);
+                map.put(context.getString(R.string.key_username), preferences.getString(context.getString(R.string.pref_lib_username), ""));
+                map.put(context.getString(R.string.key_password), password);
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -90,36 +80,20 @@ public class Loader {
     public static Map<String, String> getCmsStuInfo(Context context) {
         Map<String, String> map = new HashMap<>(2);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.need_encryption), false);
+        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.pref_need_encryption), false);
         try {
             String password = preferences.getString(context.getString(R.string.pref_cms_password), "");
             if (needEncrypt) {
-                password = EncryptionUtils.decrypt(Constants.seed, password);
+                password = AESCrypt.decrypt(Constants.seed, password);
             }
             if (!TextUtils.isEmpty(password)) {
-                map.put(Constants.USERNAME_KEY, preferences.getString(context.getString(R.string.pref_cms_username), ""));
-                map.put(Constants.PASSWORD_KEY, password);
+                map.put(context.getString(R.string.key_username), preferences.getString(context.getString(R.string.pref_cms_username), ""));
+                map.put(context.getString(R.string.key_password), password);
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
         }
         return map;
-    }
-
-    public static int getClassLength() {
-        try {
-            return university.mCMSInfo.mClassTableInfo.mClassLength;
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
-    public static int getDailyClasses() {
-        try {
-            return university.mCMSInfo.mClassTableInfo.mDailyClasses;
-        } catch (Exception e) {
-            return 0;
-        }
     }
 
     public static boolean cmsNeedCAPTCHA() {
@@ -144,8 +118,8 @@ public class Loader {
         return Integer.parseInt(week.replaceAll("[^\\x00-\\xff]", ""));
     }
 
-    public static void loadUniversity(final Context context) {
-        Observable
+    public static Observable<String> loadUniversity(final Context context) {
+        return Observable
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter<String> e) throws Exception {
@@ -186,15 +160,17 @@ public class Loader {
                         editor.putString(context.getString(R.string.pref_current_week), "第" + currentWeek + "周");
                         editor.putString(context.getString(R.string.pref_week_set_week), weekOfYearWhenSetCurrentWeek + "");
                         editor.apply();
+                        e.onComplete();
                     }
                 })
                 .subscribeOn(Schedulers.newThread())
                 .onErrorReturn(new Function<Throwable, String>() {
                     @Override
                     public String apply(Throwable throwable) throws Exception {
+                        Log.e(TAG, throwable.getMessage(), throwable);
                         return "";
                     }
-                }).subscribe();
+                });
     }
 
 }

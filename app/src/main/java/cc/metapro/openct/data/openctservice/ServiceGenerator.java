@@ -46,6 +46,7 @@ public class ServiceGenerator {
                     .build();
 
     public static <S> S createService(Class<S> serviceClass, String convertType) {
+
         Retrofit.Builder builder = new Retrofit.Builder().baseUrl(API_BASE_URL).client(client);
 
         Retrofit retrofit = null;

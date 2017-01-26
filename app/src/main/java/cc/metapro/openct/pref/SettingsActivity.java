@@ -85,7 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onDestroy() {
         storeCustom();
         ActivityUtils.encryptionCheck(this);
-        Loader.loadUniversity(SettingsActivity.this);
+        Loader.loadUniversity(SettingsActivity.this).subscribe();
         super.onDestroy();
     }
 
@@ -115,7 +115,7 @@ public class SettingsActivity extends AppCompatActivity {
         @BindString(R.string.pref_lib_password_encrypted)
         String LIB_PASSWORD_ENCRYPTED;
 
-        @BindString(R.string.need_encryption)
+        @BindString(R.string.pref_need_encryption)
         String NEED_ENCRYPTION;
 
         @BindString(R.string.pref_custom_cms_sys)
@@ -135,6 +135,12 @@ public class SettingsActivity extends AppCompatActivity {
 
         @BindString(R.string.pref_custom_school_name)
         String CUSTOM_SCHOOL_NAME;
+
+        @BindString(R.string.pref_homepage_selection)
+        String HOMEPAGE_SELECTION;
+
+        @BindString(R.string.pref_empty_class_motto)
+        String EMPTY_CLASS_MOTTO;
 
         public SchoolPreferenceFragment() {
 
@@ -159,6 +165,9 @@ public class SettingsActivity extends AppCompatActivity {
             bindSummaryToValue(findPreference(CUSTOM_LIB_URL));
             bindSummaryToValue(findPreference(CUSTOM_SCHOOL_NAME));
             bindSummaryToValue(findPreference(CUSTOM_ENABLE));
+
+            bindSummaryToValue(findPreference(HOMEPAGE_SELECTION));
+            bindSummaryToValue(findPreference(EMPTY_CLASS_MOTTO));
         }
 
         private void bindSummaryToValue(Preference preference) {

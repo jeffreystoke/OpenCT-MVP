@@ -38,6 +38,7 @@ import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.utils.HTMLUtils.FormHandler;
 import cc.metapro.openct.utils.HTMLUtils.FormUtils;
+import retrofit2.Call;
 
 @Keep
 public class LibraryFactory extends UniversityFactory {
@@ -47,22 +48,21 @@ public class LibraryFactory extends UniversityFactory {
     private static final Pattern nextPagePattern = Pattern.compile("(下一页)");
 
     private static String nextPageURL = "";
+    private static String queryTmp = "";
 
     private LibURLFactory mURLFactory;
 
-    public LibraryFactory(
-            @NonNull UniversityService service,
-            @NonNull UniversityInfo.LibraryInfo libraryInfo
-    ) {
+    public LibraryFactory(@NonNull UniversityInfo.LibraryInfo libraryInfo) {
         mBorrowTableInfo = libraryInfo.mBorrowTableInfo;
-        mService = service;
         mLibraryInfo = libraryInfo;
         mURLFactory = new LibURLFactory(mLibraryInfo.mLibSys, libraryInfo.mLibURL);
     }
 
     @NonNull
     public List<BookInfo> search(@NonNull Map<String, String> searchMap) throws Exception {
+        checkService();
         nextPageURL = "";
+        queryTmp = "";
         String searchPage = null;
         try {
             searchPage = mService.getPage(mURLFactory.SEARCH_URL, null).execute().body();
@@ -78,13 +78,14 @@ public class LibraryFactory extends UniversityFactory {
         Form form = handler.getForm(0);
 
         if (form == null) return new ArrayList<>(0);
-        searchMap.put(Constants.SEARCH_TYPE, typeTrans(searchMap.get(Constants.SEARCH_CONTENT)));
+        searchMap.put(Constants.SEARCH_TYPE_KEY, typeTrans(searchMap.get(Constants.SEARCH_CONTENT_KEY)));
         Map<String, String> res = FormUtils.getLibSearchQueryMap(form, searchMap);
 
-        String action = res.get(Constants.ACTION);
-        res.remove(Constants.ACTION);
-        String resultPage = mService.searchLibrary(action, action, res).execute().body();
-
+        String action = res.get(Constants.ACTION_KEY);
+        res.remove(Constants.ACTION_KEY);
+        Call<String> call = mService.searchLibrary(action, action, res);
+        queryTmp = call.request().url().toString();
+        String resultPage = call.execute().body();
         prepareNextPageURL(resultPage);
         return TextUtils.isEmpty(resultPage) ? new ArrayList<BookInfo>(0) : parseBook(resultPage);
     }
@@ -95,43 +96,40 @@ public class LibraryFactory extends UniversityFactory {
         if (TextUtils.isEmpty(nextPageURL)) {
             return new ArrayList<>(0);
         }
-        switch (mLibraryInfo.mLibSys) {
-            case Constants.LIBSYS:
-                resultPage = mService.getPage(nextPageURL, null).execute().body();
-                break;
+        if (Constants.LIBSYS.equalsIgnoreCase(mLibraryInfo.mLibSys)) {
+            resultPage = mService.getPage(nextPageURL, queryTmp).execute().body();
         }
-        nextPageURL = "";
         prepareNextPageURL(resultPage);
-        return TextUtils.isEmpty(resultPage) ?
-                new ArrayList<BookInfo>(0) : parseBook(resultPage);
+        return TextUtils.isEmpty(resultPage) ? new ArrayList<BookInfo>(0) : parseBook(resultPage);
     }
 
     private void prepareNextPageURL(String resultPage) {
-        Document result = Jsoup.parse(resultPage, mURLFactory.SEARCH_URL);
+        Document result = Jsoup.parse(resultPage, mURLFactory.SEARCH_REF);
         Elements links = result.select("a");
+        boolean found = false;
         for (Element a : links) {
             if (nextPagePattern.matcher(a.text()).find()) {
                 String tmp = a.absUrl("href");
                 if (!tmp.equals(nextPageURL)) {
                     nextPageURL = tmp;
-                } else {
-                    nextPageURL = "";
                 }
+                found = true;
                 break;
             }
+        }
+        if (!found) {
+            nextPageURL = "";
         }
     }
 
     @NonNull
-    public List<BorrowInfo> getBorrowInfo(
-            @NonNull Map<String, String> loginMap
-    ) throws Exception {
+    public List<BorrowInfo> getBorrowInfo(@NonNull Map<String, String> loginMap) throws Exception {
         String page = login(loginMap);
         String borrowPage = null;
         if (Constants.LIBSYS.equalsIgnoreCase(mLibraryInfo.mLibSys)) {
             borrowPage = mService.getPage(mURLFactory.BORROW_URL, mURLFactory.USER_HOME_URL).execute().body();
         }
-
+        destroyService();
         return TextUtils.isEmpty(borrowPage) ? new ArrayList<BorrowInfo>(0) : parseBorrow(borrowPage);
     }
 
@@ -209,38 +207,18 @@ public class LibraryFactory extends UniversityFactory {
     }
 
     @Override
-    protected String getCaptchaURL() {
-        return mURLFactory.CAPTCHA_URL;
-    }
-
-    @Override
-    protected String getLoginURL() {
-        return mURLFactory.LOGIN_URL;
-    }
-
-    @Override
-    protected String getLoginRefer() {
+    protected String getBaseURL() {
         return mURLFactory.LOGIN_REF;
     }
 
-    @Override
-    protected void resetURLFactory() {
-        mURLFactory = new LibURLFactory(mLibraryInfo.mLibSys, mLibraryInfo.mLibURL + "/" + dynPart + "/");
-    }
-
     public static class BorrowTableInfo {
-        public int
-                mBarcodeIndex,
-                mTitleIndex,
-                mBorrowDateIndex,
-                mDueDateIndexIndex;
-        public String mTableID;
+        int mBarcodeIndex, mTitleIndex, mBorrowDateIndex, mDueDateIndexIndex;
+        String mTableID;
     }
 
     private class LibURLFactory {
 
-        String
-                LOGIN_URL, LOGIN_REF,
+        String LOGIN_URL, LOGIN_REF,
                 SEARCH_URL, SEARCH_REF,
                 CAPTCHA_URL, USER_HOME_URL,
                 BORROW_URL;
@@ -253,7 +231,6 @@ public class LibraryFactory extends UniversityFactory {
             if (Constants.LIBSYS.equalsIgnoreCase(libSys)) {
                 SEARCH_URL = libBaseURL + "opac/search.php";
                 SEARCH_REF = libBaseURL + "opac/openlink.php?";
-                CAPTCHA_URL = libBaseURL + "reader/captcha.php";
                 LOGIN_URL = libBaseURL + "reader/redr_verify.php";
                 LOGIN_REF = libBaseURL + "reader/login.php";
                 USER_HOME_URL = libBaseURL + "reader/redr_info.php";

@@ -26,6 +26,7 @@ import cc.metapro.openct.utils.REHelper;
 
 @Keep
 public class GradeInfo {
+
     private String
             mClassCode, mClassName, mClassType, mPoints,
             mGradeSummary, mGradePractice, mGradeCommon,

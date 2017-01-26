@@ -79,15 +79,8 @@ public class TableChooseDialog extends DialogFragment {
         if (sample != null) {
             TableSettingDialog.newInstance(sample.text(), new TableSettingDialog.TableSettingCallBack() {
                 @Override
-                public void onFinish(Map<String, Integer> indexMap) {
-                    CmsFactory.ClassTableInfo info = new CmsFactory.ClassTableInfo();
-                    info.mNameIndex = indexMap.get(TableSettingDialog.NAME);
-                    info.mTimeIndex = indexMap.get(TableSettingDialog.TIME);
-                    info.mDuringIndex = indexMap.get(TableSettingDialog.DURING);
-                    info.mPlaceIndex = indexMap.get(TableSettingDialog.PLACE);
-                    info.mTeacherIndex = indexMap.get(TableSettingDialog.TEACHER);
-                    info.mTypeIndex = indexMap.get(TableSettingDialog.TYPE);
-
+                public void onFinish(Map<String, Integer> indexMap, Map<String, String> reMap) {
+                    CmsFactory.ClassTableInfo info = getClassTableInfo(indexMap, reMap);
                     info.mClassTableID = tableId;
                     info.mDailyClasses = rawInfoList.size() / 7;
                     info.mDuringRE = "(?<=(\\{第))\\d+.*?\\d+(?=(周))";
@@ -102,15 +95,57 @@ public class TableChooseDialog extends DialogFragment {
                     DBManger manger = DBManger.getInstance(getActivity());
                     manger.updateAdvancedCustomClassInfo(advInfo);
                     manger.updateClasses(classes);
-                    Toast.makeText(getActivity(), "获取课表成功, 请回到主界面查看课表", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "获取课表成功, 请回到主界面查看课表\n部分信息可能需要修改(无法完全解析)", Toast.LENGTH_LONG).show();
                     dismiss();
                 }
             }).show(getFragmentManager(), "setting_dialog");
         }
         // 未获取到样本
         else {
-            Toast.makeText(getActivity(), "很遗憾, 没能解析到课程信息", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "很遗憾, 没能解析到课程信息", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private CmsFactory.ClassTableInfo getClassTableInfo(Map<String, Integer> indexMap, Map<String, String> reMap) {
+        CmsFactory.ClassTableInfo info = new CmsFactory.ClassTableInfo();
+        info.mNameRE = reMap.get(TableSettingDialog.NAME);
+        info.mTypeRE = reMap.get(TableSettingDialog.TYPE);
+        info.mDuringRE = reMap.get(TableSettingDialog.DURING);
+        info.mTimeRE = reMap.get(TableSettingDialog.TIME);
+        info.mPlaceRE = reMap.get(TableSettingDialog.PLACE);
+        info.mTeacherRE = reMap.get(TableSettingDialog.TEACHER);
+        try {
+            info.mNameIndex = indexMap.get(TableSettingDialog.NAME);
+        } catch (Exception e) {
+            info.mNameIndex = 0;
+        }
+        try {
+            info.mTimeIndex = indexMap.get(TableSettingDialog.TIME);
+        } catch (Exception e) {
+            info.mTimeIndex = 0;
+        }
+        try {
+            info.mDuringIndex = indexMap.get(TableSettingDialog.DURING);
+        } catch (Exception e) {
+            info.mDuringIndex = 0;
+        }
+        try {
+            info.mPlaceIndex = indexMap.get(TableSettingDialog.PLACE);
+        } catch (Exception e) {
+            info.mPlaceIndex = 0;
+        }
+        try {
+            info.mTeacherIndex = indexMap.get(TableSettingDialog.TEACHER);
+        } catch (Exception e) {
+            info.mTeacherIndex = 0;
+        }
+        try {
+            info.mTypeIndex = indexMap.get(TableSettingDialog.TYPE);
+        } catch (Exception e) {
+            info.mTypeIndex = 0;
+        }
+
+        return info;
     }
 
     @Nullable

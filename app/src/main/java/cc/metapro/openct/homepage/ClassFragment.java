@@ -16,8 +16,10 @@ package cc.metapro.openct.homepage;
  * limitations under the License.
  */
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Keep;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -27,7 +29,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,16 +43,21 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
+import cc.metapro.openct.customviews.FormDialog;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
+import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
 @Keep
 public class ClassFragment extends Fragment implements ClassContract.View {
 
     private static boolean showedPrompt;
+
     @BindView(R.id.class_view_pager)
     ViewPager mViewPager;
+
     private TextView mEmptyView;
     private RecyclerView todayRecyclerView;
     private ClassContract.Presenter mPresenter;
@@ -60,9 +66,6 @@ public class ClassFragment extends Fragment implements ClassContract.View {
     private Map<String, View> mViewMap;
     private DailyClassAdapter mTodayClassAdapter;
     private String[] mTitles = {"今日课表", "本周课表", "学期课表"};
-    private int height;
-    private int classLength;
-    private int dailyClasses;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,8 +74,6 @@ public class ClassFragment extends Fragment implements ClassContract.View {
         ButterKnife.bind(this, view);
         mContext = getActivity();
         initViewPager(view);
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        height = (int) Math.round(metrics.heightPixels * (1.0 / 15.0));
         return view;
     }
 
@@ -96,7 +97,7 @@ public class ClassFragment extends Fragment implements ClassContract.View {
         strip.setTabIndicatorColor(ContextCompat.getColor(mContext, R.color.colorAccent));
         LayoutInflater layoutInflater = getLayoutInflater(getArguments());
 
-        View td = layoutInflater.inflate(R.layout.viewpager_class_today, null);
+        View td = layoutInflater.inflate(R.layout.viewpager_class_today, mViewPager, false);
         todayRecyclerView = (RecyclerView) td.findViewById(R.id.class_today_recycler_view);
         mEmptyView = (TextView) td.findViewById(R.id.empty_view);
         mTodayClassAdapter = new DailyClassAdapter(mContext);
@@ -104,11 +105,11 @@ public class ClassFragment extends Fragment implements ClassContract.View {
         mViewList.add(td);
         mViewMap.put("td", td);
 
-        View tw = layoutInflater.inflate(R.layout.viewpager_class_current_week, null);
+        View tw = layoutInflater.inflate(R.layout.viewpager_class_current_week, mViewPager, false);
         mViewList.add(tw);
         mViewMap.put("tw", tw);
 
-        View ts = layoutInflater.inflate(R.layout.viewpager_class_current_sem, null);
+        View ts = layoutInflater.inflate(R.layout.viewpager_class_current_sem, mViewPager, false);
         mViewList.add(ts);
         mViewMap.put("ts", ts);
 
@@ -139,23 +140,21 @@ public class ClassFragment extends Fragment implements ClassContract.View {
                 return mTitles[position];
             }
         });
-        mViewPager.setCurrentItem(0);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String homeIndex = preferences.getString(getString(R.string.pref_homepage_selection), "0");
+        int index = Integer.parseInt(homeIndex);
+        mViewPager.setCurrentItem(index);
     }
 
     private void addSeqViews(ViewGroup index) {
         if (index != null) {
             index.removeAllViews();
-            for (int i = 1; i <= dailyClasses * classLength; i++) {
+            for (int i = 1; i <= Constants.DAILY_CLASSES; i++) {
                 TextView textView = new TextView(mContext);
-                if (classLength == 2) {
-                    if (i % classLength == 0) continue;
-                    textView.setText("第\n" + i + "\n~\n" + (i + 1) + "\n节");
-                } else {
-                    textView.setText("第\n" + i + "\n节");
-                }
+                textView.setText("第\n" + i + "\n节");
                 textView.setGravity(Gravity.CENTER);
-                textView.setMinHeight(height * classLength);
-                textView.setMaxHeight(height * classLength);
+                textView.setMinHeight(Constants.CLASS_BASE_HEIGHT * Constants.CLASS_LENGTH);
+                textView.setMaxHeight(Constants.CLASS_BASE_HEIGHT * Constants.CLASS_LENGTH);
                 textView.setTextSize(10);
                 index.addView(textView);
             }
@@ -173,8 +172,6 @@ public class ClassFragment extends Fragment implements ClassContract.View {
 
     @Override
     public void updateClasses(List<EnrichedClassInfo> classes) {
-        classLength = Loader.getClassLength();
-        dailyClasses = Loader.getDailyClasses();
         int week = Loader.getCurrentWeek(mContext);
         mTitles[1] = "本周 (第" + week + "周)";
 
@@ -197,13 +194,21 @@ public class ClassFragment extends Fragment implements ClassContract.View {
                 Snackbar.make(mViewPager, "今天有 " + count + " 节课", Snackbar.LENGTH_SHORT).show();
             }
         } else {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+            String motto = preferences.getString(getString(R.string.pref_empty_class_motto), getString(R.string.default_motto));
             mEmptyView.setVisibility(View.VISIBLE);
+            mEmptyView.setText(motto);
             todayRecyclerView.setVisibility(View.GONE);
             if (!showedPrompt) {
                 showedPrompt = true;
                 Snackbar.make(mViewPager, "今天没有课, 好好休息一下吧~", Snackbar.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void showFormDialog(Form form) {
+        FormDialog.newInstance(form, mPresenter).show(getFragmentManager(), "form_dialog");
     }
 
     private void showSelectedWeek(List<EnrichedClassInfo> classes, int week) {

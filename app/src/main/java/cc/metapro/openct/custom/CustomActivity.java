@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Keep;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -84,8 +85,19 @@ public class CustomActivity extends AppCompatActivity {
 
     private SchoolWebViewClient mClient;
 
+    @OnClick(R.id.fab_common)
+    public void commonStart() {
+        SchoolWebViewClient.commonMode = true;
+        SchoolWebViewClient.replayMode = false;
+        String url = getUrl(mURL.getText().toString());
+        tipText.setVisibility(View.GONE);
+        mWebView.setVisibility(View.VISIBLE);
+        mWebView.loadUrl(url);
+    }
+
     @OnClick(R.id.fab)
     public void start() {
+        SchoolWebViewClient.commonMode = false;
         SchoolWebViewClient.replayMode = false;
         String url = getUrl(mURL.getText().toString());
         tipText.setVisibility(View.GONE);
@@ -93,6 +105,15 @@ public class CustomActivity extends AppCompatActivity {
         mWebView.setVisibility(View.VISIBLE);
         webScriptConfig = new CustomConfiguration();
         mWebView.loadUrl(url);
+    }
+
+    @OnClick(R.id.fab_help)
+    public void help() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("无法填写内容");
+        builder.setMessage(R.string.can_not_enter_tip);
+        builder.setPositiveButton(R.string.ok, null);
+        builder.show();
     }
 
     @OnClick(R.id.fab_replay)
@@ -197,15 +218,16 @@ public class CustomActivity extends AppCompatActivity {
                             }
                             tableMap.put(id, element);
                         }
-                        if (SchoolWebViewClient.replayMode && !TextUtils.isEmpty(classTableInfo.mClassTableID)) {
+                        if (!SchoolWebViewClient.commonMode && SchoolWebViewClient.replayMode && !TextUtils.isEmpty(classTableInfo.mClassTableID)) {
                             List<Element> list = UniversityUtils.getRawClasses(tableMap.get(classTableInfo.mClassTableID));
                             List<EnrichedClassInfo> enrichedClasses = UniversityUtils.generateClasses(list, classTableInfo);
                             DBManger manger = DBManger.getInstance(CustomActivity.this);
                             manger.updateClasses(enrichedClasses);
                             Toast.makeText(CustomActivity.this, "获取课表成功, 请回到主界面查看课表", Toast.LENGTH_LONG).show();
                         } else {
-                            TableChooseDialog tableDialog = TableChooseDialog.newInstance(tableMap);
-                            tableDialog.show(getSupportFragmentManager(), "table_choose");
+                            TableChooseDialog
+                                    .newInstance(tableMap)
+                                    .show(getSupportFragmentManager(), "table_choose");
                         }
                     }
                 }), JSInteraction.JSInterface);

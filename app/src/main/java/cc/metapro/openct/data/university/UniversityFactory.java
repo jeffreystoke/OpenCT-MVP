@@ -25,11 +25,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cc.metapro.openct.data.source.StoreHelper;
@@ -37,39 +34,61 @@ import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.utils.HTMLUtils.FormHandler;
 import cc.metapro.openct.utils.HTMLUtils.FormUtils;
+import cc.metapro.openct.utils.SchoolInterceptor;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 
 @Keep
 public abstract class UniversityFactory {
 
-    private static final Pattern LOGIN_SUCCESS = Pattern.compile("(当前借阅)|(个人信息)");
-
+    private static final String LOGIN_SUCCESS_PATTERN = "(当前借阅)|(个人信息)";
+    static UniversityService mService;
+    static SchoolInterceptor interceptor;
+    static URLFactory urlFactory;
     UniversityInfo.LibraryInfo mLibraryInfo;
-
     UniversityInfo.CMSInfo mCMSInfo;
-
     LibraryFactory.BorrowTableInfo mBorrowTableInfo;
-
     CmsFactory.ClassTableInfo mClassTableInfo;
-
     CmsFactory.GradeTableInfo mGradeTableInfo;
+    private boolean loginSuccess;
 
-    String dynPart;
-    UniversityService mService;
-    private boolean gotDynPart;
+    public static void destroyService() {
+        interceptor = null;
+        mService = null;
+        urlFactory = null;
+    }
 
     @Nullable
     String login(@NonNull Map<String, String> loginMap) throws Exception {
-        getDynPart();
-        String loginPageHtml = mService.getPage(getLoginURL(), null).execute().body();
-        String userCenter = null;
+        checkService();
+        // 准备监听获取登录页面
+        interceptor.setObserver(new SchoolInterceptor.redirectObserver<String>() {
+            @Override
+            public void onRedirect(String x) {
+                // 获取登录页面后, 若是动态地址则发生302重定向, 更新LoginRefer地址 (默认是登录地址)
+                urlFactory.setLoginPageURL(x);
+            }
+        });
+
+        String loginPageHtml = mService.getPage(urlFactory.getBaseURL(), null).execute().body();
+
+        // 准备监听登录结果, 若成功则会 302 跳转用户中心
+        loginSuccess = false;
+        interceptor.setObserver(new SchoolInterceptor.redirectObserver<String>() {
+            @Override
+            public void onRedirect(String x) {
+                urlFactory.setUserCenterURL(x);
+                loginSuccess = true;
+            }
+        });
+
+        String userCenter;
 
         // 教务网登录
         if (mCMSInfo != null) {
             // 强智教务系统 (特殊处理)
-            if (mCMSInfo.mCmsSys.equalsIgnoreCase(Constants.QZDATASOFT)) {
-                String serverResponse = mService.login(mCMSInfo.mCmsURL + "Logon.do?method=logon&flag=sess", getLoginURL(), new HashMap<String, String>(0)).execute().body();
+            if (Constants.QZDATASOFT.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
+                String serverResponse = mService.login(urlFactory.getBaseURL() + "Logon.do?method=logon&flag=sess", getBaseURL(), new HashMap<String, String>(0)).execute().body();
                 // 加密登录 (模拟网页JS代码)
                 String scode = serverResponse.split("#")[0];
                 String sxh = serverResponse.split("#")[1];
@@ -88,10 +107,10 @@ public abstract class UniversityFactory {
                 map.put("useDogCode", "");
                 map.put("encoded", encoded);
                 map.put("RANDOMCODE", loginMap.get(Constants.CAPTCHA_KEY));
-                Document document = Jsoup.parse(loginPageHtml, mCMSInfo.mCmsURL);
+                Document document = Jsoup.parse(loginPageHtml, urlFactory.getLoginPageURL());
                 String action = document.select("form").get(0).absUrl("action");
-                userCenter = mService.login(action, getLoginRefer(), map).execute().body();
-                if (!TextUtils.isEmpty(userCenter) && LOGIN_SUCCESS.matcher(userCenter).find()) {
+                userCenter = mService.login(action, urlFactory.getLoginPageURL(), map).execute().body();
+                if (!TextUtils.isEmpty(userCenter) && Pattern.compile(LOGIN_SUCCESS_PATTERN).matcher(userCenter).find()) {
                     return userCenter;
                 } else {
                     throw new Exception("登录失败, 请检查您的用户名和密码\n(以及验证码)");
@@ -99,71 +118,59 @@ public abstract class UniversityFactory {
             }
         }
 
-        FormHandler handler = new FormHandler(loginPageHtml, getLoginURL());
+        FormHandler handler = new FormHandler(loginPageHtml, urlFactory.getLoginPageURL());
         Form form = handler.getForm(0);
         if (form == null) {
             throw new Exception("学校服务器好像出了点问题~\n要不等下再试试?");
         }
         Map<String, String> res = FormUtils.getLoginFiledMap(form, loginMap, true);
-        String action = res.get(Constants.ACTION);
-        res.remove(Constants.ACTION);
-        Response<String> stringResponse = mService.login(action, getLoginURL(), res).execute();
+        String action = res.get(Constants.ACTION_KEY);
+        res.remove(Constants.ACTION_KEY);
+        Response<String> stringResponse = mService.login(action, urlFactory.getLoginPageURL(), res).execute();
         userCenter = stringResponse.body();
+
+        // 处理五秒防刷
         if (userCenter.length() < 100) {
             Thread.sleep(6 * 1000);
-            userCenter = mService.login(action, getLoginURL(), res).execute().body();
+            userCenter = mService.login(action, urlFactory.getLoginPageURL(), res).execute().body();
         }
 
         // 登录完成, 检测结果
-        if (!TextUtils.isEmpty(userCenter) && LOGIN_SUCCESS.matcher(userCenter).find()) {
+        if (loginSuccess || (!TextUtils.isEmpty(userCenter) && Pattern.compile(LOGIN_SUCCESS_PATTERN).matcher(userCenter).find())) {
             return userCenter;
         } else {
             throw new Exception("登录失败, 请检查您的用户名和密码\n(以及验证码)");
         }
     }
 
-    private void getDynPart() {
-        if (mCMSInfo != null) {
-            if (mCMSInfo.mDynLoginURL && !gotDynPart) {
-                try {
-                    String dynURL;
-                    URL url = new URL(mCMSInfo.mCmsURL);
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setInstanceFollowRedirects(false);
-                    if (conn.getResponseCode() == 302) {
-                        dynURL = conn.getHeaderField("Location");
-                        if (!TextUtils.isEmpty(dynURL)) {
-                            Pattern pattern = Pattern.compile("\\(.*\\)+");
-                            Matcher m = pattern.matcher(dynURL);
-                            if (m.find()) {
-                                dynPart = m.group();
-                            }
-                        }
-                    }
-                    conn.disconnect();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (!TextUtils.isEmpty(dynPart)) {
-                    resetURLFactory();
-                    gotDynPart = true;
-                }
-            }
-        }
-    }
-
     public void getCAPTCHA() throws IOException {
-        getDynPart();
-        Response<ResponseBody> bodyResponse = mService.getCAPTCHA(getCaptchaURL()).execute();
+        destroyService();
+        checkService();
+        interceptor.setObserver(new SchoolInterceptor.redirectObserver<String>() {
+            @Override
+            public void onRedirect(String x) {
+                // 获取登录页面后, 若是动态地址则发生302重定向, 更新LoginRefer地址 (默认是登录地址)
+                urlFactory.setLoginPageURL(x);
+            }
+        });
+
+        String loginPageHtml = mService.getPage(urlFactory.getBaseURL(), null).execute().body();
+
+        // 从登录页面解析出验证码图片地址
+        urlFactory.setCaptchaURL(loginPageHtml);
+        Response<ResponseBody> bodyResponse = mService.getCAPTCHA(urlFactory.getCaptchaURL()).execute();
         ResponseBody body = bodyResponse.body();
         StoreHelper.storeBytes(Constants.CAPTCHA_FILE, body.byteStream());
     }
 
-    protected abstract String getCaptchaURL();
+    protected void checkService() {
+        if (interceptor == null) {
+            urlFactory = new URLFactory(getBaseURL());
+            interceptor = new SchoolInterceptor(urlFactory.getBaseURL());
+            mService = interceptor.createSchoolService();
+        }
+    }
 
-    protected abstract String getLoginURL();
+    protected abstract String getBaseURL();
 
-    protected abstract String getLoginRefer();
-
-    protected abstract void resetURLFactory();
 }

@@ -72,9 +72,7 @@
                 android:layout_weight="2"
                 android:hint="星期"
                 android:inputType="numberDecimal"
-                app:met_floatingLabel="normal"
-                app:met_helperText="数字"
-                app:met_helperTextAlwaysShown="true"/>
+                app:met_floatingLabel="normal"/>
 
             <Space
                 android:layout_width="10dp"
@@ -87,9 +85,7 @@
                 android:layout_weight="2"
                 android:hint="开始"
                 android:inputType="numberDecimal"
-                app:met_floatingLabel="normal"
-                app:met_helperText="数字"
-                app:met_helperTextAlwaysShown="true"/>
+                app:met_floatingLabel="normal"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -107,9 +103,7 @@
                 android:layout_weight="2"
                 android:hint="结束"
                 android:inputType="numberDecimal"
-                app:met_floatingLabel="normal"
-                app:met_helperText="数字"
-                app:met_helperTextAlwaysShown="true"/>
+                app:met_floatingLabel="normal"/>
         </LinearLayout>
 
         <LinearLayout
@@ -131,11 +125,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:hint="开始周"
+                android:hint="开始"
                 android:inputType="numberDecimal"
-                app:met_floatingLabel="normal"
-                app:met_helperText="数字"
-                app:met_helperTextAlwaysShown="true"/>
+                app:met_floatingLabel="normal"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -151,11 +143,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:hint="结束周"
+                android:hint="结束"
                 android:inputType="numberDecimal"
-                app:met_floatingLabel="normal"
-                app:met_helperText="数字"
-                app:met_helperTextAlwaysShown="true"/>
+                app:met_floatingLabel="normal"/>
         </LinearLayout>
 
         <RadioGroup
@@ -177,6 +167,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="双周"/>
+
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="普通"/>
         </RadioGroup>
 
         <com.rengwuxian.materialedittext.MaterialEditText

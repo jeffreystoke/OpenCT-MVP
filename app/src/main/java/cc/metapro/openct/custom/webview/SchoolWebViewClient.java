@@ -43,10 +43,12 @@ public class SchoolWebViewClient extends WebViewClient {
                     "if(targ.href){id=targ.href;}" +
                     "window." + JSInteraction.JSInterface + ".getClicked(id);}\"";
     public static boolean replayMode = false;
+    public static boolean commonMode = true;
     private Observer<Integer> mObserver;
 
     public void performActions(CustomConfiguration conf, FragmentManager manager, WebView webView) {
         replayMode = true;
+        commonMode = false;
         mObserver = conf.getCmdExe(manager, webView);
     }
 
@@ -70,7 +72,7 @@ public class SchoolWebViewClient extends WebViewClient {
 
     @Override
     public void onPageFinished(WebView view, String url) {
-        if (!replayMode) {
+        if (!replayMode && !commonMode) {
             // 注入监听JS脚本
             view.loadUrl("javascript:var script = document.createElement('script');" +
                     "var node = document.createTextNode(" + CLICK_LISTENER + ");" +

@@ -34,7 +34,6 @@ import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.utils.Constants;
 
 @Keep
 public class ClickDialog extends DialogFragment implements View.OnClickListener {
@@ -123,12 +122,12 @@ public class ClickDialog extends DialogFragment implements View.OnClickListener 
         switch (id) {
             case R.id.username:
                 mValue.setVisibility(View.VISIBLE);
-                mValue.setText(userPass.get(Constants.USERNAME_KEY));
+                mValue.setText(userPass.get(getString(R.string.key_username)));
                 mType = USERNAME;
                 break;
             case R.id.password:
                 mValue.setVisibility(View.VISIBLE);
-                mValue.setText(userPass.get(Constants.PASSWORD_KEY));
+                mValue.setText(userPass.get(getString(R.string.key_password)));
                 mType = PASSWORD;
                 break;
             case R.id.captcha:

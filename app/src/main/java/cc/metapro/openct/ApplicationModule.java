@@ -16,18 +16,25 @@ package cc.metapro.openct;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
-import android.widget.TextView;
+import android.content.Context;
 
-import java.util.Map;
+import javax.inject.Singleton;
 
-@Keep
-public interface LoginPresenter extends BasePresenter {
+import dagger.Module;
+import dagger.Provides;
 
-    void loadCaptcha(final TextView view);
+@Module
+public class ApplicationModule {
 
-    void loadOnline(final String code);
+    private final Context mContext;
 
-    void loadQuery(final String actionURL, final Map<String, String> queryMap);
+    ApplicationModule(Context context) {
+        mContext = context;
+    }
 
+    @Provides
+    @Singleton
+    Context provideApplication() {
+        return mContext;
+    }
 }

@@ -84,10 +84,10 @@ public class InitDialog extends DialogFragment {
         editor.putString(getString(R.string.pref_lib_username), libUsername.getText().toString());
         editor.putString(getString(R.string.pref_lib_password), libPassword.getText().toString());
         editor.putBoolean(getString(R.string.pref_init), true);
+        editor.putBoolean(getString(R.string.pref_need_encryption), true);
         editor.apply();
-
         ActivityUtils.encryptionCheck(getActivity());
-        Loader.loadUniversity(getActivity());
+        Loader.loadUniversity(getActivity()).subscribe();
         dismiss();
     }
 

@@ -67,7 +67,7 @@ class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewHolder>
         }
     }
 
-    void addNewBooks(List<BookInfo> books) {
+    void setBooks(List<BookInfo> books) {
         if (books != null) {
             mBooks = books;
         } else {

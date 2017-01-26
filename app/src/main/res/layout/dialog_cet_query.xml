@@ -1,40 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_height="wrap_content"
               android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    <TextView
+        style="@style/DialogTitleText"
+        android:text="@string/cet_query"/>
 
-        <EditText
-            android:id="@+id/cet_cert_num"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:hint="@string/cet_num"/>
-    </LinearLayout>
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/ticket_num"
+        style="@style/dialog_edit_margin"
+        android:hint="@string/ticket_number"/>
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/full_name"
+        style="@style/dialog_edit_margin"
+        android:hint="@string/full_name"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/cet_cert_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:hint="@string/cet_name"/>
+        <TextView
+            android:id="@+id/cancel"
+            style="@style/DialogButtonText"
+            android:text="@string/cancel"/>
+
+        <TextView
+            android:id="@+id/preserve"
+            style="@style/DialogButtonText"
+            android:text="@string/preserve"/>
+
+        <TextView
+            android:id="@+id/ok"
+            style="@style/DialogButtonText"
+            android:text="@string/ok"/>
     </LinearLayout>
 </LinearLayout>

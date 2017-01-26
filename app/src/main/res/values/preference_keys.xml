@@ -25,11 +25,24 @@
     <!--当前周-->
     <string name="pref_current_week">current_week</string>
 
+    <!--首页显示 今日 | 本周 | 本学期 课表-->
+    <string name="pref_homepage_selection">homepage_selection</string>
+
+    <!--无课时在 今日课表 显示的文字-->
+    <string name="pref_empty_class_motto">empty_class_motto</string>
+
     <!--设置当前周的年度周数, 用于判断是否更新周数-->
     <string name="pref_week_set_week">week_set_week</string>
 
+    <!--设置启用验证码自动识别-->
+    <string name="pref_auto_captcha">auto_captcha</string>
+
     <!--设置加密与否-->
-    <string name="need_encryption">need_encryption</string>
+    <string name="pref_need_encryption">need_encryption</string>
+
+    <!--CET 准考证号和姓名-->
+    <string name="pref_cet_ticket_num">cet_tick_num</string>
+    <string name="pref_cet_full_name">cet_full_name</string>
 
     <!--教务网用户名密码-->
     <string name="pref_cms_username">cms_username</string>

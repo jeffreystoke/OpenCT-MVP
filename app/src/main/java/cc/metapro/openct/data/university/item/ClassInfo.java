@@ -37,6 +37,7 @@ import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.util.UidGenerator;
 
 import java.util.Calendar;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +51,7 @@ import cc.metapro.openct.utils.REHelper;
 @Keep
 public class ClassInfo {
 
+    private String mUid;
     private String mName;
     private String mType;
     private String mTime;
@@ -61,7 +63,12 @@ public class ClassInfo {
     private boolean mInactive;
     private ClassInfo mSubClassInfo;
 
-    public ClassInfo(String name, String type, String time, String during, String teacher, String place, boolean oddWeek, boolean evenWeek) {
+    public ClassInfo(String uid, String name, String type, String time, String during, String teacher, String place, boolean oddWeek, boolean evenWeek) {
+        if (TextUtils.isEmpty(uid)) {
+            mUid = UUID.randomUUID().toString();
+        } else {
+            mUid = uid;
+        }
         mName = name;
         mType = type;
         mTime = time;
@@ -73,6 +80,7 @@ public class ClassInfo {
     }
 
     public ClassInfo(String content, CmsFactory.ClassTableInfo info) {
+        mUid = UUID.randomUUID().toString();
         String[] classes = content.split(Constants.BR_REPLACER + Constants.BR_REPLACER + "+");
         String s = classes[0];
         String[] tmp = s.split(Constants.BR_REPLACER);
@@ -136,6 +144,10 @@ public class ClassInfo {
             if (m.find()) content = m.group();
         }
         return content;
+    }
+
+    public String getId() {
+        return mUid;
     }
 
     public boolean hasClass(int week) {
@@ -240,8 +252,14 @@ public class ClassInfo {
         }
         if (obj instanceof ClassInfo) {
             ClassInfo c = (ClassInfo) obj;
-            if (c.getName().equals(mName)) {
-                return true;
+            if (TextUtils.isEmpty(c.mUid) || TextUtils.isEmpty(mUid)) {
+                if (c.getName().equals(mName)) {
+                    return true;
+                }
+            } else {
+                if (c.mUid.equals(mUid)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -308,7 +326,7 @@ public class ClassInfo {
             // create event, repeat weekly
             VEvent event = new VEvent(start, end, mName + "@" + mPlace + ", " + mTime);
 
-            // set uid
+            // set mUid
             event.getProperties().add(new Uid(new UidGenerator("OPENCT").generateUid().getValue()));
 
             // set event

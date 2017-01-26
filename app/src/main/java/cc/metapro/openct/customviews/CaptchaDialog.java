@@ -114,6 +114,7 @@ public class CaptchaDialog extends DialogFragment {
         super.onDismiss(dialog);
         mTextView.setText(R.string.press_to_get_captcha);
         mTextView.setBackground(null);
+        mEditText.setText("");
         StoreHelper.delFile(Constants.CAPTCHA_FILE);
     }
 }

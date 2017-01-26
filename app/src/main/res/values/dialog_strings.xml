@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~  Copyright 2016 - 2017 OpenCT open source class table
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <string name="key_username">username</string>
+    <string name="key_password">password</string>
+    <string name="key_captcha">captcha</string>
+    <string name="key_action">action</string>
+    <string name="key_search_type">type</string>
+    <string name="key_search_content">content</string>
+
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+
+    <!--成绩查询相关-->
+    <!--CET 成绩查询对话框-->
+    <string name="cet_query">CET 成绩查询</string>
+    <string name="full_name">姓名</string>
+    <string name="ticket_number">准考证号</string>
+    <string name="preserve">预存</string>
+
+    <!--CET 成绩结果对话框-->
+    <string name="cet_result">CET 成绩</string>
+
+    <!--CET 成绩结果key-->
+    <string name="key_full_name">full_name</string>
+    <string name="key_school">school</string>
+    <string name="key_ticket_num">ticket_num</string>
+    <string name="key_cet_time">cet_time</string>
+    <string name="key_cet_grade">cet_grade</string>
+    <string name="key_cet_type">cet_type</string>
+</resources>

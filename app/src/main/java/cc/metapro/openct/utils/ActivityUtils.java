@@ -28,6 +28,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.scottyab.aescrypt.AESCrypt;
+
 import cc.metapro.openct.R;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -38,7 +40,8 @@ import io.reactivex.schedulers.Schedulers;
 @Keep
 public final class ActivityUtils {
 
-    private static final String TAG = "ENCRYPTION";
+    private static final String TAG = "ACTIVITY_UTILS";
+
     private static ProgressDialog pd;
 
     public static void addFragmentToActivity(@NonNull FragmentManager fragmentManager,
@@ -67,26 +70,25 @@ public final class ActivityUtils {
                     @Override
                     public void subscribe(ObservableEmitter<String> e) throws Exception {
                         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.need_encryption), false);
+                        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.pref_need_encryption), true);
                         boolean cmsPasswordEncrypted = preferences.getBoolean(context.getString(R.string.pref_cms_password_encrypted), false);
                         boolean libPasswordEncrypted = preferences.getBoolean(context.getString(R.string.pref_lib_password_encrypted), false);
 
+                        SharedPreferences.Editor editor = preferences.edit();
                         // 设置不加密, 将加密的部分还原
                         if (!needEncrypt) {
-                            SharedPreferences.Editor editor = preferences.edit();
                             if (cmsPasswordEncrypted) {
                                 editor.putBoolean(context.getString(R.string.pref_cms_password_encrypted), false);
                                 String password = preferences.getString(context.getString(R.string.pref_cms_password), "");
-                                password = EncryptionUtils.decrypt(Constants.seed, password);
+                                password = AESCrypt.decrypt(Constants.seed, password);
                                 editor.putString(context.getString(R.string.pref_cms_password), password);
                             }
                             if (libPasswordEncrypted) {
                                 editor.putBoolean(context.getString(R.string.pref_lib_password_encrypted), false);
                                 String password = preferences.getString(context.getString(R.string.pref_lib_password), "");
-                                password = EncryptionUtils.decrypt(Constants.seed, password);
+                                password = AESCrypt.decrypt(Constants.seed, password);
                                 editor.putString(context.getString(R.string.pref_lib_password), password);
                             }
-                            editor.apply();
                         }
                         // 设置加密, 将未加密的部分加密
                         else {
@@ -94,11 +96,9 @@ public final class ActivityUtils {
                                 String cmsPassword = preferences.getString(context.getString(R.string.pref_cms_password), "");
                                 try {
                                     if (!TextUtils.isEmpty(cmsPassword)) {
-                                        cmsPassword = EncryptionUtils.encrypt(Constants.seed, cmsPassword);
-                                        SharedPreferences.Editor editor = preferences.edit();
+                                        cmsPassword = AESCrypt.encrypt(Constants.seed, cmsPassword);
                                         editor.putString(context.getString(R.string.pref_cms_password), cmsPassword);
                                         editor.putBoolean(context.getString(R.string.pref_cms_password_encrypted), true);
-                                        editor.apply();
                                     }
                                 } catch (Exception exp) {
                                     Log.e(TAG, exp.getMessage(), exp);
@@ -108,17 +108,16 @@ public final class ActivityUtils {
                                 try {
                                     String libPassword = preferences.getString(context.getString(R.string.pref_lib_password), "");
                                     if (!TextUtils.isEmpty(libPassword)) {
-                                        libPassword = EncryptionUtils.encrypt(Constants.seed, libPassword);
-                                        SharedPreferences.Editor editor = preferences.edit();
-                                        editor.putString(context.getString(R.string.pref_cms_password), libPassword);
+                                        libPassword = AESCrypt.encrypt(Constants.seed, libPassword);
+                                        editor.putString(context.getString(R.string.pref_lib_password), libPassword);
                                         editor.putBoolean(context.getString(R.string.pref_lib_password_encrypted), true);
-                                        editor.apply();
                                     }
                                 } catch (Exception exp) {
                                     Log.e(TAG, exp.getMessage(), exp);
                                 }
                             }
                         }
+                        editor.apply();
                     }
                 })
                 .subscribeOn(Schedulers.newThread())

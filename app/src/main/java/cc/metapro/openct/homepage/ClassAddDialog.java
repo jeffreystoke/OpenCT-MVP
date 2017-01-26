@@ -47,6 +47,7 @@ import cc.metapro.openct.utils.REHelper;
 public class ClassAddDialog extends DialogFragment {
 
     private static ClassAddCallBack mCallBack;
+    private static String id;
     private static String mTitle;
     private static ClassInfo mClassInfo;
     private static int mDayOfWeek;
@@ -98,7 +99,7 @@ public class ClassAddDialog extends DialogFragment {
             String type = mType.getText().toString();
             String teacher = mTeacher.getText().toString();
             String place = mClassPlace.getText().toString();
-            ClassInfo info = new ClassInfo(name, type, time, during, teacher, place, mOddRadio.isChecked(), mEvenRadio.isChecked());
+            ClassInfo info = new ClassInfo(id, name, type, time, during, teacher, place, mOddRadio.isChecked(), mEvenRadio.isChecked());
             int dayOfWeek = Integer.parseInt(mWeekDay.getText().toString());
             int color = Constants.getColor(mColorSpinner.getSelectedItemPosition());
             int dailySeq = Integer.parseInt(mTimeStart.getText().toString());
@@ -131,6 +132,7 @@ public class ClassAddDialog extends DialogFragment {
             }
         });
         if (mClassInfo != null) {
+            id = mClassInfo.getId();
             mName.setText(mClassInfo.getName());
             mType.setText(mClassInfo.getType());
             mTeacher.setText(mClassInfo.getTeacher());

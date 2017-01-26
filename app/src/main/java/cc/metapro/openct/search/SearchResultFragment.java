@@ -19,6 +19,7 @@ package cc.metapro.openct.search;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Keep;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +33,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.EndlessRecyclerOnScrollListener;
 import cc.metapro.openct.data.university.item.BookInfo;
@@ -46,35 +48,49 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
 
     @BindView(R.id.lib_result_refresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
+
+    @BindView(R.id.fab_up)
+    FloatingActionButton mFabUp;
+
+    @OnClick(R.id.fab_up)
+    public void upToTop() {
+        mRecyclerView.smoothScrollToPosition(0);
+    }
+
     private Context mContext;
     private BooksAdapter mAdapter;
     private LibSearchContract.Presenter mPresenter;
     private Disposable mTask;
+    private LinearLayoutManager manager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_result, container, false);
-
         ButterKnife.bind(this, view);
-
         mContext = getContext();
-
         mAdapter = new BooksAdapter(getContext());
-        LinearLayoutManager manager = RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, mAdapter);
-        setRecyclerViewManager(manager);
-
+        manager = RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, mAdapter);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mPresenter.search();
             }
         });
-
         return view;
     }
 
-    private void setRecyclerViewManager(final LinearLayoutManager manager) {
+    @Override
+    public void onDestroy() {
+        if (mTask != null) {
+            mTask.dispose();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public void showOnSearching() {
+        mSwipeRefreshLayout.setRefreshing(true);
         mRecyclerView.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -92,28 +108,15 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
     }
 
     @Override
-    public void onDestroy() {
-        if (mTask != null) {
-            mTask.dispose();
-        }
-        super.onDestroy();
-    }
-
-    @Override
-    public void showOnSearching() {
-        mSwipeRefreshLayout.setRefreshing(true);
-    }
-
-    @Override
-    public void onSearchResult(List<BookInfo> infos) {
-        mAdapter.notifyItemRangeRemoved(0, mAdapter.getItemCount() - 1);
-        mAdapter.addNewBooks(infos);
+    public void onSearchResult(List<BookInfo> books) {
+        mAdapter.setBooks(books);
         mAdapter.notifyDataSetChanged();
         mSwipeRefreshLayout.setRefreshing(false);
-        if (infos.size() > 0) {
-            Toast.makeText(mContext, "找到了 " + infos.size() + " 条结果", Toast.LENGTH_SHORT).show();
+        if (books.size() > 0) {
+            Toast.makeText(mContext, "找到了 " + books.size() + " 条结果", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(mContext, "没有查询到相关书籍", Toast.LENGTH_SHORT).show();
+            mFabUp.setVisibility(View.VISIBLE);
         }
     }
 

@@ -16,35 +16,41 @@ package cc.metapro.openct.utils.HTMLUtils;
  * limitations under the License.
  */
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+
+import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cc.metapro.openct.R;
 import cc.metapro.openct.utils.Constants;
 
 public class FormUtils {
 
-    private final static Pattern INVISIBLE_FORM_ITEM = Pattern.compile("(DISPLAY: none)|(hidden)");
-
-    private final static Pattern typeKey = Pattern.compile("(strSearchType)");
-
-    private final static Pattern searchKey = Pattern.compile("(strText)");
+    public final static String INVISIBLE_FORM_ITEM_PATTERN = "(DISPLAY: none)|(hidden)";
+    private final static String TYPE_KEY_PATTERN = "(strSearchType)";
+    private final static String SEARCH_KEY_PATTERN = "(strText)";
 
     @NonNull
-    public static Map<String, String> getLibSearchQueryMap(
-            @NonNull Form form, @NonNull Map<String, String> kvs) {
-
-        String searchType = kvs.get(Constants.SEARCH_TYPE);
-        String searchContent = kvs.get(Constants.SEARCH_CONTENT);
-
+    public static Map<String, String> getLibSearchQueryMap(@NonNull Form form, @NonNull Map<String, String> kvs) {
+        String searchType = kvs.get(Constants.SEARCH_TYPE_KEY);
+        String searchContent = kvs.get(Constants.SEARCH_CONTENT_KEY);
         Map<String, String> res = new LinkedHashMap<>();
         boolean clicked = false;
 
@@ -62,7 +68,7 @@ public class FormUtils {
                 value = "0";
             }
             String onclick = element.attr("onclick");
-            if (typeKey.matcher(key).find()) {
+            if (Pattern.compile(TYPE_KEY_PATTERN).matcher(key).find()) {
                 res.put(key, searchType);
             } else if ("radio".equalsIgnoreCase(type)) {
                 // radio options
@@ -76,23 +82,19 @@ public class FormUtils {
                     clicked = true;
                 }
             } else if ("text".equalsIgnoreCase(type)) {
-                if (searchKey.matcher(key).find()) {
+                if (Pattern.compile(SEARCH_KEY_PATTERN).matcher(key).find()) {
                     res.put(key, searchContent);
                 }
             } else {
                 res.put(key, value);
             }
         }
-        res.put(Constants.ACTION, form.getAction());
+        res.put(Constants.ACTION_KEY, form.getAction());
         return res;
     }
 
     @NonNull
-    public static Map<String, String> getLoginFiledMap(
-            @NonNull Form form,
-            @NonNull Map<String, String> kvs,
-            boolean needClick
-    ) {
+    public static Map<String, String> getLoginFiledMap(@NonNull Form form, @NonNull Map<String, String> kvs, boolean needClick) {
         Elements prev = null;
         Map<String, String> loginMap = new LinkedHashMap<>();
         boolean clicked = false;
@@ -147,8 +149,7 @@ public class FormUtils {
                     }
                     passwordOK = false;
                 } else {
-                    Matcher matcher = INVISIBLE_FORM_ITEM.matcher(elements.toString());
-                    if (matcher.find()) {
+                    if (Pattern.compile(INVISIBLE_FORM_ITEM_PATTERN).matcher(elements.toString()).find()) {
                         loginMap.put(key, value);
                     }
                 }
@@ -157,7 +158,7 @@ public class FormUtils {
             }
             prev = elements;
         }
-        loginMap.put(Constants.ACTION, form.getAction());
+        loginMap.put(Constants.ACTION_KEY, form.getAction());
         return loginMap;
     }
 
@@ -184,5 +185,34 @@ public class FormUtils {
             }
         }
         return radios.get(0);
+    }
+
+    public static View getFormView(Context context, ViewGroup container, Form form) {
+        View view = LayoutInflater.from(context).inflate(R.layout.dialog_form, container, false);
+        LinearLayout baseLinearLayout = (LinearLayout) view.findViewById(R.id.form_content_layout);
+        LinkedHashMap<String, Elements> formItems = form.getFormItems();
+        for (Elements elements : formItems.values()) {
+            Element e = elements.first();
+            String tagName = e.tagName();
+            if ("select".equalsIgnoreCase(tagName)) {
+                Elements options = e.select("option");
+                List<String> texts = new ArrayList<>();
+                for (Element opt : options) {
+                    texts.add(opt.text());
+                }
+                Spinner spinner = new Spinner(context);
+                spinner.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, texts));
+                spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                baseLinearLayout.addView(spinner);
+            }
+            if ("input".equalsIgnoreCase(tagName)) {
+                if ("text".equalsIgnoreCase(e.attr("type"))) {
+                    MaterialEditText editText = new MaterialEditText(context);
+                    editText.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    baseLinearLayout.addView(editText);
+                }
+            }
+        }
+        return view;
     }
 }

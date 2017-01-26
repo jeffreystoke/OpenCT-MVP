@@ -29,9 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.BookInfo;
-import cc.metapro.openct.utils.Constants;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -70,8 +70,8 @@ class LibSearchPresenter implements LibSearchContract.Presenter {
                     @Override
                     public void subscribe(ObservableEmitter<List<BookInfo>> e) throws Exception {
                         Map<String, String> map = new HashMap<>(2);
-                        map.put(Constants.SEARCH_TYPE, mSpinner.getSelectedItem().toString());
-                        map.put(Constants.SEARCH_CONTENT, mEditText.getText().toString());
+                        map.put(mContext.getString(R.string.key_search_type), mSpinner.getSelectedItem().toString());
+                        map.put(mContext.getString(R.string.key_search_content), mEditText.getText().toString());
                         e.onNext(Loader.getLibrary().search(map));
                         e.onComplete();
                     }

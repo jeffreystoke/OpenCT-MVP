@@ -32,19 +32,21 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
-public class SchoolSelectionActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public class SchoolSelectionActivity
+        extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     public static final int REQUEST_SCHOOL_NAME = 1;
     public static final String RESULT_KEY = "school_name";
-    private static String result;
-    private static String[] values;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.school_name)
     SearchView mSearchView;
     @BindView(R.id.school_list_view)
     StickyListHeadersListView mListView;
+    private String result;
     private SchoolAdapter mAdapter;
+
+    private SharedPreferences mPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +56,9 @@ public class SchoolSelectionActivity extends AppCompatActivity implements Search
 
         setSupportActionBar(mToolbar);
         setViews();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        preferences.getString(getString(R.string.pref_school_name), "");
-        values = getResources().getStringArray(R.array.school_names_values);
+
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        result = mPreferences.getString(getString(R.string.pref_school_name), "");
     }
 
     private void setViews() {
@@ -66,12 +68,6 @@ public class SchoolSelectionActivity extends AppCompatActivity implements Search
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 result = mAdapter.getItem(position).toString();
-                for (String s : values) {
-                    if (result.startsWith(s)) {
-                        result = s;
-                        break;
-                    }
-                }
                 Intent intent = new Intent();
                 intent.putExtra(RESULT_KEY, result);
                 setResult(RESULT_OK, intent);
@@ -98,14 +94,16 @@ public class SchoolSelectionActivity extends AppCompatActivity implements Search
         if (TextUtils.isEmpty(newText)) {
             mAdapter.clearTextFilter();
             mAdapter.notifyDataSetChanged();
+        } else {
+            mAdapter.setTextFilter(newText);
+            mAdapter.notifyDataSetChanged();
         }
         return true;
     }
 
     @Override
     protected void onDestroy() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(SchoolSelectionActivity.this);
-        SharedPreferences.Editor editor = pref.edit();
+        SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString(getString(R.string.pref_school_name), result);
         editor.apply();
         super.onDestroy();

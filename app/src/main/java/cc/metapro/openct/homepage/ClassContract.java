@@ -23,6 +23,7 @@ import java.util.List;
 import cc.metapro.openct.BaseView;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
+import cc.metapro.openct.utils.HTMLUtils.Form;
 
 @Keep
 public interface ClassContract {
@@ -30,6 +31,7 @@ public interface ClassContract {
 
         void updateClasses(List<EnrichedClassInfo> classes);
 
+        void showFormDialog(Form form);
     }
 
     interface Presenter extends LoginPresenter {

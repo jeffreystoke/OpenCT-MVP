@@ -24,6 +24,7 @@ import java.util.Map;
 import cc.metapro.openct.BaseView;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.data.university.item.GradeInfo;
+import cc.metapro.openct.utils.HTMLUtils.Form;
 
 @Keep
 interface GradeContract {
@@ -35,6 +36,8 @@ interface GradeContract {
         void showCETDialog();
 
         void onLoadCETGrade(Map<String, String> resultMap);
+
+        void showFormDialog(Form form);
 
     }
 

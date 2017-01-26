@@ -1,4 +1,4 @@
-package cc.metapro.openct;
+package cc.metapro.openct.data.source;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,18 +16,12 @@ package cc.metapro.openct;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
-import android.widget.TextView;
+import android.support.v7.app.AppCompatActivity;
 
-import java.util.Map;
+import cc.metapro.openct.ApplicationModule;
+import dagger.Component;
 
-@Keep
-public interface LoginPresenter extends BasePresenter {
-
-    void loadCaptcha(final TextView view);
-
-    void loadOnline(final String code);
-
-    void loadQuery(final String actionURL, final Map<String, String> queryMap);
-
+@Component(modules = {ApplicationModule.class, NetModule.class})
+public interface NetComponent {
+    void inject(AppCompatActivity activity);
 }
