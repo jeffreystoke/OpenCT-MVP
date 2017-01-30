@@ -42,11 +42,11 @@ class URLFactory {
 
     void setCaptchaURL(String loginPage) {
         Document document = Jsoup.parse(loginPage, loginPageURL);
-        Element codeImg = document.select("img[src~=(?i)\\.(aspx)|(asp)|(servlet)|(php)]").first();
+        Element codeImg = document.select("img[src~=(?i)\\.(aspx)|(asp)|(servlet)|(php)|(html)]").first();
         if (codeImg != null) {
             captchaURL = codeImg.absUrl("src");
         } else {
-            codeImg = document.select("iframe[src~=(?i)\\.(aspx)|(asp)|(servlet)|(php)]").first();
+            codeImg = document.select("iframe[src~=(?i)\\.(aspx)|(asp)|(servlet)|(php)|(html)]").first();
             captchaURL = codeImg.absUrl("src");
         }
     }

@@ -35,7 +35,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
-import cc.metapro.openct.customviews.CaptchaDialog;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.utils.ActivityUtils;
@@ -43,17 +42,15 @@ import cc.metapro.openct.utils.ActivityUtils;
 @Keep
 public class LibBorrowActivity extends AppCompatActivity {
 
-    @BindView(R.id.lib_borrow_toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
     @BindView(R.id.fab)
     FloatingActionButton mFab;
 
-    private CaptchaDialog mCaptchaDialog;
-
     private LibBorrowContract.Presenter mPresenter;
 
-    private LibBorrowFragment mFragment;
+    private LibBorrowFragment mBorrowFragment;
 
     @OnClick(R.id.fab)
     public void load() {
@@ -63,8 +60,8 @@ public class LibBorrowActivity extends AppCompatActivity {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         } else {
-            if (Loader.libNeedCAPTCHA()) {
-                mCaptchaDialog.show(getSupportFragmentManager(), "captcha_dialog");
+            if (Loader.libNeedCAPTCHA(this)) {
+                ActivityUtils.showCaptchaDialog(getSupportFragmentManager(), mPresenter);
             } else {
                 mPresenter.loadOnline("");
             }
@@ -88,25 +85,23 @@ public class LibBorrowActivity extends AppCompatActivity {
 
         // add fragment
         FragmentManager fm = getSupportFragmentManager();
-        mFragment = (LibBorrowFragment) fm.findFragmentById(R.id.lib_borrow_container);
+        mBorrowFragment = (LibBorrowFragment) fm.findFragmentById(R.id.fragment_container);
 
-        if (mFragment == null) {
-            mFragment = new LibBorrowFragment();
-            ActivityUtils.addFragmentToActivity(fm, mFragment, R.id.lib_borrow_container);
+        if (mBorrowFragment == null) {
+            mBorrowFragment = new LibBorrowFragment();
+            ActivityUtils.addFragmentToActivity(fm, mBorrowFragment, R.id.fragment_container);
         }
-        mPresenter = new LibBorrowPresenter(mFragment, this);
-
-        mCaptchaDialog = CaptchaDialog.newInstance(mPresenter);
+        mPresenter = new LibBorrowPresenter(mBorrowFragment, this);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.show_all_borrow_info:
-                mFragment.onLoadBorrows(mPresenter.getBorrows());
+            case R.id.show_all:
+                mBorrowFragment.showAll(mPresenter.getBorrows());
                 break;
-            case R.id.show_due_borrow_info:
-                mFragment.showDue(mPresenter.getBorrows());
+            case R.id.show_due:
+                mBorrowFragment.showDue(mPresenter.getBorrows());
                 break;
         }
         return super.onOptionsItemSelected(item);

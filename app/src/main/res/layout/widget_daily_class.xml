@@ -3,21 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/materialWhite"
+    android:background="@color/material_white"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/widget_title"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/materialDark"
+        android:background="@color/material_black"
         android:gravity="center_vertical|start"
         android:paddingEnd="0dp"
         android:paddingLeft="10dp"
         android:paddingRight="0dp"
         android:paddingStart="10dp"
         android:text="@string/daily_classes"
-        android:textColor="@color/materialWhite"/>
+        android:textColor="@color/material_white"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -27,7 +27,7 @@
             android:id="@+id/widget_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@color/materialWhite"
+            android:divider="@color/material_white"
             android:dividerHeight="3dp"
             android:minHeight="40dp"
             tools:listitem="@layout/item_widget_list"/>
@@ -38,6 +38,6 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/no_daily_classes"
-            android:textColor="@color/materialDark"/>
+            android:textColor="@color/material_black"/>
     </FrameLayout>
 </LinearLayout>

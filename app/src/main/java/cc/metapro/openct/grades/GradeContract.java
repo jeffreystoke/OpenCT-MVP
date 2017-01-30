@@ -27,11 +27,11 @@ import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.utils.HTMLUtils.Form;
 
 @Keep
-interface GradeContract {
+public interface GradeContract {
 
     interface View extends BaseView<Presenter> {
 
-        void onLoadGrades(List<GradeInfo> infos);
+        void onLoadGrades(List<GradeInfo> grades);
 
         void showCETDialog();
 

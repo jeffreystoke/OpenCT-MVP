@@ -72,7 +72,7 @@ class LibSearchPresenter implements LibSearchContract.Presenter {
                         Map<String, String> map = new HashMap<>(2);
                         map.put(mContext.getString(R.string.key_search_type), mSpinner.getSelectedItem().toString());
                         map.put(mContext.getString(R.string.key_search_content), mEditText.getText().toString());
-                        e.onNext(Loader.getLibrary().search(map));
+                        e.onNext(Loader.getLibrary(mContext).search(map));
                         e.onComplete();
                     }
                 })
@@ -103,8 +103,8 @@ class LibSearchPresenter implements LibSearchContract.Presenter {
                 .create(new ObservableOnSubscribe<List<BookInfo>>() {
                     @Override
                     public void subscribe(ObservableEmitter<List<BookInfo>> e) throws Exception {
-                        List<BookInfo> infos = Loader.getLibrary().getNextPage();
-                        e.onNext(infos);
+                        List<BookInfo> books = Loader.getLibrary(mContext).getNextPage();
+                        e.onNext(books);
                         e.onComplete();
                     }
                 })

@@ -63,14 +63,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="7"
-                android:entries="@array/pref_week_seqs"/>
+                android:entries="@array/pref_week_seq_keys"/>
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="20dp"
-            android:text="@string/jwxt"
+            android:text="@string/cms_sys"
             android:textAlignment="center"
             android:textColor="@color/colorAccent"/>
 

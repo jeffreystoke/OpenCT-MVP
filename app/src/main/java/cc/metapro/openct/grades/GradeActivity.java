@@ -33,11 +33,11 @@ import cc.metapro.openct.utils.ActivityUtils;
 @Keep
 public class GradeActivity extends AppCompatActivity {
 
-    @BindView(R.id.grade_toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
     private GradeContract.Presenter mPresenter;
-    private GradeFragment mGradeFragment;
+    private GradeFragment mFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +52,14 @@ public class GradeActivity extends AppCompatActivity {
         }
 
         FragmentManager fm = getSupportFragmentManager();
-        mGradeFragment =
-                (GradeFragment) fm.findFragmentById(R.id.grade_info_container);
+        mFragment =
+                (GradeFragment) fm.findFragmentById(R.id.fragment_container);
 
-        if (mGradeFragment == null) {
-            mGradeFragment = new GradeFragment();
-            ActivityUtils.addFragmentToActivity(fm, mGradeFragment, R.id.grade_info_container);
+        if (mFragment == null) {
+            mFragment = new GradeFragment();
+            ActivityUtils.addFragmentToActivity(fm, mFragment, R.id.fragment_container);
         }
-        mPresenter = new GradePresenter(mGradeFragment, this);
+        mPresenter = new GradePresenter(mFragment, this);
     }
 
     @Override
@@ -71,11 +71,11 @@ public class GradeActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.grade_clear) {
-            mGradeFragment.onLoadGrades(null);
+        if (id == R.id.clear) {
+            mFragment.onLoadGrades(null);
             mPresenter.clearGrades();
-        } else if (id == R.id.cet_query) {
-            mGradeFragment.showCETDialog();
+        } else if (id == R.id.query) {
+            mFragment.showCETDialog();
         }
         return super.onOptionsItemSelected(item);
     }

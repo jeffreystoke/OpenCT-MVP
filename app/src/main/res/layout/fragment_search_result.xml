@@ -13,23 +13,21 @@
         android:orientation="vertical">
 
         <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/lib_result_refresh"
+            android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/lib_result_recycler_view"
+                android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
         </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_up"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
-        android:padding="16dp"
+        android:id="@+id/fab"
         android:src="@drawable/ic_up_to_top"
+        style="@style/Widget.Design.FloatingActionButton.MyFab"
+        android:layout_gravity="bottom|start"
         android:visibility="gone"/>
 </android.support.design.widget.CoordinatorLayout>

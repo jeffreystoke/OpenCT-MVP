@@ -1,4 +1,4 @@
-package cc.metapro.openct.grades;
+package cc.metapro.openct.grades.cet;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -35,6 +35,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
+import cc.metapro.openct.grades.GradeContract;
 
 public class CETQueryDialog extends DialogFragment {
 
@@ -45,7 +46,7 @@ public class CETQueryDialog extends DialogFragment {
     @BindView(R.id.full_name)
     MaterialEditText mName;
 
-    static CETQueryDialog newInstance(GradeContract.Presenter presenter) {
+    public static CETQueryDialog newInstance(GradeContract.Presenter presenter) {
         mPresenter = presenter;
         return new CETQueryDialog();
     }
@@ -65,7 +66,7 @@ public class CETQueryDialog extends DialogFragment {
         editor.putString(getString(R.string.pref_cet_ticket_num), mNum.getText().toString());
         editor.putString(getString(R.string.pref_cet_full_name), mName.getText().toString());
         editor.apply();
-        Toast.makeText(getContext(), "已保存", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.saved, Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.cancel)

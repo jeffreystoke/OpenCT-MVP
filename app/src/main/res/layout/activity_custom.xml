@@ -23,7 +23,7 @@
     android:id="@+id/activity_custom"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/materialDark"
+    android:background="@color/material_black"
     tools:context="cc.metapro.openct.custom.CustomActivity">
 
     <LinearLayout
@@ -38,16 +38,14 @@
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                style="@style/Widget.AppCompat.Toolbar.MyToolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                style="@style/Widget.AppCompat.Toolbar.MyToolbar">
 
                 <EditText
                     android:id="@+id/url_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="start"
-                    android:hint="输入地址"
+                    android:hint="@string/enter_address"
                     android:inputType="textUri"
                     android:textAlignment="viewStart"/>
             </android.support.v7.widget.Toolbar>
@@ -65,7 +63,7 @@
             android:paddingStart="40dp"
             android:text="@string/custom_tip"
             android:textAlignment="textStart"
-            android:textColor="@color/materialWhite"/>
+            android:textColor="@color/material_white"/>
 
         <WebView
             android:id="@+id/custom_web_view"

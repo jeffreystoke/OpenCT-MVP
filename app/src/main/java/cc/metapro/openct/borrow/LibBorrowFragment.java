@@ -17,15 +17,17 @@ package cc.metapro.openct.borrow;
  * limitations under the License.
  */
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,10 +42,11 @@ import cc.metapro.openct.utils.RecyclerViewHelper;
 @Keep
 public class LibBorrowFragment extends Fragment implements LibBorrowContract.View {
 
-    @BindView(R.id.lib_borrow_recycler_view)
+    private static final String TAG = "openct_borrow_view";
+
+    @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
-    private Context mContext;
     private BorrowAdapter mBorrowAdapter;
     private LibBorrowContract.Presenter mPresenter;
 
@@ -52,16 +55,15 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_lib_borrow, container, false);
         ButterKnife.bind(this, view);
-        mContext = getContext();
-        mBorrowAdapter = new BorrowAdapter(mContext);
-        RecyclerViewHelper.setRecyclerView(mContext, mRecyclerView, mBorrowAdapter);
+        mBorrowAdapter = new BorrowAdapter(getContext());
+        RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, mBorrowAdapter);
         return view;
     }
 
     @Override
     public void onResume() {
-        mPresenter.start();
         super.onResume();
+        mPresenter.start();
     }
 
     @Override
@@ -70,32 +72,30 @@ public class LibBorrowFragment extends Fragment implements LibBorrowContract.Vie
     }
 
     @Override
-    public void showDue(List<BorrowInfo> borrows) {
+    public void showDue(@NonNull List<BorrowInfo> borrows) {
         try {
-            if (borrows != null) {
-                List<BorrowInfo> dueInfo = new ArrayList<>(borrows.size());
-                for (BorrowInfo b : borrows) {
-                    if (b.isExceeded()) {
-                        dueInfo.add(b);
-                    }
+            List<BorrowInfo> dueInfo = new ArrayList<>(borrows.size());
+            for (BorrowInfo b : borrows) {
+                if (b.isExceeded()) {
+                    dueInfo.add(b);
                 }
-                mBorrowAdapter.setNewBorrows(dueInfo);
-                mBorrowAdapter.notifyDataSetChanged();
             }
+            mBorrowAdapter.setNewBorrows(dueInfo);
+            mBorrowAdapter.notifyDataSetChanged();
         } catch (Exception e) {
-
+            Log.e(TAG, e.getMessage());
         }
     }
 
     @Override
-    public void onLoadBorrows(List<BorrowInfo> borrows) {
+    public void showAll(List<BorrowInfo> borrows) {
         try {
             mBorrowAdapter.setNewBorrows(borrows);
             mBorrowAdapter.notifyDataSetChanged();
             ActivityUtils.dismissProgressDialog();
-            Toast.makeText(mContext, "共有 " + borrows.size() + " 条借阅信息", Toast.LENGTH_SHORT).show();
+            Snackbar.make(mRecyclerView, "共有 " + borrows.size() + " 条借阅信息", BaseTransientBottomBar.LENGTH_LONG).show();
         } catch (Exception e) {
-
+            Log.e(TAG, e.getMessage());
         }
     }
 

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:paddingTop="5dp"
-        android:textColor="@color/materialDark"/>
+        android:textColor="@color/material_black"/>
 
     <TextView
         android:id="@+id/widget_class_place"

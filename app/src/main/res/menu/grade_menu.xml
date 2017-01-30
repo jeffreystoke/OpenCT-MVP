@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/grade_clear"
+        android:id="@+id/clear"
         android:title="@string/clear"/>
     <item
-        android:id="@+id/cet_query"
+        android:id="@+id/query"
         android:title="@string/cet_query"/>
 </menu>

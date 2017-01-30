@@ -1,4 +1,4 @@
-package cc.metapro.openct.room;
+package cc.metapro.openct.grades.cet;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,30 +16,18 @@ package cc.metapro.openct.room;
  * limitations under the License.
  */
 
-import android.content.Context;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Query;
 
-import java.util.List;
+public interface CETService {
 
-import cc.metapro.openct.BasePresenter;
-import cc.metapro.openct.BaseView;
-import cc.metapro.openct.data.university.item.RoomInfo;
-
-interface RoomContract {
-    interface View extends BaseView<Presenter> {
-
-        void showRooms(int week, int day, int time, String place);
-
-    }
-
-    interface Presenter extends BasePresenter {
-
-        List<RoomInfo> getRoomInfos();
-
-        void loadOnlineRoomInfos();
-
-        void loadLocalRoomInfos(Context context);
-
-        void storeRoomInfos(final Context context);
-
-    }
+    @GET("http://www.chsi.com.cn/cet/query")
+    Call<String> queryCET(
+            @Header("Referer") String referer,
+            @Query("zkzh") String num,
+            @Query("xm") String name,
+            @Query("_t") String t
+    );
 }

@@ -28,10 +28,13 @@ import cc.metapro.openct.data.source.StoreHelper;
 
 @Keep
 public class BorrowInfo {
-    private String mBarCode, mAuthor, mBookTitle, mContent, mBorrowDate, mDueDate;
+    private String mAuthor;
+    private String mBookTitle;
+    private String mContent;
+    private String mBorrowDate;
+    private String mDueDate;
 
-    public BorrowInfo(String barCode, String bookTitle, String author, String content, String borrowDate, String dueDate) {
-        mBarCode = barCode;
+    public BorrowInfo(String bookTitle, String author, String content, String borrowDate, String dueDate) {
         mBookTitle = bookTitle;
         mAuthor = author;
         mContent = content;
@@ -49,21 +52,6 @@ public class BorrowInfo {
             e.printStackTrace();
         }
         return false;
-    }
-
-    public String toFullString() {
-        StringBuilder sb = new StringBuilder();
-        if (!TextUtils.isEmpty(mBarCode)) sb.append("条码编号: ").append(mBarCode);
-        if (!TextUtils.isEmpty(mBookTitle))
-            sb.append("\n\n").append("书籍信息: ").append(mBookTitle);
-        if (!TextUtils.isEmpty(mBorrowDate))
-            sb.append("\n\n").append("借阅日期: ").append(mBorrowDate);
-        if (!TextUtils.isEmpty(mDueDate)) sb.append("\n\n").append("到期时间: ").append(mDueDate);
-        return sb.toString();
-    }
-
-    public String getBarCode() {
-        return mBarCode;
     }
 
     public String getBookTitle() {

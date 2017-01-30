@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item android:title="@string/school_app">
         <menu>
             <item
-                android:id="@+id/nav_grade_info"
+                android:id="@+id/nav_grades"
                 android:icon="@drawable/ic_grade_list"
                 android:title="@string/grade_list"/>
             <item
-                android:id="@+id/nav_lib_search"
+                android:id="@+id/nav_search"
                 android:icon="@drawable/ic_search"
                 android:title="@string/search_lib"/>
             <item
-                android:id="@+id/nav_lib_borrow_info"
+                android:id="@+id/nav_borrow_info"
                 android:icon="@drawable/ic_lib_borrow"
                 android:title="@string/borrow_info"/>
-            <!--<item-->
-            <!--android:id="@+id/nav_empty_room"-->
-            <!--android:icon="@drawable/ic_empty_room"-->
-            <!--android:title="@string/empty_room_query"/>-->
+        </menu>
+    </item>
+    <item android:title="设置">
+        <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_settings"
+                android:title="设置"/>
         </menu>
     </item>
 </menu>

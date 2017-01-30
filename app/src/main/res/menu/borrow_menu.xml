@@ -3,11 +3,11 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/show_all_borrow_info"
+        android:id="@+id/show_all"
         android:title="@string/show_all_borrows"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/show_due_borrow_info"
+        android:id="@+id/show_due"
         android:title="@string/show_exceeded"
         app:showAsAction="never"/>
 </menu>

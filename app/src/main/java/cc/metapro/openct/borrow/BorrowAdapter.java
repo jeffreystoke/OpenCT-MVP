@@ -18,6 +18,8 @@ package cc.metapro.openct.borrow;
 
 import android.content.Context;
 import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,27 +39,22 @@ class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowViewHolder>
 
     private List<BorrowInfo> mBorrows;
 
-    private Context mContext;
+    private final LayoutInflater mInflater;
 
     BorrowAdapter(Context context) {
-        mContext = context;
+        mInflater = LayoutInflater.from(context);
         mBorrows = new ArrayList<>(0);
     }
 
     @Override
     public BorrowViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_borrow, parent, false);
+        View view = mInflater.inflate(R.layout.item_borrow, parent, false);
         return new BorrowViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(BorrowViewHolder holder, int position) {
-        BorrowInfo b = mBorrows.get(position);
-        holder.setTitle(b.getBookTitle());
-        holder.setAuthor(b.getAuthor());
-        holder.setContent(b.getContent());
-        holder.setBorrowTime(b.getBorrowDate());
-        holder.setDueTime(b.getDueDate());
+        holder.setInfo(mBorrows.get(position));
     }
 
     @Override
@@ -65,29 +62,25 @@ class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowViewHolder>
         return mBorrows.size();
     }
 
-    void setNewBorrows(List<BorrowInfo> borrows) {
-        if (borrows == null || borrows.size() == 0) {
-            mBorrows = new ArrayList<>(0);
-        } else {
-            mBorrows = borrows;
-        }
+    void setNewBorrows(@NonNull List<BorrowInfo> borrows) {
+        mBorrows = borrows;
     }
 
     static class BorrowViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.lib_borrow_item_title)
+        @BindView(R.id.borrow_item_title)
         TextView mTitle;
 
-        @BindView(R.id.lib_borrow_item_author)
+        @BindView(R.id.borrow_item_author)
         TextView mAuthor;
 
-        @BindView(R.id.lib_borrow_item_borrow_content)
+        @BindView(R.id.borrow_item_content)
         TextView mContent;
 
-        @BindView(R.id.lib_borrow_item_borrow_time)
+        @BindView(R.id.borrow_item_time)
         TextView mBorrowTime;
 
-        @BindView(R.id.lib_borrow_item_due_time)
+        @BindView(R.id.borrow_item_due)
         TextView mDueTime;
 
         BorrowViewHolder(View itemView) {
@@ -95,24 +88,14 @@ class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowViewHolder>
             ButterKnife.bind(this, itemView);
         }
 
-        public void setTitle(String title) {
-            mTitle.setText(title);
-        }
-
-        public void setAuthor(String author) {
-            mAuthor.setText(author);
-        }
-
-        public void setContent(String content) {
-            mContent.setText(content);
-        }
-
-        void setBorrowTime(String borrowTime) {
-            mBorrowTime.setText(borrowTime);
-        }
-
-        void setDueTime(String dueTime) {
-            mDueTime.setText(dueTime);
+        public void setInfo(@Nullable BorrowInfo info) {
+            if (info != null) {
+                mTitle.setText(info.getBookTitle());
+                mAuthor.setText(info.getAuthor());
+                mContent.setText(info.getContent());
+                mBorrowTime.setText(info.getBorrowDate());
+                mDueTime.setText(info.getDueDate());
+            }
         }
     }
 }

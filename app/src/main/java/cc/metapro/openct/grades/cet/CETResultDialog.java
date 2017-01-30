@@ -1,4 +1,4 @@
-package cc.metapro.openct.grades;
+package cc.metapro.openct.grades.cet;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -49,7 +49,7 @@ public class CETResultDialog extends DialogFragment {
     @BindView(R.id.grade)
     TextView mGrade;
 
-    static CETResultDialog newInstance(Map<String, String> resultMap) {
+    public static CETResultDialog newInstance(Map<String, String> resultMap) {
         result = resultMap;
         return new CETResultDialog();
     }

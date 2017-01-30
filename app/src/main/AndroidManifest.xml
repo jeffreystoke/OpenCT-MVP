@@ -33,7 +33,7 @@
         </activity>
         <activity
             android:name=".grades.GradeActivity"
-            android:label="@string/grade_query"
+            android:label="@string/grade_list"
             android:parentActivityName=".homepage.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -56,14 +56,6 @@
                 android:value="cc.metapro.openct.homepage.MainActivity"/>
         </activity>
         <activity android:name=".search.BookDetailActivity">
-        </activity>
-        <activity
-            android:name=".room.RoomActivity"
-            android:label="@string/empty_room_query"
-            android:parentActivityName=".homepage.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="cc.metapro.openct.homepage.MainActivity"/>
         </activity>
         <activity
             android:name=".custom.CustomActivity"
@@ -104,6 +96,13 @@
         <service
             android:name=".widget.WidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS">
+        </service>
+
+        <service android:name=".custom.vpn.MyVpnService"
+                 android:permission="android.permission.BIND_VPN_SERVICE">
+            <intent-filter>
+                <action android:name="android.net.VpnService"/>
+            </intent-filter>
         </service>
     </application>
 

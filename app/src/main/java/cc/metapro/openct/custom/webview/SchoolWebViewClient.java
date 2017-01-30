@@ -16,18 +16,28 @@ package cc.metapro.openct.custom.webview;
  * limitations under the License.
  */
 
+import android.annotation.TargetApi;
 import android.net.http.SslError;
 import android.os.Build;
 import android.support.annotation.Keep;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.util.concurrent.TimeUnit;
+
 import cc.metapro.openct.custom.CustomConfiguration;
+import cc.metapro.openct.data.openctservice.QuotePreservingCookieJar;
 import io.reactivex.Observer;
+import okhttp3.Call;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 @Keep
 public class SchoolWebViewClient extends WebViewClient {
@@ -44,7 +54,20 @@ public class SchoolWebViewClient extends WebViewClient {
                     "window." + JSInteraction.JSInterface + ".getClicked(id);}\"";
     public static boolean replayMode = false;
     public static boolean commonMode = true;
+    private OkHttpClient mOkHttpClient;
     private Observer<Integer> mObserver;
+
+    public SchoolWebViewClient() {
+        mOkHttpClient = new OkHttpClient.Builder()
+                .cookieJar(new QuotePreservingCookieJar(new CookieManager() {
+                    {
+                        setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+                    }
+                }))
+                .connectTimeout(20, TimeUnit.SECONDS)
+                .followRedirects(true)
+                .build();
+    }
 
     public void performActions(CustomConfiguration conf, FragmentManager manager, WebView webView) {
         replayMode = true;
@@ -52,7 +75,7 @@ public class SchoolWebViewClient extends WebViewClient {
         mObserver = conf.getCmdExe(manager, webView);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
         view.loadUrl(request.getUrl().toString());
@@ -64,10 +87,25 @@ public class SchoolWebViewClient extends WebViewClient {
         handler.proceed();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         view.loadUrl(url);
         return true;
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+        String method = request.getMethod();
+        if ("POST".equalsIgnoreCase(method)) {
+            Request.Builder builder = new Request.Builder()
+                    .headers(Headers.of(request.getRequestHeaders()));
+            Call call = mOkHttpClient.newCall(builder.build());
+        } else if ("GET".equalsIgnoreCase(method)) {
+
+        }
+        return super.shouldInterceptRequest(view, request);
     }
 
     @Override

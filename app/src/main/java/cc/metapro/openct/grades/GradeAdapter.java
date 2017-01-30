@@ -18,6 +18,7 @@ package cc.metapro.openct.grades;
 
 import android.content.Context;
 import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -33,34 +34,34 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.GradeInfo;
+import cc.metapro.openct.utils.REHelper;
 
 @Keep
 class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHolder> {
 
-    private List<GradeInfo> mGradeInfos;
+    private List<GradeInfo> mGrades;
 
-    private Context mContext;
+    private LayoutInflater mInflater;
 
     GradeAdapter(Context context) {
-        mContext = context;
-        mGradeInfos = new ArrayList<>(0);
+        mInflater = LayoutInflater.from(context);
+        mGrades = new ArrayList<>(0);
     }
 
     @Override
     public GradeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_grade, parent, false);
+        View view = mInflater.inflate(R.layout.item_grade, parent, false);
         return new GradeViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(GradeViewHolder holder, int position) {
-        final GradeInfo g = mGradeInfos.get(position);
-        holder.setClassName(g.getClassName());
-        holder.setGradeSummary(g.getGradeSummary());
+        final GradeInfo g = mGrades.get(position);
+        holder.setInfo(g);
         holder.setListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder ab = new AlertDialog.Builder(mContext);
+                AlertDialog.Builder ab = new AlertDialog.Builder(mInflater.getContext());
                 ab.setMessage(g.toFullString());
                 ab.show();
             }
@@ -69,18 +70,14 @@ class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mGradeInfos.size();
+        return mGrades.size();
     }
 
-    void updateGradeInfos(List<GradeInfo> gradeInfos) {
-        if (gradeInfos == null || gradeInfos.size() == 0) {
-            mGradeInfos = new ArrayList<>(0);
-        } else {
-            mGradeInfos = gradeInfos;
-        }
+    void updateGrades(@NonNull List<GradeInfo> grades) {
+        mGrades = grades;
     }
 
-    static class GradeViewHolder extends RecyclerView.ViewHolder {
+    class GradeViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.grade_class_name)
         TextView mClassName;
@@ -88,19 +85,20 @@ class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHolder> {
         @BindView(R.id.grade_level)
         TextView mGradeSummary;
 
+        private View mView;
+
         GradeViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            mView = itemView;
         }
 
-        void setClassName(String name) {
-            mClassName.setText(name);
-        }
-
-        void setGradeSummary(String grade) {
-            mGradeSummary.setText("总评成绩  " + grade);
+        void setInfo(GradeInfo info) {
+            mClassName.setText(info.getClassName());
+            String summary = info.getGradeSummary();
+            mGradeSummary.setText("总评成绩  " + summary);
             try {
-                int i = Integer.parseInt(grade);
+                int i = Integer.parseInt(REHelper.delDoubleWidthChar(summary));
                 if (i < 60) {
                     mGradeSummary.setTextColor(ContextCompat.getColor(mGradeSummary.getContext(), R.color.colorAccent));
                 }
@@ -110,8 +108,7 @@ class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHolder> {
         }
 
         void setListener(View.OnClickListener l) {
-            mClassName.setOnClickListener(l);
-            mGradeSummary.setOnClickListener(l);
+            mView.setOnClickListener(l);
         }
     }
 }

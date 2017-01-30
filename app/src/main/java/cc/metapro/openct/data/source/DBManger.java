@@ -39,7 +39,7 @@ import cc.metapro.openct.data.university.item.GradeInfo;
 @Keep
 public class DBManger {
 
-    private static final String TAG = "DBMANAGER";
+    private static final String TAG = DBManger.class.getSimpleName();
 
     private static SQLiteDatabase mDatabase;
 

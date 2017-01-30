@@ -105,8 +105,8 @@ public class CaptchaDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        mPresenter.loadCaptcha(mTextView);
         super.onResume();
+        mPresenter.loadCaptcha(mTextView);
     }
 
     @Override

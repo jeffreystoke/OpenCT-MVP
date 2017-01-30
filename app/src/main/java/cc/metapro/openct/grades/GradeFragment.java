@@ -40,6 +40,8 @@ import cc.metapro.openct.customviews.CaptchaDialog;
 import cc.metapro.openct.customviews.FormDialog;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.GradeInfo;
+import cc.metapro.openct.grades.cet.CETQueryDialog;
+import cc.metapro.openct.grades.cet.CETResultDialog;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.HTMLUtils.Form;
@@ -67,7 +69,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
             Intent intent = new Intent(mContext, SettingsActivity.class);
             startActivity(intent);
         } else {
-            if (Loader.cmsNeedCAPTCHA()) {
+            if (Loader.cmsNeedCAPTCHA(mContext)) {
                 mCaptchaDialog.show(getFragmentManager(), "captcha_dialog");
             } else {
                 mPresenter.loadOnline("");
@@ -97,7 +99,7 @@ public class GradeFragment extends Fragment implements GradeContract.View {
 
     @Override
     public void onLoadGrades(List<GradeInfo> grades) {
-        mGradeAdapter.updateGradeInfos(grades);
+        mGradeAdapter.updateGrades(grades);
         mGradeAdapter.notifyDataSetChanged();
         ActivityUtils.dismissProgressDialog();
     }

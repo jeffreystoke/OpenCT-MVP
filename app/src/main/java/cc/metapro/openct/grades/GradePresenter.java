@@ -37,8 +37,8 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.openctservice.ServiceGenerator;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.UniversityService;
 import cc.metapro.openct.data.university.item.GradeInfo;
+import cc.metapro.openct.grades.cet.CETService;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.HTMLUtils.Form;
@@ -67,62 +67,57 @@ class GradePresenter implements GradeContract.Presenter {
     @Override
     public void loadOnline(final String code) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_grade_page).show();
-        Loader.loadUniversity(mContext).doOnComplete(new Action() {
+        Observable.create(new ObservableOnSubscribe<Form>() {
             @Override
-            public void run() throws Exception {
-                Observable.create(new ObservableOnSubscribe<Form>() {
+            public void subscribe(ObservableEmitter<Form> e) throws Exception {
+                Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
+                loginMap.put(mContext.getString(R.string.key_captcha), code);
+                Form form = Loader.getCms(mContext).getGradePageForm(loginMap);
+                if (form != null) {
+                    e.onNext(form);
+                } else {
+                    e.onComplete();
+                }
+            }
+        })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(new Consumer<Form>() {
                     @Override
-                    public void subscribe(ObservableEmitter<Form> e) throws Exception {
-                        Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
-                        loginMap.put(mContext.getString(R.string.key_captcha), code);
-                        Form form = Loader.getCms().getGradePageForm(loginMap);
+                    public void accept(Form form) throws Exception {
+                        ActivityUtils.dismissProgressDialog();
                         if (form != null) {
-                            e.onNext(form);
+                            mGradeFragment.showFormDialog(form);
                         } else {
-                            e.onComplete();
+                            Toast.makeText(mContext, R.string.load_grade_page_fail, Toast.LENGTH_LONG).show();
                         }
                     }
                 })
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnNext(new Consumer<Form>() {
-                            @Override
-                            public void accept(Form form) throws Exception {
-                                ActivityUtils.dismissProgressDialog();
-                                if (form != null) {
-                                    mGradeFragment.showFormDialog(form);
-                                } else {
-                                    Toast.makeText(mContext, "获取成绩页面失败", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        })
-                        .onErrorReturn(new Function<Throwable, Form>() {
-                            @Override
-                            public Form apply(Throwable throwable) throws Exception {
-                                ActivityUtils.dismissProgressDialog();
-                                Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                                return new Form();
-                            }
-                        })
-                        .doOnComplete(new Action() {
-                            @Override
-                            public void run() throws Exception {
-                                ActivityUtils.dismissProgressDialog();
-                                Toast.makeText(mContext, "无法获取教务网课表页面", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .subscribe();
-            }
-        }).observeOn(AndroidSchedulers.mainThread()).subscribe();
+                .onErrorReturn(new Function<Throwable, Form>() {
+                    @Override
+                    public Form apply(Throwable throwable) throws Exception {
+                        ActivityUtils.dismissProgressDialog();
+                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        return new Form();
+                    }
+                })
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        ActivityUtils.dismissProgressDialog();
+                        Toast.makeText(mContext, R.string.load_grade_page_fail, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .subscribe();
     }
 
     @Override
     public void loadQuery(final String actionURL, final Map<String, String> queryMap) {
-        ActivityUtils.getProgressDialog(mContext, R.string.loading_grade_infos).show();
+        ActivityUtils.getProgressDialog(mContext, R.string.loading_grades).show();
         Observable.create(new ObservableOnSubscribe<List<GradeInfo>>() {
             @Override
             public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
-                e.onNext(Loader.getCms().getGrades(actionURL, queryMap));
+                e.onNext(Loader.getCms(mContext).getGrades(actionURL, queryMap));
                 e.onComplete();
             }
         })
@@ -178,7 +173,7 @@ class GradePresenter implements GradeContract.Presenter {
                 .onErrorReturn(new Function<Throwable, List<GradeInfo>>() {
                     @Override
                     public List<GradeInfo> apply(Throwable throwable) throws Exception {
-                        Toast.makeText(mContext, mContext.getString(R.string.somthing_wrong) + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, mContext.getString(R.string.something_wrong) + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         return new ArrayList<>(0);
                     }
                 }).subscribe();
@@ -190,16 +185,14 @@ class GradePresenter implements GradeContract.Presenter {
                 .create(new ObservableOnSubscribe<Map<String, String>>() {
                     @Override
                     public void subscribe(ObservableEmitter<Map<String, String>> e) throws Exception {
-                        UniversityService service = ServiceGenerator
-                                .createService(UniversityService.class, ServiceGenerator.HTML);
-
-                        String res = service.queryCET(
-                                "http://www.chsi.com.cn/cet/",
+                        CETService service = ServiceGenerator.createCETService();
+                        String queryResult = service.queryCET(
+                                mContext.getString(R.string.chsi_referer),
                                 queryMap.get(mContext.getString(R.string.key_ticket_num)),
                                 queryMap.get(mContext.getString(R.string.key_full_name)), "t")
                                 .execute().body();
 
-                        Document document = Jsoup.parse(res);
+                        Document document = Jsoup.parse(queryResult);
                         Elements elements = document.select("table[class=cetTable]");
                         Element targetTable = elements.first();
                         Elements tds = targetTable.getElementsByTag("td");
@@ -245,7 +238,7 @@ class GradePresenter implements GradeContract.Presenter {
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter e) throws Exception {
-                        Loader.getCms().getCAPTCHA();
+                        Loader.getCms(mContext).getCAPTCHA();
                         e.onComplete();
                     }
                 })

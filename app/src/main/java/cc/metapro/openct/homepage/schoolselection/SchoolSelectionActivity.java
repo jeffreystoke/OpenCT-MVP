@@ -19,24 +19,27 @@ package cc.metapro.openct.homepage.schoolselection;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
+import cc.metapro.openct.data.source.Loader;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 public class SchoolSelectionActivity
         extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     public static final int REQUEST_SCHOOL_NAME = 1;
-    public static final String RESULT_KEY = "school_name";
+    public static final String SCHOOL_RESULT = "school_name";
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.school_name)
@@ -69,7 +72,7 @@ public class SchoolSelectionActivity
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 result = mAdapter.getItem(position).toString();
                 Intent intent = new Intent();
-                intent.putExtra(RESULT_KEY, result);
+                intent.putExtra(SCHOOL_RESULT, result);
                 setResult(RESULT_OK, intent);
                 finish();
             }
@@ -106,6 +109,7 @@ public class SchoolSelectionActivity
         SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString(getString(R.string.pref_school_name), result);
         editor.apply();
+        Loader.needUpdateUniversity();
         super.onDestroy();
     }
 }

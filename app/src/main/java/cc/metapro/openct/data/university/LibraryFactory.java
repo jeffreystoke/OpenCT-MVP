@@ -194,7 +194,6 @@ public class LibraryFactory extends UniversityFactory {
                     String title = entry.get(mBorrowTableInfo.mTitleIndex).text().split("/")[0];
                     String author = entry.get(mBorrowTableInfo.mTitleIndex).text().split("/")[1];
                     BorrowInfo info = new BorrowInfo(
-                            entry.get(mBorrowTableInfo.mBarcodeIndex).text(),
                             title, author, "",
                             entry.get(mBorrowTableInfo.mBorrowDateIndex).text(),
                             entry.get(mBorrowTableInfo.mDueDateIndexIndex).text());
@@ -212,16 +211,13 @@ public class LibraryFactory extends UniversityFactory {
     }
 
     public static class BorrowTableInfo {
-        int mBarcodeIndex, mTitleIndex, mBorrowDateIndex, mDueDateIndexIndex;
+        int mTitleIndex, mBorrowDateIndex, mDueDateIndexIndex;
         String mTableID;
     }
 
     private class LibURLFactory {
 
-        String LOGIN_URL, LOGIN_REF,
-                SEARCH_URL, SEARCH_REF,
-                CAPTCHA_URL, USER_HOME_URL,
-                BORROW_URL;
+        String LOGIN_URL, LOGIN_REF, SEARCH_URL, SEARCH_REF, USER_HOME_URL, BORROW_URL;
 
         LibURLFactory(@NonNull String libSys, @NonNull String libBaseURL) {
             if (!libBaseURL.endsWith("/")) {

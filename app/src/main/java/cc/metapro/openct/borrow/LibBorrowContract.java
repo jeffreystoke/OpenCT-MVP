@@ -31,7 +31,7 @@ interface LibBorrowContract {
 
         void showDue(List<BorrowInfo> borrows);
 
-        void onLoadBorrows(List<BorrowInfo> borrows);
+        void showAll(List<BorrowInfo> borrows);
 
     }
 

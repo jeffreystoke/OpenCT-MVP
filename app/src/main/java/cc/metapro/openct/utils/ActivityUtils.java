@@ -30,7 +30,9 @@ import android.util.Log;
 
 import com.scottyab.aescrypt.AESCrypt;
 
+import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
+import cc.metapro.openct.customviews.CaptchaDialog;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -130,4 +132,7 @@ public final class ActivityUtils {
                 }).subscribe();
     }
 
+    public static void showCaptchaDialog(FragmentManager manager, LoginPresenter presenter) {
+        CaptchaDialog.newInstance(presenter).show(manager, "captcha_dialog");
+    }
 }

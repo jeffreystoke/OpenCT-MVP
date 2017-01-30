@@ -16,7 +16,6 @@ package cc.metapro.openct.customviews;
  * limitations under the License.
  */
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -62,23 +61,26 @@ public class InitDialog extends DialogFragment {
     private String schoolName;
 
     public static InitDialog newInstance() {
+        InitDialog initDialog = new InitDialog();
+        initDialog.setCancelable(false);
         return new InitDialog();
     }
 
     @OnClick(R.id.info_init_school)
     public void startSelection() {
-        Intent intent = new Intent(getActivity(), SchoolSelectionActivity.class);
-        startActivityForResult(intent, SchoolSelectionActivity.REQUEST_SCHOOL_NAME);
+        startActivityForResult(new Intent(getActivity(), SchoolSelectionActivity.class),
+                SchoolSelectionActivity.REQUEST_SCHOOL_NAME);
     }
 
     @OnClick(R.id.ok)
     public void storePref() {
-        String week = weekSpinner.getSelectedItem().toString();
+        int i = weekSpinner.getSelectedItemPosition();
+        String week = getResources().getStringArray(R.array.pref_week_seq_values)[i];
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = p.edit();
         editor.putString(getString(R.string.pref_school_name), schoolName);
         editor.putString(getString(R.string.pref_current_week), week);
-        editor.putString(getString(R.string.pref_week_set_week), Calendar.getInstance().get(Calendar.WEEK_OF_YEAR) + "");
+        editor.putInt(getString(R.string.pref_week_set_week), Calendar.getInstance().get(Calendar.WEEK_OF_YEAR));
         editor.putString(getString(R.string.pref_cms_username), cmsUsername.getText().toString());
         editor.putString(getString(R.string.pref_cms_password), cmsPassword.getText().toString());
         editor.putString(getString(R.string.pref_lib_username), libUsername.getText().toString());
@@ -87,7 +89,7 @@ public class InitDialog extends DialogFragment {
         editor.putBoolean(getString(R.string.pref_need_encryption), true);
         editor.apply();
         ActivityUtils.encryptionCheck(getActivity());
-        Loader.loadUniversity(getActivity()).subscribe();
+        Loader.needUpdateUniversity();
         dismiss();
     }
 
@@ -110,15 +112,11 @@ public class InitDialog extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
             if (data != null) {
-                schoolName = data.getStringExtra(SchoolSelectionActivity.RESULT_KEY);
+                schoolName = data.getStringExtra(SchoolSelectionActivity.SCHOOL_RESULT);
                 schoolText.setText(schoolName);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-    }
 }

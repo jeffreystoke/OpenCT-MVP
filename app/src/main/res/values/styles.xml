@@ -1,15 +1,27 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/material_white</item>
+        <item name="colorPrimaryDark">@color/material_white_dark</item>
+        <item name="colorAccent">@color/material_red</item>
+        <item name="android:textColorPrimary">@color/material_black</item>
+        <item name="android:textColorSecondary">@color/material_grey</item>
     </style>
 
     <style name="AppTheme.Actionbar" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/material_white</item>
+        <item name="colorPrimaryDark">@color/material_white_dark</item>
+        <item name="colorAccent">@color/material_red</item>
+        <item name="android:textColorPrimary">@color/material_black</item>
+        <item name="android:textColorSecondary">@color/material_grey</item>
+    </style>
+
+    <!--toolbar-->
+    <style name="Widget.AppCompat.Toolbar.MyToolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:background">@color/colorPrimary</item>
     </style>
 
     <!--对话框输入组件默认样式-->
@@ -48,7 +60,6 @@
 
     <!--RecyclerView Item 标题文字样式-->
     <style name="ItemTitleText" parent="TextAppearance.AppCompat">
-        <item name="android:textColor">@color/materialDark</item>
         <item name="android:textSize">18sp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -61,10 +72,9 @@
 
     <!--RecyclerView Item 详细文字样式-->
     <style name="ItemContentText" parent="TextAppearance.AppCompat">
-        <item name="android:textColor">@color/materialGray</item>
-        <item name="android:textSize">14sp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:padding">16dp</item>
     </style>
 
@@ -78,15 +88,8 @@
 
     </style>
 
-    <style name="Widget.AppCompat.Toolbar.MyToolbar" parent="Widget.AppCompat.Toolbar">
-        <!--<item name="android:background">@color/colorPrimary</item>-->
-        <!--<item name="android:minHeight">?actionBarSize</item>-->
-        <!--<item name="android:theme">@style/Toolbar</item>-->
-        <!--<item name="android:fitsSystemWindows">true</item>-->
-    </style>
-
     <style name="TextAppearance.AppCompat.SeqText" parent="TextAppearance.AppCompat">
-        <item name="android:textColor">@color/materialDark</item>
+        <item name="android:textColor">@color/material_black</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">2</item>
@@ -99,6 +102,8 @@
     </style>
 
     <style name="Widget.Design.FloatingActionButton.MyFab" parent="Widget.Design.FloatingActionButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="borderWidth">0dp</item>
         <item name="elevation">6dp</item>
         <item name="fabSize">normal</item>
@@ -108,6 +113,8 @@
     </style>
 
     <style name="CardView.FullWidth" parent="CardView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_margin">8dp</item>
         <item name="cardCornerRadius">5dp</item>
         <item name="cardElevation">5dp</item>

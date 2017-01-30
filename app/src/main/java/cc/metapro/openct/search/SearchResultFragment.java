@@ -16,10 +16,11 @@ package cc.metapro.openct.search;
  * limitations under the License.
  */
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Keep;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,7 +28,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -43,34 +43,32 @@ import io.reactivex.disposables.Disposable;
 @Keep
 public class SearchResultFragment extends Fragment implements LibSearchContract.View {
 
-    @BindView(R.id.lib_result_recycler_view)
+    @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.lib_result_refresh)
+    @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
 
-    @BindView(R.id.fab_up)
+    @BindView(R.id.fab)
     FloatingActionButton mFabUp;
 
-    @OnClick(R.id.fab_up)
+    @OnClick(R.id.fab)
     public void upToTop() {
         mRecyclerView.smoothScrollToPosition(0);
     }
 
-    private Context mContext;
     private BooksAdapter mAdapter;
     private LibSearchContract.Presenter mPresenter;
     private Disposable mTask;
-    private LinearLayoutManager manager;
+    private LinearLayoutManager mLinearLayoutManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_result, container, false);
         ButterKnife.bind(this, view);
-        mContext = getContext();
         mAdapter = new BooksAdapter(getContext());
-        manager = RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, mAdapter);
+        mLinearLayoutManager = RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, mAdapter);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -96,7 +94,7 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
             public void run() {
                 if (mRecyclerView != null) {
                     mRecyclerView.clearOnScrollListeners();
-                    mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
+                    mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mLinearLayoutManager) {
                         @Override
                         public void onLoadMore(int currentPage) {
                             mTask = mPresenter.nextPage();
@@ -113,9 +111,9 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
         mAdapter.notifyDataSetChanged();
         mSwipeRefreshLayout.setRefreshing(false);
         if (books.size() > 0) {
-            Toast.makeText(mContext, "找到了 " + books.size() + " 条结果", Toast.LENGTH_SHORT).show();
+            Snackbar.make(mRecyclerView, "找到了 " + books.size() + " 条结果", BaseTransientBottomBar.LENGTH_LONG).show();
         } else {
-            Toast.makeText(mContext, "没有查询到相关书籍", Toast.LENGTH_SHORT).show();
+            Snackbar.make(mRecyclerView, R.string.no_related_books, BaseTransientBottomBar.LENGTH_LONG).show();
             mFabUp.setVisibility(View.VISIBLE);
         }
     }
@@ -126,9 +124,9 @@ public class SearchResultFragment extends Fragment implements LibSearchContract.
         mAdapter.notifyDataSetChanged();
         mSwipeRefreshLayout.setRefreshing(false);
         if (infos.size() > 0) {
-            Toast.makeText(mContext, "加载了 " + infos.size() + " 条结果", Toast.LENGTH_SHORT).show();
+            Snackbar.make(mRecyclerView, "加载了 " + infos.size() + " 条结果", BaseTransientBottomBar.LENGTH_LONG).show();
         } else {
-            Toast.makeText(mContext, "没有更多结果了", Toast.LENGTH_SHORT).show();
+            Snackbar.make(mRecyclerView, R.string.no_more_results, BaseTransientBottomBar.LENGTH_LONG).show();
         }
     }
 

@@ -21,6 +21,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,7 @@ import io.reactivex.schedulers.Schedulers;
 @Keep
 class LibBorrowPresenter implements LibBorrowContract.Presenter {
 
+    private static final String TAG = "openct_borrow_presenter";
     private LibBorrowContract.View mLibBorrowView;
     private List<BorrowInfo> mBorrows;
     private Context mContext;
@@ -53,20 +55,19 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
     LibBorrowPresenter(@NonNull LibBorrowContract.View libBorrowView, Context context) {
         mLibBorrowView = libBorrowView;
         mContext = context;
-
         mLibBorrowView.setPresenter(this);
     }
 
     @Override
     public void loadOnline(final String code) {
-        ActivityUtils.getProgressDialog(mContext, R.string.loading_borrow_info).show();
+        ActivityUtils.getProgressDialog(mContext, R.string.loading_borrows).show();
         Observable
                 .create(new ObservableOnSubscribe<List<BorrowInfo>>() {
                     @Override
                     public void subscribe(ObservableEmitter<List<BorrowInfo>> e) throws Exception {
                         Map<String, String> loginMap = Loader.getLibStuInfo(mContext);
                         loginMap.put(mContext.getString(R.string.key_captcha), code);
-                        e.onNext(Loader.getLibrary().getBorrowInfo(loginMap));
+                        e.onNext(Loader.getLibrary(mContext).getBorrowInfo(loginMap));
                         e.onComplete();
                     }
                 })
@@ -108,8 +109,8 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
                     @Override
                     public void subscribe(ObservableEmitter<List<BorrowInfo>> e) throws Exception {
                         DBManger manger = DBManger.getInstance(mContext);
-                        List<BorrowInfo> borrowInfos = manger.getBorrowInfos();
-                        e.onNext(borrowInfos);
+                        List<BorrowInfo> borrows = manger.getBorrowInfos();
+                        e.onNext(borrows);
                         e.onComplete();
                     }
                 })
@@ -122,13 +123,14 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
                             Toast.makeText(mContext, R.string.no_local_borrows_avail, Toast.LENGTH_SHORT).show();
                         } else {
                             mBorrows = infos;
-                            mLibBorrowView.onLoadBorrows(mBorrows);
+                            mLibBorrowView.showAll(mBorrows);
                         }
                     }
                 })
                 .onErrorReturn(new Function<Throwable, List<BorrowInfo>>() {
                     @Override
                     public List<BorrowInfo> apply(Throwable throwable) throws Exception {
+                        Log.e(TAG, throwable.getMessage());
                         Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         return new ArrayList<>(0);
                     }
@@ -147,7 +149,7 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter e) throws Exception {
-                        Loader.getLibrary().getCAPTCHA();
+                        Loader.getLibrary(mContext).getCAPTCHA();
                         e.onComplete();
                     }
                 })
@@ -156,7 +158,7 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
                 .onErrorReturn(new Function<Throwable, String>() {
                     @Override
                     public String apply(Throwable throwable) throws Exception {
-                        Toast.makeText(mContext, "获取验证码失败\n" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, mContext.getString(R.string.load_aptcha_fail) + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         return "";
                     }
                 })

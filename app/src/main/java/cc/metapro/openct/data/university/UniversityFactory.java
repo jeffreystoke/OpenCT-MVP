@@ -41,22 +41,19 @@ import retrofit2.Response;
 @Keep
 public abstract class UniversityFactory {
 
-    private static final String LOGIN_SUCCESS_PATTERN = "(当前借阅)|(个人信息)";
-    static UniversityService mService;
-    static SchoolInterceptor interceptor;
+    private static final String LOGIN_SUCCESS_PATTERN = "(当前)|(个人)";
+    private static SchoolInterceptor interceptor;
     static URLFactory urlFactory;
-    UniversityInfo.LibraryInfo mLibraryInfo;
+    static UniversityService mService;
+
     UniversityInfo.CMSInfo mCMSInfo;
-    LibraryFactory.BorrowTableInfo mBorrowTableInfo;
     CmsFactory.ClassTableInfo mClassTableInfo;
     CmsFactory.GradeTableInfo mGradeTableInfo;
-    private boolean loginSuccess;
 
-    public static void destroyService() {
-        interceptor = null;
-        mService = null;
-        urlFactory = null;
-    }
+    UniversityInfo.LibraryInfo mLibraryInfo;
+    LibraryFactory.BorrowTableInfo mBorrowTableInfo;
+    
+    private boolean loginSuccess;
 
     @Nullable
     String login(@NonNull Map<String, String> loginMap) throws Exception {
@@ -163,12 +160,18 @@ public abstract class UniversityFactory {
         StoreHelper.storeBytes(Constants.CAPTCHA_FILE, body.byteStream());
     }
 
-    protected void checkService() {
+    void checkService() {
         if (interceptor == null) {
             urlFactory = new URLFactory(getBaseURL());
             interceptor = new SchoolInterceptor(urlFactory.getBaseURL());
             mService = interceptor.createSchoolService();
         }
+    }
+
+    void destroyService() {
+        interceptor = null;
+        mService = null;
+        urlFactory = null;
     }
 
     protected abstract String getBaseURL();

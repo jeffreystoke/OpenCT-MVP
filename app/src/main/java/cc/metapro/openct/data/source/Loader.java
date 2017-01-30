@@ -44,16 +44,31 @@ import io.reactivex.schedulers.Schedulers;
 
 @Keep
 public class Loader {
-    private static final String TAG = "LOADER";
+    private static final String TAG = Loader.class.getSimpleName();
+
+    private static boolean needUpdateUniversity;
 
     private static UniversityInfo university;
 
-    public static LibraryFactory getLibrary() {
+    public static void needUpdateUniversity() {
+        needUpdateUniversity = true;
+    }
+
+    public static LibraryFactory getLibrary(Context context) {
+        checkUniversity(context);
         return new LibraryFactory(university.mLibraryInfo);
     }
 
-    public static CmsFactory getCms() {
+    public static CmsFactory getCms(Context context) {
+        checkUniversity(context);
         return new CmsFactory(university.mCMSInfo);
+    }
+
+    private static void checkUniversity(Context context) {
+        if (university == null || needUpdateUniversity) {
+            university = loadUniversity(context);
+            needUpdateUniversity = false;
+        }
     }
 
     @NonNull
@@ -96,7 +111,8 @@ public class Loader {
         return map;
     }
 
-    public static boolean cmsNeedCAPTCHA() {
+    public static boolean cmsNeedCAPTCHA(Context context) {
+        checkUniversity(context);
         try {
             return university.mCMSInfo.mNeedCAPTCHA;
         } catch (Exception e) {
@@ -104,7 +120,8 @@ public class Loader {
         }
     }
 
-    public static boolean libNeedCAPTCHA() {
+    public static boolean libNeedCAPTCHA(Context context) {
+        checkUniversity(context);
         try {
             return university.mLibraryInfo.mNeedCAPTCHA;
         } catch (Exception e) {
@@ -114,63 +131,60 @@ public class Loader {
 
     public static int getCurrentWeek(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String week = preferences.getString(context.getString(R.string.pref_current_week), "第1周");
-        return Integer.parseInt(week.replaceAll("[^\\x00-\\xff]", ""));
+        return Integer.parseInt(preferences.getString(context.getString(R.string.pref_current_week), "1"));
     }
 
-    public static Observable<String> loadUniversity(final Context context) {
-        return Observable
-                .create(new ObservableOnSubscribe<String>() {
-                    @Override
-                    public void subscribe(ObservableEmitter<String> e) throws Exception {
-                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                        boolean custom = preferences.getBoolean(context.getString(R.string.pref_custom_enable), false);
-                        DBManger manger = DBManger.getInstance(context);
-                        String defaultSchool = context.getResources().getStringArray(R.array.school_names)[0];
-                        if (custom) {
-                            UniversityInfo.SchoolInfo info = manger.getCustomSchoolInfo();
-                            if (info != null) {
-                                university = manger.getUniversity(info);
-                            } else {
-                                university = manger.getUniversity(preferences.getString(context.getString(R.string.pref_school_name), defaultSchool));
-                            }
-                        } else {
-                            university = manger.getUniversity(preferences.getString(context.getString(R.string.pref_school_name), defaultSchool));
-                        }
+    @NonNull
+    private static UniversityInfo loadUniversity(final Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean custom = preferences.getBoolean(context.getString(R.string.pref_custom_enable), false);
+        DBManger manger = DBManger.getInstance(context);
+        String defaultSchool = context.getResources().getStringArray(R.array.school_names)[0];
 
-                        int lastSetWeek = Integer.parseInt(preferences.getString(context.getString(R.string.pref_week_set_week), "1"));
-                        Calendar cal = Calendar.getInstance(Locale.CHINA);
-                        cal.setFirstDayOfWeek(Calendar.MONDAY);
-                        int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
-                        String week = preferences.getString(context.getString(R.string.pref_current_week), "第1周");
-                        int currentWeek = Integer.parseInt(week.replaceAll("[^\\x00-\\xff]", ""));
-                        if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
-                            if (lastSetWeek == 53) {
-                                currentWeek += weekOfYearWhenSetCurrentWeek;
-                            } else {
-                                currentWeek += (52 - lastSetWeek) + weekOfYearWhenSetCurrentWeek;
-                            }
-                        } else {
-                            currentWeek += (weekOfYearWhenSetCurrentWeek - lastSetWeek);
-                        }
-                        if (currentWeek >= 30) {
-                            currentWeek = 1;
-                        }
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString(context.getString(R.string.pref_current_week), "第" + currentWeek + "周");
-                        editor.putString(context.getString(R.string.pref_week_set_week), weekOfYearWhenSetCurrentWeek + "");
-                        editor.apply();
-                        e.onComplete();
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .onErrorReturn(new Function<Throwable, String>() {
-                    @Override
-                    public String apply(Throwable throwable) throws Exception {
-                        Log.e(TAG, throwable.getMessage(), throwable);
-                        return "";
-                    }
-                });
+        UniversityInfo university;
+        if (custom) {
+            UniversityInfo.SchoolInfo info = manger.getCustomSchoolInfo();
+            if (info != null) {
+                university = manger.getUniversity(info);
+            } else {
+                university = manger.getUniversity(preferences.getString(context.getString(R.string.pref_school_name), defaultSchool));
+            }
+        } else {
+            university = manger.getUniversity(preferences.getString(context.getString(R.string.pref_school_name), defaultSchool));
+        }
+
+        updateWeekSeq(context);
+
+        return university;
+    }
+
+    private static void updateWeekSeq(Context context) {
+        try {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            int lastSetWeek = Integer.parseInt(preferences.getString(context.getString(R.string.pref_week_set_week), "1"));
+            Calendar cal = Calendar.getInstance(Locale.CHINA);
+            cal.setFirstDayOfWeek(Calendar.MONDAY);
+            int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
+            int currentWeek = Integer.parseInt(preferences.getString(context.getString(R.string.pref_current_week), "1"));
+            if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
+                if (lastSetWeek == 53) {
+                    currentWeek += weekOfYearWhenSetCurrentWeek;
+                } else {
+                    currentWeek += (52 - lastSetWeek) + weekOfYearWhenSetCurrentWeek;
+                }
+            } else {
+                currentWeek += (weekOfYearWhenSetCurrentWeek - lastSetWeek);
+            }
+            if (currentWeek >= 30) {
+                currentWeek = 1;
+            }
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(context.getString(R.string.pref_current_week), currentWeek + "");
+            editor.putInt(context.getString(R.string.pref_week_set_week), weekOfYearWhenSetCurrentWeek);
+            editor.apply();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
     }
 
 }

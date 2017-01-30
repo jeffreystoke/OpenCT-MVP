@@ -87,11 +87,7 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean init = preferences.getBoolean(initStr, false);
         if (!init) {
-            InitDialog fragment = InitDialog.newInstance();
-            fragment.setCancelable(false);
-            fragment.show(getSupportFragmentManager(), "init_dialog_fragment");
-        } else {
-            Loader.loadUniversity(this).subscribe();
+            InitDialog.newInstance().show(getSupportFragmentManager(), "init_dialog");
         }
         // add class fragment
         FragmentManager fm = getSupportFragmentManager();
@@ -134,18 +130,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-            return true;
-        } else if (id == R.id.refresh_classes) {
+        if (id == R.id.refresh_classes) {
             Map<String, String> map = Loader.getCmsStuInfo(this);
             if (map.size() < 2) {
                 Toast.makeText(this, R.string.enrich_cms_info, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
             } else {
-                if (Loader.cmsNeedCAPTCHA()) {
+                if (Loader.cmsNeedCAPTCHA(this)) {
                     CaptchaDialog.newInstance(mPresenter).show(getSupportFragmentManager(), "captcha_dialog");
                 } else {
                     mPresenter.loadOnline("");
@@ -167,27 +159,21 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Intent intent;
         switch (item.getItemId()) {
-            case R.id.nav_grade_info:
-                intent = new Intent(this, GradeActivity.class);
-                startActivity(intent);
+            case R.id.nav_grades:
+                startActivity(new Intent(this, GradeActivity.class));
                 break;
-            case R.id.nav_lib_search:
-                intent = new Intent(this, LibSearchActivity.class);
-                startActivity(intent);
+            case R.id.nav_search:
+                startActivity(new Intent(this, LibSearchActivity.class));
                 break;
-            case R.id.nav_lib_borrow_info:
-                intent = new Intent(this, LibBorrowActivity.class);
-                startActivity(intent);
+            case R.id.nav_borrow_info:
+                startActivity(new Intent(this, LibBorrowActivity.class));
                 break;
-//            case R.id.nav_empty_room:
-//                intent = new Intent(this, RoomActivity.class);
-//                startActivity(intent);
-//                break;
+            case R.id.nav_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+//        mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 

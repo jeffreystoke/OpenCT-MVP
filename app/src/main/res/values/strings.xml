@@ -2,136 +2,33 @@
     <string name="app_name">OpenCT</string>
     <string name="navigation_drawer_open">Open drawer</string>
     <string name="navigation_drawer_close">Close drawer</string>
-    <string name="action_settings">设置</string>
-    <string name="pref_header_school">校园信息</string>
-    <string name="pref_title_remember_me">保存账户信息</string>
-    <string name="pref_description_remember_me">您的账户密码均保存在本地</string>
 
-    <string name="school">学校</string>
-
-    <string name="pref_title_current_week">本周</string>
-    <string-array name="pref_week_seqs">
-        <item>第1周</item>
-        <item>第2周</item>
-        <item>第3周</item>
-        <item>第4周</item>
-        <item>第5周</item>
-        <item>第6周</item>
-        <item>第7周</item>
-        <item>第8周</item>
-        <item>第9周</item>
-        <item>第10周</item>
-        <item>第11周</item>
-        <item>第12周</item>
-        <item>第13周</item>
-        <item>第14周</item>
-        <item>第15周</item>
-        <item>第16周</item>
-        <item>第17周</item>
-        <item>第18周</item>
-        <item>第19周</item>
-        <item>第20周</item>
-        <item>第21周</item>
-        <item>第22周</item>
-        <item>第23周</item>
-        <item>第24周</item>
-        <item>第25周</item>
-        <item>第26周</item>
-        <item>第27周</item>
-        <item>第28周</item>
-        <item>第29周</item>
-        <item>第30周</item>
-    </string-array>
-
-    <string-array name="homepage_selections">
-        <item>今日课表</item>
-        <item>本周课表</item>
-        <item>学期课表</item>
-    </string-array>
-
-    <string-array name="homepage_selections_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
-
-    <string name="default_motto">Thought is already is late\n\nexactly is the earliest time</string>
-
-    <string-array name="njit_room_places">
-        <item>东馆</item>
-        <item>东馆A座</item>
-        <item>东馆B座</item>
-        <item>东馆C座</item>
-        <item>西馆</item>
-        <item>西馆A座</item>
-        <item>西馆B座</item>
-        <item>西馆C座</item>
-        <item>南馆</item>
-        <item>南馆A座</item>
-        <item>南馆B座</item>
-    </string-array>
-
-    <string-array name="week_days">
-        <item>整周</item>
-        <item>@string/monday</item>
-        <item>@string/tuesday</item>
-        <item>@string/wednesday</item>
-        <item>@string/thursday</item>
-        <item>@string/friday</item>
-        <item>@string/saturday</item>
-        <item>@string/sunday</item>
-    </string-array>
-
-    <string-array name="njit_class_times">
-        <item>全天</item>
-        <item>上午</item>
-        <item>1 – 2节</item>
-        <item>3 – 4节</item>
-        <item>下午</item>
-        <item>5 – 6节</item>
-        <item>7 – 8节</item>
-    </string-array>
-
-    <string name="captcha_fail">加载验证码失败, 再试一次看看</string>
     <string name="login_fail">登录失败, 请检查您的用户名密码\n(以及验证码)</string>
     <string name="network_error">网络连接失败\n是否打开了WiFi或数据流量?</string>
-    <string name="netowrk_timeout">校园服务器状态不佳\n请稍后重试</string>
-    <string name="unknown_error">/(ㄒoㄒ)/~~发生了未知错误\n程序员正在加班修复</string>
+    <string name="network_timeout">校园服务器状态不佳\n请稍后重试</string>
+    <string name="unknown_error">/(ㄒoㄒ)/~~发生了未知错误\n开发者正在加班修复</string>
 
-    <string name="pref_header_about">关于</string>
-    <string name="pref_about_openct">关于OpenCT</string>
-    <string name="pref_about_author">关于作者</string>
+    <!--CaptchaDialog-->
 
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <string name="pref_header_open_source_license">开源信息</string>
-    <string name="class_table">课程表</string>
-    <string name="grade_list">成绩查询</string>
-    <string name="search_lib">馆藏查询</string>
-    <string name="borrow_info">借阅信息</string>
-    <string name="settings">设置</string>
-
-    <string name="pref_licience_info">
-        \nCopyright OpenCT-MVP METAPRO.CC\n
-        Licensed under the Apache License, Version 2.0 (the "License");\n
-        you may not use this file except in compliance with the License.\n
-        You may obtain a copy of the License at\n
-        http://www.apache.org/licenses/LICENSE-2.0\n
-        (Click to View Web Version LICENSE)
-    </string>
-    <string name="search">检索</string>
-    <string name="press_to_get_captcha">点击获取验证码</string>
-    <string name="enter_code">验证码</string>
-    <string name="grade_query">成绩查询</string>
-    <string name="clear">清空</string>
+    <!--week seq-->
     <string name="monday">周一</string>
     <string name="tuesday">周二</string>
     <string name="wednesday">周三</string>
     <string name="thursday">周四</string>
+    <string name="friday">周五</string>
     <string name="saturday">周六</string>
     <string name="sunday">周日</string>
-    <string name="friday">周五</string>
-    <string name="nav_header_img">nav_header_img</string>
+
+    <string name="class_table">课程表</string>
+    <string name="grade_list">成绩查询</string>
+    <string name="search_lib">馆藏查询</string>
+    <string name="borrow_info">借阅信息</string>
+
+    <string name="settings">设置</string>
+    <string name="search">检索</string>
+    <string name="press_to_get_captcha">点击获取验证码</string>
+    <string name="enter_code">输入验证码</string>
+    <string name="clear">清空</string>
     <string name="school_app">校园应用</string>
     <string name="update_classes">更新课表</string>
     <string name="show_all_borrows">所有借阅</string>
@@ -139,23 +36,24 @@
     <string name="app_description">开源课程表与图书馆应用</string>
     <string name="show_raw">查看馆藏详情</string>
     <string name="password_notice">用户名密码都将保存在本地</string>
-    <string name="notice">注意</string>
+    <string name="notice">注意事项</string>
     <string name="password">密码</string>
     <string name="username">用户名</string>
     <string name="library">图书馆</string>
-    <string name="basic_info">基本信息</string>
-    <string name="user_info">用户信息</string>
-    <string name="jwxt">教务系统</string>
     <string name="pref_lib_summary">你的图书管理系统用户名及密码</string>
     <string name="pref_cms_summary">你的教务网用户名及密码</string>
-    <string name="loading_class_infos">正在加载课程表</string>
-    <string name="loading_class_page">正在加载课表页面</string>
-    <string name="loading_grade_infos">正在加载成绩</string>
+
+    <string name="loading_class_page">正在加载课程表页面</string>
+    <string name="loading_classes">正在加载课程信息</string>
     <string name="loading_grade_page">正在加载成绩页面</string>
-    <string name="loading_borrow_info">正在加载借阅信息</string>
+    <string name="loading_grades">正在加载成绩信息</string>
+
+    <string name="loading_borrows">正在加载借阅信息</string>
     <string name="need_captcha">请输入验证码</string>
+
     <string name="loading_cet_grade">正在加载CET成绩</string>
     <string name="filter">筛选</string>
+
     <string name="show_all_avail_time">查看所有空闲时间</string>
     <string name="empty_room_query">查空教室</string>
     <string name="enrich_cms_info">请先完善您的教务网个人信息</string>
@@ -168,7 +66,7 @@
     <string name="no_local_classes_avail">这里还没有课表哦\n(点击右上角获取教务网课表)</string>
     <string name="no_local_grades_avail">这里还没有成绩哦\n(点击右下角获取教务网最新成绩)</string>
     <string name="no_local_borrows_avail">这里还没有借阅信息哦\n(点击右下角获取图书馆借阅信息)</string>
-    <string name="somthing_wrong">出现了点问题~\n</string>
+    <string name="something_wrong">出现了点问题~\n</string>
     <string name="daily_classes">今日课表</string>
     <string name="weekly_classes">本周课表</string>
     <string name="sem_classes">学期课表</string>
@@ -181,27 +79,16 @@
     <string name="yes">是</string>
     <string name="compulsory_num">重要(数字)</string>
     <string name="optional_re">可选(正则式)</string>
-    <string name="school_info">学校信息</string>
-    <string name="abbr">简拼</string>
-    <string name="school_abbr">学校缩写</string>
-    <string name="school_name">学校名称</string>
-    <string name="jwgl">教务管理</string>
-    <string name="system">系统</string>
-    <string name="address">地址</string>
-    <string name="cms_addr">教务系统地址</string>
-    <string name="captcha">验证码</string>
-    <string name="lib_addr">图书馆系统地址</string>
-    <string name="encryption_tip">使用AES-128加密你的密码</string>
-    <string name="enable_encryption">启用加密</string>
-    <string name="project_url" translatable="false">https://github.com/jeffreystoke/openct-mvp</string>
-    <string name="custom">自定义</string>
     <string name="select_school">选择学校</string>
-    <string name="custom_tip">Tips:\n\n1.初次定制\n\n\t1)在上方输入地址\n\n\t2)随后点击右下角菜单 -> 开始按钮\n\n\t3)到达课表界面后点击结束\n\n\t4)根据提示选择课表并设定课表参数\n\n\n\n2.成功录制后使用该功能\n\n\t1)点击右下角菜单 -> 回放按钮\n\n\t2)到达课表界面后点击结束即可生成</string>
-    <string name="project_addr">项目地址</string>
-    <string name="contact_author">联系作者</string>
-    <string name="open_source_license">开源许可</string>
-    <string name="about_openct">关于 OpenCT</string>
-    <string name="apache_license_2_url" translatable="false">https://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="custom_tip">Tips:\n\n
+        1.初次定制\n\n
+        \t1)在上方输入地址\n\n
+        \t2)随后点击右下角菜单 -> 开始按钮\n\n
+        \t3)到达课表界面后点击结束\n\n
+        \t4)根据提示选择课表并设定课表参数\n\n\n\n
+        2.成功录制后使用该功能\n\n
+        \t1)点击右下角菜单 -> 回放按钮\n\n
+        \t2)到达课表界面后点击结束即可生成</string>
     <string name="mail_addr">jeffctor@gmail.com</string>
     <string name="tip_not_exist">如果你的学校不在列表中, 可以尝试自定义功能</string>
     <string name="custom_school">自定义学校</string>
@@ -210,4 +97,56 @@
     <string name="abv_custom">高级自定义(测试)</string>
     <string name="custom_your_class_fetch_way">自定义你的课程表获取方式</string>
     <string name="can_not_enter_tip">出现无法填写内容的情况一般是网页代码做出了限制, 这说明你的学校对于网络爬虫之类的限制十分到位, 你的个人信息十分安全, 你可以选择普通模式进行操作, 但是不会记录你的操作轨迹, 即你的用户名密码不会自动填写</string>
+    <string name="load_aptcha_fail">获取验证码失败\n</string>
+
+    <!--URLs-->
+    <string name="apache_license2_url" translatable="false">https://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="project_url" translatable="false">https://github.com/jeffreystoke/openct-mvp</string>
+    <string name="chsi_referer">http://www.chsi.com.cn/cet/</string>
+
+    <!--copyright-->
+    <string name="pref_licience_info">
+        Copyright OpenCT-MVP METAPRO.CC\n
+        Licensed under the Apache License, Version 2.0 (the "License");\n
+        you may not use this file except in compliance with the License.\n
+        You may obtain a copy of the License at\n
+        http://www.apache.org/licenses/LICENSE-2.0
+    </string>
+
+    <!--preference fragment-->
+    <string name="action_settings">设置</string>
+    <string name="school">学校</string>
+    <string name="pref_title_current_week">本周</string>
+    <string name="default_motto">Thought is already is late\n\nexactly is the earliest time</string>
+
+    <string name="school_info">校园信息</string>
+    <string name="school_name">学校名称</string>
+    <string name="address">地址</string>
+    <string name="captcha">验证码</string>
+    <string name="encryption_tip">使用AES-128加密你的密码</string>
+    <string name="enable_encryption">启用加密</string>
+    <string name="custom">自定义</string>
+
+    <string name="homepage_showing">首页显示</string>
+    <string name="empty_class_motto">无课宣言</string>
+    <string name="basic_custom">基础自定义</string>
+    <string name="enable_custom">启用自定义学校</string>
+    <string name="cms_config">教务网配置</string>
+    <string name="cms">教务网</string>
+    <string name="cms_sys">教务系统</string>
+    <string name="captcha_required">登录需要验证码时勾选</string>
+    <string name="lib_config">图书馆配置</string>
+    <string name="lib_sys">图书管理系统</string>
+    <string name="security_tip">本软件仅使用校园服务器提供各项服务, 个人信息均保存在本地, 若手机已 Root 请一定开启加密功能以保障账户安全</string>
+    <string name="security">安全</string>
+    <string name="personalise">个性化</string>
+    <string name="project_addr">项目地址</string>
+    <string name="contact_author">联系作者</string>
+    <string name="open_source_license">开源许可</string>
+    <string name="about_openct">关于 OpenCT</string>
+    <string name="saved">已保存</string>
+    <string name="load_grade_page_fail">获取成绩页面失败</string>
+    <string name="enter_address">输入地址</string>
+    <string name="no_related_books">没有查询到相关书籍</string>
+    <string name="no_more_results">没有更多结果了</string>
 </resources>
