@@ -38,7 +38,7 @@
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                style="@style/Widget.AppCompat.Toolbar.MyToolbar">
+                style="@style/AppTheme.Toolbar">
 
                 <EditText
                     android:id="@+id/url_input"

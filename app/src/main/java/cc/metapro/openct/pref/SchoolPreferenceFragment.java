@@ -132,27 +132,37 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
             if (mCustomEnablePreference.isChecked()) {
                 bindSummary(mSchoolPreference, value);
             }
-        } else if (preference.equals(mCmsPasswordPreference) || preference.equals(mLibPasswordPreference)) {
-            SharedPreferences pref = preference.getSharedPreferences();
-            boolean needEncrypt = pref.getBoolean(getString(R.string.pref_need_encryption), true);
-            if (needEncrypt) {
-                if (!TextUtils.isEmpty(value)) {
-                    SharedPreferences.Editor editor = pref.edit();
-                    try {
-                        value = AESCrypt.encrypt(Constants.seed, value);
-                        editor.putString(getString(R.string.pref_cms_password), value);
-                        editor.putBoolean(getString(R.string.pref_cms_password_encrypted), true);
-                        preference.setSummary("已加密");
-                    } catch (Exception e) {
-                        preference.setSummary("加密失败, 请关闭加密选项");
-                        e.printStackTrace();
-                    } finally {
-                        editor.apply();
-                    }
+        } else if (preference.equals(mCmsPasswordPreference)) {
+            return encryption(preference, value, R.string.pref_cms_password, R.string.pref_cms_password_encrypted);
+        } else if (preference.equals(mLibPasswordPreference)) {
+            return encryption(preference, value, R.string.pref_lib_password, R.string.pref_lib_password_encrypted);
+        }
+        return true;
+    }
+
+    private boolean encryption(Preference preference, String password, int passwordId, int encryptedId) {
+        SharedPreferences pref = preference.getSharedPreferences();
+        boolean needEncrypt = pref.getBoolean(getString(R.string.pref_need_encryption), true);
+        SharedPreferences.Editor editor = pref.edit();
+        if (needEncrypt) {
+            if (!TextUtils.isEmpty(password)) {
+                try {
+                    password = AESCrypt.encrypt(Constants.seed, password);
+                    editor.putString(getString(passwordId), password);
+                    editor.putBoolean(getString(encryptedId), true);
+                    preference.setSummary(R.string.encrypted);
+                    return false;
+                } catch (Exception e) {
+                    preference.setSummary(R.string.encrypt_fail);
+                    e.printStackTrace();
+                } finally {
+                    editor.apply();
                 }
-            } else {
-                preference.setSummary("未加密");
             }
+        } else {
+            editor.putBoolean(getString(encryptedId), false);
+            preference.setSummary(R.string.unencrypted);
+            return true;
         }
         return true;
     }

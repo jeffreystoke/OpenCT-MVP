@@ -29,7 +29,6 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.UniversityInfo;
-import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 
 @Keep
@@ -61,7 +60,6 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         storeCustom();
-        ActivityUtils.encryptionCheck(this);
         super.onDestroy();
     }
 

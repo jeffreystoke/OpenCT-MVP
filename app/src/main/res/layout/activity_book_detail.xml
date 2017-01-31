@@ -14,7 +14,7 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/book_detail_toolbar"
-            style="@style/Widget.AppCompat.Toolbar.MyToolbar"
+            style="@style/AppTheme.Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
         </android.support.v7.widget.Toolbar>
@@ -40,7 +40,7 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_back"
-            style="@style/Widget.Design.FloatingActionButton.MyFab"
+            style="@style/AppTheme.Fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_back"/>

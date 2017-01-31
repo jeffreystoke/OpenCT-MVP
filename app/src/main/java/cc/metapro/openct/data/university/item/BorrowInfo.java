@@ -17,7 +17,6 @@ package cc.metapro.openct.data.university.item;
  */
 
 import android.support.annotation.Keep;
-import android.text.TextUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -51,6 +51,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -71,9 +72,9 @@ class ClassPresenter implements ClassContract.Presenter {
     }
 
     @Override
-    public void loadOnline(final String code) {
+    public Disposable loadTargetPage(final String code) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_class_page).show();
-        Observable.create(new ObservableOnSubscribe<Form>() {
+        return Observable.create(new ObservableOnSubscribe<Form>() {
             @Override
             public void subscribe(ObservableEmitter<Form> e) throws Exception {
                 Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
@@ -107,15 +108,16 @@ class ClassPresenter implements ClassContract.Presenter {
     }
 
     @Override
-    public void loadQuery(final String actionURL, final Map<String, String> queryMap) {
+    public Disposable loadQuery(final String actionURL, final Map<String, String> queryMap) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_classes).show();
-        Observable.create(new ObservableOnSubscribe<List<EnrichedClassInfo>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<EnrichedClassInfo>> e) throws Exception {
-                e.onNext(Loader.getCms(mContext).getClasses(actionURL, queryMap));
-                e.onComplete();
-            }
-        })
+        return Observable
+                .create(new ObservableOnSubscribe<List<EnrichedClassInfo>>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<List<EnrichedClassInfo>> e) throws Exception {
+                        e.onNext(Loader.getCms(mContext).getClasses(actionURL, queryMap));
+                        e.onComplete();
+                    }
+                })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<List<EnrichedClassInfo>>() {
@@ -161,8 +163,8 @@ class ClassPresenter implements ClassContract.Presenter {
     }
 
     @Override
-    public void loadCaptcha(final TextView view) {
-        Observable
+    public Disposable loadCaptcha(final TextView view) {
+        return Observable
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter e) throws Exception {

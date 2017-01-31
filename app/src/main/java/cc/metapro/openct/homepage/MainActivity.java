@@ -24,24 +24,31 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentManager;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.LibBorrowActivity;
-import cc.metapro.openct.customviews.CaptchaDialog;
+import cc.metapro.openct.customviews.FormDialog;
 import cc.metapro.openct.customviews.InitDialog;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
@@ -50,23 +57,28 @@ import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.HTMLUtils.Form;
 
 @Keep
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ClassContract.View {
 
-    ClassContract.Presenter mPresenter;
-
+    private static boolean showedPrompt;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
-
     @BindView(R.id.nav_view)
     NavigationView mNavigationView;
-
+    @BindView(R.id.tab_layout)
+    TabLayout mTabLayout;
+    @BindView(R.id.view_pager)
+    ViewPager mViewPager;
+    ClassContract.Presenter mPresenter;
     private boolean mExitState;
+    private DailyClassAdapter mDailyClassAdapter;
+
+    private ClassPagerAdapter mClassPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,15 +101,92 @@ public class MainActivity extends AppCompatActivity
         if (!init) {
             InitDialog.newInstance().show(getSupportFragmentManager(), "init_dialog");
         }
-        // add class fragment
-        FragmentManager fm = getSupportFragmentManager();
-        ClassFragment classFragment = (ClassFragment) fm.findFragmentById(R.id.classes_container);
+        new ClassPresenter(this, this);
+        initViewPager();
+    }
 
-        if (classFragment == null) {
-            classFragment = new ClassFragment();
-            ActivityUtils.addFragmentToActivity(fm, classFragment, R.id.classes_container);
+    private void initViewPager() {
+        mTabLayout.setupWithViewPager(mViewPager);
+
+        mClassPagerAdapter = new ClassPagerAdapter(mViewPager);
+        mDailyClassAdapter = mClassPagerAdapter.getDailyClassAdapter();
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String homeIndex = preferences.getString(getString(R.string.pref_homepage_selection), "0");
+        int index = Integer.parseInt(homeIndex);
+        mViewPager.setCurrentItem(index);
+    }
+
+    private void addSeqViews(ViewGroup index) {
+        if (index != null) {
+            index.removeAllViews();
+            for (int i = 1; i <= Constants.DAILY_CLASSES; i++) {
+                TextView textView = new TextView(this);
+                textView.setText("第\n" + i + "\n节");
+                textView.setGravity(Gravity.CENTER);
+                textView.setMinHeight(Constants.CLASS_BASE_HEIGHT * Constants.CLASS_LENGTH);
+                textView.setMaxHeight(Constants.CLASS_BASE_HEIGHT * Constants.CLASS_LENGTH);
+                textView.setTextSize(10);
+                index.addView(textView);
+            }
         }
-        mPresenter = new ClassPresenter(classFragment, this);
+    }
+
+    private void addContentView(ViewGroup content, List<EnrichedClassInfo> classes, int thisWeek) {
+        if (content == null) return;
+        content.removeAllViews();
+        for (EnrichedClassInfo info : classes) {
+            // 仅显示本周
+            info.addViewTo(content, this, mPresenter, thisWeek);
+        }
+    }
+
+    @Override
+    public void updateClasses(List<EnrichedClassInfo> classes) {
+        int week = Loader.getCurrentWeek(this);
+
+        // 更新学期课表视图
+        View view = mClassPagerAdapter.getSemClassView();
+        ViewGroup seq = (ViewGroup) view.findViewById(R.id.sem_class_seq);
+        ViewGroup con = (ViewGroup) view.findViewById(R.id.sem_class_content);
+        addSeqViews(seq);
+        addContentView(con, classes, -1);
+
+        // 更新周课表视图
+        mClassPagerAdapter.setWeekTitle(week);
+        view = mClassPagerAdapter.getWeekClassView();
+        seq = (ViewGroup) view.findViewById(R.id.week_class_seq);
+        con = (ViewGroup) view.findViewById(R.id.week_class_content);
+        addSeqViews(seq);
+        addContentView(con, classes, week);
+
+        // 更新当日课表视图
+        mDailyClassAdapter.updateTodayClasses(classes, week);
+        mDailyClassAdapter.notifyDataSetChanged();
+        if (mDailyClassAdapter.hasClassToday()) {
+            mClassPagerAdapter.showRecyclerView();
+            if (!showedPrompt) {
+                showedPrompt = true;
+                Snackbar.make(mViewPager, "今天有 " + mDailyClassAdapter.getItemCount() + " 节课", Snackbar.LENGTH_SHORT).show();
+            }
+        } else {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            mClassPagerAdapter.dismissRecyclerView(preferences.getString(getString(R.string.pref_empty_class_motto), getString(R.string.default_motto)));
+            if (!showedPrompt) {
+                showedPrompt = true;
+                Snackbar.make(mViewPager, R.string.empty_class_tip, Snackbar.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void showFormDialog(Form form) {
+        FormDialog.newInstance(form, mPresenter).show(getSupportFragmentManager(), "form_dialog");
+    }
+
+    @Override
+    public void setPresenter(ClassContract.Presenter presenter) {
+        mPresenter = presenter;
     }
 
     @Override
@@ -138,9 +227,9 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             } else {
                 if (Loader.cmsNeedCAPTCHA(this)) {
-                    CaptchaDialog.newInstance(mPresenter).show(getSupportFragmentManager(), "captcha_dialog");
+                    ActivityUtils.showCaptchaDialog(getSupportFragmentManager(), mPresenter);
                 } else {
-                    mPresenter.loadOnline("");
+                    mPresenter.loadTargetPage("");
                 }
             }
             return true;
@@ -181,6 +270,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         initStatic();
+        mPresenter.start();
     }
 
     private void initStatic() {

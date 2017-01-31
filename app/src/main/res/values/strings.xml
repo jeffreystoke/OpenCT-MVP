@@ -149,4 +149,12 @@
     <string name="enter_address">输入地址</string>
     <string name="no_related_books">没有查询到相关书籍</string>
     <string name="no_more_results">没有更多结果了</string>
+    <string name="add_class_info">添加课程信息</string>
+
+    <string name="encrypt_fail">加密失败, 请关闭加密选项</string>
+    <string name="encrypted">已加密</string>
+    <string name="unencrypted">未加密</string>
+    <string name="empty_class_tip">今天没有课, 好好休息一下吧~</string>
+    <string name="searching_library">正在检索图书馆馆藏</string>
+    <string name="class_detail">课程详情</string>
 </resources>

@@ -131,6 +131,7 @@ public class CmsFactory extends UniversityFactory {
         } else {
             tablePage = mService.post(actionURL, urlFactory.getUserCenterURL(), queryMap).execute().body();
         }
+
         destroyService();
         return UniversityUtils.generateGrades(tablePage, mGradeTableInfo);
     }
@@ -142,7 +143,6 @@ public class CmsFactory extends UniversityFactory {
         } else {
             tablePage = mService.getPage(actionURL, urlFactory.getUserCenterURL()).execute().body();
         }
-        destroyService();
 
         // 替换标识符, 生成课程
         tablePage = tablePage.replaceAll(Constants.BR, Constants.BR_REPLACER);
@@ -165,6 +165,8 @@ public class CmsFactory extends UniversityFactory {
 
         // 从表格中获取课程信息
         List<Element> classes = UniversityUtils.getRawClasses(targetTable);
+
+        destroyService();
         return UniversityUtils.generateClasses(classes, mClassTableInfo);
     }
 

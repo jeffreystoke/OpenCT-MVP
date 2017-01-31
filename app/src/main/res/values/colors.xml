@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#f5f5f5</color>
-    <color name="colorPrimaryDark">#bdbdbd</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">@color/material_white</color>
+    <color name="colorPrimaryDark">@color/material_white_dark</color>
+    <color name="colorAccent">@color/material_red</color>
 
     <color name="material_white">#f5f5f5</color>
-    <color name="material_white_dark">#eeeeee</color>
+    <color name="material_white_dark">#e0e0e0</color>
     <color name="material_black">#212121</color>
     <color name="material_grey">#616161</color>
     <color name="material_red">#FF4081</color>

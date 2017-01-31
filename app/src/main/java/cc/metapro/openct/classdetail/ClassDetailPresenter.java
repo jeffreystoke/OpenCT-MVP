@@ -1,4 +1,4 @@
-package cc.metapro.openct;
+package cc.metapro.openct.classdetail;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,20 +16,10 @@ package cc.metapro.openct;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
-import android.widget.TextView;
+public class ClassDetailPresenter implements ClassDetailContract.Presenter {
 
-import java.util.Map;
+    @Override
+    public void start() {
 
-import io.reactivex.disposables.Disposable;
-
-@Keep
-public interface LoginPresenter extends BasePresenter {
-
-    Disposable loadCaptcha(final TextView view);
-
-    Disposable loadTargetPage(final String code);
-
-    Disposable loadQuery(final String actionURL, final Map<String, String> queryMap);
-
+    }
 }

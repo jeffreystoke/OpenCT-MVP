@@ -84,7 +84,7 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
         return mClasses != null && mClasses.size() > 0;
     }
 
-    static class ClassViewHolder extends RecyclerView.ViewHolder {
+    class ClassViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.class_name)
         TextView mClassName;

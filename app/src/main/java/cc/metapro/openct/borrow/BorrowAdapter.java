@@ -37,9 +37,8 @@ import cc.metapro.openct.data.university.item.BorrowInfo;
 @Keep
 class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowViewHolder> {
 
-    private List<BorrowInfo> mBorrows;
-
     private final LayoutInflater mInflater;
+    private List<BorrowInfo> mBorrows;
 
     BorrowAdapter(Context context) {
         mInflater = LayoutInflater.from(context);

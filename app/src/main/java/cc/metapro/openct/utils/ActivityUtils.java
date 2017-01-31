@@ -30,14 +30,11 @@ import android.util.Log;
 
 import com.scottyab.aescrypt.AESCrypt;
 
+import java.security.GeneralSecurityException;
+
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.CaptchaDialog;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 @Keep
 public final class ActivityUtils {
@@ -67,69 +64,63 @@ public final class ActivityUtils {
     }
 
     public static void encryptionCheck(final Context context) {
-        Observable
-                .create(new ObservableOnSubscribe<String>() {
-                    @Override
-                    public void subscribe(ObservableEmitter<String> e) throws Exception {
-                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.pref_need_encryption), true);
-                        boolean cmsPasswordEncrypted = preferences.getBoolean(context.getString(R.string.pref_cms_password_encrypted), false);
-                        boolean libPasswordEncrypted = preferences.getBoolean(context.getString(R.string.pref_lib_password_encrypted), false);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.pref_need_encryption), true);
+        boolean cmsPasswordEncrypted = preferences.getBoolean(context.getString(R.string.pref_cms_password_encrypted), false);
+        boolean libPasswordEncrypted = preferences.getBoolean(context.getString(R.string.pref_lib_password_encrypted), false);
 
-                        SharedPreferences.Editor editor = preferences.edit();
-                        // 设置不加密, 将加密的部分还原
-                        if (!needEncrypt) {
-                            if (cmsPasswordEncrypted) {
-                                editor.putBoolean(context.getString(R.string.pref_cms_password_encrypted), false);
-                                String password = preferences.getString(context.getString(R.string.pref_cms_password), "");
-                                password = AESCrypt.decrypt(Constants.seed, password);
-                                editor.putString(context.getString(R.string.pref_cms_password), password);
-                            }
-                            if (libPasswordEncrypted) {
-                                editor.putBoolean(context.getString(R.string.pref_lib_password_encrypted), false);
-                                String password = preferences.getString(context.getString(R.string.pref_lib_password), "");
-                                password = AESCrypt.decrypt(Constants.seed, password);
-                                editor.putString(context.getString(R.string.pref_lib_password), password);
-                            }
-                        }
-                        // 设置加密, 将未加密的部分加密
-                        else {
-                            if (!cmsPasswordEncrypted) {
-                                String cmsPassword = preferences.getString(context.getString(R.string.pref_cms_password), "");
-                                try {
-                                    if (!TextUtils.isEmpty(cmsPassword)) {
-                                        cmsPassword = AESCrypt.encrypt(Constants.seed, cmsPassword);
-                                        editor.putString(context.getString(R.string.pref_cms_password), cmsPassword);
-                                        editor.putBoolean(context.getString(R.string.pref_cms_password_encrypted), true);
-                                    }
-                                } catch (Exception exp) {
-                                    Log.e(TAG, exp.getMessage(), exp);
-                                }
-                            }
-                            if (!libPasswordEncrypted) {
-                                try {
-                                    String libPassword = preferences.getString(context.getString(R.string.pref_lib_password), "");
-                                    if (!TextUtils.isEmpty(libPassword)) {
-                                        libPassword = AESCrypt.encrypt(Constants.seed, libPassword);
-                                        editor.putString(context.getString(R.string.pref_lib_password), libPassword);
-                                        editor.putBoolean(context.getString(R.string.pref_lib_password_encrypted), true);
-                                    }
-                                } catch (Exception exp) {
-                                    Log.e(TAG, exp.getMessage(), exp);
-                                }
-                            }
-                        }
-                        editor.apply();
+        SharedPreferences.Editor editor = preferences.edit();
+        // 设置不加密, 将加密的部分还原
+        if (!needEncrypt) {
+            if (cmsPasswordEncrypted) {
+                try {
+                    editor.putBoolean(context.getString(R.string.pref_cms_password_encrypted), false);
+                    String password = preferences.getString(context.getString(R.string.pref_cms_password), "");
+                    password = AESCrypt.decrypt(Constants.seed, password);
+                    editor.putString(context.getString(R.string.pref_cms_password), password);
+                } catch (GeneralSecurityException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (libPasswordEncrypted) {
+                try {
+                    editor.putBoolean(context.getString(R.string.pref_lib_password_encrypted), false);
+                    String password = preferences.getString(context.getString(R.string.pref_lib_password), "");
+                    password = AESCrypt.decrypt(Constants.seed, password);
+                    editor.putString(context.getString(R.string.pref_lib_password), password);
+                } catch (GeneralSecurityException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        // 设置加密, 将未加密的部分加密
+        else {
+            if (!cmsPasswordEncrypted) {
+                String cmsPassword = preferences.getString(context.getString(R.string.pref_cms_password), "");
+                try {
+                    if (!TextUtils.isEmpty(cmsPassword)) {
+                        cmsPassword = AESCrypt.encrypt(Constants.seed, cmsPassword);
+                        editor.putString(context.getString(R.string.pref_cms_password), cmsPassword);
+                        editor.putBoolean(context.getString(R.string.pref_cms_password_encrypted), true);
                     }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .onErrorReturn(new Function<Throwable, String>() {
-                    @Override
-                    public String apply(Throwable throwable) throws Exception {
-                        Log.e(TAG, throwable.getMessage(), throwable);
-                        return "";
+                } catch (Exception exp) {
+                    Log.e(TAG, exp.getMessage(), exp);
+                }
+            }
+            if (!libPasswordEncrypted) {
+                try {
+                    String libPassword = preferences.getString(context.getString(R.string.pref_lib_password), "");
+                    if (!TextUtils.isEmpty(libPassword)) {
+                        libPassword = AESCrypt.encrypt(Constants.seed, libPassword);
+                        editor.putString(context.getString(R.string.pref_lib_password), libPassword);
+                        editor.putBoolean(context.getString(R.string.pref_lib_password_encrypted), true);
                     }
-                }).subscribe();
+                } catch (Exception exp) {
+                    Log.e(TAG, exp.getMessage(), exp);
+                }
+            }
+        }
+        editor.apply();
     }
 
     public static void showCaptchaDialog(FragmentManager manager, LoginPresenter presenter) {

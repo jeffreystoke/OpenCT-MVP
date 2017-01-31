@@ -8,9 +8,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/class_today_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent"/>
 
     <TextView
         android:id="@+id/empty_view"
@@ -18,7 +16,6 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="100dp"
         android:gravity="center"
-        android:text="无课, 自习去"
         android:textAlignment="center"
         android:visibility="gone"/>
 </RelativeLayout>

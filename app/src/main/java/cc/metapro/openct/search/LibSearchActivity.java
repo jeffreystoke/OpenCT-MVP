@@ -18,32 +18,42 @@ package cc.metapro.openct.search;
 
 import android.os.Bundle;
 import android.support.annotation.Keep;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentManager;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import cc.metapro.openct.R;
+import cc.metapro.openct.customviews.EndlessRecyclerOnScrollListener;
+import cc.metapro.openct.data.university.item.BookInfo;
 import cc.metapro.openct.utils.ActivityUtils;
+import cc.metapro.openct.utils.RecyclerViewHelper;
 import io.reactivex.disposables.Disposable;
 
 @Keep
-public class LibSearchActivity extends AppCompatActivity {
+public class LibSearchActivity extends AppCompatActivity implements LibSearchContract.View {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @BindView(R.id.fab_search)
+    @BindView(R.id.fab)
     FloatingActionButton mFabSearch;
 
     @BindView(R.id.lib_search_content_edittext)
@@ -51,18 +61,31 @@ public class LibSearchActivity extends AppCompatActivity {
 
     @BindView(R.id.type_spinner)
     Spinner mSpinner;
-    private LibSearchPresenter mLibSearchPresnter;
-    private Disposable mTask;
 
-    @OnClick(R.id.fab_search)
+    @BindView(R.id.recycler_view)
+    RecyclerView mRecyclerView;
+
+    @BindView(R.id.fab_up)
+    FloatingActionButton mFabUp;
+    private LibSearchContract.Presenter mPresenter;
+    private BooksAdapter mAdapter;
+    private Disposable mTask;
+    private LinearLayoutManager mLinearLayoutManager;
+
+    @OnClick(R.id.fab_up)
+    public void upToTop() {
+        mRecyclerView.smoothScrollToPosition(0);
+    }
+
+    @OnClick(R.id.fab)
     public void fabSearch() {
-        mTask = mLibSearchPresnter.search();
+        mTask = mPresenter.search();
     }
 
     @OnEditorAction(R.id.lib_search_content_edittext)
     public boolean editorSearch(TextView textView, int i, KeyEvent keyEvent) {
         if (i == EditorInfo.IME_ACTION_SEARCH || (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-            mTask = mLibSearchPresnter.search();
+            mTask = mPresenter.search();
             return true;
         }
         return false;
@@ -71,25 +94,22 @@ public class LibSearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lib_search);
+        setContentView(R.layout.activity_search);
 
         ButterKnife.bind(this);
 
         // set mToolbar
         setSupportActionBar(mToolbar);
         ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-
-        FragmentManager fm = getSupportFragmentManager();
-        SearchResultFragment resultFragment =
-                (SearchResultFragment) fm.findFragmentById(R.id.search_result_fragment_continer);
-
-        if (resultFragment == null) {
-            resultFragment = new SearchResultFragment();
-            ActivityUtils.addFragmentToActivity(fm, resultFragment, R.id.search_result_fragment_continer);
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
         }
 
-        mLibSearchPresnter = new LibSearchPresenter(resultFragment, mSpinner, mEditText);
+        mAdapter = new BooksAdapter(this);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.item_text_white, getResources().getStringArray(R.array.lib_search_type));
+        mSpinner.setAdapter(adapter);
+        mLinearLayoutManager = RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mAdapter);
+        new LibSearchPresenter(this, mSpinner, mEditText);
     }
 
     @Override
@@ -98,5 +118,54 @@ public class LibSearchActivity extends AppCompatActivity {
             mTask.dispose();
         }
         super.onDestroy();
+    }
+
+    @Override
+    public void showOnSearching() {
+        ActivityUtils.getProgressDialog(this, R.string.searching_library).show();
+        mRecyclerView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mRecyclerView != null) {
+                    mRecyclerView.clearOnScrollListeners();
+                    mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mLinearLayoutManager) {
+                        @Override
+                        public void onLoadMore(int currentPage) {
+                            mTask = mPresenter.nextPage();
+                        }
+                    });
+                }
+            }
+        }, 5000);
+    }
+
+    @Override
+    public void onSearchResult(List<BookInfo> books) {
+        ActivityUtils.dismissProgressDialog();
+        mAdapter.setBooks(books);
+        mAdapter.notifyDataSetChanged();
+        if (books.size() > 0) {
+            Snackbar.make(mRecyclerView, "找到了 " + books.size() + " 条结果", BaseTransientBottomBar.LENGTH_LONG).show();
+        } else {
+            Snackbar.make(mRecyclerView, R.string.no_related_books, BaseTransientBottomBar.LENGTH_LONG).show();
+            mFabUp.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onNextPageResult(List<BookInfo> books) {
+        ActivityUtils.dismissProgressDialog();
+        mAdapter.addBooks(books);
+        mAdapter.notifyDataSetChanged();
+        if (books.size() > 0) {
+            Snackbar.make(mRecyclerView, "加载了 " + books.size() + " 条结果", BaseTransientBottomBar.LENGTH_LONG).show();
+        } else {
+            Snackbar.make(mRecyclerView, R.string.no_more_results, BaseTransientBottomBar.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void setPresenter(LibSearchContract.Presenter presenter) {
+        mPresenter = presenter;
     }
 }

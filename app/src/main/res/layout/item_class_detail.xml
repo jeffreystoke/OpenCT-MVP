@@ -15,31 +15,30 @@
   ~ limitations under the License.
   -->
 
-<ScrollView
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/CardView.FullWidth"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/title"
-            style="@style/DialogTitleText"
-            android:text="@string/add_class_info"/>
+        android:orientation="vertical"
+        android:padding="20dp">
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/class_name"
-            style="@style/dialog_edit_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:hint="课程名称"
             app:met_floatingLabel="normal"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/class_type"
-            style="@style/dialog_edit_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:hint="课程类型"
             app:met_floatingLabel="normal"/>
 
@@ -56,19 +55,6 @@
                 android:paddingRight="10dp"
                 android:paddingStart="0dp"
                 android:text="上课时间"/>
-
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/week"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:hint="星期"
-                android:inputType="numberDecimal"
-                app:met_floatingLabel="normal"/>
-
-            <Space
-                android:layout_width="10dp"
-                android:layout_height="10dp"/>
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/time_start"
@@ -181,23 +167,5 @@
             android:layout_height="wrap_content"
             android:hint="上课地点"
             app:met_floatingLabel="normal"/>
-
-        <Spinner
-            android:id="@+id/color_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="40dp">
-        </Spinner>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/ok"
-                style="@style/DialogButtonText"
-                android:text="确定"/>
-        </LinearLayout>
     </LinearLayout>
-
-</ScrollView>
+</android.support.v7.widget.CardView>

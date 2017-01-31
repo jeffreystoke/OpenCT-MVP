@@ -16,11 +16,9 @@ package cc.metapro.openct.data.university.item;
  * limitations under the License.
  */
 
-import android.content.DialogInterface;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,8 +30,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import cc.metapro.openct.R;
+import cc.metapro.openct.classdetail.ClassDetailActivity;
 import cc.metapro.openct.data.source.StoreHelper;
-import cc.metapro.openct.homepage.ClassAddDialog;
 import cc.metapro.openct.homepage.ClassContract;
 import cc.metapro.openct.utils.Constants;
 
@@ -90,8 +88,7 @@ public class EnrichedClassInfo {
      * @return a list of class info
      */
     @NonNull
-    public List<ClassInfo>
-    getAllClasses() {
+    public List<ClassInfo> getAllClasses() {
         List<ClassInfo> list = new ArrayList<>();
         list.add(mClassInfo);
         ClassInfo c = mClassInfo;
@@ -161,25 +158,12 @@ public class EnrichedClassInfo {
         card.setY(y);
         card.setCardBackgroundColor(color);
 
-        final AlertDialog.Builder builder = target.getAlertDialog(context, presenter);
-        builder.setNegativeButton("修改", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                ClassAddDialog.newInstance("修改课程信息", EnrichedClassInfo.this, new ClassAddDialog.ClassAddCallBack() {
-                    @Override
-                    public void onAdded(EnrichedClassInfo classInfo) {
-                        presenter.onClassEdited(classInfo);
-                    }
-                }).show(context.getSupportFragmentManager(), "class_modify_dialog");
-            }
-        });
         card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                builder.show();
+                ClassDetailActivity.actionStart(context, EnrichedClassInfo.this);
             }
         });
-
         viewGroup.addView(card);
         ViewGroup.LayoutParams params = card.getLayoutParams();
         params.width = width;

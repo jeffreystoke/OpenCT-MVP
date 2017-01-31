@@ -42,17 +42,16 @@ import retrofit2.Response;
 public abstract class UniversityFactory {
 
     private static final String LOGIN_SUCCESS_PATTERN = "(当前)|(个人)";
-    private static SchoolInterceptor interceptor;
     static URLFactory urlFactory;
     static UniversityService mService;
-
+    private static SchoolInterceptor interceptor;
     UniversityInfo.CMSInfo mCMSInfo;
     CmsFactory.ClassTableInfo mClassTableInfo;
     CmsFactory.GradeTableInfo mGradeTableInfo;
 
     UniversityInfo.LibraryInfo mLibraryInfo;
     LibraryFactory.BorrowTableInfo mBorrowTableInfo;
-    
+
     private boolean loginSuccess;
 
     @Nullable

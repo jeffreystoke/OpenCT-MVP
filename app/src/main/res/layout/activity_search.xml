@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cc.metapro.openct.search.LibSearchActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar_layout"
+        style="@style/AppTheme.AppBarLayout">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            style="@style/AppTheme.CollapsingToolbarLayout">
+
+            <ImageView
+                style="@style/AppTheme.AppBarImage"
+                android:src="@drawable/search_header"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <Spinner
+                    android:id="@+id/type_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:entries="@array/lib_search_type"
+                    android:textAlignment="center"/>
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/lib_search_content_edittext"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="7"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/search"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    app:met_floatingLabel="normal"/>
+            </LinearLayout>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                style="@style/AppTheme.Toolbar"
+                android:layout_marginTop="@dimen/toolbar_padding_top">
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_up"
+        style="@style/AppTheme.Fab"
+        android:src="@drawable/ic_up_to_top"
+        android:visibility="gone"
+        app:layout_anchor="@id/recycler_view"
+        app:layout_anchorGravity="bottom|start"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        style="@style/AppTheme.Fab"
+        android:src="@drawable/ic_search"
+        app:layout_anchor="@id/appbar_layout"
+        app:layout_anchorGravity="bottom|end|right"/>
+</android.support.design.widget.CoordinatorLayout>

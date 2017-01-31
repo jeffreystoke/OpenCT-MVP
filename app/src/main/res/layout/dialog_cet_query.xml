@@ -10,12 +10,12 @@
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/ticket_num"
-        style="@style/dialog_edit_margin"
+        style="@style/dialog_edit_style"
         android:hint="@string/ticket_number"/>
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/full_name"
-        style="@style/dialog_edit_margin"
+        style="@style/dialog_edit_style"
         android:hint="@string/full_name"/>
 
     <LinearLayout

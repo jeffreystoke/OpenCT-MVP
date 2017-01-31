@@ -124,6 +124,7 @@ public class LibraryFactory extends UniversityFactory {
 
     @NonNull
     public List<BorrowInfo> getBorrowInfo(@NonNull Map<String, String> loginMap) throws Exception {
+        destroyService();
         String page = login(loginMap);
         String borrowPage = null;
         if (Constants.LIBSYS.equalsIgnoreCase(mLibraryInfo.mLibSys)) {

@@ -40,6 +40,7 @@ import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.Constants;
+import io.reactivex.disposables.Disposable;
 
 @Keep
 public class CaptchaDialog extends DialogFragment {
@@ -49,6 +50,7 @@ public class CaptchaDialog extends DialogFragment {
     TextView mTextView;
     @BindView(R.id.captcha_edit_text)
     MaterialEditText mEditText;
+    Disposable mDisposable;
 
     public static CaptchaDialog newInstance(LoginPresenter presenter) {
         CaptchaDialog fragment = new CaptchaDialog();
@@ -59,7 +61,7 @@ public class CaptchaDialog extends DialogFragment {
     @OnClick(R.id.captcha_image)
     public void loadCaptcha() {
         if (mPresenter != null) {
-            mPresenter.loadCaptcha(mTextView);
+            mDisposable = mPresenter.loadCaptcha(mTextView);
         }
     }
 
@@ -70,7 +72,7 @@ public class CaptchaDialog extends DialogFragment {
             Toast.makeText(getActivity(), R.string.enter_captcha, Toast.LENGTH_SHORT).show();
         } else {
             dismiss();
-            mPresenter.loadOnline(code);
+            mPresenter.loadTargetPage(code);
         }
     }
 
@@ -82,7 +84,7 @@ public class CaptchaDialog extends DialogFragment {
                 Toast.makeText(getActivity(), R.string.enter_captcha, Toast.LENGTH_SHORT).show();
             } else {
                 dismiss();
-                mPresenter.loadOnline(code);
+                mPresenter.loadTargetPage(code);
             }
             return true;
         }
@@ -106,7 +108,7 @@ public class CaptchaDialog extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mPresenter.loadCaptcha(mTextView);
+        mDisposable = mPresenter.loadCaptcha(mTextView);
     }
 
     @Override

@@ -46,6 +46,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -65,9 +66,9 @@ class GradePresenter implements GradeContract.Presenter {
     }
 
     @Override
-    public void loadOnline(final String code) {
+    public Disposable loadTargetPage(final String code) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_grade_page).show();
-        Observable.create(new ObservableOnSubscribe<Form>() {
+        return Observable.create(new ObservableOnSubscribe<Form>() {
             @Override
             public void subscribe(ObservableEmitter<Form> e) throws Exception {
                 Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
@@ -112,15 +113,16 @@ class GradePresenter implements GradeContract.Presenter {
     }
 
     @Override
-    public void loadQuery(final String actionURL, final Map<String, String> queryMap) {
+    public Disposable loadQuery(final String actionURL, final Map<String, String> queryMap) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_grades).show();
-        Observable.create(new ObservableOnSubscribe<List<GradeInfo>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
-                e.onNext(Loader.getCms(mContext).getGrades(actionURL, queryMap));
-                e.onComplete();
-            }
-        })
+        return Observable
+                .create(new ObservableOnSubscribe<List<GradeInfo>>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
+                        e.onNext(Loader.getCms(mContext).getGrades(actionURL, queryMap));
+                        e.onComplete();
+                    }
+                })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<List<GradeInfo>>() {
@@ -233,8 +235,8 @@ class GradePresenter implements GradeContract.Presenter {
     }
 
     @Override
-    public void loadCaptcha(final TextView view) {
-        Observable
+    public Disposable loadCaptcha(final TextView view) {
+        return Observable
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter e) throws Exception {

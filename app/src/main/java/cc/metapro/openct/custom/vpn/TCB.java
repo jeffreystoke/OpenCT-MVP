@@ -42,6 +42,7 @@ public class TCB {
     public SocketChannel channel;
     public boolean waitingForNetworkData;
     public SelectionKey selectionKey;
+
     public TCB(String ipAndPort, long mySequenceNum, long theirSequenceNum, long myAcknowledgementNum, long theirAcknowledgementNum,
                SocketChannel channel, Packet referencePacket) {
         this.ipAndPort = ipAndPort;

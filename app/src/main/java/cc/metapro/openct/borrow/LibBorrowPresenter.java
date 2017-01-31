@@ -39,6 +39,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -47,7 +48,7 @@ import io.reactivex.schedulers.Schedulers;
 @Keep
 class LibBorrowPresenter implements LibBorrowContract.Presenter {
 
-    private static final String TAG = "openct_borrow_presenter";
+    private static final String TAG = LibBorrowPresenter.class.getSimpleName();
     private LibBorrowContract.View mLibBorrowView;
     private List<BorrowInfo> mBorrows;
     private Context mContext;
@@ -59,9 +60,9 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
     }
 
     @Override
-    public void loadOnline(final String code) {
+    public Disposable loadTargetPage(final String code) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_borrows).show();
-        Observable
+        return Observable
                 .create(new ObservableOnSubscribe<List<BorrowInfo>>() {
                     @Override
                     public void subscribe(ObservableEmitter<List<BorrowInfo>> e) throws Exception {
@@ -98,8 +99,8 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
     }
 
     @Override
-    public void loadQuery(final String actionURL, Map<String, String> queryMap) {
-
+    public Disposable loadQuery(final String actionURL, Map<String, String> queryMap) {
+        return null;
     }
 
     @Override
@@ -144,8 +145,8 @@ class LibBorrowPresenter implements LibBorrowContract.Presenter {
     }
 
     @Override
-    public void loadCaptcha(final TextView view) {
-        Observable
+    public Disposable loadCaptcha(final TextView view) {
+        return Observable
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter e) throws Exception {
