@@ -92,12 +92,12 @@ public class UniversityUtils {
 
         for (int i = 0; i < 7; i++) {
             int colorIndex = i;
-            if (colorIndex > Constants.colorString.length) {
+            if (colorIndex > Constants.colorStringNew.length) {
                 colorIndex /= 3;
             }
             for (int j = 0; j < dailyClasses; j++) {
                 colorIndex++;
-                if (colorIndex >= Constants.colorString.length) {
+                if (colorIndex >= Constants.colorStringNew.length) {
                     colorIndex = 0;
                 }
                 ClassInfo classInfo = classes.get(j * 7 + i);

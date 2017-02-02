@@ -21,6 +21,10 @@
 
 ##---------------End: proguard configuration for Gson  ----------
 
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -dontwarn retrofit2.Platform$Java8
@@ -29,10 +33,10 @@
 -dontwarn org.codehaus.groovy.**
 -dontwarn org.apache.commons.logging.**
 -dontwarn sun.misc.Perf
+-dontwarn aQute.bnd.**
 
 -dontnote com.google.vending.**
 -dontnote com.android.vending.licensing.**
--dontwarn aQute.bnd.**
 
 -keepnames class ** { *; }
 -keepnames interface ** { *; }

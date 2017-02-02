@@ -16,11 +16,8 @@ package cc.metapro.openct.data.university.item;
  * limitations under the License.
  */
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import net.fortuna.ical4j.model.DateTime;
@@ -43,7 +40,6 @@ import java.util.regex.Pattern;
 
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.data.university.CmsFactory;
-import cc.metapro.openct.homepage.ClassContract;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.REHelper;
@@ -60,8 +56,11 @@ public class ClassInfo {
     private String mPlace;
     private boolean mOddWeek;
     private boolean mEvenWeek;
-    private boolean mInactive;
     private ClassInfo mSubClassInfo;
+
+    public ClassInfo() {
+        mUid = UUID.randomUUID().toString();
+    }
 
     public ClassInfo(String uid, String name, String type, String time, String during, String teacher, String place, boolean oddWeek, boolean evenWeek) {
         if (TextUtils.isEmpty(uid)) {
@@ -151,7 +150,6 @@ public class ClassInfo {
     }
 
     public boolean hasClass(int week) {
-        if (mInactive) return false;
         if (TextUtils.isEmpty(mDuring)) return false;
         int[] startEnd = REHelper.getStartEnd(mDuring);
         if (week >= startEnd[0] && week <= startEnd[1]) {
@@ -197,7 +195,7 @@ public class ClassInfo {
         return mSubClassInfo;
     }
 
-    void setSubClassInfo(ClassInfo info) {
+    public void setSubClassInfo(ClassInfo info) {
         mSubClassInfo = info;
     }
 
@@ -215,29 +213,6 @@ public class ClassInfo {
 
     public String getPlace() {
         return TextUtils.isEmpty(mPlace) ? "" : mPlace;
-    }
-
-    private String toFullString() {
-        StringBuilder sb = new StringBuilder();
-
-        if (!REHelper.isEmpty(mName)) sb.append("课程名称: ").append(mName).append("\n\n");
-        if (!REHelper.isEmpty(mType)) sb.append("课程类型: ").append(mType).append("\n\n");
-
-        String time = getTime();
-        if (!REHelper.isEmpty(time)) sb.append("上课时间: ").append(time).append("\n\n");
-
-        if (!REHelper.isEmpty(mPlace)) sb.append("上课地点: ").append(mPlace).append("\n\n");
-        if (!REHelper.isEmpty(mTeacher)) sb.append("授课教师: ").append(mTeacher).append("\n\n");
-
-        String during = getDuring();
-        if (!REHelper.isEmpty(during)) sb.append("课程周期: ").append(during).append("\n\n");
-
-        if (hasSubClass()) sb.append("\n\n").append(mSubClassInfo.toFullString());
-
-        if (sb.length() > 2 && sb.charAt(sb.length() - 1) == '\n') {
-            sb.delete(sb.length() - 2, sb.length());
-        }
-        return sb.toString();
     }
 
     @Override
@@ -282,8 +257,6 @@ public class ClassInfo {
      */
     @Nullable
     public VEvent getEvent(int week, int weekDay) {
-        if (isEmpty() || mInactive)
-            return null;
         try {
             // set end Date
             Calendar now = Calendar.getInstance();
@@ -337,33 +310,6 @@ public class ClassInfo {
             e.printStackTrace();
             return null;
         }
-    }
-
-    AlertDialog.Builder getAlertDialog(final Context mContext, final ClassContract.Presenter mPresenter) {
-        AlertDialog.Builder a = new AlertDialog.Builder(mContext);
-        a.setMessage(toFullString());
-        a.setCancelable(true);
-        a.setPositiveButton("返回", null);
-        a.setNeutralButton("删除", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                AlertDialog.Builder b = new AlertDialog.Builder(mContext);
-                b.setNegativeButton("确认", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        mInactive = true;
-                        mPresenter.storeClasses();
-                        mPresenter.loadLocalClasses();
-                    }
-                });
-                b.setPositiveButton("取消", null);
-                b.setTitle("警告");
-                b.setMessage("这节课将被删除!\n\nPS: 该操作仅对今日课表和本周课表有效");
-                b.show();
-            }
-        });
-        a.setTitle("课程信息");
-        return a;
     }
 
 }

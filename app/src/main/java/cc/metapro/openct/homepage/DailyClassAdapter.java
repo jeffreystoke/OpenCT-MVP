@@ -54,9 +54,7 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
 
     @Override
     public void onBindViewHolder(ClassViewHolder holder, int position) {
-        ClassInfo c = mClasses.get(position);
-        holder.setClassName(c.getName());
-        holder.setTimePlace(c.getTime(), c.getPlace());
+        holder.setInfo(mClasses.get(position));
     }
 
     @Override
@@ -97,14 +95,11 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
             ButterKnife.bind(this, itemView);
         }
 
-        void setClassName(String className) {
-            mClassName.setText(className);
-        }
-
-        void setTimePlace(String time, String place) {
+        void setInfo(ClassInfo info) {
+            mClassName.setText(info.getName());
             String content = "";
-            if (!TextUtils.isEmpty(time)) content += "今天 " + time + " 节 ";
-            if (!TextUtils.isEmpty(place)) content += "在 " + place;
+            if (!TextUtils.isEmpty(info.getTime())) content += "今天 " + info.getTime() + " 节 ";
+            if (!TextUtils.isEmpty(info.getPlace())) content += "在 " + info.getPlace();
             mTimePlace.setText(content);
         }
     }

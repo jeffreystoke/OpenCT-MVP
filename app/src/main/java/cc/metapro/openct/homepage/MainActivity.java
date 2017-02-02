@@ -48,6 +48,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.LibBorrowActivity;
+import cc.metapro.openct.classdetail.ClassDetailActivity;
 import cc.metapro.openct.customviews.FormDialog;
 import cc.metapro.openct.customviews.InitDialog;
 import cc.metapro.openct.data.source.Loader;
@@ -77,17 +78,15 @@ public class MainActivity extends AppCompatActivity
     ClassContract.Presenter mPresenter;
     private boolean mExitState;
     private DailyClassAdapter mDailyClassAdapter;
-
     private ClassPagerAdapter mClassPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initStatic();
         ButterKnife.bind(this);
-
         setSupportActionBar(mToolbar);
-
         mExitState = false;
 
         ActionBarDrawerToggle toggle = new
@@ -136,8 +135,7 @@ public class MainActivity extends AppCompatActivity
         if (content == null) return;
         content.removeAllViews();
         for (EnrichedClassInfo info : classes) {
-            // 仅显示本周
-            info.addViewTo(content, this, mPresenter, thisWeek);
+            info.addViewTo(content, this, thisWeek);
         }
     }
 
@@ -154,6 +152,7 @@ public class MainActivity extends AppCompatActivity
 
         // 更新周课表视图
         mClassPagerAdapter.setWeekTitle(week);
+        mClassPagerAdapter.notifyDataSetChanged();
         view = mClassPagerAdapter.getWeekClassView();
         seq = (ViewGroup) view.findViewById(R.id.week_class_seq);
         con = (ViewGroup) view.findViewById(R.id.week_class_content);
@@ -236,12 +235,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.export_classes) {
             mPresenter.exportClasses();
         } else if (id == R.id.add_class) {
-            ClassAddDialog.newInstance("添加课程", null, new ClassAddDialog.ClassAddCallBack() {
-                @Override
-                public void onAdded(EnrichedClassInfo classInfo) {
-                    mPresenter.onClassEdited(classInfo);
-                }
-            }).show(getSupportFragmentManager(), "class_add_dialog");
+            ClassDetailActivity.actionStart(this, new EnrichedClassInfo());
         }
         return super.onOptionsItemSelected(item);
     }
@@ -269,7 +263,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        initStatic();
         mPresenter.start();
     }
 

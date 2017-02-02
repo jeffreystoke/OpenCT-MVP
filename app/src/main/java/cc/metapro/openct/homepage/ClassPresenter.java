@@ -22,6 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +61,7 @@ import io.reactivex.schedulers.Schedulers;
 @Keep
 class ClassPresenter implements ClassContract.Presenter {
 
+    private static final String TAG = ClassPresenter.class.getSimpleName();
     private static boolean showedNotice;
     private ClassContract.View mView;
     private List<EnrichedClassInfo> mEnrichedClasses;
@@ -236,20 +238,20 @@ class ClassPresenter implements ClassContract.Presenter {
                                 downloadDir.createNewFile();
                             }
 
-                            File file = new File(downloadDir, "openct_classes.ics");
+                            File file = new File(downloadDir, "OpenCT_Classes.ics");
                             fos = new FileOutputStream(file);
                             CalendarOutputter calOut = new CalendarOutputter();
                             calOut.output(calendar, fos);
                             e.onComplete();
                         } catch (Exception e1) {
-                            e1.printStackTrace();
+                            Log.e(TAG, e1.getMessage(), e1);
                             e.onError(e1);
                         } finally {
                             if (fos != null) {
                                 try {
                                     fos.close();
                                 } catch (Exception e1) {
-                                    e1.printStackTrace();
+                                    Log.e(TAG, e1.getMessage(), e1);
                                 }
                             }
                         }
@@ -261,49 +263,19 @@ class ClassPresenter implements ClassContract.Presenter {
                     @Override
                     public void run() throws Exception {
                         ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, "创建成功, 文件 openct_classes.ics 保存在手机存储根目录中", Toast.LENGTH_LONG).show();
+                        Toast.makeText(mContext, R.string.ical_create_success, Toast.LENGTH_LONG).show();
                     }
                 })
                 .onErrorReturn(new Function<Throwable, Calendar>() {
                     @Override
                     public Calendar apply(Throwable throwable) throws Exception {
                         ActivityUtils.dismissProgressDialog();
+                        Log.e(TAG, throwable.getMessage(), throwable);
                         Toast.makeText(mContext, "创建日历信息时发生了异常\n" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         return new Calendar();
                     }
                 })
                 .subscribe();
-    }
-
-    @Override
-    public void onClassEdited(EnrichedClassInfo info) {
-        boolean found = false;
-        for (EnrichedClassInfo classInfo : mEnrichedClasses) {
-            if (classInfo.equals(info)) {
-                mEnrichedClasses.remove(classInfo);
-
-                boolean modify = false;
-                List<ClassInfo> list = classInfo.getAllClasses();
-                for (ClassInfo c : list) {
-                    if (c.equals(info.getFirstClassInfo())) {
-                        classInfo.replaceClassInfo(c, info.getFirstClassInfo());
-                        modify = true;
-                    }
-                }
-                if (!modify) {
-                    classInfo.addClassInfo(info.getFirstClassInfo());
-                    mEnrichedClasses.add(classInfo);
-                    found = true;
-                }
-                break;
-            }
-        }
-        if (!found) {
-            mEnrichedClasses.add(info);
-        }
-
-        storeClasses();
-        loadLocalClasses();
     }
 
     @Override

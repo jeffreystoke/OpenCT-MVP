@@ -19,29 +19,12 @@ package cc.metapro.openct;
 import android.app.Application;
 import android.support.annotation.Keep;
 
-import cc.metapro.openct.data.source.DaggerNetComponent;
-import cc.metapro.openct.data.source.NetComponent;
-import cc.metapro.openct.data.source.NetModule;
-
 @Keep
 public class OpenCT extends Application {
 
-    private NetComponent mNetComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        createComponents();
-    }
-
-    private void createComponents() {
-        mNetComponent = DaggerNetComponent.builder()
-                .applicationModule(new ApplicationModule(this))
-                .netModule(new NetModule())
-                .build();
-    }
-
-    public NetComponent getNetComponent() {
-        return mNetComponent;
     }
 }

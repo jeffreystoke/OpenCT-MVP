@@ -52,6 +52,8 @@ public final class Constants {
     public static final String[] colorString = {
             "#8BC34A", "#03A9F4", "#FF9800", "#C5CAE9", "#FFCDD2", "#009688", "#536DFE"
     };
+
+    public static final String[] colorStringNew = {"#968bc34a", "#96ff9800", "#962196f3", "#96607d8b", "#969c27b0", "#96f44336", "#964dd0e1", "#96d4e157"};
     // map keys
     public static String ACTION_KEY;
     public static String USERNAME_KEY;
@@ -64,6 +66,6 @@ public final class Constants {
     public static int CLASS_BASE_HEIGHT = 0;
 
     public static int getColor(int seq) {
-        return Color.parseColor(colorString[seq]);
+        return Color.parseColor(colorStringNew[seq]);
     }
 }

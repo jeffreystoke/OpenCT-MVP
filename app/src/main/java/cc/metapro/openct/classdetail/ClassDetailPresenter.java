@@ -16,10 +16,63 @@ package cc.metapro.openct.classdetail;
  * limitations under the License.
  */
 
-public class ClassDetailPresenter implements ClassDetailContract.Presenter {
+import android.content.Context;
+
+import java.util.List;
+
+import cc.metapro.openct.data.source.DBManger;
+import cc.metapro.openct.data.university.item.EnrichedClassInfo;
+import cc.metapro.openct.widget.DailyClassWidget;
+
+class ClassDetailPresenter implements ClassDetailContract.Presenter {
+
+    private List<EnrichedClassInfo> mEnrichedClasses;
+
+    private Context mContext;
+
+    ClassDetailPresenter(Context context, ClassDetailContract.View view) {
+        mContext = context;
+        DBManger manger = DBManger.getInstance(mContext);
+        mEnrichedClasses = manger.getClassInfos();
+        view.setPresenter(this);
+    }
 
     @Override
     public void start() {
 
+    }
+
+    @Override
+    public void storeClassInfo(EnrichedClassInfo info) {
+        boolean found = false;
+        for (EnrichedClassInfo enrichedClassInfo : mEnrichedClasses) {
+            // 找到修改目标
+            if (enrichedClassInfo.equals(info)) {
+                found = true;
+                mEnrichedClasses.remove(enrichedClassInfo);
+                mEnrichedClasses.add(info);
+                break;
+            }
+        }
+
+        if (!found) {
+            found = false;
+            for (EnrichedClassInfo enrichedClassInfo : mEnrichedClasses) {
+                if (enrichedClassInfo.equalsCoordinate(info)) {
+                    found = true;
+                    mEnrichedClasses.remove(enrichedClassInfo);
+                    enrichedClassInfo.addClassInfo(info.getFirstClassInfo());
+                    mEnrichedClasses.add(enrichedClassInfo);
+                    break;
+                }
+            }
+            if (!found) {
+                mEnrichedClasses.add(info);
+            }
+        }
+
+        DBManger manger = DBManger.getInstance(mContext);
+        manger.updateClasses(mEnrichedClasses);
+        DailyClassWidget.update(mContext);
     }
 }

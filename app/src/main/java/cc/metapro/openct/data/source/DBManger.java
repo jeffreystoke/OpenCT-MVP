@@ -21,6 +21,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -258,10 +259,13 @@ public class DBManger {
         try {
             mDatabase.delete(DBHelper.CLASS_TABLE, null, null);
             for (EnrichedClassInfo c : classes) {
-                mDatabase.execSQL(
-                        "INSERT INTO " + DBHelper.CLASS_TABLE + " VALUES(null, ?)",
-                        new Object[]{c.toString()}
-                );
+                String target = c.toString();
+                if (!TextUtils.isEmpty(target)) {
+                    mDatabase.execSQL(
+                            "INSERT INTO " + DBHelper.CLASS_TABLE + " VALUES(null, ?)",
+                            new Object[]{target}
+                    );
+                }
             }
             mDatabase.setTransactionSuccessful();
         } finally {

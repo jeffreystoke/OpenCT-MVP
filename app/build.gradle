@@ -7,15 +7,15 @@ android {
         applicationId "cc.metapro.openct"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 15
-        versionName "0.5.1"
+        versionCode 21
+        versionName "0.6.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -47,10 +47,11 @@ dependencies {
     compile 'com.scottyab:aescrypt:0.0.1'
     compile 'com.github.clans:fab:1.6.4'
     compile 'com.jakewharton:butterknife:8.4.0'
+    compile 'org.xdty.preference:color-picker:0.0.4'
+    compile 'com.yanzhenjie:recyclerview-swipe:1.0.2'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'jp.wasabeef:recyclerview-animators:2.2.4'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
-    compile 'com.google.dagger:dagger:2.8'
     compile 'org.slf4j:slf4j-jdk14:1.7.21'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.8'

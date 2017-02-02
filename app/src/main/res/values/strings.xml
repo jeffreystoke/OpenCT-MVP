@@ -19,6 +19,16 @@
     <string name="saturday">周六</string>
     <string name="sunday">周日</string>
 
+    <string-array name="weekdays">
+        <item>@string/monday</item>
+        <item>@string/tuesday</item>
+        <item>@string/wednesday</item>
+        <item>@string/thursday</item>
+        <item>@string/friday</item>
+        <item>@string/saturday</item>
+        <item>@string/sunday</item>
+    </string-array>
+
     <string name="class_table">课程表</string>
     <string name="grade_list">成绩查询</string>
     <string name="search_lib">馆藏查询</string>
@@ -157,4 +167,18 @@
     <string name="empty_class_tip">今天没有课, 好好休息一下吧~</string>
     <string name="searching_library">正在检索图书馆馆藏</string>
     <string name="class_detail">课程详情</string>
+    <string name="choose_background">选择背景色</string>
+    <string name="class_name">课程名称</string>
+    <string name="class_type">课程类型</string>
+    <string name="class_time">上课时间</string>
+    <string name="start">开始</string>
+    <string name="to">到</string>
+    <string name="end">结束</string>
+    <string name="class_during">课程周期</string>
+    <string name="odd_week">单周</string>
+    <string name="even_week">双周</string>
+    <string name="common">普通</string>
+    <string name="class_teacher">授课教师</string>
+    <string name="class_place">上课地点</string>
+    <string name="ical_create_success">创建成功, 文件 OpenCT_Classes.ics 保存在手机存储根目录中</string>
 </resources>

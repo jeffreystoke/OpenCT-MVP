@@ -20,6 +20,7 @@ import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,16 +29,18 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.classdetail.ClassDetailActivity;
 import cc.metapro.openct.data.source.StoreHelper;
-import cc.metapro.openct.homepage.ClassContract;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.REHelper;
 
 @Keep
 public class EnrichedClassInfo {
 
+    private String id;
     /**
      * 课程信息
      */
@@ -65,19 +68,26 @@ public class EnrichedClassInfo {
 
     /**
      * 用于用户创建课程信息
-     *
+     */
+    public EnrichedClassInfo() {
+        id = UUID.randomUUID().toString();
+        color = Constants.getColor(0);
+    }
+
+    /**
      * @param classInfo 基础课程信息 - 显示的信息
      * @param dayOfWeek 星期几
      * @param dailySeq  第几节课
      * @param color     背景色
      */
     public EnrichedClassInfo(ClassInfo classInfo, int dayOfWeek, int dailySeq, int color) {
+        id = UUID.randomUUID().toString();
         mClassInfo = classInfo;
-        this.x = Constants.CLASS_WIDTH * (dayOfWeek - 1);
-        this.y = Constants.CLASS_BASE_HEIGHT * (dailySeq - 1);
+        x = Constants.CLASS_WIDTH * (dayOfWeek - 1);
+        y = Constants.CLASS_BASE_HEIGHT * (dailySeq - 1);
         this.color = color;
-        this.width = Constants.CLASS_WIDTH;
-        this.height = Constants.CLASS_BASE_HEIGHT * Constants.CLASS_LENGTH;
+        width = Constants.CLASS_WIDTH;
+        height = Constants.CLASS_BASE_HEIGHT * Constants.CLASS_LENGTH;
 
         mDayOfWeek = dayOfWeek;
     }
@@ -89,6 +99,9 @@ public class EnrichedClassInfo {
      */
     @NonNull
     public List<ClassInfo> getAllClasses() {
+        if (isEmpty()) {
+            return new ArrayList<>(0);
+        }
         List<ClassInfo> list = new ArrayList<>();
         list.add(mClassInfo);
         ClassInfo c = mClassInfo;
@@ -99,14 +112,14 @@ public class EnrichedClassInfo {
         return list;
     }
 
-
-    public ClassInfo
-    getFirstClassInfo() {
+    public ClassInfo getFirstClassInfo() {
         return mClassInfo;
     }
 
-    public void
-    addClassInfo(ClassInfo info) {
+    public void addClassInfo(ClassInfo info) {
+        if (isEmpty()) {
+            return;
+        }
         if (mClassInfo.hasSubClass()) {
             ClassInfo sub = mClassInfo.getSubClassInfo();
             while (sub.hasSubClass()) {
@@ -118,14 +131,34 @@ public class EnrichedClassInfo {
         }
     }
 
+    public void removeClassInfo(@NonNull ClassInfo info) {
+        if (isEmpty()) {
+            return;
+        }
+        ClassInfo p = mClassInfo;
+        if (p.equals(info)) {
+            mClassInfo = p.getSubClassInfo();
+        } else {
+            while (p.hasSubClass()) {
+                if (p.getSubClassInfo().equals(info)) {
+                    break;
+                }
+                p = p.getSubClassInfo();
+            }
+            p.setSubClassInfo(p.getSubClassInfo().getSubClassInfo());
+        }
+    }
+
     /**
      * 生成课程信息的视图
      *
-     * @param context   用于生成 CardView
-     * @param presenter 用于删除课程
-     * @param week      第几周 (<= 0 表示不比较周数, 直接添加)
+     * @param context 用于生成 CardView
+     * @param week    第几周 (<= 0 表示不比较周数, 直接添加)
      */
-    public void addViewTo(ViewGroup viewGroup, final FragmentActivity context, final ClassContract.Presenter presenter, int week) {
+    public void addViewTo(ViewGroup viewGroup, final FragmentActivity context, int week) {
+        if (isEmpty()) {
+            return;
+        }
         ClassInfo target = null;
         if (week > 0) {
             List<ClassInfo> infoList = getAllClasses();
@@ -155,6 +188,8 @@ public class EnrichedClassInfo {
         }
 
         card.setX(x);
+        int timeStart = REHelper.getStartEnd(target.getTime())[0];
+        int y = timeStart == -1 ? this.y : (timeStart - 1) * Constants.CLASS_BASE_HEIGHT;
         card.setY(y);
         card.setCardBackgroundColor(color);
 
@@ -170,6 +205,12 @@ public class EnrichedClassInfo {
         params.height = length * Constants.CLASS_BASE_HEIGHT;
     }
 
+    private int getY() {
+        if (mClassInfo == null) return -1;
+        int timeStart = REHelper.getStartEnd(mClassInfo.getTime())[0];
+        return timeStart == -1 ? this.y : (timeStart - 1) * Constants.CLASS_BASE_HEIGHT;
+    }
+
     public boolean isToday() {
         Calendar calendar = Calendar.getInstance();
         return weekDayTrans(mDayOfWeek) == calendar.get(Calendar.DAY_OF_WEEK);
@@ -177,6 +218,11 @@ public class EnrichedClassInfo {
 
     public int getDayOfWeek() {
         return mDayOfWeek;
+    }
+
+    public void setDayOfWeek(int dayOfWeek) {
+        mDayOfWeek = dayOfWeek;
+        x = Constants.CLASS_WIDTH * (dayOfWeek - 1);
     }
 
     public int getWeekDay() {
@@ -209,6 +255,10 @@ public class EnrichedClassInfo {
         return color;
     }
 
+    public void setColor(int color) {
+        this.color = color;
+    }
+
     public void replaceClassInfo(ClassInfo oldInfo, ClassInfo newInfo) {
         if (mClassInfo.equals(oldInfo)) {
             newInfo.setSubClassInfo(mClassInfo.getSubClassInfo());
@@ -223,14 +273,23 @@ public class EnrichedClassInfo {
         }
     }
 
-    @Override
-    public String toString() {
-        return StoreHelper.getJsonText(this);
+    public void setClassInfo(ClassInfo info) {
+        mClassInfo = info;
     }
 
-    /**
-     * 拥有相同的坐标即为相等
-     */
+    @Override
+    public String toString() {
+        return isEmpty() ? "" : StoreHelper.getJsonText(this);
+    }
+
+    public boolean isEmpty() {
+        return mClassInfo == null;
+    }
+
+    public boolean equalsCoordinate(EnrichedClassInfo info) {
+        return mDayOfWeek == info.mDayOfWeek && getY() == info.getY();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
@@ -239,9 +298,7 @@ public class EnrichedClassInfo {
 
         if (obj instanceof EnrichedClassInfo) {
             EnrichedClassInfo classInfo = (EnrichedClassInfo) obj;
-            if (classInfo.getFirstClassInfo().equals(mClassInfo)) {
-                return true;
-            }
+            return !TextUtils.isEmpty(id) && id.equals(classInfo.id);
         }
         return false;
     }

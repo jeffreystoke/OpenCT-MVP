@@ -5,8 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="3dp"
-    app:cardElevation="5dp">
+    app:cardCornerRadius="3dp">
 
     <TextView
         android:id="@+id/class_name"

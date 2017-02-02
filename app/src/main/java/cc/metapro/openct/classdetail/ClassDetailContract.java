@@ -18,14 +18,15 @@ package cc.metapro.openct.classdetail;
 
 import cc.metapro.openct.BasePresenter;
 import cc.metapro.openct.BaseView;
+import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 
-public interface ClassDetailContract {
+interface ClassDetailContract {
 
     interface View extends BaseView<Presenter> {
 
     }
 
     interface Presenter extends BasePresenter {
-
+        void storeClassInfo(EnrichedClassInfo enrichedClassInfo);
     }
 }

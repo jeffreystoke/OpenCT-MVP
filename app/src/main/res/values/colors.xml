@@ -9,4 +9,15 @@
     <color name="material_black">#212121</color>
     <color name="material_grey">#616161</color>
     <color name="material_red">#FF4081</color>
+
+    <array name="class_background">
+        <item>#968bc34a</item>
+        <item>#96ff9800</item>
+        <item>#962196f3</item>
+        <item>#96607d8b</item>
+        <item>#969c27b0</item>
+        <item>#96f44336</item>
+        <item>#964dd0e1</item>
+        <item>#96d4e157</item>
+    </array>
 </resources>

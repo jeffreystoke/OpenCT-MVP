@@ -74,7 +74,7 @@
     </LinearLayout>
 
     <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/menu_custom"
+        android:id="@+id/fab_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
@@ -83,7 +83,7 @@
         fab:menu_colorPressed="@color/colorAccent"
         fab:menu_colorRipple="@color/colorAccent"
         fab:menu_icon="@drawable/ic_menu"
-        fab:menu_labels_maxLines="2"
+        fab:menu_labels_maxLines="1"
         fab:menu_labels_position="left">
 
         <com.github.clans.fab.FloatingActionButton

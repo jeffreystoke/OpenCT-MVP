@@ -54,19 +54,19 @@ public class SchoolWebViewClient extends WebViewClient {
                     "window." + JSInteraction.JSInterface + ".getClicked(id);}\"";
     public static boolean replayMode = false;
     public static boolean commonMode = true;
-    private OkHttpClient mOkHttpClient;
+//    private OkHttpClient mOkHttpClient;
     private Observer<Integer> mObserver;
 
     public SchoolWebViewClient() {
-        mOkHttpClient = new OkHttpClient.Builder()
-                .cookieJar(new QuotePreservingCookieJar(new CookieManager() {
-                    {
-                        setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-                    }
-                }))
-                .connectTimeout(20, TimeUnit.SECONDS)
-                .followRedirects(true)
-                .build();
+//        mOkHttpClient = new OkHttpClient.Builder()
+//                .cookieJar(new QuotePreservingCookieJar(new CookieManager() {
+//                    {
+//                        setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+//                    }
+//                }))
+//                .connectTimeout(20, TimeUnit.SECONDS)
+//                .followRedirects(true)
+//                .build();
     }
 
     public void performActions(CustomConfiguration conf, FragmentManager manager, WebView webView) {
@@ -94,19 +94,19 @@ public class SchoolWebViewClient extends WebViewClient {
         return true;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-        String method = request.getMethod();
-        if ("POST".equalsIgnoreCase(method)) {
-            Request.Builder builder = new Request.Builder()
-                    .headers(Headers.of(request.getRequestHeaders()));
-            Call call = mOkHttpClient.newCall(builder.build());
-        } else if ("GET".equalsIgnoreCase(method)) {
-
-        }
-        return super.shouldInterceptRequest(view, request);
-    }
+//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+//    @Override
+//    public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+//        String method = request.getMethod();
+//        if ("POST".equalsIgnoreCase(method)) {
+//            Request.Builder builder = new Request.Builder()
+//                    .headers(Headers.of(request.getRequestHeaders()));
+//            Call call = mOkHttpClient.newCall(builder.build());
+//        } else if ("GET".equalsIgnoreCase(method)) {
+//
+//        }
+//        return super.shouldInterceptRequest(view, request);
+//    }
 
     @Override
     public void onPageFinished(WebView view, String url) {

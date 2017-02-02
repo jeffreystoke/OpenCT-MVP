@@ -116,6 +116,6 @@ public class ClassPagerAdapter extends PagerAdapter {
     }
 
     void setWeekTitle(int week) {
-        mTitles[1] = "本周 (第" + week + "周)";
+        mTitles[1] = "本周课表(第" + week + "周)";
     }
 }

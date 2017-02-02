@@ -26,8 +26,8 @@ import java.util.regex.Pattern;
 @Keep
 public final class REHelper {
 
-    private static final String timeDuringPattern = "([1][0-9])|([0-9])";
-    private static final String lastNumberPattern = "(([1][0-9])|([0-9]))(?=[^0-9]*$)";
+    private static final String timeDuringPattern = "([0-2]?[0-9]?)";
+    private static final String lastNumberPattern = "([0-2]?[0-9]?)(?=[^0-9]*$)";
     private static final String emptyPattern = "^\\s+$";
     private static final String oddPatternString = "(单周?)";
     private static final String evenPatternString = "(双周?)";
@@ -38,6 +38,9 @@ public final class REHelper {
      */
     @NonNull
     public static int[] getStartEnd(String s) {
+        if (TextUtils.isEmpty(s)) {
+            return new int[]{-1, -1};
+        }
         Matcher first = Pattern.compile(timeDuringPattern).matcher(s);
         if (first.find()) {
             int start = Integer.parseInt(first.group());

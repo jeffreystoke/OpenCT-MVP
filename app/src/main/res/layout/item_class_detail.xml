@@ -32,14 +32,14 @@
             android:id="@+id/class_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="课程名称"
+            android:hint="@string/class_name"
             app:met_floatingLabel="normal"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/class_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="课程类型"
+            android:hint="@string/class_type"
             app:met_floatingLabel="normal"/>
 
         <LinearLayout
@@ -54,14 +54,14 @@
                 android:paddingLeft="0dp"
                 android:paddingRight="10dp"
                 android:paddingStart="0dp"
-                android:text="上课时间"/>
+                android:text="@string/class_time"/>
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/time_start"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:hint="开始"
+                android:hint="@string/start"
                 android:inputType="numberDecimal"
                 app:met_floatingLabel="normal"/>
 
@@ -72,14 +72,14 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingStart="10dp"
-                android:text="到"/>
+                android:text="@string/to"/>
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/time_end"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:hint="结束"
+                android:hint="@string/end"
                 android:inputType="numberDecimal"
                 app:met_floatingLabel="normal"/>
         </LinearLayout>
@@ -96,14 +96,14 @@
                 android:paddingLeft="0dp"
                 android:paddingRight="10dp"
                 android:paddingStart="0dp"
-                android:text="课程周期"/>
+                android:text="@string/class_during"/>
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/week_start"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:hint="开始"
+                android:hint="@string/start"
                 android:inputType="numberDecimal"
                 app:met_floatingLabel="normal"/>
 
@@ -114,14 +114,14 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingStart="10dp"
-                android:text="到"/>
+                android:text="@string/to"/>
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/week_end"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:hint="结束"
+                android:hint="@string/end"
                 android:inputType="numberDecimal"
                 app:met_floatingLabel="normal"/>
         </LinearLayout>
@@ -137,35 +137,36 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="单周"/>
+                android:text="@string/odd_week"/>
 
             <RadioButton
                 android:id="@+id/even"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="双周"/>
+                android:text="@string/even_week"/>
 
             <RadioButton
+                android:id="@+id/common"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checked="true"
-                android:text="普通"/>
+                android:text="@string/common"/>
         </RadioGroup>
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/class_teacher"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="授课教师"
+            android:hint="@string/class_teacher"
             app:met_floatingLabel="normal"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/class_place"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="上课地点"
+            android:hint="@string/class_place"
             app:met_floatingLabel="normal"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>

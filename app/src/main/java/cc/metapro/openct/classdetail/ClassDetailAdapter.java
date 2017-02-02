@@ -17,6 +17,8 @@ package cc.metapro.openct.classdetail;
  */
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -27,7 +29,6 @@ import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -39,15 +40,24 @@ import cc.metapro.openct.utils.REHelper;
 
 class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDetailViewHolder> {
 
+    private static boolean addClass = false;
     private LayoutInflater mInflater;
     private List<ClassInfo> mClasses;
-
     private SparseArray<ClassDetailViewHolder> mViewHolders;
 
     ClassDetailAdapter(Context context, EnrichedClassInfo info) {
         mInflater = LayoutInflater.from(context);
         mClasses = info.getAllClasses();
+        addClass = false;
+        if (mClasses.isEmpty()) {
+            mClasses.add(new ClassInfo());
+            addClass = true;
+        }
         mViewHolders = new SparseArray<>(mClasses.size());
+    }
+
+    boolean isAddClass() {
+        return addClass;
     }
 
     void enableEdit() {
@@ -62,15 +72,36 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
         }
     }
 
-    List<ClassInfo> getResultClasses() {
-        List<ClassInfo> classes = new ArrayList<>();
+    ClassInfo getItem(int i) {
+        return mClasses.get(i);
+    }
+
+    void addItem(ClassInfo info) {
+        mClasses.add(info);
+    }
+
+    void removeItem(int i) {
+        mClasses.remove(i);
+        mViewHolders.remove(i);
+    }
+
+    @Nullable
+    ClassInfo getResultClass() {
+        ClassInfo result = null;
+        ClassInfo tmp = null;
         for (int i = 0; i < mViewHolders.size(); i++) {
-            ClassInfo info = mViewHolders.get(i).getClassInfo(mInflater.getContext());
-            if (info != null) {
-                classes.add(info);
+            if (i == 0) {
+                result = mViewHolders.valueAt(i).getClassInfo();
+                tmp = result;
+            } else {
+                ClassDetailViewHolder viewHolder = mViewHolders.valueAt(i);
+                if (viewHolder != null) {
+                    tmp.setSubClassInfo(viewHolder.getClassInfo());
+                    tmp = tmp.getSubClassInfo();
+                }
             }
         }
-        return classes;
+        return result;
     }
 
     @Override
@@ -100,6 +131,8 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
         RadioButton mOddRadio;
         @BindView(R.id.even)
         RadioButton mEvenRadio;
+        @BindView(R.id.common)
+        RadioButton mCommonRadio;
         @BindView(R.id.class_teacher)
         MaterialEditText mTeacher;
         @BindView(R.id.class_place)
@@ -120,9 +153,9 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
             ButterKnife.bind(this, itemView);
         }
 
-        void setInfo(ClassInfo info) {
-            if (info != null) {
-                id = info.getId();
+        void setInfo(@NonNull ClassInfo info) {
+            id = info.getId();
+            if (!addClass) {
                 mName.setText(info.getName());
                 mType.setText(info.getType());
                 mTeacher.setText(info.getTeacher());
@@ -142,8 +175,9 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                 } else if (info.isOddWeek()) {
                     mOddRadio.setChecked(true);
                 }
+
+                disableEdit();
             }
-            disableEdit();
         }
 
         void enableEdit() {
@@ -151,6 +185,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
             mType.setEnabled(true);
             mOddRadio.setEnabled(true);
             mEvenRadio.setEnabled(true);
+            mCommonRadio.setEnabled(true);
             mTeacher.setEnabled(true);
             mClassPlace.setEnabled(true);
             mTimeStart.setEnabled(true);
@@ -164,6 +199,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
             mType.setEnabled(false);
             mOddRadio.setEnabled(false);
             mEvenRadio.setEnabled(false);
+            mCommonRadio.setEnabled(false);
             mTeacher.setEnabled(false);
             mClassPlace.setEnabled(false);
             mTimeStart.setEnabled(false);
@@ -172,17 +208,17 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
             mWeekEnd.setEnabled(false);
         }
 
-        ClassInfo getClassInfo(Context context) {
+        ClassInfo getClassInfo() {
             String name = mName.getText().toString();
             String during = mWeekStart.getText().toString() + " - " + mWeekEnd.getText().toString();
-            String time = mTimeStart.getText().toString() + " - " + mTimeEnd.getText().toString() + " 节";
+            String time = mTimeStart.getText().toString() + " - " + mTimeEnd.getText().toString();
             if (!REHelper.isEmpty(name) && !REHelper.isEmpty(during) && !REHelper.isEmpty(time)) {
                 String type = mType.getText().toString();
                 String teacher = mTeacher.getText().toString();
                 String place = mClassPlace.getText().toString();
                 return new ClassInfo(id, name, type, time, during, teacher, place, mOddRadio.isChecked(), mEvenRadio.isChecked());
             } else {
-                Toast.makeText(context, "请输入课程名称, 上课时间, 课程周期\n(这些都很重要)", Toast.LENGTH_LONG).show();
+                Toast.makeText(mName.getContext(), "请输入课程名称, 上课时间, 课程周期\n(这些都很重要)", Toast.LENGTH_LONG).show();
             }
             return null;
         }
