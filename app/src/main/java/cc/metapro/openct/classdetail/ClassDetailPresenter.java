@@ -33,7 +33,7 @@ class ClassDetailPresenter implements ClassDetailContract.Presenter {
     ClassDetailPresenter(Context context, ClassDetailContract.View view) {
         mContext = context;
         DBManger manger = DBManger.getInstance(mContext);
-        mEnrichedClasses = manger.getClassInfos();
+        mEnrichedClasses = manger.getClasses();
         view.setPresenter(this);
     }
 

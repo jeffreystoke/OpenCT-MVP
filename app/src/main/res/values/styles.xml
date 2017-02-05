@@ -95,11 +95,8 @@
         <item name="android:textSize">18sp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:paddingEnd" tools:targetApi="jelly_bean_mr1">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:paddingStart" tools:targetApi="jelly_bean_mr1">16dp</item>
-        <item name="android:paddingLeft">16dp</item>
+        <item name="android:textColor">@color/material_black</item>
+        <item name="android:paddingBottom">20dp</item>
     </style>
 
     <!--RecyclerView Item 详细文字样式-->
@@ -107,7 +104,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:padding">16dp</item>
+        <item name="android:textColor">@color/material_grey</item>
     </style>
 
     <style name="TextAppearance.AppCompat.SeqText" parent="TextAppearance.AppCompat">

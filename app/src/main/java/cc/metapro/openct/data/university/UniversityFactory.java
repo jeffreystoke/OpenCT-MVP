@@ -18,14 +18,17 @@ package cc.metapro.openct.data.university;
 
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -42,49 +45,66 @@ import retrofit2.Response;
 public abstract class UniversityFactory {
 
     private static final String LOGIN_SUCCESS_PATTERN = "(当前)|(个人)";
-    static URLFactory urlFactory;
-    static UniversityService mService;
-    private static SchoolInterceptor interceptor;
-    UniversityInfo.CMSInfo mCMSInfo;
-    CmsFactory.ClassTableInfo mClassTableInfo;
-    CmsFactory.GradeTableInfo mGradeTableInfo;
 
-    UniversityInfo.LibraryInfo mLibraryInfo;
-    LibraryFactory.BorrowTableInfo mBorrowTableInfo;
+    static WebHelper webHelper;
+    static UniversityService mService;
+    static String SYS;
+    private static SchoolInterceptor interceptor;
+    private static String BASE_URL;
 
     private boolean loginSuccess;
 
-    @Nullable
-    String login(@NonNull Map<String, String> loginMap) throws Exception {
-        checkService();
-        // 准备监听获取登录页面
-        interceptor.setObserver(new SchoolInterceptor.redirectObserver<String>() {
-            @Override
-            public void onRedirect(String x) {
-                // 获取登录页面后, 若是动态地址则发生302重定向, 更新LoginRefer地址 (默认是登录地址)
-                urlFactory.setLoginPageURL(x);
+    UniversityFactory(String sys, String url) {
+        SYS = sys;
+        BASE_URL = url;
+        if (!BASE_URL.endsWith("/")) {
+            BASE_URL += "/";
+        }
+    }
+
+    @NonNull
+    static Map<String, Element> getTablesFromTargetPage(Document html) {
+        Map<String, Element> result = new HashMap<>();
+        Elements tables = html.select("table");
+        for (Element table : tables) {
+            String id = table.id();
+            if (TextUtils.isEmpty(id)) {
+                id = table.attr("name");
+                if (TextUtils.isEmpty(id)) {
+                    id = table.attr("class");
+                }
             }
-        });
+            result.put(id, table);
+        }
+        return result;
+    }
 
-        String loginPageHtml = mService.getPage(urlFactory.getBaseURL(), null).execute().body();
+    // 再次获取验证码
+    public static void getOneMoreCAPTCHA() throws IOException {
+        Response<ResponseBody> bodyResponse = mService.getCAPTCHA(webHelper.getCaptchaURL(), webHelper.getLoginPageURL()).execute();
+        ResponseBody body = bodyResponse.body();
+        StoreHelper.storeBytes(Constants.CAPTCHA_FILE, body.byteStream());
+    }
 
-        // 准备监听登录结果, 若成功则会 302 跳转用户中心
+    @NonNull
+    public Document login(@NonNull Map<String, String> loginMap) throws Exception {
+        // 准备监听登录结果, 若成功会 302 跳转用户中心
         loginSuccess = false;
         interceptor.setObserver(new SchoolInterceptor.redirectObserver<String>() {
             @Override
             public void onRedirect(String x) {
-                urlFactory.setUserCenterURL(x);
+                webHelper.setUserCenterURL(x);
                 loginSuccess = true;
             }
         });
 
-        String userCenter;
+        String userCenter = "";
 
-        // 教务网登录
-        if (mCMSInfo != null) {
-            // 强智教务系统 (特殊处理)
-            if (Constants.QZDATASOFT.equalsIgnoreCase(mCMSInfo.mCmsSys)) {
-                String serverResponse = mService.login(urlFactory.getBaseURL() + "Logon.do?method=logon&flag=sess", getBaseURL(), new HashMap<String, String>(0)).execute().body();
+        // 强智教务系统 (特殊处理)
+        if (Constants.QZDATASOFT.equalsIgnoreCase(SYS)) {
+            // 无需验证码则没有加密使用普通方法
+            if (webHelper.getLoginForm() != null) {
+                String serverResponse = mService.login(webHelper.getBaseURL() + "Logon.do?method=logon&flag=sess", getBaseURL(), new HashMap<String, String>(0)).execute().body();
                 // 加密登录 (模拟网页JS代码)
                 String scode = serverResponse.split("#")[0];
                 String sxh = serverResponse.split("#")[1];
@@ -103,76 +123,112 @@ public abstract class UniversityFactory {
                 map.put("useDogCode", "");
                 map.put("encoded", encoded);
                 map.put("RANDOMCODE", loginMap.get(Constants.CAPTCHA_KEY));
-                Document document = Jsoup.parse(loginPageHtml, urlFactory.getLoginPageURL());
-                String action = document.select("form").get(0).absUrl("action");
-                userCenter = mService.login(action, urlFactory.getLoginPageURL(), map).execute().body();
-                if (!TextUtils.isEmpty(userCenter) && Pattern.compile(LOGIN_SUCCESS_PATTERN).matcher(userCenter).find()) {
-                    return userCenter;
+                String action = webHelper.getLoginForm().absUrl("action");
+                userCenter = mService.login(action, webHelper.getLoginPageURL(), map).execute().body();
+                if (loginSuccess || (!TextUtils.isEmpty(userCenter) && Pattern.compile(LOGIN_SUCCESS_PATTERN).matcher(userCenter).find())) {
+                    return Jsoup.parse(userCenter, webHelper.getUserCenterURL());
                 } else {
                     throw new Exception("登录失败, 请检查您的用户名和密码\n(以及验证码)");
                 }
             }
         }
 
-        FormHandler handler = new FormHandler(loginPageHtml, urlFactory.getLoginPageURL());
-        Form form = handler.getForm(0);
-        if (form == null) {
-            throw new Exception("学校服务器好像出了点问题~\n要不等下再试试?");
-        }
-        Map<String, String> res = FormUtils.getLoginFiledMap(form, loginMap, true);
-        String action = res.get(Constants.ACTION_KEY);
-        res.remove(Constants.ACTION_KEY);
-        Response<String> stringResponse = mService.login(action, urlFactory.getLoginPageURL(), res).execute();
-        userCenter = stringResponse.body();
+        Document loginPageDom = webHelper.getLoginPageDOM();
+        if (loginPageDom != null) {
+            FormHandler formHandler = new FormHandler(loginPageDom);
+            Form targetForm = webHelper.getLoginForm() == null ? formHandler.getForm(0) : new Form(webHelper.getLoginForm());
+            if (targetForm == null) {
+                throw new Exception("学校服务器好像出了点问题~\n要不等下再试试?");
+            }
 
-        // 处理五秒防刷
-        if (userCenter.length() < 100) {
-            Thread.sleep(6 * 1000);
-            userCenter = mService.login(action, urlFactory.getLoginPageURL(), res).execute().body();
+            Map<String, String> res = FormUtils.getLoginFiledMap(targetForm, loginMap, true);
+
+            String action = res.get(Constants.ACTION_KEY);
+            res.remove(Constants.ACTION_KEY);
+            Response<String> stringResponse = mService.login(action, webHelper.getLoginPageURL(), res).execute();
+            userCenter = stringResponse.body();
+
+            // 处理五秒防刷
+            if (userCenter.length() < 100) {
+                Thread.sleep(6 * 1000);
+                userCenter = mService.login(action, webHelper.getLoginPageURL(), res).execute().body();
+            }
+
+            // 登录完成, 检测结果
+            if (loginSuccess || (!TextUtils.isEmpty(userCenter) && Pattern.compile(LOGIN_SUCCESS_PATTERN).matcher(userCenter).find())) {
+                return Jsoup.parse(userCenter, webHelper.getUserCenterURL());
+            } else {
+                throw new Exception("登录失败, 请检查您的用户名和密码\n(以及验证码)");
+            }
         }
 
-        // 登录完成, 检测结果
-        if (loginSuccess || (!TextUtils.isEmpty(userCenter) && Pattern.compile(LOGIN_SUCCESS_PATTERN).matcher(userCenter).find())) {
-            return userCenter;
-        } else {
-            throw new Exception("登录失败, 请检查您的用户名和密码\n(以及验证码)");
-        }
+        return Jsoup.parse(userCenter, webHelper.getUserCenterURL());
     }
 
-    public void getCAPTCHA() throws IOException {
+    // 初次获取验证码
+    public boolean prepareOnlineInfo() throws IOException {
         destroyService();
         checkService();
         interceptor.setObserver(new SchoolInterceptor.redirectObserver<String>() {
             @Override
             public void onRedirect(String x) {
                 // 获取登录页面后, 若是动态地址则发生302重定向, 更新LoginRefer地址 (默认是登录地址)
-                urlFactory.setLoginPageURL(x);
+                webHelper.setLoginPageURL(x);
             }
         });
 
-        String loginPageHtml = mService.getPage(urlFactory.getBaseURL(), null).execute().body();
+        String loginPageHtml = mService.getPage(webHelper.getBaseURL(), null).execute().body();
+        Document document = Jsoup.parse(loginPageHtml, webHelper.getLoginPageURL());
+        List<Document> domList = new ArrayList<>();
+        domList.add(document);
 
-        // 从登录页面解析出验证码图片地址
-        urlFactory.setCaptchaURL(loginPageHtml);
-        Response<ResponseBody> bodyResponse = mService.getCAPTCHA(urlFactory.getCaptchaURL()).execute();
-        ResponseBody body = bodyResponse.body();
-        StoreHelper.storeBytes(Constants.CAPTCHA_FILE, body.byteStream());
+        // 获取框架网页 (部分学校将登陆表单置于框架中)
+        Elements iFrames = document.select("iframe");
+        iFrames.addAll(document.select("span"));
+        for (Element iFrame : iFrames) {
+            String url = iFrame.attr("src");
+            if (TextUtils.isEmpty(url)) {
+                url = iFrame.absUrl("value");
+            } else {
+                url = iFrame.absUrl("src");
+            }
+            if (!TextUtils.isEmpty(url)) {
+                String frame = mService.getPage(url, webHelper.getLoginPageURL()).execute().body();
+                domList.add(Jsoup.parse(frame, url));
+            }
+        }
+
+        // 从所有获取到的页面中解析出验证码图片地址
+        webHelper.setCaptchaURL(domList);
+
+        // 获取验证码
+        String captchaURL = webHelper.getCaptchaURL();
+        if (!TextUtils.isEmpty(captchaURL)) {
+            Response<ResponseBody> bodyResponse = mService.getCAPTCHA(captchaURL, webHelper.getLoginPageURL()).execute();
+            ResponseBody body = bodyResponse.body();
+            StoreHelper.storeBytes(Constants.CAPTCHA_FILE, body.byteStream());
+            return true;
+        } else {
+            return false;
+        }
     }
 
     void checkService() {
         if (interceptor == null) {
-            urlFactory = new URLFactory(getBaseURL());
-            interceptor = new SchoolInterceptor(urlFactory.getBaseURL());
+            webHelper = new WebHelper(getBaseURL());
+            interceptor = new SchoolInterceptor(webHelper.getBaseURL());
             mService = interceptor.createSchoolService();
         }
     }
 
-    void destroyService() {
+    private void destroyService() {
         interceptor = null;
         mService = null;
-        urlFactory = null;
+        webHelper = null;
     }
 
-    protected abstract String getBaseURL();
+    protected String getBaseURL() {
+        return BASE_URL;
+    }
 
 }

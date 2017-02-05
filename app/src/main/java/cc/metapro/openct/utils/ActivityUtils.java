@@ -39,16 +39,16 @@ import cc.metapro.openct.customviews.CaptchaDialog;
 @Keep
 public final class ActivityUtils {
 
-    private static final String TAG = "ACTIVITY_UTILS";
+//    private static final String TAG = ActivityUtils.class.getSimpleName();
 
     private static ProgressDialog pd;
 
-    public static void addFragmentToActivity(@NonNull FragmentManager fragmentManager,
-                                             @NonNull Fragment fragment, int frameId) {
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(frameId, fragment);
-        transaction.commit();
-    }
+//    public static void addFragmentToActivity(@NonNull FragmentManager fragmentManager,
+//                                             @NonNull Fragment fragment, int frameId) {
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        transaction.add(frameId, fragment);
+//        transaction.commit();
+//    }
 
     public static ProgressDialog getProgressDialog(Context context, int messageId) {
         pd = new ProgressDialog(context);
@@ -64,63 +64,53 @@ public final class ActivityUtils {
     }
 
     public static void encryptionCheck(final Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.pref_need_encryption), true);
-        boolean cmsPasswordEncrypted = preferences.getBoolean(context.getString(R.string.pref_cms_password_encrypted), false);
-        boolean libPasswordEncrypted = preferences.getBoolean(context.getString(R.string.pref_lib_password_encrypted), false);
-
-        SharedPreferences.Editor editor = preferences.edit();
-        // 设置不加密, 将加密的部分还原
-        if (!needEncrypt) {
+        boolean cmsPasswordEncrypted = PrefHelper.getBoolean(context, R.string.pref_cms_password_encrypted);
+        boolean libPasswordEncrypted = PrefHelper.getBoolean(context, R.string.pref_lib_password_encrypted);
+        if (!PrefHelper.getBoolean(context, R.string.pref_need_encryption)) {
             if (cmsPasswordEncrypted) {
                 try {
-                    editor.putBoolean(context.getString(R.string.pref_cms_password_encrypted), false);
-                    String password = preferences.getString(context.getString(R.string.pref_cms_password), "");
+                    PrefHelper.putBoolean(context, R.string.pref_cms_password_encrypted, false);
+                    String password = PrefHelper.getString(context, R.string.pref_cms_password);
                     password = AESCrypt.decrypt(Constants.seed, password);
-                    editor.putString(context.getString(R.string.pref_cms_password), password);
+                    PrefHelper.putString(context, R.string.pref_cms_password, password);
                 } catch (GeneralSecurityException e) {
                     e.printStackTrace();
                 }
             }
+
             if (libPasswordEncrypted) {
                 try {
-                    editor.putBoolean(context.getString(R.string.pref_lib_password_encrypted), false);
-                    String password = preferences.getString(context.getString(R.string.pref_lib_password), "");
+                    PrefHelper.putBoolean(context, R.string.pref_lib_password_encrypted, false);
+                    String password = PrefHelper.getString(context, R.string.pref_lib_password);
                     password = AESCrypt.decrypt(Constants.seed, password);
-                    editor.putString(context.getString(R.string.pref_lib_password), password);
+                    PrefHelper.putString(context, R.string.pref_cms_password, password);
+                } catch (GeneralSecurityException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            if (!cmsPasswordEncrypted) {
+                try {
+                    PrefHelper.putBoolean(context, R.string.pref_cms_password_encrypted, true);
+                    String password = PrefHelper.getString(context, R.string.pref_cms_password);
+                    password = AESCrypt.encrypt(Constants.seed, password);
+                    PrefHelper.putString(context, R.string.pref_cms_password, password);
+                } catch (GeneralSecurityException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (!libPasswordEncrypted) {
+                try {
+                    PrefHelper.putBoolean(context, R.string.pref_lib_password_encrypted, true);
+                    String password = PrefHelper.getString(context, R.string.pref_lib_password);
+                    password = AESCrypt.encrypt(Constants.seed, password);
+                    PrefHelper.putString(context, R.string.pref_lib_password, password);
                 } catch (GeneralSecurityException e) {
                     e.printStackTrace();
                 }
             }
         }
-        // 设置加密, 将未加密的部分加密
-        else {
-            if (!cmsPasswordEncrypted) {
-                String cmsPassword = preferences.getString(context.getString(R.string.pref_cms_password), "");
-                try {
-                    if (!TextUtils.isEmpty(cmsPassword)) {
-                        cmsPassword = AESCrypt.encrypt(Constants.seed, cmsPassword);
-                        editor.putString(context.getString(R.string.pref_cms_password), cmsPassword);
-                        editor.putBoolean(context.getString(R.string.pref_cms_password_encrypted), true);
-                    }
-                } catch (Exception exp) {
-                    Log.e(TAG, exp.getMessage(), exp);
-                }
-            }
-            if (!libPasswordEncrypted) {
-                try {
-                    String libPassword = preferences.getString(context.getString(R.string.pref_lib_password), "");
-                    if (!TextUtils.isEmpty(libPassword)) {
-                        libPassword = AESCrypt.encrypt(Constants.seed, libPassword);
-                        editor.putString(context.getString(R.string.pref_lib_password), libPassword);
-                        editor.putBoolean(context.getString(R.string.pref_lib_password_encrypted), true);
-                    }
-                } catch (Exception exp) {
-                    Log.e(TAG, exp.getMessage(), exp);
-                }
-            }
-        }
-        editor.apply();
     }
 
     public static void showCaptchaDialog(FragmentManager manager, LoginPresenter presenter) {

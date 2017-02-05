@@ -17,6 +17,8 @@ package cc.metapro.openct.customviews;
  */
 
 import android.content.DialogInterface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
@@ -39,30 +41,55 @@ import butterknife.OnEditorAction;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.StoreHelper;
+import cc.metapro.openct.data.university.UniversityFactory;
 import cc.metapro.openct.utils.Constants;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 @Keep
 public class CaptchaDialog extends DialogFragment {
 
-    private static LoginPresenter mPresenter;
+    private static LoginPresenter mLoginPresenter;
     @BindView(R.id.captcha_image)
     TextView mTextView;
     @BindView(R.id.captcha_edit_text)
     MaterialEditText mEditText;
-    Disposable mDisposable;
 
     public static CaptchaDialog newInstance(LoginPresenter presenter) {
-        CaptchaDialog fragment = new CaptchaDialog();
-        mPresenter = presenter;
-        return fragment;
+        mLoginPresenter = presenter;
+        return new CaptchaDialog();
     }
 
     @OnClick(R.id.captcha_image)
     public void loadCaptcha() {
-        if (mPresenter != null) {
-            mDisposable = mPresenter.loadCaptcha(mTextView);
-        }
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> e) throws Exception {
+                UniversityFactory.getOneMoreCAPTCHA();
+                e.onComplete();
+            }
+        })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .onErrorReturn(new Function<Throwable, String>() {
+                    @Override
+                    public String apply(Throwable throwable) throws Exception {
+                        Toast.makeText(getContext(), "获取验证码失败\n" + throwable.getMessage(), Toast.LENGTH_LONG).show();
+                        return "";
+                    }
+                })
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        setCaptchaImg();
+                    }
+                })
+                .subscribe();
     }
 
     @OnClick(R.id.ok)
@@ -71,21 +98,15 @@ public class CaptchaDialog extends DialogFragment {
         if (TextUtils.isEmpty(code)) {
             Toast.makeText(getActivity(), R.string.enter_captcha, Toast.LENGTH_SHORT).show();
         } else {
+            mLoginPresenter.loadUserCenter(getFragmentManager(), code);
             dismiss();
-            mPresenter.loadTargetPage(code);
         }
     }
 
     @OnEditorAction(R.id.captcha_edit_text)
     public boolean onEnter(TextView textView, int i, KeyEvent keyEvent) {
         if (i == EditorInfo.IME_ACTION_GO || (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-            String code = mEditText.getText().toString();
-            if (TextUtils.isEmpty(code)) {
-                Toast.makeText(getActivity(), R.string.enter_captcha, Toast.LENGTH_SHORT).show();
-            } else {
-                dismiss();
-                mPresenter.loadTargetPage(code);
-            }
+            go();
             return true;
         }
         return false;
@@ -96,7 +117,16 @@ public class CaptchaDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.diaolg_captcha, container);
         ButterKnife.bind(this, view);
+        setCaptchaImg();
         return view;
+    }
+
+    private void setCaptchaImg() {
+        Drawable drawable = BitmapDrawable.createFromPath(Constants.CAPTCHA_FILE);
+        if (drawable != null) {
+            mTextView.setBackground(drawable);
+            mTextView.setText("");
+        }
     }
 
     @Override
@@ -108,7 +138,7 @@ public class CaptchaDialog extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mDisposable = mPresenter.loadCaptcha(mTextView);
+
     }
 
     @Override

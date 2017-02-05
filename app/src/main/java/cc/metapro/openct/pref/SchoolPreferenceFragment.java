@@ -16,6 +16,7 @@ package cc.metapro.openct.pref;
  * limitations under the License.
  */
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -34,8 +36,9 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
+import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.homepage.schoolselection.SchoolSelectionActivity;
+import cc.metapro.openct.myclass.schoolselection.SchoolSelectionActivity;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.widget.DailyClassWidget;
 
@@ -60,6 +63,24 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         setHasOptionsMenu(false);
         ButterKnife.bind(this, getActivity());
         mPreferences = new ArrayList<>();
+
+        findPreference(getString(R.string.pref_custom_action_clear)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("提示")
+                        .setMessage("这将清空你的操作记录, 是否继续?")
+                        .setNegativeButton("取消", null)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DBManger manger = DBManger.getInstance(getActivity());
+                                manger.delAdvancedCustomClassInfo();
+                            }
+                        }).show();
+                return false;
+            }
+        });
 
         mSchoolPreference = findPreference(getString(R.string.pref_school_name));
         mSchoolPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -110,6 +131,12 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         mPreferences.add(findPreference(getString(R.string.pref_custom_lib_url)));
         mPreferences.add(findPreference(getString(R.string.pref_homepage_selection)));
         mPreferences.add(findPreference(getString(R.string.pref_empty_class_motto)));
+        mPreferences.add(findPreference(getString(R.string.pref_class_name_re)));
+        mPreferences.add(findPreference(getString(R.string.pref_class_type_re)));
+        mPreferences.add(findPreference(getString(R.string.pref_class_time_re)));
+        mPreferences.add(findPreference(getString(R.string.pref_class_during_re)));
+        mPreferences.add(findPreference(getString(R.string.pref_class_teacher_re)));
+        mPreferences.add(findPreference(getString(R.string.pref_class_place_re)));
         bindListener();
     }
 

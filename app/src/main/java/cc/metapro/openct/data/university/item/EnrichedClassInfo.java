@@ -74,6 +74,11 @@ public class EnrichedClassInfo {
         color = Constants.getColor(0);
     }
 
+    public EnrichedClassInfo(ClassInfo info) {
+        this();
+        mClassInfo = info;
+    }
+
     /**
      * @param classInfo 基础课程信息 - 显示的信息
      * @param dayOfWeek 星期几
@@ -131,22 +136,8 @@ public class EnrichedClassInfo {
         }
     }
 
-    public void removeClassInfo(@NonNull ClassInfo info) {
-        if (isEmpty()) {
-            return;
-        }
-        ClassInfo p = mClassInfo;
-        if (p.equals(info)) {
-            mClassInfo = p.getSubClassInfo();
-        } else {
-            while (p.hasSubClass()) {
-                if (p.getSubClassInfo().equals(info)) {
-                    break;
-                }
-                p = p.getSubClassInfo();
-            }
-            p.setSubClassInfo(p.getSubClassInfo().getSubClassInfo());
-        }
+    public String getId() {
+        return id;
     }
 
     /**
@@ -188,9 +179,7 @@ public class EnrichedClassInfo {
         }
 
         card.setX(x);
-        int timeStart = REHelper.getStartEnd(target.getTime())[0];
-        int y = timeStart == -1 ? this.y : (timeStart - 1) * Constants.CLASS_BASE_HEIGHT;
-        card.setY(y);
+        card.setY(getY());
         card.setCardBackgroundColor(color);
 
         card.setOnClickListener(new View.OnClickListener() {
@@ -203,6 +192,10 @@ public class EnrichedClassInfo {
         ViewGroup.LayoutParams params = card.getLayoutParams();
         params.width = width;
         params.height = length * Constants.CLASS_BASE_HEIGHT;
+    }
+
+    private int getX() {
+        return Constants.CLASS_WIDTH * (mDayOfWeek - 1);
     }
 
     private int getY() {
@@ -259,27 +252,13 @@ public class EnrichedClassInfo {
         this.color = color;
     }
 
-    public void replaceClassInfo(ClassInfo oldInfo, ClassInfo newInfo) {
-        if (mClassInfo.equals(oldInfo)) {
-            newInfo.setSubClassInfo(mClassInfo.getSubClassInfo());
-            mClassInfo = newInfo;
-        } else if (mClassInfo.hasSubClass()) {
-            ClassInfo parent = mClassInfo;
-            while (parent.hasSubClass() && !parent.getSubClassInfo().equals(oldInfo)) {
-                parent = parent.getSubClassInfo();
-            }
-            newInfo.setSubClassInfo(parent.getSubClassInfo().getSubClassInfo());
-            parent.setSubClassInfo(newInfo);
-        }
-    }
-
     public void setClassInfo(ClassInfo info) {
         mClassInfo = info;
     }
 
     @Override
     public String toString() {
-        return isEmpty() ? "" : StoreHelper.getJsonText(this);
+        return isEmpty() ? "" : StoreHelper.toJson(this);
     }
 
     public boolean isEmpty() {

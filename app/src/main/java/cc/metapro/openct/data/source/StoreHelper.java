@@ -21,6 +21,9 @@ import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -30,6 +33,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 @Keep
 public final class StoreHelper {
@@ -68,8 +73,21 @@ public final class StoreHelper {
         }
     }
 
-    public static String getJsonText(Object infos) {
-        return gson.toJson(infos);
+    public static String toJson(Object o) {
+        return gson.toJson(o);
+    }
+
+    static <T> List<T> fromJsonList(String jsonList, Class<T> classType) {
+        JsonArray array = new JsonParser().parse(jsonList).getAsJsonArray();
+        List<T> result = new ArrayList<>();
+        for (JsonElement element : array) {
+            result.add(gson.fromJson(element, classType));
+        }
+        return result;
+    }
+
+    static <T> T fromJson(String jsonElement, Class<T> tClass) {
+        return gson.fromJson(jsonElement, tClass);
     }
 
     public static void storeBytes(String path, InputStream in) throws IOException {

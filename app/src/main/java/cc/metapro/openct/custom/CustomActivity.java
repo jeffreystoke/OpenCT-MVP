@@ -124,7 +124,7 @@ public class CustomActivity extends AppCompatActivity {
             mWebView.loadUrl(getUrl(mURL.getText().toString()));
             mClient.performActions(webScriptConfig, getSupportFragmentManager(), mWebView);
         } else {
-            Toast.makeText(this, "还没有自定义过, 请点击开始自定义", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.no_adv_custom_config, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -153,9 +153,9 @@ public class CustomActivity extends AppCompatActivity {
         }
 
         DBManger manger = DBManger.getInstance(this);
-        AdvancedCustomInfo customInfo = manger.getAdvancedCustomInfo();
+        AdvancedCustomInfo customInfo = manger.getAdvancedCustomInfo(this);
         if (customInfo != null) {
-            cmsClassURL = customInfo.mCmsClassURL;
+            cmsClassURL = customInfo.mCmsURL;
             if (!TextUtils.isEmpty(cmsClassURL)) {
                 mURL.setText(cmsClassURL);
             }
@@ -219,14 +219,14 @@ public class CustomActivity extends AppCompatActivity {
                             tableMap.put(id, element);
                         }
                         if (!SchoolWebViewClient.commonMode && SchoolWebViewClient.replayMode && !TextUtils.isEmpty(classTableInfo.mClassTableID)) {
-                            List<Element> list = UniversityUtils.getRawClasses(tableMap.get(classTableInfo.mClassTableID));
-                            List<EnrichedClassInfo> enrichedClasses = UniversityUtils.generateClasses(list, classTableInfo);
+                            List<Element> list = UniversityUtils.getRawClasses(tableMap.get(classTableInfo.mClassTableID), CustomActivity.this);
+                            List<EnrichedClassInfo> enrichedClasses = UniversityUtils.generateClasses(CustomActivity.this, list, classTableInfo);
                             DBManger manger = DBManger.getInstance(CustomActivity.this);
                             manger.updateClasses(enrichedClasses);
                             Toast.makeText(CustomActivity.this, "获取课表成功, 请回到主界面查看课表", Toast.LENGTH_LONG).show();
                         } else {
                             TableChooseDialog
-                                    .newInstance(tableMap)
+                                    .newInstance(TableChooseDialog.CLASS_TABLE_DIALOG, tableMap, null)
                                     .show(getSupportFragmentManager(), "table_choose");
                         }
                     }

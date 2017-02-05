@@ -23,21 +23,11 @@ import android.support.annotation.Keep;
 import android.support.v4.app.FragmentManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.util.concurrent.TimeUnit;
-
 import cc.metapro.openct.custom.CustomConfiguration;
-import cc.metapro.openct.data.openctservice.QuotePreservingCookieJar;
 import io.reactivex.Observer;
-import okhttp3.Call;
-import okhttp3.Headers;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 
 @Keep
 public class SchoolWebViewClient extends WebViewClient {
@@ -54,7 +44,7 @@ public class SchoolWebViewClient extends WebViewClient {
                     "window." + JSInteraction.JSInterface + ".getClicked(id);}\"";
     public static boolean replayMode = false;
     public static boolean commonMode = true;
-//    private OkHttpClient mOkHttpClient;
+    //    private OkHttpClient mOkHttpClient;
     private Observer<Integer> mObserver;
 
     public SchoolWebViewClient() {

@@ -39,7 +39,7 @@ public class Form {
 
     }
 
-    Form(Element form) {
+    public Form(Element form) {
         mName = form.attr("name");
         mId = form.attr("id");
         mMethod = form.attr("method");

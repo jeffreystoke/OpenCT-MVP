@@ -17,7 +17,7 @@
 
 <resources>
     <!--是否初始化-->
-    <string name="pref_init">init</string>
+    <string name="pref_initialed">initialed</string>
 
     <!--学校信息-->
     <string name="pref_school_name">school_name</string>
@@ -61,13 +61,19 @@
     <string name="pref_custom_lib_sys">custom_lib_sys</string>
     <string name="pref_custom_cms_url">custom_cms_url</string>
     <string name="pref_custom_lib_url">custom_lib_url</string>
-    <string name="pref_custom_cms_captcha">custom_cms_captcha</string>
-    <string name="pref_custom_cms_dyn_url">custom_cms_dyn_url</string>
-    <string name="pref_custom_cms_inner">custom_cms_inner</string>
     <string name="pref_custom_school_name">custom_school_name</string>
-    <string name="pref_custom_lib_captcha">custom_lib_captcha</string>
-    <string name="pref_custom_lib_dyn_url">custom_lib_dyn_url</string>
-    <string name="pref_custom_lib_inner">custom_lib_inner</string>
+
+    <!--操作信息清除-->
+    <string name="pref_custom_action_clear">custom_action_clear</string>
+
+    <!--课程表正则表达式-->
+    <string name="pref_class_line_based">class_line_based</string>
+    <string name="pref_class_name_re">class_name_re</string>
+    <string name="pref_class_time_re">class_time_re</string>
+    <string name="pref_class_during_re">class_during_re</string>
+    <string name="pref_class_type_re">class_type_re</string>
+    <string name="pref_class_teacher_re">class_teacher_re</string>
+    <string name="pref_class_place_re">class_place_re</string>
 
     <!--周数键值-->
     <string-array name="pref_week_seq_keys">

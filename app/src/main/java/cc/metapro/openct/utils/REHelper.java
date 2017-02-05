@@ -43,13 +43,21 @@ public final class REHelper {
         }
         Matcher first = Pattern.compile(timeDuringPattern).matcher(s);
         if (first.find()) {
-            int start = Integer.parseInt(first.group());
-            Matcher last = Pattern.compile(lastNumberPattern).matcher(s);
-            int end = start;
-            if (last.find()) {
-                end = Integer.parseInt(last.group());
+            String sS = first.group();
+            if (!TextUtils.isEmpty(sS)) {
+                int start = Integer.parseInt(first.group());
+                Matcher last = Pattern.compile(lastNumberPattern).matcher(s);
+                int end = start;
+                if (last.find()) {
+                    String eS = last.group();
+                    if (!TextUtils.isEmpty(eS)) {
+                        end = Integer.parseInt(eS);
+                    }
+                }
+                return new int[]{start, end};
+            } else {
+                return new int[]{-1, -1};
             }
-            return new int[]{start, end};
         } else {
             return new int[]{-1, -1};
         }

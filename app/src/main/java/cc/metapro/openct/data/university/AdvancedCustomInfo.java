@@ -16,8 +16,12 @@ package cc.metapro.openct.data.university;
  * limitations under the License.
  */
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.Keep;
 
+import cc.metapro.openct.R;
 import cc.metapro.openct.custom.CustomConfiguration;
 import cc.metapro.openct.data.source.StoreHelper;
 
@@ -25,13 +29,26 @@ import cc.metapro.openct.data.source.StoreHelper;
 public class AdvancedCustomInfo {
 
     public CustomConfiguration mWebScriptConfiguration;
-
     public CmsFactory.ClassTableInfo mClassTableInfo;
+    public String CLASS_URL_PATTERN;
+    public String GRADE_URL_PATTERN;
+    public String BORROW_URL_PATTERN;
+    public String GRADE_TABLE_ID;
+    public String BORROW_TABLE_ID;
+    public String mCmsURL;
+    private String mSchoolName;
 
-    public String mCmsClassURL;
+    public AdvancedCustomInfo(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if (preferences.getBoolean(context.getString(R.string.pref_custom_enable), false)) {
+            mSchoolName = preferences.getString(context.getString(R.string.pref_school_name), "openct");
+        } else {
+            mSchoolName = preferences.getString(context.getString(R.string.pref_school_name), context.getResources().getStringArray(R.array.school_names)[0]);
+        }
+    }
 
-    public AdvancedCustomInfo() {
-
+    public String getSchoolName() {
+        return mSchoolName;
     }
 
     public void setClassTableInfo(CmsFactory.ClassTableInfo classTableInfo) {
@@ -42,12 +59,12 @@ public class AdvancedCustomInfo {
         mWebScriptConfiguration = webScriptConfiguration;
     }
 
-    public void setCmsClassURL(String cmsClassURL) {
-        mCmsClassURL = cmsClassURL;
+    public void setCmsURL(String cmsURL) {
+        mCmsURL = cmsURL;
     }
 
     @Override
     public String toString() {
-        return StoreHelper.getJsonText(this);
+        return StoreHelper.toJson(this);
     }
 }

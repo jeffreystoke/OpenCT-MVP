@@ -51,12 +51,12 @@ public class Loader {
 
     public static LibraryFactory getLibrary(Context context) {
         checkUniversity(context);
-        return new LibraryFactory(university.mLibraryInfo);
+        return new LibraryFactory(university.libSys, university.libURL);
     }
 
     public static CmsFactory getCms(Context context) {
         checkUniversity(context);
-        return new CmsFactory(university.mCMSInfo);
+        return new CmsFactory(university.cmsSys, university.cmsURL);
     }
 
     private static void checkUniversity(Context context) {
@@ -106,24 +106,6 @@ public class Loader {
         return map;
     }
 
-    public static boolean cmsNeedCAPTCHA(Context context) {
-        checkUniversity(context);
-        try {
-            return university.mCMSInfo.mNeedCAPTCHA;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public static boolean libNeedCAPTCHA(Context context) {
-        checkUniversity(context);
-        try {
-            return university.mLibraryInfo.mNeedCAPTCHA;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public static int getCurrentWeek(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return Integer.parseInt(preferences.getString(context.getString(R.string.pref_current_week), "1"));
@@ -138,13 +120,11 @@ public class Loader {
 
         UniversityInfo university;
         if (custom) {
-            UniversityInfo.SchoolInfo info = manger.getCustomSchoolInfo();
-            if (info != null) {
-                university = manger.getUniversity(info);
-            } else {
-                university = manger.getUniversity(preferences.getString(context.getString(R.string.pref_school_name), defaultSchool));
-            }
+            university = manger.getCustomUniversity();
         } else {
+            university = manger.getUniversity(preferences.getString(context.getString(R.string.pref_school_name), defaultSchool));
+        }
+        if (university == null) {
             university = manger.getUniversity(preferences.getString(context.getString(R.string.pref_school_name), defaultSchool));
         }
 

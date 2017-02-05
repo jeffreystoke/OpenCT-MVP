@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import cc.metapro.openct.data.university.item.BookInfo;
-import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.HTMLUtils.Form;
 import cc.metapro.openct.utils.HTMLUtils.FormHandler;
@@ -43,21 +42,27 @@ import retrofit2.Call;
 @Keep
 public class LibraryFactory extends UniversityFactory {
 
-    private static final String TAG = "LIB_FACTORY";
-
-    private static final Pattern nextPagePattern = Pattern.compile("(下一页)");
-
+    private static final String TAG = LibraryFactory.class.getSimpleName();
+    private static final Pattern nextPagePattern = Pattern.compile("(下一?1?页)");
     private static String nextPageURL = "";
     private static String queryTmp = "";
-
     private LibURLFactory mURLFactory;
 
-    public LibraryFactory(@NonNull UniversityInfo.LibraryInfo libraryInfo) {
-        mBorrowTableInfo = libraryInfo.mBorrowTableInfo;
-        mLibraryInfo = libraryInfo;
-        mURLFactory = new LibURLFactory(mLibraryInfo.mLibSys, libraryInfo.mLibURL);
+    public LibraryFactory(String libSys, String libBaseURL) {
+        super(libSys, libBaseURL);
+        mURLFactory = new LibURLFactory(libBaseURL);
     }
 
+    @NonNull
+    public Map<String, Element> getBorrowPageTables(String url) throws Exception {
+        String tablePage = mService.getPage(url, webHelper.getUserCenterURL()).execute().body();
+        tablePage = tablePage.replaceAll(Constants.BR, Constants.BR_REPLACER);
+        return getTablesFromTargetPage(Jsoup.parse(tablePage, url));
+    }
+
+    /**
+     * 以下为图书馆搜索, 加载下一页功能, 页面即结果, 解析工作需要分系统操作
+     */
     @NonNull
     public List<BookInfo> search(@NonNull Map<String, String> searchMap) throws Exception {
         checkService();
@@ -77,13 +82,15 @@ public class LibraryFactory extends UniversityFactory {
         FormHandler handler = new FormHandler(searchPage, mURLFactory.SEARCH_URL);
         Form form = handler.getForm(0);
 
-        if (form == null) return new ArrayList<>(0);
+        if (form == null) {
+            return new ArrayList<>(0);
+        }
         searchMap.put(Constants.SEARCH_TYPE_KEY, typeTrans(searchMap.get(Constants.SEARCH_CONTENT_KEY)));
-        Map<String, String> res = FormUtils.getLibSearchQueryMap(form, searchMap);
+        Map<String, String> postMap = FormUtils.getLibSearchQueryMap(form, searchMap);
 
-        String action = res.get(Constants.ACTION_KEY);
-        res.remove(Constants.ACTION_KEY);
-        Call<String> call = mService.searchLibrary(action, action, res);
+        String action = postMap.get(Constants.ACTION_KEY);
+        postMap.remove(Constants.ACTION_KEY);
+        Call<String> call = mService.searchLibrary(action, action, postMap);
         queryTmp = call.request().url().toString();
         String resultPage = call.execute().body();
         prepareNextPageURL(resultPage);
@@ -96,7 +103,7 @@ public class LibraryFactory extends UniversityFactory {
         if (TextUtils.isEmpty(nextPageURL)) {
             return new ArrayList<>(0);
         }
-        if (Constants.LIBSYS.equalsIgnoreCase(mLibraryInfo.mLibSys)) {
+        if (Constants.NJHUIWEN.equalsIgnoreCase(SYS)) {
             resultPage = mService.getPage(nextPageURL, queryTmp).execute().body();
         }
         prepareNextPageURL(resultPage);
@@ -123,18 +130,6 @@ public class LibraryFactory extends UniversityFactory {
     }
 
     @NonNull
-    public List<BorrowInfo> getBorrowInfo(@NonNull Map<String, String> loginMap) throws Exception {
-        destroyService();
-        String page = login(loginMap);
-        String borrowPage = null;
-        if (Constants.LIBSYS.equalsIgnoreCase(mLibraryInfo.mLibSys)) {
-            borrowPage = mService.getPage(mURLFactory.BORROW_URL, mURLFactory.USER_HOME_URL).execute().body();
-        }
-        destroyService();
-        return TextUtils.isEmpty(borrowPage) ? new ArrayList<BorrowInfo>(0) : parseBorrow(borrowPage);
-    }
-
-    @NonNull
     private String typeTrans(String cnType) {
         switch (cnType) {
             case "书名":
@@ -154,7 +149,7 @@ public class LibraryFactory extends UniversityFactory {
 
     @NonNull
     private List<BookInfo> parseBook(@NonNull String resultPage) {
-        List<BookInfo> bookInfos = new ArrayList<>();
+        List<BookInfo> bookList = new ArrayList<>();
         Document document = Jsoup.parse(resultPage, mURLFactory.SEARCH_URL);
         Elements elements = document.select("li[class=book_list_info]");
         Elements tmp = document.select("div[class=list_books]");
@@ -176,34 +171,9 @@ public class LibraryFactory extends UniversityFactory {
             String remains = els_body.text();
             author = author.substring(author.indexOf(remains) + remains.length());
             BookInfo b = new BookInfo(title, author, content, remains, href);
-            bookInfos.add(b);
+            bookList.add(b);
         }
-        return bookInfos;
-    }
-
-    @NonNull
-    private List<BorrowInfo> parseBorrow(@NonNull String resultPage) {
-        List<BorrowInfo> list = new ArrayList<>();
-        Document doc = Jsoup.parse(resultPage);
-        Elements elements = doc.select("table");
-        for (Element e : elements) {
-            if (e.attr("class").equals(mBorrowTableInfo.mTableID)) {
-                Elements trs = e.select("tr");
-                trs.remove(0);
-                for (Element tr : trs) {
-                    Elements entry = tr.select("td");
-                    String title = entry.get(mBorrowTableInfo.mTitleIndex).text().split("/")[0];
-                    String author = entry.get(mBorrowTableInfo.mTitleIndex).text().split("/")[1];
-                    BorrowInfo info = new BorrowInfo(
-                            title, author, "",
-                            entry.get(mBorrowTableInfo.mBorrowDateIndex).text(),
-                            entry.get(mBorrowTableInfo.mDueDateIndexIndex).text());
-                    list.add(info);
-                }
-                return list;
-            }
-        }
-        return new ArrayList<>(0);
+        return bookList;
     }
 
     @Override
@@ -211,27 +181,19 @@ public class LibraryFactory extends UniversityFactory {
         return mURLFactory.LOGIN_REF;
     }
 
-    public static class BorrowTableInfo {
-        int mTitleIndex, mBorrowDateIndex, mDueDateIndexIndex;
-        String mTableID;
-    }
-
     private class LibURLFactory {
 
-        String LOGIN_URL, LOGIN_REF, SEARCH_URL, SEARCH_REF, USER_HOME_URL, BORROW_URL;
+        String LOGIN_URL, LOGIN_REF, SEARCH_URL, SEARCH_REF;
 
-        LibURLFactory(@NonNull String libSys, @NonNull String libBaseURL) {
+        LibURLFactory(String libBaseURL) {
             if (!libBaseURL.endsWith("/")) {
                 libBaseURL += "/";
             }
-
-            if (Constants.LIBSYS.equalsIgnoreCase(libSys)) {
+            if (Constants.NJHUIWEN.equalsIgnoreCase(SYS)) {
                 SEARCH_URL = libBaseURL + "opac/search.php";
-                SEARCH_REF = libBaseURL + "opac/openlink.php?";
+                SEARCH_REF = libBaseURL + "opac/openlink.php";
                 LOGIN_URL = libBaseURL + "reader/redr_verify.php";
                 LOGIN_REF = libBaseURL + "reader/login.php";
-                USER_HOME_URL = libBaseURL + "reader/redr_info.php";
-                BORROW_URL = libBaseURL + "reader/book_lst.php";
             }
         }
     }

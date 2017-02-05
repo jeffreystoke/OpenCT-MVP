@@ -34,20 +34,23 @@ public final class Constants {
     public static final String URL = "url";
 
     public static final int DAILY_CLASSES = 12;
-
     public static final int CLASS_LENGTH = 1;
+
     // 正方系列
     public static final String ZFSOFT = "zfsoft";
-    public static final String ZFSOFT2012 = "zfsoft2012";
-    public static final String ZFSOFT2008 = "zfsoft2008";
     // 苏文
     public static final String NJSUWEN = "njsuwen";
+    // 普通
+    public static final String COMMON = "custom";
     // 强智
     public static final String QZDATASOFT = "qzdatasoft";
     // 青果
     public static final String KINGOSOFT = "kingosoft";
+    // 清元优软
+    public static final String URP = "urp";
+
     // 汇文
-    public static final String LIBSYS = "libsys";
+    public static final String NJHUIWEN = "njhuiwen";
     // class info background colors
     public static final String[] colorString = {
             "#8BC34A", "#03A9F4", "#FF9800", "#C5CAE9", "#FFCDD2", "#009688", "#536DFE"

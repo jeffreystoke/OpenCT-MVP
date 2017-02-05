@@ -50,8 +50,7 @@ public class FormDialog extends DialogFragment {
     public static FormDialog newInstance(Form form, LoginPresenter presenter) {
         mForm = form;
         mPresenter = presenter;
-        FormDialog dialog = new FormDialog();
-        return dialog;
+        return new FormDialog();
     }
 
     @OnClick(R.id.cancel)
@@ -81,7 +80,7 @@ public class FormDialog extends DialogFragment {
                 map.put(target.attr("name"), target.attr("value"));
             }
         }
-        mPresenter.loadQuery(mForm.getAction(), map);
+        mPresenter.loadQuery(getFragmentManager(), mForm.getAction(), map);
         dismiss();
     }
 

@@ -68,11 +68,7 @@ public class GradeActivity extends AppCompatActivity implements GradeContract.Vi
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         } else {
-            if (Loader.cmsNeedCAPTCHA(this)) {
-                ActivityUtils.showCaptchaDialog(getSupportFragmentManager(), mPresenter);
-            } else {
-                mPresenter.loadTargetPage("");
-            }
+            mPresenter.loadOnlineInfo(getSupportFragmentManager());
         }
     }
 
@@ -118,11 +114,6 @@ public class GradeActivity extends AppCompatActivity implements GradeContract.Vi
         ActivityUtils.dismissProgressDialog();
         CETResultDialog.newInstance(resultMap)
                 .show(getSupportFragmentManager(), "cet_result");
-    }
-
-    @Override
-    public void showFormDialog(Form form) {
-        FormDialog.newInstance(form, mPresenter).show(getSupportFragmentManager(), "form_dialog");
     }
 
     @Override

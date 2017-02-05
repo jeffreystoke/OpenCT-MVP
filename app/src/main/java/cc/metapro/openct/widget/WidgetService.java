@@ -56,7 +56,7 @@ public class WidgetService extends RemoteViewsService {
         public void onDataSetChanged() {
             DBManger manger = DBManger.getInstance(mContext);
             int week = Loader.getCurrentWeek(mContext);
-            List<EnrichedClassInfo> allClasses = manger.getClassInfos();
+            List<EnrichedClassInfo> allClasses = manger.getClasses();
             mDailyClasses = new ArrayList<>(0);
             if (allClasses.size() != 0) {
                 for (EnrichedClassInfo info : allClasses) {

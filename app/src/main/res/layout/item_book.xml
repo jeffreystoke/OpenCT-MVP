@@ -13,29 +13,19 @@
 
         <TextView
             android:id="@+id/book_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:textColor="@color/material_black"
-            android:textSize="20sp"/>
+            style="@style/ItemTitleText"/>
 
         <TextView
             android:id="@+id/author"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="20dp"/>
+            style="@style/ItemContentText"/>
 
         <TextView
             android:id="@+id/content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"/>
+            style="@style/ItemContentText"/>
 
         <TextView
             android:id="@+id/store_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"/>
+            style="@style/ItemContentText"/>
 
         <TextView
             android:id="@+id/load_raw"

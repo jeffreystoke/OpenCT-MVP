@@ -40,7 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.homepage.schoolselection.SchoolSelectionActivity;
+import cc.metapro.openct.myclass.schoolselection.SchoolSelectionActivity;
 import cc.metapro.openct.utils.ActivityUtils;
 
 @Keep
@@ -85,10 +85,9 @@ public class InitDialog extends DialogFragment {
         editor.putString(getString(R.string.pref_cms_password), cmsPassword.getText().toString());
         editor.putString(getString(R.string.pref_lib_username), libUsername.getText().toString());
         editor.putString(getString(R.string.pref_lib_password), libPassword.getText().toString());
-        editor.putBoolean(getString(R.string.pref_init), true);
+        editor.putBoolean(getString(R.string.pref_initialed), true);
         editor.putBoolean(getString(R.string.pref_need_encryption), true);
         editor.apply();
-        ActivityUtils.encryptionCheck(getActivity());
         Loader.needUpdateUniversity();
         dismiss();
     }

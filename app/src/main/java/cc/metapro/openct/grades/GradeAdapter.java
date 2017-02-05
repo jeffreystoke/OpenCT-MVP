@@ -19,8 +19,6 @@ package cc.metapro.openct.grades;
 import android.content.Context;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +32,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.GradeInfo;
-import cc.metapro.openct.utils.REHelper;
 
 @Keep
 class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHolder> {
@@ -58,14 +55,6 @@ class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHolder> {
     public void onBindViewHolder(GradeViewHolder holder, int position) {
         final GradeInfo g = mGrades.get(position);
         holder.setInfo(g);
-        holder.setListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder ab = new AlertDialog.Builder(mInflater.getContext());
-                ab.setMessage(g.toFullString());
-                ab.show();
-            }
-        });
     }
 
     @Override
@@ -82,33 +71,13 @@ class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHolder> {
         @BindView(R.id.grade_class_name)
         TextView mClassName;
 
-        @BindView(R.id.grade_level)
-        TextView mGradeSummary;
-
-        private View mView;
-
         GradeViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            mView = itemView;
         }
 
         void setInfo(GradeInfo info) {
-            mClassName.setText(info.getClassName());
-            String summary = info.getGradeSummary();
-            mGradeSummary.setText("总评成绩  " + summary);
-            try {
-                int i = Integer.parseInt(REHelper.delDoubleWidthChar(summary));
-                if (i < 60) {
-                    mGradeSummary.setTextColor(ContextCompat.getColor(mGradeSummary.getContext(), R.color.colorAccent));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        void setListener(View.OnClickListener l) {
-            mView.setOnClickListener(l);
+            mClassName.setText(info.toFullString());
         }
     }
 }

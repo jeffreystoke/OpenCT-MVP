@@ -6,16 +6,6 @@
               android:orientation="vertical"
               tools:context=".pref.SettingsActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            style="@style/AppTheme.Toolbar">
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
-
     <FrameLayout
         android:id="@+id/pref_container"
         android:layout_width="match_parent"

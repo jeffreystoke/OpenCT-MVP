@@ -70,18 +70,6 @@ class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowViewHolder>
         @BindView(R.id.borrow_item_title)
         TextView mTitle;
 
-        @BindView(R.id.borrow_item_author)
-        TextView mAuthor;
-
-        @BindView(R.id.borrow_item_content)
-        TextView mContent;
-
-        @BindView(R.id.borrow_item_time)
-        TextView mBorrowTime;
-
-        @BindView(R.id.borrow_item_due)
-        TextView mDueTime;
-
         BorrowViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -89,11 +77,7 @@ class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowViewHolder>
 
         public void setInfo(@Nullable BorrowInfo info) {
             if (info != null) {
-                mTitle.setText(info.getBookTitle());
-                mAuthor.setText(info.getAuthor());
-                mContent.setText(info.getContent());
-                mBorrowTime.setText(info.getBorrowDate());
-                mDueTime.setText(info.getDueDate());
+                mTitle.setText(info.toFullString());
             }
         }
     }

@@ -18,91 +18,15 @@ package cc.metapro.openct.data.university;
 
 import android.support.annotation.Keep;
 
-import com.google.gson.Gson;
-
-import java.util.Map;
-
-import cc.metapro.openct.data.source.DBHelper;
 import cc.metapro.openct.data.source.StoreHelper;
 
 @Keep
 public class UniversityInfo {
 
-    public CMSInfo mCMSInfo;
-    public LibraryInfo mLibraryInfo;
+    public String name, cmsSys, cmsURL, libSys, libURL;
 
-    public static class LibraryInfo {
-
-        public String mLibSys, mLibURL;
-
-        public boolean mNeedCAPTCHA;
-
-        public LibraryFactory.BorrowTableInfo mBorrowTableInfo;
-
-        @Override
-        public String toString() {
-            return StoreHelper.getJsonText(this);
-        }
-    }
-
-    public static class CMSInfo {
-
-        public boolean mNeedCAPTCHA, mDynLoginURL;
-
-        public String mCmsSys, mCmsURL;
-
-        public CmsFactory.ClassTableInfo mClassTableInfo;
-        public CmsFactory.GradeTableInfo mGradeTableInfo;
-
-        @Override
-        public String toString() {
-            return StoreHelper.getJsonText(this);
-        }
-    }
-
-    public static class SchoolInfo {
-
-        public String name, cmsSys, cmsURL, libSys, libURL;
-
-        public boolean
-                cmsDynURL, cmsCaptcha, cmsInnerAccess,
-                libDynURL, libCaptcha, libInnerAccess;
-
-        public SchoolInfo() {
-
-        }
-
-        public SchoolInfo(Map<String, String> stringMap, Map<String, Boolean> booleanMap) {
-            try {
-                name = stringMap.get(DBHelper.SCHOOL_NAME);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try {
-                cmsSys = stringMap.get(DBHelper.CMS_SYS);
-                cmsURL = stringMap.get(DBHelper.CMS_URL);
-                cmsDynURL = booleanMap.get(DBHelper.CMS_DYN_URL);
-                cmsCaptcha = booleanMap.get(DBHelper.CMS_CAPTCHA);
-                cmsInnerAccess = booleanMap.get(DBHelper.CMS_INNER_ACCESS);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                libSys = stringMap.get(DBHelper.LIB_SYS);
-                libURL = stringMap.get(DBHelper.LIB_URL);
-                libDynURL = booleanMap.get(DBHelper.LIB_DYN_URL);
-                libCaptcha = booleanMap.get(DBHelper.LIB_CAPTCHA);
-                libInnerAccess = booleanMap.get(DBHelper.LIB_INNER_ACCESS);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public String toString() {
-            Gson gson = new Gson();
-            return gson.toJson(this);
-        }
+    @Override
+    public String toString() {
+        return StoreHelper.toJson(this);
     }
 }

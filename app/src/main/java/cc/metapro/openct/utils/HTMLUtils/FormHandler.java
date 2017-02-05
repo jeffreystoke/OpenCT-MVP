@@ -32,13 +32,16 @@ public class FormHandler {
     // use linkedHashMap to ensure form seq
     private LinkedHashMap<String, List<Form>> mForms;
 
-    public FormHandler(@NonNull String html, String baseURL) {
+    public FormHandler(Document document) {
         mForms = new LinkedHashMap<>();
-        Document document = Jsoup.parse(html, baseURL);
         Elements elements = document.getElementsByTag("form");
         for (Element form : elements) {
             addForm(form);
         }
+    }
+
+    public FormHandler(@NonNull String html, String baseURL) {
+        this(Jsoup.parse(html, baseURL));
     }
 
     private void addForm(Element form) {

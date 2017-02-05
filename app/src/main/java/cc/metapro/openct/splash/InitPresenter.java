@@ -1,4 +1,4 @@
-package cc.metapro.openct.borrow;
+package cc.metapro.openct.splash;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,32 +16,10 @@ package cc.metapro.openct.borrow;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
+public class InitPresenter implements InitContract.Presenter {
 
-import java.util.List;
-
-import cc.metapro.openct.BaseView;
-import cc.metapro.openct.LoginPresenter;
-import cc.metapro.openct.data.university.item.BorrowInfo;
-
-@Keep
-interface LibBorrowContract {
-
-    interface View extends BaseView<Presenter> {
-
-        void showDue(List<BorrowInfo> borrows);
-
-        void showAll(List<BorrowInfo> borrows);
-
-    }
-
-    interface Presenter extends LoginPresenter {
-
-        void loadLocalBorrows();
-
-        void storeBorrows();
-
-        List<BorrowInfo> getBorrows();
+    @Override
+    public void start() {
 
     }
 }

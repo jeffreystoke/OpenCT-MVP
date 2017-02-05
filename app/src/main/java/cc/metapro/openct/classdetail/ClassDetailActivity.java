@@ -151,9 +151,8 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
             }
 
             @Override
-            public void onItemDismiss(int position) {
+            public void onItemDismiss(final int position) {
                 final ClassInfo toDel = mDetailAdapter.getItem(position);
-                mInfo.removeClassInfo(toDel);
                 mDetailAdapter.removeItem(position);
                 mDetailAdapter.notifyDataSetChanged();
                 classInfoModified();
@@ -161,9 +160,15 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
                         .setAction(R.string.cancel, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                mDetailAdapter.addItem(toDel);
+                                mDetailAdapter.addItem(position, toDel);
                                 mDetailAdapter.notifyDataSetChanged();
-                                classInfoModified();
+                                mRecyclerView.smoothScrollToPosition(position);
+                                mRecyclerView.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        classInfoModified();
+                                    }
+                                }, 500);
                             }
                         }).show();
             }

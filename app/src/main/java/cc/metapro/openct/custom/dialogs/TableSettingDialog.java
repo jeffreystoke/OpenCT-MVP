@@ -26,10 +26,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.rengwuxian.materialedittext.MaterialEditText;
+import org.jsoup.nodes.Element;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,9 +51,9 @@ public class TableSettingDialog extends DialogFragment {
     public static final String PLACE = "上课地点";
     public static final String TEACHER = "授课教师";
     public static final String[] titles = {NAME, TIME, TYPE, DURING, PLACE, TEACHER};
-    private static final String TAG = "openct_table_setting";
     private static String[] mStrings;
     private static TableSettingCallBack mCallBack;
+    private final String TAG = TableSettingDialog.class.getSimpleName();
     @BindView(R.id.info)
     TextView mInfo;
     @BindView(R.id.options_layout)
@@ -63,13 +62,23 @@ public class TableSettingDialog extends DialogFragment {
     private int mIndex = 0;
 
     private Map<String, Integer> mResultIndexMap;
-    private Map<String, MaterialEditText> mEditTextMap;
 
-    public static TableSettingDialog newInstance(String sample, TableSettingCallBack callBack) {
-        sample = sample.split(Constants.BR_REPLACER + Constants.BR_REPLACER + "+")[0];
-        mStrings = sample.split(Constants.BR_REPLACER);
-        mCallBack = callBack;
-        return new TableSettingDialog();
+    public static TableSettingDialog newInstance(List<Element> rawInfoList, TableSettingCallBack callBack) throws Exception {
+        Element element = null;
+        for (Element td : rawInfoList) {
+            if (td.text().length() > 10) {
+                element = td;
+                break;
+            }
+        }
+        if (element != null) {
+            String sample = element.text().split(Constants.BR_REPLACER + Constants.BR_REPLACER + "+")[0];
+            mStrings = sample.split(Constants.BR_REPLACER);
+            mCallBack = callBack;
+            return new TableSettingDialog();
+        } else {
+            throw new Exception("");
+        }
     }
 
     @OnClick(R.id.ok)
@@ -89,11 +98,7 @@ public class TableSettingDialog extends DialogFragment {
                 Log.e(TAG, e.getMessage());
             }
         } else {
-            Map<String, String> resultReMap = new HashMap<>(mEditTextMap.size());
-            for (String title : mEditTextMap.keySet()) {
-                resultReMap.put(title, mEditTextMap.get(title).getText().toString());
-            }
-            mCallBack.onFinish(mResultIndexMap, resultReMap);
+            mCallBack.onFinish(mResultIndexMap);
             dismiss();
         }
     }
@@ -105,7 +110,6 @@ public class TableSettingDialog extends DialogFragment {
         ButterKnife.bind(this, view);
         mInfo.setText(mStrings[0]);
         mResultIndexMap = new HashMap<>();
-        mEditTextMap = new HashMap<>();
         addClassTableOptions();
         setCancelable(false);
         return view;
@@ -123,27 +127,12 @@ public class TableSettingDialog extends DialogFragment {
             final CheckBox checkBox = new CheckBox(getContext());
             checkBox.setText(title);
             checkBox.setGravity(Gravity.CENTER);
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        MaterialEditText editText = new MaterialEditText(getContext());
-                        editText.setHint(title + "匹配 (正则式, 可选)");
-                        editText.setFloatingLabel(MaterialEditText.FLOATING_LABEL_NORMAL);
-                        mViewGroup.addView(editText);
-                        mEditTextMap.put(title, editText);
-                    } else {
-                        mViewGroup.removeView(mEditTextMap.get(title));
-                        mEditTextMap.remove(title);
-                    }
-                }
-            });
             mCheckBoxes.add(checkBox);
             mViewGroup.addView(checkBox);
         }
     }
 
     public interface TableSettingCallBack {
-        void onFinish(Map<String, Integer> indexMap, Map<String, String> reMap);
+        void onFinish(Map<String, Integer> indexMap);
     }
 }

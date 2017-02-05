@@ -1,4 +1,4 @@
-package cc.metapro.openct.homepage.schoolselection;
+package cc.metapro.openct.myclass.schoolselection;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -31,6 +31,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.utils.PrefHelper;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 public class SchoolSelectionActivity
@@ -104,9 +105,7 @@ public class SchoolSelectionActivity
 
     @Override
     protected void onDestroy() {
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putString(getString(R.string.pref_school_name), result);
-        editor.apply();
+        PrefHelper.putString(this, R.string.pref_school_name, result);
         Loader.needUpdateUniversity();
         super.onDestroy();
     }

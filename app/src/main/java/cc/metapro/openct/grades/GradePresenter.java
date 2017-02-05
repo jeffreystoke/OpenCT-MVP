@@ -17,10 +17,10 @@ package cc.metapro.openct.grades;
  */
 
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.Keep;
-import android.widget.TextView;
+import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.jsoup.Jsoup;
@@ -32,15 +32,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import cc.metapro.openct.R;
+import cc.metapro.openct.custom.dialogs.TableChooseDialog;
+import cc.metapro.openct.customviews.FormDialog;
+import cc.metapro.openct.customviews.LinkSelectionDialog;
 import cc.metapro.openct.data.openctservice.ServiceGenerator;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.university.AdvancedCustomInfo;
+import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.grades.cet.CETService;
 import cc.metapro.openct.utils.ActivityUtils;
-import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.HTMLUtils.Form;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -55,25 +60,117 @@ import io.reactivex.schedulers.Schedulers;
 @Keep
 class GradePresenter implements GradeContract.Presenter {
 
+    private static final String TAG = GradePresenter.class.getSimpleName();
     private Context mContext;
     private GradeContract.View mGradeFragment;
     private List<GradeInfo> mGrades;
+    private DBManger mDBManger;
 
     GradePresenter(GradeContract.View view, Context context) {
         mContext = context;
         mGradeFragment = view;
         mGradeFragment.setPresenter(this);
+        mDBManger = DBManger.getInstance(mContext);
     }
 
     @Override
-    public Disposable loadTargetPage(final String code) {
+    public Disposable loadOnlineInfo(final FragmentManager manager) {
+        ActivityUtils.getProgressDialog(mContext, R.string.preparing_school_sys_info).show();
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                e.onNext(Loader.getCms(mContext).prepareOnlineInfo());
+                e.onComplete();
+            }
+        })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean needCaptcha) throws Exception {
+                        ActivityUtils.dismissProgressDialog();
+                        if (needCaptcha) {
+                            ActivityUtils.showCaptchaDialog(manager, GradePresenter.this);
+                        } else {
+                            loadUserCenter(manager, "");
+                        }
+                    }
+                })
+                .onErrorReturn(new Function<Throwable, Boolean>() {
+                    @Override
+                    public Boolean apply(Throwable throwable) throws Exception {
+                        ActivityUtils.dismissProgressDialog();
+                        Toast.makeText(mContext, "获取校园信息失败\n" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, throwable.getMessage(), throwable);
+                        return false;
+                    }
+                })
+                .subscribe();
+    }
+
+    @Override
+    public Disposable loadUserCenter(final FragmentManager manager, final String code) {
+        ActivityUtils.getProgressDialog(mContext, R.string.login_to_system).show();
+        return Observable.create(new ObservableOnSubscribe<Elements>() {
+            @Override
+            public void subscribe(ObservableEmitter<Elements> e) throws Exception {
+                Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
+                loginMap.put(mContext.getString(R.string.key_captcha), code);
+                Document document = Loader.getCms(mContext).login(loginMap);
+                Elements elements = UniversityUtils.getLinksByPattern(document, "成绩");
+                if (!elements.isEmpty()) {
+                    e.onNext(elements);
+                } else {
+                    e.onComplete();
+                }
+            }
+        })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(new Consumer<Elements>() {
+                    @Override
+                    public void accept(Elements links) throws Exception {
+                        ActivityUtils.dismissProgressDialog();
+                        AdvancedCustomInfo info = mDBManger.getAdvancedCustomInfo(mContext);
+                        if (info != null && !TextUtils.isEmpty(info.GRADE_URL_PATTERN)) {
+                            Pattern pattern = Pattern.compile(info.GRADE_URL_PATTERN);
+                            for (Element link : links) {
+                                if (pattern.matcher(link.html()).find()) {
+                                    loadTargetPage(manager, link.absUrl("href"));
+                                }
+                            }
+                        } else {
+                            LinkSelectionDialog
+                                    .newInstance(LinkSelectionDialog.GRADE_URL_DIALOG, links, GradePresenter.this)
+                                    .show(manager, "link_selection");
+                        }
+                    }
+                })
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        ActivityUtils.dismissProgressDialog();
+                        Toast.makeText(mContext, "未成功获取到跳转链接", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .onErrorReturn(new Function<Throwable, Elements>() {
+                    @Override
+                    public Elements apply(Throwable throwable) throws Exception {
+                        ActivityUtils.dismissProgressDialog();
+                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        return new Elements(0);
+                    }
+                })
+                .subscribe();
+    }
+
+    @Override
+    public Disposable loadTargetPage(final FragmentManager manager, final String url) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_grade_page).show();
         return Observable.create(new ObservableOnSubscribe<Form>() {
             @Override
             public void subscribe(ObservableEmitter<Form> e) throws Exception {
-                Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
-                loginMap.put(mContext.getString(R.string.key_captcha), code);
-                Form form = Loader.getCms(mContext).getGradePageForm(loginMap);
+                Form form = Loader.getCms(mContext).getGradePageForm(url);
                 if (form != null) {
                     e.onNext(form);
                 } else {
@@ -85,13 +182,9 @@ class GradePresenter implements GradeContract.Presenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<Form>() {
                     @Override
-                    public void accept(Form form) throws Exception {
+                    public void accept(Form classes) throws Exception {
                         ActivityUtils.dismissProgressDialog();
-                        if (form != null) {
-                            mGradeFragment.showFormDialog(form);
-                        } else {
-                            Toast.makeText(mContext, R.string.load_grade_page_fail, Toast.LENGTH_LONG).show();
-                        }
+                        FormDialog.newInstance(classes, GradePresenter.this).show(manager, "form_dialog");
                     }
                 })
                 .onErrorReturn(new Function<Throwable, Form>() {
@@ -102,48 +195,44 @@ class GradePresenter implements GradeContract.Presenter {
                         return new Form();
                     }
                 })
-                .doOnComplete(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, R.string.load_grade_page_fail, Toast.LENGTH_SHORT).show();
-                    }
-                })
                 .subscribe();
     }
 
     @Override
-    public Disposable loadQuery(final String actionURL, final Map<String, String> queryMap) {
+    public Disposable loadQuery(final FragmentManager manager, final String actionURL, final Map<String, String> queryMap) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_grades).show();
-        return Observable
-                .create(new ObservableOnSubscribe<List<GradeInfo>>() {
-                    @Override
-                    public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
-                        e.onNext(Loader.getCms(mContext).getGrades(actionURL, queryMap));
-                        e.onComplete();
-                    }
-                })
+        return Observable.create(new ObservableOnSubscribe<Map<String, Element>>() {
+            @Override
+            public void subscribe(ObservableEmitter<Map<String, Element>> e) throws Exception {
+                e.onNext(Loader.getCms(mContext).getGradePageTables(actionURL, queryMap));
+                e.onComplete();
+            }
+        })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<List<GradeInfo>>() {
+                .doOnNext(new Consumer<Map<String, Element>>() {
                     @Override
-                    public void accept(List<GradeInfo> infos) throws Exception {
+                    public void accept(Map<String, Element> map) throws Exception {
                         ActivityUtils.dismissProgressDialog();
-                        if (infos.size() == 0) {
-                            Toast.makeText(mContext, R.string.no_grades_avail, Toast.LENGTH_SHORT).show();
+                        DBManger manger = DBManger.getInstance(mContext);
+                        final AdvancedCustomInfo customInfo = manger.getAdvancedCustomInfo(mContext);
+                        if (customInfo == null || TextUtils.isEmpty(customInfo.GRADE_TABLE_ID)) {
+                            TableChooseDialog
+                                    .newInstance(TableChooseDialog.GRADE_TABLE_DIALOG, map, GradePresenter.this)
+                                    .show(manager, "table_choose");
                         } else {
-                            mGrades = infos;
+                            mGrades = UniversityUtils.generateInfo(map.get(customInfo.GRADE_TABLE_ID), GradeInfo.class);
                             storeGrades();
                             loadLocalGrades();
                         }
                     }
                 })
-                .onErrorReturn(new Function<Throwable, List<GradeInfo>>() {
+                .onErrorReturn(new Function<Throwable, Map<String, Element>>() {
                     @Override
-                    public List<GradeInfo> apply(Throwable throwable) throws Exception {
+                    public Map<String, Element> apply(Throwable throwable) throws Exception {
                         ActivityUtils.dismissProgressDialog();
                         Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        return new ArrayList<>(0);
+                        return new HashMap<>(0);
                     }
                 }).subscribe();
     }
@@ -155,7 +244,7 @@ class GradePresenter implements GradeContract.Presenter {
                     @Override
                     public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
                         DBManger manger = DBManger.getInstance(mContext);
-                        e.onNext(manger.getGradeInfos());
+                        e.onNext(manger.getGrades());
                         e.onComplete();
                     }
                 })
@@ -164,9 +253,7 @@ class GradePresenter implements GradeContract.Presenter {
                 .doOnNext(new Consumer<List<GradeInfo>>() {
                     @Override
                     public void accept(List<GradeInfo> gradeInfos) throws Exception {
-                        if (gradeInfos.size() == 0) {
-                            Toast.makeText(mContext, R.string.no_local_grades_avail, Toast.LENGTH_SHORT).show();
-                        } else {
+                        if (gradeInfos.size() != 0) {
                             mGrades = gradeInfos;
                             mGradeFragment.onLoadGrades(mGrades);
                         }
@@ -183,39 +270,38 @@ class GradePresenter implements GradeContract.Presenter {
 
     @Override
     public void loadCETGrade(final Map<String, String> queryMap) {
-        Observable
-                .create(new ObservableOnSubscribe<Map<String, String>>() {
-                    @Override
-                    public void subscribe(ObservableEmitter<Map<String, String>> e) throws Exception {
-                        CETService service = ServiceGenerator.createCETService();
-                        String queryResult = service.queryCET(
-                                mContext.getString(R.string.chsi_referer),
-                                queryMap.get(mContext.getString(R.string.key_ticket_num)),
-                                queryMap.get(mContext.getString(R.string.key_full_name)), "t")
-                                .execute().body();
+        Observable.create(new ObservableOnSubscribe<Map<String, String>>() {
+            @Override
+            public void subscribe(ObservableEmitter<Map<String, String>> e) throws Exception {
+                CETService service = ServiceGenerator.createCETService();
+                String queryResult = service.queryCET(
+                        mContext.getString(R.string.chsi_referer),
+                        queryMap.get(mContext.getString(R.string.key_ticket_num)),
+                        queryMap.get(mContext.getString(R.string.key_full_name)), "t")
+                        .execute().body();
 
-                        Document document = Jsoup.parse(queryResult);
-                        Elements elements = document.select("table[class=cetTable]");
-                        Element targetTable = elements.first();
-                        Elements tds = targetTable.getElementsByTag("td");
-                        String name = tds.get(0).text();
-                        String school = tds.get(1).text();
-                        String type = tds.get(2).text();
-                        String num = tds.get(3).text();
-                        String time = tds.get(4).text();
-                        String grade = tds.get(5).text();
+                Document document = Jsoup.parse(queryResult);
+                Elements elements = document.select("table[class=cetTable]");
+                Element targetTable = elements.first();
+                Elements tds = targetTable.getElementsByTag("td");
+                String name = tds.get(0).text();
+                String school = tds.get(1).text();
+                String type = tds.get(2).text();
+                String num = tds.get(3).text();
+                String time = tds.get(4).text();
+                String grade = tds.get(5).text();
 
-                        Map<String, String> results = new HashMap<>(6);
-                        results.put(mContext.getString(R.string.key_full_name), name);
-                        results.put(mContext.getString(R.string.key_school), school);
-                        results.put(mContext.getString(R.string.key_cet_type), type);
-                        results.put(mContext.getString(R.string.key_ticket_num), num);
-                        results.put(mContext.getString(R.string.key_cet_time), time);
-                        results.put(mContext.getString(R.string.key_cet_grade), grade);
+                Map<String, String> results = new HashMap<>(6);
+                results.put(mContext.getString(R.string.key_full_name), name);
+                results.put(mContext.getString(R.string.key_school), school);
+                results.put(mContext.getString(R.string.key_cet_type), type);
+                results.put(mContext.getString(R.string.key_ticket_num), num);
+                results.put(mContext.getString(R.string.key_cet_time), time);
+                results.put(mContext.getString(R.string.key_cet_grade), grade);
 
-                        e.onNext(results);
-                    }
-                })
+                e.onNext(results);
+            }
+        })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<Map<String, String>>() {
@@ -235,42 +321,10 @@ class GradePresenter implements GradeContract.Presenter {
     }
 
     @Override
-    public Disposable loadCaptcha(final TextView view) {
-        return Observable
-                .create(new ObservableOnSubscribe<String>() {
-                    @Override
-                    public void subscribe(ObservableEmitter e) throws Exception {
-                        Loader.getCms(mContext).getCAPTCHA();
-                        e.onComplete();
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .onErrorReturn(new Function<Throwable, String>() {
-                    @Override
-                    public String apply(Throwable throwable) throws Exception {
-                        Toast.makeText(mContext, "获取验证码失败\n" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        return "";
-                    }
-                })
-                .doOnComplete(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        Drawable drawable = BitmapDrawable.createFromPath(Constants.CAPTCHA_FILE);
-                        if (drawable != null) {
-                            view.setBackground(drawable);
-                            view.setText("");
-                        }
-                    }
-                })
-                .subscribe();
-    }
-
-    @Override
     public void storeGrades() {
         try {
             DBManger manger = DBManger.getInstance(mContext);
-            manger.updateGradeInfos(mGrades);
+            manger.updateGrades(mGrades);
         } catch (Exception e) {
             Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
         }

@@ -1,4 +1,4 @@
-package cc.metapro.openct.homepage;
+package cc.metapro.openct.borrow;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -22,26 +22,26 @@ import java.util.List;
 
 import cc.metapro.openct.BaseView;
 import cc.metapro.openct.LoginPresenter;
-import cc.metapro.openct.data.university.item.EnrichedClassInfo;
-import cc.metapro.openct.utils.HTMLUtils.Form;
+import cc.metapro.openct.data.university.item.BorrowInfo;
 
 @Keep
-public interface ClassContract {
+public interface BorrowContract {
+
     interface View extends BaseView<Presenter> {
 
-        void updateClasses(List<EnrichedClassInfo> classes);
+        void showDue(List<BorrowInfo> borrows);
 
-        void showFormDialog(Form form);
+        void showAll(List<BorrowInfo> borrows);
+
     }
 
     interface Presenter extends LoginPresenter {
 
-        void loadLocalClasses();
+        void loadLocalBorrows();
 
-        void storeClasses();
+        void storeBorrows();
 
-        void exportClasses();
+        List<BorrowInfo> getBorrows();
 
-        void loadFromExcel();
     }
 }

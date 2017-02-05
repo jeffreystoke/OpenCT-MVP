@@ -46,17 +46,17 @@
                 android:id="@+id/appbar_image"
                 style="@style/AppTheme.AppBarImage"/>
 
-            <Spinner
-                android:id="@+id/week"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:entries="@array/weekdays"/>
-
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 style="@style/AppTheme.Toolbar"
-                android:layout_marginTop="@dimen/toolbar_padding_top"/>
+                android:layout_marginTop="@dimen/toolbar_padding_top">
+                <Spinner
+                    android:id="@+id/week"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:entries="@array/weekdays"/>
+            </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 

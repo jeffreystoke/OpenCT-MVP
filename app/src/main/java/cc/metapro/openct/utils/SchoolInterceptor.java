@@ -25,15 +25,16 @@ import cc.metapro.openct.data.openctservice.QuotePreservingCookieJar;
 import cc.metapro.openct.data.university.UniversityService;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class SchoolInterceptor implements Interceptor {
 
+    private static final String userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
     private redirectObserver<String> mObserver;
     private String mURL;
-    private boolean redirected;
 
     public SchoolInterceptor(String URL) {
         mURL = URL.substring(0, URL.lastIndexOf("/"));
@@ -45,12 +46,20 @@ public class SchoolInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        Response response = chain.proceed(chain.request());
-        if (response.code() == 302 && !redirected) {
-            redirected = true;
+        Request request = chain.request();
+        Request newRequest = request
+                .newBuilder()
+                .header("User-Agent", userAgent)
+                .build();
+
+        Response response = chain.proceed(newRequest);
+
+        if (response.code() == 302) {
             String location = response.headers().get("Location");
             if (location.startsWith("/")) {
                 location = mURL + location;
+            } else {
+                location = mURL + "/" + location;
             }
             if (mObserver != null) {
                 mObserver.onRedirect(location);

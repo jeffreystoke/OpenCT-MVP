@@ -37,8 +37,6 @@ public interface GradeContract {
 
         void onLoadCETGrade(Map<String, String> resultMap);
 
-        void showFormDialog(Form form);
-
     }
 
     interface Presenter extends LoginPresenter {

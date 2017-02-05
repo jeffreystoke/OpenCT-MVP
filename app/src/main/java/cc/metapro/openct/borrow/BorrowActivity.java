@@ -50,9 +50,9 @@ import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
 @Keep
-public class LibBorrowActivity extends AppCompatActivity implements LibBorrowContract.View {
+public class BorrowActivity extends AppCompatActivity implements BorrowContract.View {
 
-    private final String TAG = LibBorrowActivity.class.getSimpleName();
+    private final String TAG = BorrowActivity.class.getSimpleName();
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -63,7 +63,7 @@ public class LibBorrowActivity extends AppCompatActivity implements LibBorrowCon
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
-    private LibBorrowContract.Presenter mPresenter;
+    private BorrowContract.Presenter mPresenter;
     private BorrowAdapter mBorrowAdapter;
 
     @OnClick(R.id.fab)
@@ -74,11 +74,7 @@ public class LibBorrowActivity extends AppCompatActivity implements LibBorrowCon
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         } else {
-            if (Loader.libNeedCAPTCHA(this)) {
-                ActivityUtils.showCaptchaDialog(getSupportFragmentManager(), mPresenter);
-            } else {
-                mPresenter.loadTargetPage("");
-            }
+            mPresenter.loadOnlineInfo(getSupportFragmentManager());
         }
     }
 
@@ -105,7 +101,7 @@ public class LibBorrowActivity extends AppCompatActivity implements LibBorrowCon
         mBorrowAdapter = new BorrowAdapter(this);
         RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mBorrowAdapter);
         // add fragment
-        new LibBorrowPresenter(this, this);
+        new BorrowPresenter(this, this);
     }
 
     @Override
@@ -115,7 +111,7 @@ public class LibBorrowActivity extends AppCompatActivity implements LibBorrowCon
     }
 
     @Override
-    public void setPresenter(LibBorrowContract.Presenter presenter) {
+    public void setPresenter(BorrowContract.Presenter presenter) {
         mPresenter = presenter;
     }
 

@@ -17,7 +17,7 @@ package cc.metapro.openct;
  */
 
 import android.support.annotation.Keep;
-import android.widget.TextView;
+import android.support.v4.app.FragmentManager;
 
 import java.util.Map;
 
@@ -26,10 +26,12 @@ import io.reactivex.disposables.Disposable;
 @Keep
 public interface LoginPresenter extends BasePresenter {
 
-    Disposable loadCaptcha(final TextView view);
+    Disposable loadOnlineInfo(final FragmentManager manager);
 
-    Disposable loadTargetPage(final String code);
+    Disposable loadUserCenter(final FragmentManager manager, final String code);
 
-    Disposable loadQuery(final String actionURL, final Map<String, String> queryMap);
+    Disposable loadTargetPage(final FragmentManager manager, final String url);
+
+    Disposable loadQuery(final FragmentManager manager, final String actionURL, final Map<String, String> queryMap);
 
 }

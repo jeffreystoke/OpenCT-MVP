@@ -83,6 +83,7 @@ public class ClassInfo {
         String[] classes = content.split(Constants.BR_REPLACER + Constants.BR_REPLACER + "+");
         String s = classes[0];
         String[] tmp = s.split(Constants.BR_REPLACER);
+
         if (tmp.length > 0) {
             int duringIndex = info.mDuringIndex;
             int placeIndex = info.mPlaceIndex;
@@ -94,31 +95,23 @@ public class ClassInfo {
                 timeIndex--;
                 teacherIndex--;
             }
-            if (info.mNameIndex < tmp.length) {
-                mName = infoParser(info.mNameRE, tmp[info.mNameIndex]);
+            mName = infoParser(info.mNameIndex, info.mNameRE, tmp);
+            mType = infoParser(info.mTypeIndex, info.mTypeRE, tmp);
+            mTeacher = infoParser(teacherIndex, info.mTeacherRE, tmp);
+            mPlace = infoParser(placeIndex, info.mPlaceRE, tmp);
+
+            if (timeIndex < tmp.length && timeIndex >= 0) {
+                mOddWeek = REHelper.isOddWeek(tmp[timeIndex]);
+                mEvenWeek = REHelper.isEvenWeek(tmp[timeIndex]);
             }
-            if (info.mTypeIndex < tmp.length) {
-                mType = infoParser(info.mTypeRE, tmp[info.mTypeIndex]);
+
+            mTime = infoParser(timeIndex, info.mTimeRE, tmp);
+            if (!REHelper.isEmpty(mTime)) {
+                mTime = REHelper.delDoubleWidthChar(mTime);
             }
-            if (teacherIndex < tmp.length) {
-                mTeacher = infoParser(info.mTeacherRE, tmp[teacherIndex]);
-            }
-            if (placeIndex < tmp.length) {
-                mPlace = infoParser(info.mPlaceRE, tmp[placeIndex]);
-            }
-            if (timeIndex < tmp.length) {
-                mTime = infoParser(info.mTimeRE, tmp[timeIndex]);
-                if (!REHelper.isEmpty(mTime)) {
-                    mTime = REHelper.delDoubleWidthChar(mTime);
-                    mOddWeek = REHelper.isOddWeek(mTime);
-                    mEvenWeek = REHelper.isEvenWeek(mTime);
-                }
-            }
-            if (duringIndex < tmp.length) {
-                mDuring = infoParser(info.mDuringRE, tmp[duringIndex]);
-                if (REHelper.isEmpty(mDuring)) {
-                    mDuring = REHelper.delDoubleWidthChar(mDuring);
-                }
+            mDuring = infoParser(duringIndex, info.mDuringRE, tmp);
+            if (REHelper.isEmpty(mDuring)) {
+                mDuring = REHelper.delDoubleWidthChar(mDuring);
             }
         }
 
@@ -136,13 +129,19 @@ public class ClassInfo {
         }
     }
 
-    private String infoParser(String re, String content) {
-        if (!TextUtils.isEmpty(re)) {
-            Pattern pattern = Pattern.compile(re);
-            Matcher m = pattern.matcher(content);
-            if (m.find()) content = m.group();
+    private String infoParser(int idx, String re, String[] contents) {
+        if (idx < contents.length) {
+            String content = contents[idx];
+            if (!TextUtils.isEmpty(re)) {
+                Pattern pattern = Pattern.compile(re);
+                Matcher m = pattern.matcher(content);
+                if (m.find())
+                    content = m.group();
+            }
+            return content;
+        } else {
+            return "";
         }
-        return content;
     }
 
     public String getId() {
@@ -187,7 +186,7 @@ public class ClassInfo {
         return REHelper.isEmpty(mName);
     }
 
-    public boolean hasSubClass() {
+    boolean hasSubClass() {
         return mSubClassInfo != null;
     }
 
@@ -217,7 +216,7 @@ public class ClassInfo {
 
     @Override
     public String toString() {
-        return StoreHelper.getJsonText(this);
+        return StoreHelper.toJson(this);
     }
 
     @Override

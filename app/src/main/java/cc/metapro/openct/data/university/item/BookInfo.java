@@ -36,6 +36,6 @@ public final class BookInfo {
 
     @Override
     public String toString() {
-        return StoreHelper.getJsonText(this);
+        return StoreHelper.toJson(this);
     }
 }

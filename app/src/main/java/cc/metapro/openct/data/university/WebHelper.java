@@ -16,18 +16,24 @@ package cc.metapro.openct.data.university;
  * limitations under the License.
  */
 
-import org.jsoup.Jsoup;
+import android.text.TextUtils;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
-class URLFactory {
+import java.util.List;
+
+class WebHelper {
 
     private String baseURL;
     private String captchaURL;
     private String loginPageURL;
     private String userCenterURL;
+    private Element loginForm;
+    private Document loginPageDOM;
 
-    URLFactory(String baseURL) {
+    WebHelper(String baseURL) {
         this.baseURL = baseURL;
         loginPageURL = baseURL;
     }
@@ -40,15 +46,37 @@ class URLFactory {
         return captchaURL;
     }
 
-    void setCaptchaURL(String loginPage) {
-        Document document = Jsoup.parse(loginPage, loginPageURL);
-        Element codeImg = document.select("img[src~=(?i)\\.(aspx)|(asp)|(servlet)|(php)|(html)]").first();
-        if (codeImg != null) {
-            captchaURL = codeImg.absUrl("src");
-        } else {
-            codeImg = document.select("iframe[src~=(?i)\\.(aspx)|(asp)|(servlet)|(php)|(html)]").first();
-            captchaURL = codeImg.absUrl("src");
+    void setCaptchaURL(List<Document> documents) {
+        loop:
+        for (Document document : documents) {
+            loginPageDOM = document;
+            loginPageURL = document.baseUri();
+            Elements forms = document.select("form");
+
+            // 遍历表单
+            for (Element form : forms) {
+                Elements codeImg = form.select("img[src~=(?i)^(?!.*\\.(png|jpg|gif|ico)).*$");
+                codeImg.addAll(form.select("iframe[src~=(?i)^(?!.*\\.(png|jpg|gif|ico)).*$"));
+
+                // 获取验证码地址
+                for (Element img : codeImg) {
+                    String url = img.absUrl("src");
+                    if (!TextUtils.isEmpty(url)) {
+                        loginForm = form;
+                        captchaURL = url;
+                        break loop;
+                    }
+                }
+            }
         }
+    }
+
+    Document getLoginPageDOM() {
+        return loginPageDOM;
+    }
+
+    Element getLoginForm() {
+        return loginForm;
     }
 
     String getLoginPageURL() {

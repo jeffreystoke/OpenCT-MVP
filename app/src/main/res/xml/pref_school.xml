@@ -76,6 +76,41 @@
                 android:singleLine="true"
                 android:title="@string/password"/>
         </PreferenceScreen>
+        <PreferenceScreen
+            android:summary="设置校园信息表格的解析"
+            android:title="表格设置">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="@string/pref_class_line_based"
+                android:title="按行课程表"/>
+            <Preference
+                android:key="@string/pref_custom_action_clear"
+                android:summary="这将清除你的操作记录, 同时重新获取教务网或图书馆信息时需要再次选择"
+                android:title="清空链接/表格选择"/>
+            <PreferenceCategory
+                android:title="课程表正则表达式">
+                <EditTextPreference
+                    android:key="@string/pref_class_name_re"
+                    android:title="课程名称"/>
+                <EditTextPreference
+                    android:key="@string/pref_class_type_re"
+                    android:title="课程类型"/>
+                <EditTextPreference
+                    android:defaultValue="@string/default_time_re"
+                    android:key="@string/pref_class_time_re"
+                    android:title="课程时间"/>
+                <EditTextPreference
+                    android:defaultValue="@string/default_during_re"
+                    android:key="@string/pref_class_during_re"
+                    android:title="课程周期"/>
+                <EditTextPreference
+                    android:key="@string/pref_class_teacher_re"
+                    android:title="授课教师"/>
+                <EditTextPreference
+                    android:key="@string/pref_class_place_re"
+                    android:title="上课地点"/>
+            </PreferenceCategory>
+        </PreferenceScreen>
         <!--基础自定义-->
         <PreferenceScreen
             android:summary="@string/tip_not_exist"
@@ -101,10 +136,6 @@
                     android:inputType="textUri"
                     android:key="@string/pref_custom_cms_url"
                     android:title="@string/address"/>
-                <CheckBoxPreference
-                    android:key="@string/pref_custom_cms_captcha"
-                    android:summary="@string/captcha_required"
-                    android:title="@string/captcha"/>
             </PreferenceCategory>
             <PreferenceCategory
                 android:summary="@string/lib_config"
@@ -121,10 +152,6 @@
                     android:inputType="textUri"
                     android:key="@string/pref_custom_lib_url"
                     android:title="@string/address"/>
-                <CheckBoxPreference
-                    android:key="@string/pref_custom_lib_captcha"
-                    android:summary="@string/captcha_required"
-                    android:title="@string/captcha"/>
             </PreferenceCategory>
         </PreferenceScreen>
         <!--高级自定义-->

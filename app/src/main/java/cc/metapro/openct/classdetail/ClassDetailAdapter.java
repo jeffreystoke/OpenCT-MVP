@@ -76,8 +76,8 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
         return mClasses.get(i);
     }
 
-    void addItem(ClassInfo info) {
-        mClasses.add(info);
+    void addItem(int i, ClassInfo info) {
+        mClasses.add(i, info);
     }
 
     void removeItem(int i) {
@@ -174,6 +174,8 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                     mEvenRadio.setChecked(true);
                 } else if (info.isOddWeek()) {
                     mOddRadio.setChecked(true);
+                } else {
+                    mCommonRadio.setChecked(true);
                 }
 
                 disableEdit();

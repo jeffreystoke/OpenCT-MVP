@@ -12,21 +12,5 @@
         <TextView
             android:id="@+id/borrow_item_title"
             style="@style/ItemTitleText"/>
-
-        <TextView
-            android:id="@+id/borrow_item_author"
-            style="@style/ItemContentText"/>
-
-        <TextView
-            android:id="@+id/borrow_item_content"
-            style="@style/ItemContentText"/>
-
-        <TextView
-            android:id="@+id/borrow_item_time"
-            style="@style/ItemContentText"/>
-
-        <TextView
-            android:id="@+id/borrow_item_due"
-            style="@style/ItemContentText"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>

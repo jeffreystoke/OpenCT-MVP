@@ -16,15 +16,13 @@ package cc.metapro.openct.pref;
  * limitations under the License.
  */
 
+import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Keep;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
@@ -34,9 +32,6 @@ import cc.metapro.openct.utils.Constants;
 @Keep
 public class SettingsActivity extends AppCompatActivity {
 
-    @BindView(R.id.toolbar)
-    Toolbar mToolbar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,9 +39,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        // setup toolbar
-        setSupportActionBar(mToolbar);
-        ActionBar ab = getSupportActionBar();
+        // setup actionbar
+        ActionBar ab = getActionBar();
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
@@ -65,14 +59,12 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void storeCustom() {
         DBManger manger = DBManger.getInstance(this);
-        UniversityInfo.SchoolInfo info = new UniversityInfo.SchoolInfo();
+        UniversityInfo info = new UniversityInfo();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        info.cmsSys = pref.getString(getString(R.string.pref_custom_cms_sys), Constants.ZFSOFT2012);
-        info.cmsURL = pref.getString(getString(R.string.pref_custom_cms_url), "http://openct.metapro.club");
-        info.libSys = pref.getString(getString(R.string.pref_custom_lib_sys), Constants.LIBSYS);
-        info.libURL = pref.getString(getString(R.string.pref_custom_lib_url), "http://openct.metapro.club");
-        info.cmsCaptcha = pref.getBoolean(getString(R.string.pref_custom_cms_captcha), false);
-        info.libCaptcha = pref.getBoolean(getString(R.string.pref_custom_lib_captcha), false);
+        info.cmsSys = pref.getString(getString(R.string.pref_custom_cms_sys), Constants.COMMON);
+        info.cmsURL = pref.getString(getString(R.string.pref_custom_cms_url), "http://openct.metapro.cc");
+        info.libSys = pref.getString(getString(R.string.pref_custom_lib_sys), Constants.NJHUIWEN);
+        info.libURL = pref.getString(getString(R.string.pref_custom_lib_url), "http://openct.metapro.cc");
         manger.updateCustomSchoolInfo(info);
     }
 }

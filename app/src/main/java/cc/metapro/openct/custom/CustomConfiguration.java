@@ -33,18 +33,18 @@ import io.reactivex.disposables.Disposable;
 public class CustomConfiguration {
 
     private List<String> mTypes;
-    private List<String> mCmds;
+    private List<String> mCommands;
     private Observer<Integer> mObserver;
     private int mIndex = 0;
 
     CustomConfiguration() {
         mTypes = new ArrayList<>();
-        mCmds = new ArrayList<>();
+        mCommands = new ArrayList<>();
     }
 
     void addAction(String type, String cmd) {
         mTypes.add(type);
-        mCmds.add(cmd);
+        mCommands.add(cmd);
     }
 
     private void showInputDialog(FragmentManager manager, final WebView view) {
@@ -59,7 +59,7 @@ public class CustomConfiguration {
         InputDialog.newInstance(hint, new InputDialog.InputCallBack() {
             @Override
             public void onConfirm(String result) {
-                String cmd = "javascript:" + mCmds.get(mIndex++) + "\"" + result + "\");";
+                String cmd = "javascript:" + mCommands.get(mIndex++) + "\"" + result + "\");";
                 view.loadUrl(cmd);
                 mObserver.onNext(0);
             }
@@ -84,7 +84,7 @@ public class CustomConfiguration {
                         showInputDialog(manager, view);
                         break;
                     default:
-                        view.loadUrl("javascript:" + mCmds.get(mIndex++));
+                        view.loadUrl("javascript:" + mCommands.get(mIndex++));
                         if (mIndex < mTypes.size() && mIndex > 0) {
                             try {
                                 if (!(ClickDialog.LINK.equals(mTypes.get(mIndex - 1)) && ClickDialog.SUBMIT_BUTTON.equals(mTypes.get(mIndex - 1)))) {
@@ -114,7 +114,7 @@ public class CustomConfiguration {
 
     @Override
     public String toString() {
-        return StoreHelper.getJsonText(this);
+        return StoreHelper.toJson(this);
     }
 
     public boolean isEmpty() {

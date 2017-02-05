@@ -17,20 +17,20 @@ package cc.metapro.openct.data.source;
  */
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
 import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.data.university.item.BorrowInfo;
@@ -70,9 +70,23 @@ public class DBManger {
     public void updateAdvancedCustomClassInfo(AdvancedCustomInfo info) {
         mDatabase.beginTransaction();
         try {
-            mDatabase.delete(DBHelper.ADV_CUSTOM_TABLE, null, null);
             String json = info.toString();
-            mDatabase.execSQL("INSERT INTO " + DBHelper.ADV_CUSTOM_TABLE + " VALUES(null, ?)", new Object[]{json});
+            mDatabase.delete(DBHelper.ADV_CUSTOM_TABLE, null, null);
+            if (!TextUtils.isEmpty(json)) {
+                mDatabase.execSQL("INSERT INTO " + DBHelper.ADV_CUSTOM_TABLE + " VALUES(?, ?)", new Object[]{info.getSchoolName(), json});
+            }
+            mDatabase.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            mDatabase.endTransaction();
+        }
+    }
+
+    public void delAdvancedCustomClassInfo() {
+        mDatabase.beginTransaction();
+        try {
+            mDatabase.delete(DBHelper.ADV_CUSTOM_TABLE, null, null);
             mDatabase.setTransactionSuccessful();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -84,18 +98,39 @@ public class DBManger {
     /**
      * 获取高级自定义信息
      *
-     * @return
+     * @return 用户创建的高级自定义信息
      */
-    public AdvancedCustomInfo getAdvancedCustomInfo() {
+    @Nullable
+    public AdvancedCustomInfo getAdvancedCustomInfo(Context context) {
         Cursor cursor = null;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String name;
+        if (preferences.getBoolean(context.getString(R.string.pref_custom_enable), false)) {
+            name = preferences.getString(context.getString(R.string.pref_custom_school_name), "openct");
+        } else {
+            name = preferences.getString(context.getString(R.string.pref_school_name), context.getResources().getStringArray(R.array.school_names)[0]);
+        }
         try {
-            cursor = mDatabase.query(DBHelper.ADV_CUSTOM_TABLE, null, null, null, null, null, null);
+            cursor = mDatabase.query(
+                    DBHelper.ADV_CUSTOM_TABLE, null,
+                    DBHelper.SCHOOL_NAME + "=? COLLATE NOCASE", new String[]{name},
+                    null, null, null);
             cursor.moveToFirst();
-            Gson gson = new Gson();
-            return gson.fromJson(cursor.getString(1), AdvancedCustomInfo.class);
+            AdvancedCustomInfo customInfo = StoreHelper.fromJson(cursor.getString(1), AdvancedCustomInfo.class);
+            try {
+                customInfo.mClassTableInfo.mNameRE = preferences.getString(context.getString(R.string.pref_class_name_re), "");
+                customInfo.mClassTableInfo.mTypeRE = preferences.getString(context.getString(R.string.pref_class_type_re), "");
+                customInfo.mClassTableInfo.mDuringRE = preferences.getString(context.getString(R.string.pref_class_during_re), "");
+                customInfo.mClassTableInfo.mTimeRE = preferences.getString(context.getString(R.string.pref_class_time_re), "");
+                customInfo.mClassTableInfo.mPlaceRE = preferences.getString(context.getString(R.string.pref_class_place_re), "");
+                customInfo.mClassTableInfo.mTeacherRE = preferences.getString(context.getString(R.string.pref_class_teacher_re), "");
+            } catch (Exception ignored) {
+
+            }
+            return customInfo;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
-            return null;
+            return new AdvancedCustomInfo(context);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -108,7 +143,7 @@ public class DBManger {
      *
      * @param info 新的自定义学校信息
      */
-    public void updateCustomSchoolInfo(UniversityInfo.SchoolInfo info) {
+    public void updateCustomSchoolInfo(UniversityInfo info) {
         mDatabase.beginTransaction();
         try {
             mDatabase.delete(DBHelper.CUSTOM_TABLE, null, null);
@@ -127,13 +162,14 @@ public class DBManger {
      *
      * @return 自定义学校的基本信息
      */
-    UniversityInfo.SchoolInfo getCustomSchoolInfo() {
+    @Nullable
+    UniversityInfo getCustomUniversity() {
         Cursor cursor = null;
         try {
-            cursor = mDatabase.query(DBHelper.CUSTOM_TABLE, null, null, null, null, null, null);
+            cursor = mDatabase.query(
+                    DBHelper.CUSTOM_TABLE, null, null, null, null, null, null);
             cursor.moveToFirst();
-            Gson gson = new Gson();
-            return gson.fromJson(cursor.getString(1), UniversityInfo.SchoolInfo.class);
+            return StoreHelper.fromJson(cursor.getString(1), UniversityInfo.class);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
             return null;
@@ -144,109 +180,29 @@ public class DBManger {
         }
     }
 
-    /**
-     * 根据学校中文名称获取学校基本信息
-     *
-     * @param name 学校名称
-     * @return 学校基本信息
-     */
-    private UniversityInfo.SchoolInfo getSchoolInfo(String name) {
-        Cursor cursor = mDatabase.query(
-                DBHelper.SCHOOL_TABLE, null,
-                DBHelper.SCHOOL_NAME + "=? COLLATE NOCASE", new String[]{name},
-                null, null, null);
-        int n = cursor.getColumnCount();
-        String[] content = cursor.getColumnNames();
-        Map<String, String> strKvs = new HashMap<>(n);
-        Map<String, Boolean> boolKvs = new HashMap<>(n);
-        cursor.moveToFirst();
-        if (cursor.getCount() > 0) {
-            for (int i = 0; i < n; i++) {
-                switch (cursor.getType(i)) {
-                    case Cursor.FIELD_TYPE_STRING:
-                        strKvs.put(content[i], cursor.getString(i));
-                        break;
-                    case Cursor.FIELD_TYPE_INTEGER:
-                        boolean s = cursor.getInt(i) == 1;
-                        boolKvs.put(content[i], s);
-                        break;
-                }
-            }
-        }
-        cursor.close();
-
-        return new UniversityInfo.SchoolInfo(strKvs, boolKvs);
-    }
-
-    /**
-     * 根据学校基本信息返回学校完整信息
-     *
-     * @param schoolInfo 学校基本信息
-     * @return 学校完整信息
-     */
-    UniversityInfo getUniversity(UniversityInfo.SchoolInfo schoolInfo) {
-        UniversityInfo universityInfo = new UniversityInfo();
-        String cmsJson;
-        String libJson;
-
-
-        Gson gson = new Gson();
-        Cursor cmsCursor = null;
-        try {
-            cmsCursor = mDatabase.query(
-                    DBHelper.CMS_TABLE, null,
-                    DBHelper.SYS_NAME + "=? COLLATE NOCASE",
-                    new String[]{schoolInfo.cmsSys}, null, null, null
-            );
-            cmsCursor.moveToFirst();
-            cmsJson = cmsCursor.getString(2);
-            cmsCursor.close();
-            UniversityInfo.CMSInfo cmsInfo = gson.fromJson(cmsJson, UniversityInfo.CMSInfo.class);
-            cmsInfo.mCmsURL = schoolInfo.cmsURL;
-            cmsInfo.mDynLoginURL = schoolInfo.cmsDynURL;
-            cmsInfo.mNeedCAPTCHA = schoolInfo.cmsCaptcha;
-            universityInfo.mCMSInfo = cmsInfo;
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
-        } finally {
-            if (cmsCursor != null) {
-                cmsCursor.close();
-            }
-        }
-
-        Cursor libCursor = null;
-        try {
-            libCursor = mDatabase.query(
-                    DBHelper.LIB_TABLE, null,
-                    DBHelper.SYS_NAME + "=? COLLATE NOCASE",
-                    new String[]{schoolInfo.libSys}, null, null, null
-            );
-            libCursor.moveToFirst();
-            libJson = libCursor.getString(2);
-            libCursor.close();
-            UniversityInfo.LibraryInfo libraryInfo = gson.fromJson(libJson, UniversityInfo.LibraryInfo.class);
-            libraryInfo.mLibURL = schoolInfo.libURL;
-            libraryInfo.mNeedCAPTCHA = schoolInfo.libCaptcha;
-            universityInfo.mLibraryInfo = libraryInfo;
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
-        } finally {
-            if (libCursor != null) {
-                libCursor.close();
-            }
-        }
-        return universityInfo;
-    }
-
-    /**
-     * 根据学校中文名称返回学校信息
-     *
-     * @param name 学校名称 (全称, 中文)
-     * @return 学校完整信息
-     */
+    @Nullable
     UniversityInfo getUniversity(String name) {
-        UniversityInfo.SchoolInfo schoolInfo = getSchoolInfo(name);
-        return getUniversity(schoolInfo);
+        Cursor cursor = null;
+        try {
+            cursor = mDatabase.query(
+                    DBHelper.SCHOOL_TABLE, null,
+                    DBHelper.SCHOOL_NAME + "=? COLLATE NOCASE", new String[]{name},
+                    null, null, null);
+            cursor.moveToFirst();
+            UniversityInfo info = null;
+            if (!cursor.isAfterLast()) {
+                info = StoreHelper.fromJson(cursor.getString(1), UniversityInfo.class);
+            }
+            cursor.close();
+            return info;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+            return null;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     /**
@@ -262,7 +218,53 @@ public class DBManger {
                 String target = c.toString();
                 if (!TextUtils.isEmpty(target)) {
                     mDatabase.execSQL(
-                            "INSERT INTO " + DBHelper.CLASS_TABLE + " VALUES(null, ?)",
+                            "INSERT INTO " + DBHelper.CLASS_TABLE + " VALUES(?, ?)",
+                            new Object[]{c.getId(), target}
+                    );
+                }
+            }
+            mDatabase.setTransactionSuccessful();
+        } finally {
+            mDatabase.endTransaction();
+        }
+    }
+
+    @NonNull
+    public List<EnrichedClassInfo> getClasses() {
+        Cursor cursor = null;
+        try {
+            cursor = mDatabase.query(DBHelper.CLASS_TABLE, null, null, null, null, null, null);
+            cursor.moveToFirst();
+            List<EnrichedClassInfo> grades = new ArrayList<>();
+            while (!cursor.isAfterLast()) {
+                grades.add(StoreHelper.fromJson(cursor.getString(1), EnrichedClassInfo.class));
+                cursor.moveToNext();
+            }
+            return grades;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return new ArrayList<>(0);
+    }
+
+    /**
+     * 更新成绩信息
+     *
+     * @param grades 新的成绩信息
+     */
+    public void updateGrades(@NonNull List<GradeInfo> grades) {
+        mDatabase.beginTransaction();
+        try {
+            mDatabase.delete(DBHelper.GRADE_TABLE, null, null);
+            for (GradeInfo g : grades) {
+                String target = g.toString();
+                if (!TextUtils.isEmpty(target)) {
+                    mDatabase.execSQL(
+                            "INSERT INTO " + DBHelper.GRADE_TABLE + " VALUES(null, ?)",
                             new Object[]{target}
                     );
                 }
@@ -274,52 +276,25 @@ public class DBManger {
     }
 
     @NonNull
-    public List<EnrichedClassInfo> getClassInfos() {
-        Cursor cursor = mDatabase.query(DBHelper.CLASS_TABLE, null, null, null, null, null, null);
-        cursor.moveToFirst();
-        List<EnrichedClassInfo> classInfos = new ArrayList<>();
-        Gson gson = new Gson();
-        while (!cursor.isAfterLast()) {
-            classInfos.add(gson.fromJson(cursor.getString(1), EnrichedClassInfo.class));
-            cursor.moveToNext();
-        }
-        cursor.close();
-        return classInfos;
-    }
-
-    /**
-     * 更新成绩信息
-     *
-     * @param grades 新的成绩信息
-     */
-    public void updateGradeInfos(@NonNull List<GradeInfo> grades) {
-        mDatabase.beginTransaction();
+    public List<GradeInfo> getGrades() {
+        Cursor cursor = null;
         try {
-            mDatabase.delete(DBHelper.GRADE_TABLE, null, null);
-            for (GradeInfo g : grades) {
-                mDatabase.execSQL(
-                        "INSERT INTO " + DBHelper.GRADE_TABLE + " VALUES(null, ?)",
-                        new Object[]{g.toString()}
-                );
+            cursor = mDatabase.query(DBHelper.GRADE_TABLE, null, null, null, null, null, null);
+            cursor.moveToFirst();
+            List<GradeInfo> grades = new ArrayList<>();
+            while (!cursor.isAfterLast()) {
+                grades.add(StoreHelper.fromJson(cursor.getString(1), GradeInfo.class));
+                cursor.moveToNext();
             }
-            mDatabase.setTransactionSuccessful();
+            return grades;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
         } finally {
-            mDatabase.endTransaction();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-    }
-
-    @NonNull
-    public List<GradeInfo> getGradeInfos() {
-        Cursor cursor = mDatabase.query(DBHelper.GRADE_TABLE, null, null, null, null, null, null);
-        cursor.moveToFirst();
-        List<GradeInfo> gradeInfos = new ArrayList<>();
-        Gson gson = new Gson();
-        while (!cursor.isAfterLast()) {
-            gradeInfos.add(gson.fromJson(cursor.getString(1), GradeInfo.class));
-            cursor.moveToNext();
-        }
-        cursor.close();
-        return gradeInfos;
+        return new ArrayList<>(0);
     }
 
     /**
@@ -327,15 +302,16 @@ public class DBManger {
      *
      * @param borrow 新的借阅信息
      */
-    public void updateBorrowInfos(List<BorrowInfo> borrow) {
+    public void updateBorrows(@NonNull List<BorrowInfo> borrow) {
         mDatabase.beginTransaction();
         try {
             mDatabase.delete(DBHelper.BORROW_TABLE, null, null);
-            if (borrow != null) {
-                for (BorrowInfo b : borrow) {
+            for (BorrowInfo b : borrow) {
+                String target = b.toString();
+                if (!TextUtils.isEmpty(target)) {
                     mDatabase.execSQL(
                             "INSERT INTO " + DBHelper.BORROW_TABLE + " VALUES(null, ?)",
-                            new Object[]{b.toString()}
+                            new Object[]{target}
                     );
                 }
             }
@@ -346,16 +322,24 @@ public class DBManger {
     }
 
     @NonNull
-    public List<BorrowInfo> getBorrowInfos() {
-        Cursor cursor = mDatabase.query(DBHelper.BORROW_TABLE, null, null, null, null, null, null);
-        cursor.moveToFirst();
-        List<BorrowInfo> borrowInfos = new ArrayList<>();
-        Gson gson = new Gson();
-        while (!cursor.isAfterLast()) {
-            borrowInfos.add(gson.fromJson(cursor.getString(1), BorrowInfo.class));
-            cursor.moveToNext();
+    public List<BorrowInfo> getBorrows() {
+        Cursor cursor = null;
+        try {
+            cursor = mDatabase.query(DBHelper.BORROW_TABLE, null, null, null, null, null, null);
+            cursor.moveToFirst();
+            List<BorrowInfo> grades = new ArrayList<>();
+            while (!cursor.isAfterLast()) {
+                grades.add(StoreHelper.fromJson(cursor.getString(1), BorrowInfo.class));
+                cursor.moveToNext();
+            }
+            return grades;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        cursor.close();
-        return borrowInfos;
+        return new ArrayList<>(0);
     }
 }

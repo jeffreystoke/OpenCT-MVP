@@ -1,4 +1,4 @@
-package cc.metapro.openct.homepage;
+package cc.metapro.openct.myclass;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,8 +16,11 @@ package cc.metapro.openct.homepage;
  * limitations under the License.
  */
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -26,6 +29,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -47,23 +51,22 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.borrow.LibBorrowActivity;
+import cc.metapro.openct.borrow.BorrowActivity;
 import cc.metapro.openct.classdetail.ClassDetailActivity;
 import cc.metapro.openct.customviews.FormDialog;
-import cc.metapro.openct.customviews.InitDialog;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.grades.GradeActivity;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
-import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.HTMLUtils.Form;
 
 @Keep
-public class MainActivity extends AppCompatActivity
+public class ClassActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ClassContract.View {
 
+    private static final int REQUEST_WRITE_STORAGE = 112;
     private static boolean showedPrompt;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -93,13 +96,6 @@ public class MainActivity extends AppCompatActivity
                 ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         toggle.syncState();
         mNavigationView.setNavigationItemSelectedListener(this);
-
-        String initStr = getString(R.string.pref_init);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean init = preferences.getBoolean(initStr, false);
-        if (!init) {
-            InitDialog.newInstance().show(getSupportFragmentManager(), "init_dialog");
-        }
         new ClassPresenter(this, this);
         initViewPager();
     }
@@ -179,11 +175,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void showFormDialog(Form form) {
-        FormDialog.newInstance(form, mPresenter).show(getSupportFragmentManager(), "form_dialog");
-    }
-
-    @Override
     public void setPresenter(ClassContract.Presenter presenter) {
         mPresenter = presenter;
     }
@@ -225,15 +216,18 @@ public class MainActivity extends AppCompatActivity
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
             } else {
-                if (Loader.cmsNeedCAPTCHA(this)) {
-                    ActivityUtils.showCaptchaDialog(getSupportFragmentManager(), mPresenter);
-                } else {
-                    mPresenter.loadTargetPage("");
-                }
+                mPresenter.loadOnlineInfo(getSupportFragmentManager());
             }
             return true;
         } else if (id == R.id.export_classes) {
-            mPresenter.exportClasses();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                int hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if (hasPermission != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_STORAGE);
+                }
+            } else {
+                mPresenter.exportClasses();
+            }
         } else if (id == R.id.add_class) {
             ClassDetailActivity.actionStart(this, new EnrichedClassInfo());
         }
@@ -250,7 +244,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(this, LibSearchActivity.class));
                 break;
             case R.id.nav_borrow_info:
-                startActivity(new Intent(this, LibBorrowActivity.class));
+                startActivity(new Intent(this, BorrowActivity.class));
                 break;
             case R.id.nav_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -264,6 +258,19 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         mPresenter.start();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_WRITE_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mPresenter.exportClasses();
+                } else {
+                    Toast.makeText(this, R.string.no_write_permission, Toast.LENGTH_LONG).show();
+                }
+        }
     }
 
     private void initStatic() {

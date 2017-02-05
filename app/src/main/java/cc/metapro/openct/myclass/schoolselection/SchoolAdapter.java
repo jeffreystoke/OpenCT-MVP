@@ -1,4 +1,4 @@
-package cc.metapro.openct.homepage.schoolselection;
+package cc.metapro.openct.myclass.schoolselection;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -120,5 +120,4 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
     private class ViewHolder {
         TextView schoolText;
     }
-
 }

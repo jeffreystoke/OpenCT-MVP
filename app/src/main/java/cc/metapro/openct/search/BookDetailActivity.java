@@ -44,7 +44,7 @@ import cc.metapro.openct.utils.Constants;
 @Keep
 public class BookDetailActivity extends AppCompatActivity {
 
-    @BindView(R.id.book_detail_toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
     @BindView(R.id.fab_back)
