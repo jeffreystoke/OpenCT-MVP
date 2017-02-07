@@ -17,33 +17,31 @@ package cc.metapro.openct.data.university;
  */
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.Keep;
 
 import cc.metapro.openct.R;
-import cc.metapro.openct.custom.CustomConfiguration;
 import cc.metapro.openct.data.source.StoreHelper;
+import cc.metapro.openct.utils.PrefHelper;
 
 @Keep
 public class AdvancedCustomInfo {
 
-    public CustomConfiguration mWebScriptConfiguration;
     public CmsFactory.ClassTableInfo mClassTableInfo;
+
     public String CLASS_URL_PATTERN;
     public String GRADE_URL_PATTERN;
     public String BORROW_URL_PATTERN;
+
     public String GRADE_TABLE_ID;
     public String BORROW_TABLE_ID;
-    public String mCmsURL;
+
     private String mSchoolName;
 
     public AdvancedCustomInfo(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if (preferences.getBoolean(context.getString(R.string.pref_custom_enable), false)) {
-            mSchoolName = preferences.getString(context.getString(R.string.pref_school_name), "openct");
+        if (PrefHelper.getBoolean(context, R.string.pref_custom_enable)) {
+            mSchoolName = PrefHelper.getString(context, R.string.pref_school_name);
         } else {
-            mSchoolName = preferences.getString(context.getString(R.string.pref_school_name), context.getResources().getStringArray(R.array.school_names)[0]);
+            mSchoolName = PrefHelper.getString(context, R.string.pref_school_name);
         }
     }
 
@@ -53,14 +51,6 @@ public class AdvancedCustomInfo {
 
     public void setClassTableInfo(CmsFactory.ClassTableInfo classTableInfo) {
         mClassTableInfo = classTableInfo;
-    }
-
-    public void setWebScriptConfiguration(CustomConfiguration webScriptConfiguration) {
-        mWebScriptConfiguration = webScriptConfiguration;
-    }
-
-    public void setCmsURL(String cmsURL) {
-        mCmsURL = cmsURL;
     }
 
     @Override

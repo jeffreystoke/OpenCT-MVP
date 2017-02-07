@@ -44,9 +44,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import cc.metapro.openct.R;
-import cc.metapro.openct.custom.dialogs.TableChooseDialog;
 import cc.metapro.openct.customviews.FormDialog;
 import cc.metapro.openct.customviews.LinkSelectionDialog;
+import cc.metapro.openct.customviews.TableChooseDialog;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
@@ -54,7 +54,7 @@ import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.utils.ActivityUtils;
-import cc.metapro.openct.utils.HTMLUtils.Form;
+import cc.metapro.openct.utils.webutils.Form;
 import cc.metapro.openct.widget.DailyClassWidget;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -216,43 +216,44 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public Disposable loadQuery(final FragmentManager manager, final String actionURL, final Map<String, String> queryMap) {
-        ActivityUtils.getProgressDialog(mContext, R.string.loading_classes).show();
-        return Observable.create(new ObservableOnSubscribe<Map<String, Element>>() {
-            @Override
-            public void subscribe(ObservableEmitter<Map<String, Element>> e) throws Exception {
-                e.onNext(Loader.getCms(mContext).getClassPageTables(actionURL, queryMap));
-                e.onComplete();
-            }
-        })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<Map<String, Element>>() {
-                    @Override
-                    public void accept(Map<String, Element> map) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        DBManger manger = DBManger.getInstance(mContext);
-                        final AdvancedCustomInfo customInfo = manger.getAdvancedCustomInfo(mContext);
-                        if (customInfo == null || customInfo.mClassTableInfo == null || TextUtils.isEmpty(customInfo.mClassTableInfo.mClassTableID)) {
-                            TableChooseDialog
-                                    .newInstance(TableChooseDialog.CLASS_TABLE_DIALOG, map, ClassPresenter.this)
-                                    .show(manager, "table_choose");
-                        } else {
-                            List<Element> rawClasses = UniversityUtils.getRawClasses(map.get(customInfo.mClassTableInfo.mClassTableID), mContext);
-                            mEnrichedClasses = UniversityUtils.generateClasses(mContext, rawClasses, customInfo.mClassTableInfo);
-                            storeClasses();
-                            loadLocalClasses();
-                        }
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, Map<String, Element>>() {
-                    @Override
-                    public Map<String, Element> apply(Throwable throwable) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        throwable.printStackTrace();
-                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        return new HashMap<>();
-                    }
-                }).subscribe();
+//        ActivityUtils.getProgressDialog(mContext, R.string.loading_classes).show();
+        return null;
+//        return Observable.create(new ObservableOnSubscribe<Map<String, Element>>() {
+//            @Override
+//            public void subscribe(ObservableEmitter<Map<String, Element>> e) throws Exception {
+//                e.onNext(Loader.getCms(mContext).getClassPageTables(actionURL, queryMap));
+//                e.onComplete();
+//            }
+//        })
+//                .subscribeOn(Schedulers.newThread())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .doOnNext(new Consumer<Map<String, Element>>() {
+//                    @Override
+//                    public void accept(Map<String, Element> map) throws Exception {
+//                        ActivityUtils.dismissProgressDialog();
+//                        DBManger manger = DBManger.getInstance(mContext);
+//                        final AdvancedCustomInfo customInfo = manger.getAdvancedCustomInfo(mContext);
+//                        if (customInfo == null || customInfo.mClassTableInfo == null || TextUtils.isEmpty(customInfo.mClassTableInfo.mClassTableID)) {
+//                            TableChooseDialog
+//                                    .newInstance(TableChooseDialog.CLASS_TABLE_DIALOG, map, ClassPresenter.this)
+//                                    .show(manager, "table_choose");
+//                        } else {
+//                            List<Element> rawClasses = UniversityUtils.getRawClasses(map.get(customInfo.mClassTableInfo.mClassTableID), mContext);
+//                            mEnrichedClasses = UniversityUtils.generateClasses(mContext, rawClasses, customInfo.mClassTableInfo);
+//                            storeClasses();
+//                            loadLocalClasses();
+//                        }
+//                    }
+//                })
+//                .onErrorReturn(new Function<Throwable, Map<String, Element>>() {
+//                    @Override
+//                    public Map<String, Element> apply(Throwable throwable) throws Exception {
+//                        ActivityUtils.dismissProgressDialog();
+//                        throwable.printStackTrace();
+//                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+//                        return new HashMap<>();
+//                    }
+//                }).subscribe();
     }
 
     @Override

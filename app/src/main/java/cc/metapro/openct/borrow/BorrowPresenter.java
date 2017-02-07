@@ -29,28 +29,26 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import cc.metapro.openct.R;
-import cc.metapro.openct.custom.dialogs.TableChooseDialog;
 import cc.metapro.openct.customviews.LinkSelectionDialog;
+import cc.metapro.openct.customviews.TableChooseDialog;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.utils.ActivityUtils;
+import cc.metapro.openct.utils.MyObserver;
+import cc.metapro.openct.utils.webutils.TableUtils;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 @Keep
@@ -72,132 +70,138 @@ class BorrowPresenter implements BorrowContract.Presenter {
     @Override
     public Disposable loadOnlineInfo(final FragmentManager manager) {
         ActivityUtils.getProgressDialog(mContext, R.string.preparing_school_sys_info).show();
-        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+
+        Observable<Boolean> observable = Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 e.onNext(Loader.getLibrary(mContext).prepareOnlineInfo());
                 e.onComplete();
             }
-        })
-                .subscribeOn(Schedulers.newThread())
+        });
+
+        Observer<Boolean> observer = new MyObserver<Boolean>() {
+            @Override
+            public void onNext(Boolean needCaptcha) {
+                ActivityUtils.dismissProgressDialog();
+                if (needCaptcha) {
+                    ActivityUtils.showCaptchaDialog(manager, BorrowPresenter.this);
+                } else {
+                    loadUserCenter(manager, "");
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ActivityUtils.dismissProgressDialog();
+                Log.e(TAG, e.getMessage(), e);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean needCaptcha) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        if (needCaptcha) {
-                            ActivityUtils.showCaptchaDialog(manager, BorrowPresenter.this);
-                        } else {
-                            loadUserCenter(manager, "");
-                        }
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, Boolean>() {
-                    @Override
-                    public Boolean apply(Throwable throwable) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, "获取校园信息失败\n" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, throwable.getMessage(), throwable);
-                        return false;
-                    }
-                })
-                .subscribe();
+                .subscribe(observer);
+
+        return null;
     }
 
     @Override
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_borrows).show();
-        return Observable.create(new ObservableOnSubscribe<Elements>() {
+
+        Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
-            public void subscribe(ObservableEmitter<Elements> e) throws Exception {
+            public void subscribe(ObservableEmitter<Document> e) throws Exception {
                 Map<String, String> loginMap = Loader.getLibStuInfo(mContext);
                 loginMap.put(mContext.getString(R.string.key_captcha), code);
                 Document userCenter = Loader.getLibrary(mContext).login(loginMap);
-                Elements elements = UniversityUtils.getLinksByPattern(userCenter, "借阅");
-                if (!elements.isEmpty()) {
-                    e.onNext(elements);
+                e.onNext(userCenter);
+            }
+        });
+
+        Observer<Document> observer = new MyObserver<Document>() {
+
+            @Override
+            public void onNext(Document document) {
+                ActivityUtils.dismissProgressDialog();
+                Elements links = document.select("a");
+                if (links.isEmpty()) {
+                    onError(new Exception("获取图书馆用户中心失败"));
                 } else {
-                    e.onComplete();
+                    AdvancedCustomInfo info = mDBManger.getAdvancedCustomInfo(mContext);
+                    if (info != null && !TextUtils.isEmpty(info.BORROW_URL_PATTERN)) {
+                        Element target = document.select("a:matches("+info.BORROW_URL_PATTERN+")").first();
+                        if (target != null) {
+                            loadTargetPage(manager, target.absUrl("href"));
+                        } else {
+                            ActivityUtils.showLinkSelectionDialog(manager, LinkSelectionDialog.BORROW_URL_DIALOG, links, BorrowPresenter.this);
+                        }
+                    } else {
+                        ActivityUtils.showLinkSelectionDialog(manager, LinkSelectionDialog.BORROW_URL_DIALOG, links, BorrowPresenter.this);
+                    }
                 }
             }
-        })
-                .subscribeOn(Schedulers.newThread())
+
+            @Override
+            public void onError(Throwable e) {
+                ActivityUtils.dismissProgressDialog();
+                Log.e(TAG, e.getMessage(), e);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<Elements>() {
-                    @Override
-                    public void accept(Elements links) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        AdvancedCustomInfo info = mDBManger.getAdvancedCustomInfo(mContext);
-                        if (info != null && !TextUtils.isEmpty(info.BORROW_URL_PATTERN)) {
-                            Pattern pattern = Pattern.compile(info.BORROW_URL_PATTERN);
-                            for (Element link : links) {
-                                if (pattern.matcher(link.html()).find()) {
-                                    loadTargetPage(manager, link.absUrl("href"));
-                                }
-                            }
-                        } else {
-                            LinkSelectionDialog
-                                    .newInstance(LinkSelectionDialog.BORROW_URL_DIALOG, links, BorrowPresenter.this)
-                                    .show(manager, "link_selection");
-                        }
-                    }
-                })
-                .doOnComplete(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, "未成功获取到跳转链接", Toast.LENGTH_LONG).show();
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, Elements>() {
-                    @Override
-                    public Elements apply(Throwable throwable) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        return new Elements(0);
-                    }
-                })
-                .subscribe();
+                .subscribe(observer);
+
+        return null;
     }
 
     @Override
     public Disposable loadTargetPage(final FragmentManager manager, final String url) {
-        ActivityUtils.getProgressDialog(mContext, R.string.loading_classes).show();
-        return Observable.create(new ObservableOnSubscribe<Map<String, Element>>() {
+        ActivityUtils.getProgressDialog(mContext, R.string.loading_target_page).show();
+
+        Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
-            public void subscribe(ObservableEmitter<Map<String, Element>> e) throws Exception {
-                e.onNext(Loader.getLibrary(mContext).getBorrowPageTables(url));
+            public void subscribe(ObservableEmitter<Document> e) throws Exception {
+                e.onNext(Loader.getLibrary(mContext).getBorrowPageDom(url));
                 e.onComplete();
             }
-        })
-                .subscribeOn(Schedulers.newThread())
+        });
+
+        Observer<Document> observer = new MyObserver<Document>() {
+            @Override
+            public void onNext(Document document) {
+                ActivityUtils.dismissProgressDialog();
+                DBManger manger = DBManger.getInstance(mContext);
+                final AdvancedCustomInfo customInfo = manger.getAdvancedCustomInfo(mContext);
+                if (customInfo != null && !TextUtils.isEmpty(customInfo.BORROW_TABLE_ID)) {
+                    Map<String, Element> map = TableUtils.getTablesFromTargetPage(document);
+                    if (!map.isEmpty()) {
+                        mBorrows = UniversityUtils.generateInfo(map.get(customInfo.BORROW_TABLE_ID), BorrowInfo.class);
+                        storeBorrows();
+                        loadLocalBorrows();
+                    } else {
+                        ActivityUtils.showTableChooseDialog(manager, TableChooseDialog.BORROW_TABLE_DIALOG, document, BorrowPresenter.this);
+                    }
+                } else {
+                    ActivityUtils.showTableChooseDialog(manager, TableChooseDialog.BORROW_TABLE_DIALOG, document, BorrowPresenter.this);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ActivityUtils.dismissProgressDialog();
+                Log.e(TAG, e.getMessage(), e);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<Map<String, Element>>() {
-                    @Override
-                    public void accept(Map<String, Element> map) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        DBManger manger = DBManger.getInstance(mContext);
-                        final AdvancedCustomInfo customInfo = manger.getAdvancedCustomInfo(mContext);
-                        if (customInfo == null || TextUtils.isEmpty(customInfo.BORROW_TABLE_ID)) {
-                            TableChooseDialog
-                                    .newInstance(TableChooseDialog.BORROW_TABLE_DIALOG, map, BorrowPresenter.this)
-                                    .show(manager, "table_choose");
-                        } else {
-                            mBorrows = UniversityUtils.generateInfo(map.get(customInfo.BORROW_TABLE_ID), BorrowInfo.class);
-                            storeBorrows();
-                            loadLocalBorrows();
-                        }
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, Map<String, Element>>() {
-                    @Override
-                    public Map<String, Element> apply(Throwable throwable) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        throwable.printStackTrace();
-                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        return new HashMap<>();
-                    }
-                }).subscribe();
+                .subscribe(observer);
+
+        return null;
     }
 
     @Override
@@ -207,36 +211,36 @@ class BorrowPresenter implements BorrowContract.Presenter {
 
     @Override
     public void loadLocalBorrows() {
-        Observable
-                .create(new ObservableOnSubscribe<List<BorrowInfo>>() {
-                    @Override
-                    public void subscribe(ObservableEmitter<List<BorrowInfo>> e) throws Exception {
-                        DBManger manger = DBManger.getInstance(mContext);
-                        List<BorrowInfo> borrows = manger.getBorrows();
-                        e.onNext(borrows);
-                        e.onComplete();
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
+        Observable<List<BorrowInfo>> observable = Observable.create(new ObservableOnSubscribe<List<BorrowInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<BorrowInfo>> e) throws Exception {
+                DBManger manger = DBManger.getInstance(mContext);
+                List<BorrowInfo> borrows = manger.getBorrows();
+                e.onNext(borrows);
+                e.onComplete();
+            }
+        });
+
+        Observer<List<BorrowInfo>> observer = new MyObserver<List<BorrowInfo>>() {
+            @Override
+            public void onNext(List<BorrowInfo> borrows) {
+                if (borrows.size() != 0) {
+                    mBorrows = borrows;
+                    mLibBorrowView.showAll(mBorrows);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ActivityUtils.dismissProgressDialog();
+                Log.e(TAG, e.getMessage(), e);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<List<BorrowInfo>>() {
-                    @Override
-                    public void accept(List<BorrowInfo> infos) throws Exception {
-                        if (infos.size() != 0) {
-                            mBorrows = infos;
-                            mLibBorrowView.showAll(mBorrows);
-                        }
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, List<BorrowInfo>>() {
-                    @Override
-                    public List<BorrowInfo> apply(Throwable throwable) throws Exception {
-                        Log.e(TAG, throwable.getMessage());
-                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        return new ArrayList<>(0);
-                    }
-                })
-                .subscribe();
+                .subscribe(observer);
     }
 
     @Override

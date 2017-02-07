@@ -59,6 +59,8 @@
     <string name="loading_grade_page">正在加载成绩页面</string>
     <string name="loading_grades">正在加载成绩信息</string>
 
+    <string name="loading_target_page">正在前往指定页面</string>
+    <string name="loading_user_center">正在加载用户中心</string>
     <string name="loading_borrows">正在加载借阅信息</string>
     <string name="need_captcha">请输入验证码</string>
 
@@ -190,4 +192,12 @@
     <string name="choose_table">选择目标信息所在的表格</string>
     <string name="what_is_that">上面显示的是 ?</string>
     <string name="click_to_choose_your_school">点击选择你的学校</string>
+    <string name="unable_to_enter_values">无法填写内容</string>
+    <string name="not_in_range_above">不在以上选项内</string>
+    <string name="what_did_you_clicked">刚刚点击的输入框是?</string>
+    <string name="username_input">用户名输入框</string>
+    <string name="password_input">密码输入框</string>
+    <string name="captcha_input">验证码输入框</string>
+    <string name="enter_value_accordingly">填写对应的值</string>
+    <string name="common_input">普通输入框</string>
 </resources>

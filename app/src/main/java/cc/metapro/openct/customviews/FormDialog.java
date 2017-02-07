@@ -38,8 +38,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
-import cc.metapro.openct.utils.HTMLUtils.Form;
-import cc.metapro.openct.utils.HTMLUtils.FormUtils;
+import cc.metapro.openct.utils.webutils.Form;
+import cc.metapro.openct.utils.webutils.FormUtils;
 
 public class FormDialog extends DialogFragment {
 

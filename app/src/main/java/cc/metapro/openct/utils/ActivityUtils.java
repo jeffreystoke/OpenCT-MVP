@@ -18,23 +18,21 @@ package cc.metapro.openct.utils;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.text.TextUtils;
-import android.util.Log;
 
 import com.scottyab.aescrypt.AESCrypt;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.security.GeneralSecurityException;
 
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.CaptchaDialog;
+import cc.metapro.openct.customviews.LinkSelectionDialog;
+import cc.metapro.openct.customviews.TableChooseDialog;
 
 @Keep
 public final class ActivityUtils {
@@ -114,6 +112,20 @@ public final class ActivityUtils {
     }
 
     public static void showCaptchaDialog(FragmentManager manager, LoginPresenter presenter) {
-        CaptchaDialog.newInstance(presenter).show(manager, "captcha_dialog");
+        CaptchaDialog
+                .newInstance(presenter)
+                .show(manager, "captcha_dialog");
+    }
+
+    public static void showLinkSelectionDialog(FragmentManager manager, String type, Elements links, LoginPresenter presenter) {
+        LinkSelectionDialog
+                .newInstance(type, links, presenter)
+                .show(manager, "link_selection_dialog");
+    }
+
+    public static void showTableChooseDialog(FragmentManager manager, String type, Document document, LoginPresenter presenter) {
+        TableChooseDialog
+                .newInstance(type, document, presenter)
+                .show(manager, "table_choose_dialog");
     }
 }

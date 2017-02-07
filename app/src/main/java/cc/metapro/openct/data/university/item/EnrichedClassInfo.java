@@ -16,6 +16,7 @@ package cc.metapro.openct.data.university.item;
  * limitations under the License.
  */
 
+import android.graphics.Color;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -71,7 +72,7 @@ public class EnrichedClassInfo {
      */
     public EnrichedClassInfo() {
         id = UUID.randomUUID().toString();
-        color = Constants.getColor(0);
+        color = Color.parseColor("#968bc34a");
     }
 
     public EnrichedClassInfo(ClassInfo info) {

@@ -41,7 +41,6 @@ import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.myclass.schoolselection.SchoolSelectionActivity;
-import cc.metapro.openct.utils.ActivityUtils;
 
 @Keep
 public class InitDialog extends DialogFragment {

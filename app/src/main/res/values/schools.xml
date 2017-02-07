@@ -9,7 +9,7 @@
         <item>丛书名</item>
     </string-array>
 
-    <string name="default_during_re">\\d+-\\d+></string>
+    <string name="default_during_re">\\d+-\\d+</string>
     <string name="default_time_re">(\\d+,)+\\d+</string>
 
     <string-array name="school_cms">

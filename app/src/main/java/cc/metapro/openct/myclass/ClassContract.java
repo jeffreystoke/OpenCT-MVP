@@ -23,7 +23,6 @@ import java.util.List;
 import cc.metapro.openct.BaseView;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
-import cc.metapro.openct.utils.HTMLUtils.Form;
 
 @Keep
 public interface ClassContract {

@@ -26,12 +26,32 @@ import io.reactivex.disposables.Disposable;
 @Keep
 public interface LoginPresenter extends BasePresenter {
 
+    /**
+     * 加载网页, 判断是否需要验证码, 需要时弹出验证码输入框, 不需要时 loadUserCenter
+     *
+     * @param manager supportFragmentManager for CaptchaDialog
+     */
     Disposable loadOnlineInfo(final FragmentManager manager);
 
+    /**
+     * 登录获取用户中心, 并在用户中心获得链接, 并显示在对话框中(未存储)
+     *
+     * @param manager supportFragmentManager for LinkSelectionDialog
+     * @param code    captcha code
+     */
     Disposable loadUserCenter(final FragmentManager manager, final String code);
 
+    /**
+     * @param manager supportFragmentManager for FormDialog
+     * @param url     url selected in LinkSelectionDialog
+     */
     Disposable loadTargetPage(final FragmentManager manager, final String url);
 
+    /**
+     * @param manager   supportFragmentManager for TableChooseDialog
+     * @param actionURL form action absolute url
+     * @param queryMap  form key value map
+     */
     Disposable loadQuery(final FragmentManager manager, final String actionURL, final Map<String, String> queryMap);
 
 }

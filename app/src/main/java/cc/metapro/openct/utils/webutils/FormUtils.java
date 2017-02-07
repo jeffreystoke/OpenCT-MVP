@@ -1,4 +1,4 @@
-package cc.metapro.openct.utils.HTMLUtils;
+package cc.metapro.openct.utils.webutils;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table

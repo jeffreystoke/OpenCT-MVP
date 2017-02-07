@@ -37,7 +37,7 @@ public class SchoolInterceptor implements Interceptor {
     private String mURL;
 
     public SchoolInterceptor(String URL) {
-        mURL = URL.substring(0, URL.lastIndexOf("/"));
+        mURL = URL;
     }
 
     public void setObserver(redirectObserver<String> observer) {

@@ -21,13 +21,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.util.Map;
 
+import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.HTMLUtils.Form;
-import cc.metapro.openct.utils.HTMLUtils.FormHandler;
+import cc.metapro.openct.utils.webutils.Form;
+import cc.metapro.openct.utils.webutils.FormHandler;
+import cc.metapro.openct.utils.webutils.TableUtils;
 import okhttp3.HttpUrl;
 
 @Keep
@@ -60,28 +63,28 @@ public class CmsFactory extends UniversityFactory {
     }
 
     @NonNull
-    public Map<String, Element> getGradePageTables(String actionURL, Map<String, String> queryMap) throws Exception {
+    public Document getGradePageTables(String actionURL, Map<String, String> queryMap) throws Exception {
         // 获取成绩表页面的所有表格 id -> Table
         return getTables(actionURL, GRADE_URL, queryMap);
     }
 
     @NonNull
-    public Map<String, Element> getClassPageTables(String actionURL, Map<String, String> queryMap) throws Exception {
+    public Document getClassPageTables(String actionURL, Map<String, String> queryMap) throws Exception {
         // 获取课程表页面的所有表格 id -> Table
         return getTables(actionURL, CLASS_URL, queryMap);
     }
 
     @NonNull
-    private Map<String, Element> getTables(String actionURL, String refer, Map<String, String> queryMap) throws Exception {
+    private Document getTables(String actionURL, String refer, Map<String, String> queryMap) throws Exception {
         String tablePage;
         if (Constants.QZDATASOFT.equalsIgnoreCase(SYS)) {
             tablePage = mService.post(refer, refer, queryMap).execute().body();
         } else {
             tablePage = mService.getPage(actionURL, refer).execute().body();
         }
-        tablePage = tablePage.replaceAll(Constants.BR, Constants.BR_REPLACER);
+        tablePage = tablePage.replaceAll(HTMLUtils.BR, HTMLUtils.BR_REPLACER);
 
-        return getTablesFromTargetPage(Jsoup.parse(tablePage, refer));
+        return Jsoup.parse(tablePage, refer);
     }
 
     public static class ClassTableInfo {

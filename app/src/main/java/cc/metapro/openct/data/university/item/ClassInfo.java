@@ -38,6 +38,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.utils.Constants;
@@ -80,9 +81,9 @@ public class ClassInfo {
 
     public ClassInfo(String content, CmsFactory.ClassTableInfo info) {
         mUid = UUID.randomUUID().toString();
-        String[] classes = content.split(Constants.BR_REPLACER + Constants.BR_REPLACER + "+");
+        String[] classes = content.split(HTMLUtils.BR_REPLACER + HTMLUtils.BR_REPLACER + "+");
         String s = classes[0];
-        String[] tmp = s.split(Constants.BR_REPLACER);
+        String[] tmp = s.split(HTMLUtils.BR_REPLACER);
 
         if (tmp.length > 0) {
             int duringIndex = info.mDuringIndex;
@@ -120,7 +121,7 @@ public class ClassInfo {
             String subContent = "";
             for (int i = 1; i < classes.length; i++) {
                 if (i < classes.length - 1) {
-                    subContent += classes[i] + Constants.BR_REPLACER + Constants.BR_REPLACER;
+                    subContent += classes[i] + HTMLUtils.BR_REPLACER + HTMLUtils.BR_REPLACER;
                 } else {
                     subContent += classes[i];
                 }

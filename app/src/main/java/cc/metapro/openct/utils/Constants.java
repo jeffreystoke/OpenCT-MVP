@@ -16,19 +16,14 @@ package cc.metapro.openct.utils;
  * limitations under the License.
  */
 
-import android.graphics.Color;
 import android.support.annotation.Keep;
 
 @Keep
 public final class Constants {
 
-    public static final String BR = "(<\\s*?br\\s*?/?>)|(---+)|(◇)";
-
     // encryption seed
     public static final String seed =
             "MGICAQACEQDkTyaa2c4v50mkZfyNT0HFAgMBAAECEDrkM9gTwLzYFoimr5b74KECCQD1rE5MzS2H7QIJAO3neDhgDY5AghQ4kbxQEgyTQIIYe3qGoSYgzkCCQCwrArrXqKPw";
-
-    public static final String BR_REPLACER = "&";
 
     public static final String TITLE = "title";
     public static final String URL = "url";
@@ -51,12 +46,7 @@ public final class Constants {
 
     // 汇文
     public static final String NJHUIWEN = "njhuiwen";
-    // class info background colors
-    public static final String[] colorString = {
-            "#8BC34A", "#03A9F4", "#FF9800", "#C5CAE9", "#FFCDD2", "#009688", "#536DFE"
-    };
 
-    public static final String[] colorStringNew = {"#968bc34a", "#96ff9800", "#962196f3", "#96607d8b", "#969c27b0", "#96f44336", "#964dd0e1", "#96d4e157"};
     // map keys
     public static String ACTION_KEY;
     public static String USERNAME_KEY;
@@ -67,8 +57,4 @@ public final class Constants {
     public static String CAPTCHA_FILE;
     public static int CLASS_WIDTH = 0;
     public static int CLASS_BASE_HEIGHT = 0;
-
-    public static int getColor(int seq) {
-        return Color.parseColor(colorStringNew[seq]);
-    }
 }

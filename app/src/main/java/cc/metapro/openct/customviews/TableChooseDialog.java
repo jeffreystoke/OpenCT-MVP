@@ -1,4 +1,4 @@
-package cc.metapro.openct.custom.dialogs;
+package cc.metapro.openct.customviews;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.util.ArrayList;
@@ -40,7 +41,6 @@ import butterknife.OnClick;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.BorrowContract;
-import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
 import cc.metapro.openct.data.university.CmsFactory;
@@ -50,6 +50,7 @@ import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.grades.GradeContract;
 import cc.metapro.openct.myclass.ClassContract;
+import cc.metapro.openct.utils.webutils.TableUtils;
 
 @Keep
 public class TableChooseDialog extends DialogFragment {
@@ -68,8 +69,8 @@ public class TableChooseDialog extends DialogFragment {
     @BindView(R.id.view_pager)
     ViewPager mViewPager;
 
-    public static TableChooseDialog newInstance(String type, Map<String, Element> source, @Nullable LoginPresenter presenter) {
-        tableMap = source;
+    public static TableChooseDialog newInstance(String type, Document source, @Nullable LoginPresenter presenter) {
+        tableMap = TableUtils.getTablesFromTargetPage(source);
         TYPE = type;
         mPresenter = presenter;
         return new TableChooseDialog();
@@ -95,8 +96,6 @@ public class TableChooseDialog extends DialogFragment {
                         info.mClassTableID = tableId;
                         List<EnrichedClassInfo> classes = UniversityUtils.generateClasses(getActivity(), rawInfoList, info);
                         advInfo.setClassTableInfo(info);
-                        advInfo.setWebScriptConfiguration(CustomActivity.webScriptConfig);
-                        advInfo.setCmsURL(CustomActivity.cmsClassURL);
 
                         manger.updateAdvancedCustomClassInfo(advInfo);
                         manger.updateClasses(classes);
@@ -225,4 +224,5 @@ public class TableChooseDialog extends DialogFragment {
     public void onDestroy() {
         super.onDestroy();
     }
+
 }

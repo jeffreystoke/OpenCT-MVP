@@ -32,10 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
-import cc.metapro.openct.utils.Constants;
 
 @Keep
 public class UniversityUtils {
@@ -65,7 +65,7 @@ public class UniversityUtils {
                     Elements tds = tr.select("td");
                     StringBuilder builder = new StringBuilder();
                     for (Element td : tds) {
-                        builder.append(td.text()).append(Constants.BR_REPLACER);
+                        builder.append(td.text()).append(HTMLUtils.BR_REPLACER);
                     }
                     Element td = new Element(Tag.valueOf("td"), tr.baseUri());
                     td.text(builder.toString());
@@ -112,6 +112,7 @@ public class UniversityUtils {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         List<ClassInfo> classes = new ArrayList<>(rawInfo.size());
         List<EnrichedClassInfo> enrichedClasses = new ArrayList<>(classes.size());
+        int[] colors = context.getResources().getIntArray(R.array.class_background);
         if (preferences.getBoolean(context.getString(R.string.pref_class_line_based), false)) {
             for (Element td : rawInfo) {
                 classes.add(new ClassInfo(td.text(), info));
@@ -129,12 +130,12 @@ public class UniversityUtils {
 
             for (int i = 0; i < 7; i++) {
                 int colorIndex = i;
-                if (colorIndex > Constants.colorStringNew.length) {
+                if (colorIndex > colors.length) {
                     colorIndex /= 3;
                 }
                 for (int j = 0; j < dailyClasses; j++) {
                     colorIndex++;
-                    if (colorIndex >= Constants.colorStringNew.length) {
+                    if (colorIndex >= colors.length) {
                         colorIndex = 0;
                     }
                     ClassInfo classInfo = classes.get(j * 7 + i);
@@ -143,7 +144,7 @@ public class UniversityUtils {
                     }
 
                     if (!classInfo.isEmpty()) {
-                        enrichedClasses.add(new EnrichedClassInfo(classInfo, i + 1, j + 1, Constants.getColor(colorIndex)));
+                        enrichedClasses.add(new EnrichedClassInfo(classInfo, i + 1, j + 1, colors[colorIndex]));
                     }
                 }
             }

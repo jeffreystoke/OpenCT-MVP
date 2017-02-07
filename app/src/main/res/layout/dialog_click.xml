@@ -15,102 +15,35 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="20dp">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:paddingBottom="10dp"
-        android:text="刚刚点击的是?"
-        android:textAlignment="center"
-        android:textColor="@color/colorAccent"
-        android:textSize="15sp"/>
-
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical">
-
-        <RadioButton
-            android:id="@+id/username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="用户名输入框"/>
-
-        <RadioButton
-            android:id="@+id/password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="密码输入框"/>
-
-        <RadioButton
-            android:id="@+id/captcha"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="验证码输入框"/>
-
-        <RadioButton
-            android:id="@+id/submit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="登录按钮"/>
-
-        <RadioButton
-            android:id="@+id/input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="普通输入框"/>
-
-        <RadioButton
-            android:id="@+id/link"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="普通链接"/>
-    </RadioGroup>
-
-    <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/value"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="填写对应的值"
-        android:visibility="gone"
-        app:met_floatingLabel="normal"/>
+    android:layout_height="match_parent">
 
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/cancel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_weight="1"
-            android:text="不在以上范围, 继续"
-            android:textAlignment="textStart"
-            android:textColor="@color/colorAccent"
-            android:textSize="15sp"/>
+            style="@style/DialogTitleText"
+            android:text="@string/what_did_you_clicked"/>
 
-        <TextView
-            android:id="@+id/ok"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_weight="1"
-            android:text="确定"
-            android:textAlignment="textEnd"
-            android:textColor="@color/colorAccent"
-            android:textSize="15sp"/>
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/common"
+                style="@style/DialogButtonText"
+                android:text="@string/common_input"/>
+
+            <TextView
+                android:id="@+id/username"
+                style="@style/DialogButtonText"
+                android:text="@string/username_input"/>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</ScrollView>

@@ -53,6 +53,12 @@ public class LinkSelectionDialog extends DialogFragment {
     RadioGroup mRadioGroup;
     private List<RadioButton> mRadioButtons;
 
+    /**
+     * @param type      种类
+     * @param elements
+     * @param presenter
+     * @return
+     */
     public static LinkSelectionDialog newInstance(String type, Elements elements, LoginPresenter presenter) {
         TYPE = type;
         mLinks = elements;
@@ -83,6 +89,11 @@ public class LinkSelectionDialog extends DialogFragment {
             }
         }
         dismiss();
+    }
+
+    @OnClick(R.id.cancel)
+    public void moreOptions() {
+        // TODO: 17/2/7 显示所有链接选项
     }
 
     @Nullable

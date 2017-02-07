@@ -53,14 +53,12 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.BorrowActivity;
 import cc.metapro.openct.classdetail.ClassDetailActivity;
-import cc.metapro.openct.customviews.FormDialog;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.grades.GradeActivity;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.HTMLUtils.Form;
 
 @Keep
 public class ClassActivity extends AppCompatActivity

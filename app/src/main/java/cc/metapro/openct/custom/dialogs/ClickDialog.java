@@ -24,70 +24,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.rengwuxian.materialedittext.MaterialEditText;
-
-import java.util.Map;
-
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.custom.CustomActivity;
-import cc.metapro.openct.data.source.Loader;
 
 @Keep
-public class ClickDialog extends DialogFragment implements View.OnClickListener {
+public class ClickDialog extends DialogFragment {
+    private static TypeCallback mTypeCallback;
 
-    // 用户输入用户名密码, 回放时将直接填写
-    public static final String USERNAME = "username";
-    public static final String PASSWORD = "password";
-    // 用户输入验证码, 在回放时执行到此项出现对话框输入验证码
-    public static final String CAPTCHA = "captcha";
-    // 点击登录, 若有此项将会区分登录前登陆后操作
-    public static final String SUBMIT_BUTTON = "login_button";
-    // 输入框, 在回放时需要弹出窗口供用户输入值
-    public static final String INPUT = "input";
-    // 点击了链接
-    public static final String LINK = "link";
-
-
-    private static CallBack mCallBack;
-    private static String mId;
-
-    @BindView(R.id.value)
-    MaterialEditText mValue;
-    private String mType = LINK;
-    private Map<String, String> userPass;
-
-    public static ClickDialog newInstance(CallBack callBack, String id) {
-        mCallBack = callBack;
-        mId = id;
+    public static ClickDialog newInstance(TypeCallback typeCallback) {
+        mTypeCallback = typeCallback;
         return new ClickDialog();
     }
 
-    @OnClick(R.id.cancel)
-    public void cancel() {
+    @OnClick(R.id.common)
+    public void backToEnter() {
+        mTypeCallback.onResult(CustomActivity.COMMON_INPUT);
         dismiss();
     }
 
-    @OnClick(R.id.ok)
-    public void ok() {
-        if (CAPTCHA.equals(mType) || INPUT.equals(mType)) {
-            String hint = "";
-            if (CAPTCHA.equals(mType)) {
-                hint = "请输入验证码";
-            } else if (INPUT.equals(mType)) {
-                hint = "请输入内容";
-            }
-            InputDialog.newInstance(hint, new InputDialog.InputCallBack() {
-                @Override
-                public void onConfirm(String result) {
-                    mCallBack.setResult(mType, generateValue(mType), result);
-                }
-            }).show(getFragmentManager(), "input_dialog");
-        } else {
-            mCallBack.setResult(mType, generateValue(mType), null);
-        }
+    @OnClick(R.id.username)
+    public void setUsername() {
+        mTypeCallback.onResult(CustomActivity.USERNAME_INPUT);
         dismiss();
     }
 
@@ -103,87 +62,9 @@ public class ClickDialog extends DialogFragment implements View.OnClickListener 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
-        switch (CustomActivity.CUSTOM_TYPE) {
-            case CustomActivity.CMS_CLASS:
-            case CustomActivity.CMS_GRADE:
-                userPass = Loader.getCmsStuInfo(getActivity());
-                break;
-            case CustomActivity.LIB_BORROW:
-            case CustomActivity.LIB_SEARCH:
-                userPass = Loader.getLibStuInfo(getActivity());
-                break;
-        }
     }
 
-    @Override
-    @OnClick({R.id.username, R.id.password, R.id.captcha, R.id.submit, R.id.input, R.id.link})
-    public void onClick(View v) {
-        int id = v.getId();
-        switch (id) {
-            case R.id.username:
-                mValue.setVisibility(View.VISIBLE);
-                mValue.setText(userPass.get(getString(R.string.key_username)));
-                mType = USERNAME;
-                break;
-            case R.id.password:
-                mValue.setVisibility(View.VISIBLE);
-                mValue.setText(userPass.get(getString(R.string.key_password)));
-                mType = PASSWORD;
-                break;
-            case R.id.captcha:
-                // 选择了验证码, 点击确定后弹出窗口输入验证码
-                mValue.setVisibility(View.GONE);
-                mType = CAPTCHA;
-                break;
-            case R.id.input:
-                // 选择了输入框, 点击确定后弹出窗口输入内容
-                mValue.setVisibility(View.GONE);
-                mType = INPUT;
-                break;
-            case R.id.submit:
-                mValue.setVisibility(View.GONE);
-                mType = SUBMIT_BUTTON;
-                break;
-            case R.id.link:
-                mValue.setVisibility(View.GONE);
-                mType = LINK;
-                break;
-        }
-    }
-
-    private String generateValue(String type) {
-        if (USERNAME.equals(type) || PASSWORD.equals(type)) {
-            // 正方 需要一个 count 变量才能输入验证码
-            return "var count=1;var openCTNode=document.getElementById(\"" + mId + "\");" +
-                    "if(!openCTNode){openCTNode=document.getElementsByName(\"" + mId + "\")[0];}" +
-                    "openCTNode.setAttribute(\"value\",\"" + mValue.getText() + "\");";
-        } else if (CAPTCHA.equals(type)) {
-            // 准备填写验证码的JS代码, 调用时需要补全
-            return "var openCTCaptchaText=document.getElementById(\"" + mId + "\");" +
-                    "if(!openCTCaptchaText){openCTCaptchaText=document.getElementsByName(\"" + mId + "\")[0];}" +
-                    "openCTCaptchaText.setAttribute(\"value\",";
-        } else if (SUBMIT_BUTTON.equals(type)) {
-            return "var openCTButton=document.getElementById(\"" + mId + "\");" +
-                    "if(!openCTButton){openCTButton=document.getElementsByName(\"" + mId + "\")[0];}" +
-                    "if(openCTButton){openCTButton.click();}";
-        } else if (INPUT.equals(type)) {
-            // 需要填写内容的JS代码, 调用时需要补全
-            return "var openCTInputText=document.getElementById(\"" + mId + "\");" +
-                    "if(!openCTInputText){captchaText=document.getElementsByName(\"" + mId + "\")[0];}" +
-                    "openCTInputText.setAttribute(\"value\",";
-        } else if (LINK.equals(type)) {
-            // 链接, 检查当前页面中 href
-            return "var openCTLinks=document.getElementsByTagName(\"a\");" +
-                    "for(var i=0;i<openCTLinks.length;i++){" +
-                    "if(openCTLinks[i].href.indexOf(\"" + mId.substring(mId.lastIndexOf("/") + 1) + "\")>=0){" +
-                    "openCTLinks[i].click();}}";
-        }
-        return null;
-    }
-
-    public interface CallBack {
-
-        void setResult(String key, String cmd, String value);
-
+    public interface TypeCallback {
+        void onResult(int type);
     }
 }

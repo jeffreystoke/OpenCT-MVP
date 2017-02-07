@@ -16,51 +16,43 @@ package cc.metapro.openct.custom;
  * limitations under the License.
  */
 
-import android.os.Build;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
+import android.view.inputmethod.InputMethodManager;
+import android.webkit.URLUtil;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cc.metapro.interactiveweb.InteractiveWebView;
+import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.custom.dialogs.ClickDialog;
-import cc.metapro.openct.custom.dialogs.TableChooseDialog;
-import cc.metapro.openct.custom.webview.JSInteraction;
-import cc.metapro.openct.custom.webview.SchoolWebViewClient;
-import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.university.AdvancedCustomInfo;
-import cc.metapro.openct.data.university.CmsFactory;
-import cc.metapro.openct.data.university.UniversityUtils;
-import cc.metapro.openct.data.university.item.EnrichedClassInfo;
-import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.custom.dialogs.InputDialog;
+import cc.metapro.openct.customviews.TableChooseDialog;
+import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.utils.ActivityUtils;
 
 @Keep
 public class CustomActivity extends AppCompatActivity {
 
-    public static final String TAG = "CUSTOM";
+    public static final String TAG = CustomActivity.class.getSimpleName();
 
     public static final int CMS_CLASS = 1;
     public static final int CMS_GRADE = 2;
@@ -68,14 +60,23 @@ public class CustomActivity extends AppCompatActivity {
     public static final int LIB_BORROW = 4;
 
     public static int CUSTOM_TYPE = CMS_CLASS;
-    public static CmsFactory.ClassTableInfo classTableInfo;
-    public static CustomConfiguration webScriptConfig;
-    public static String cmsClassURL;
+
+    public static final int COMMON_MODE = 5;
+    public static final int RECORD_MODE = 6;
+    public static final int REPLAY_MODE = 7;
+
+    public static final int COMMON_INPUT = 100;
+    public static final int USERNAME_INPUT = 101;
+
+    public static int MODE = COMMON_MODE;
+
+    private String USERNAME;
+    private String PASSWORD;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.custom_web_view)
-    WebView mWebView;
+    InteractiveWebView mWebView;
     @BindView(R.id.url_input)
     EditText mURL;
     @BindView(R.id.tips)
@@ -83,60 +84,83 @@ public class CustomActivity extends AppCompatActivity {
     @BindView(R.id.web_layout)
     ViewGroup mViewGroup;
 
-    private SchoolWebViewClient mClient;
+    private InteractiveWebView.ClickCallback mClickCallback = new InteractiveWebView.ClickCallback() {
+        @Override
+        public void onClick(@NonNull final Element element) {
+            if (HTMLUtils.isPasswordInput(element)) {
+                if (!mWebView.setById(element.id(), "value", PASSWORD)) {
+                    mWebView.setByName(element.attr("name"), "value", PASSWORD);
+                }
+            } else if (HTMLUtils.isTextInput(element)) {
+                ClickDialog.newInstance(new ClickDialog.TypeCallback() {
+                    @Override
+                    public void onResult(int type) {
+                        switch (type) {
+                            case COMMON_INPUT:
+                                if (!mWebView.clickElementById(element.id())) {
+                                    mWebView.clickElementsByName(element.attr("name"));
+                                }
+                                break;
+                            case USERNAME_INPUT:
+                                if (!mWebView.setById(element.id(), "value", USERNAME)) {
+                                    mWebView.setByName(element.attr("name"), "value", USERNAME);
+                                }
+                                break;
+                        }
+                    }
+                }).show(getSupportFragmentManager(), "click_dialog");
+            }
+        }
+    };
 
     @OnClick(R.id.fab_common)
     public void commonStart() {
-        SchoolWebViewClient.commonMode = true;
-        SchoolWebViewClient.replayMode = false;
-        String url = getUrl(mURL.getText().toString());
+        String url = URLUtil.guessUrl(mURL.getText().toString());
+        mURL.setText(url);
+        MODE = COMMON_MODE;
+
+        mWebView.removeUserClickCallback();
         tipText.setVisibility(View.GONE);
         mWebView.setVisibility(View.VISIBLE);
         mWebView.loadUrl(url);
     }
 
     @OnClick(R.id.fab)
-    public void start() {
-        SchoolWebViewClient.commonMode = false;
-        SchoolWebViewClient.replayMode = false;
-        String url = getUrl(mURL.getText().toString());
-        tipText.setVisibility(View.GONE);
-        cmsClassURL = url;
-        mWebView.setVisibility(View.VISIBLE);
-        webScriptConfig = new CustomConfiguration();
-        mWebView.loadUrl(url);
-    }
+    public void recordStart() {
+        String url = URLUtil.guessUrl(mURL.getText().toString());
+        mURL.setText(url);
+        MODE = RECORD_MODE;
 
-    @OnClick(R.id.fab_help)
-    public void help() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("无法填写内容");
-        builder.setMessage(R.string.can_not_enter_tip);
-        builder.setPositiveButton(R.string.ok, null);
-        builder.show();
+        mWebView.setUserClickCallback(mClickCallback);
+        tipText.setVisibility(View.GONE);
+        mWebView.setVisibility(View.VISIBLE);
+        mWebView.loadUrl(url);
     }
 
     @OnClick(R.id.fab_replay)
     public void replay() {
-        if (!webScriptConfig.isEmpty()) {
-            tipText.setVisibility(View.GONE);
-            mWebView.setVisibility(View.VISIBLE);
-            mWebView.loadUrl(getUrl(mURL.getText().toString()));
-            mClient.performActions(webScriptConfig, getSupportFragmentManager(), mWebView);
-        } else {
-            Toast.makeText(this, R.string.no_adv_custom_config, Toast.LENGTH_LONG).show();
-        }
+        String url = URLUtil.guessUrl(mURL.getText().toString());
+        mURL.setText(url);
+        MODE = REPLAY_MODE;
+
+        tipText.setVisibility(View.GONE);
+        mWebView.setVisibility(View.VISIBLE);
+        mWebView.loadUrl(url);
     }
 
     @OnClick(R.id.fab_ok)
     public void showTableChooseDialog() {
-        mWebView.loadUrl(
-                "javascript:var frs=document.getElementsByTagName(\"iframe\");" +
-                        "var frameContent=\"\";" +
-                        "for(var i=0;i<frs.length;i++){frameContent=frameContent+frs[i].contentDocument.body.innerHTML;}" +
-                        "window." + JSInteraction.JSInterface + ".getRaw(" +
-                        "document.getElementsByTagName('html')[0].innerHTML + frameContent);"
-        );
+        Document document = mWebView.getPageDom();
+        ActivityUtils.showTableChooseDialog(getSupportFragmentManager(), TableChooseDialog.CLASS_TABLE_DIALOG, document, null);
+    }
+
+    @OnClick(R.id.fab_help)
+    public void help() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.unable_to_enter_values)
+                .setMessage(R.string.can_not_enter_tip)
+                .setPositiveButton(R.string.ok, null)
+                .show();
     }
 
     @Override
@@ -152,93 +176,29 @@ public class CustomActivity extends AppCompatActivity {
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
-        DBManger manger = DBManger.getInstance(this);
-        AdvancedCustomInfo customInfo = manger.getAdvancedCustomInfo(this);
-        if (customInfo != null) {
-            cmsClassURL = customInfo.mCmsURL;
-            if (!TextUtils.isEmpty(cmsClassURL)) {
-                mURL.setText(cmsClassURL);
-            }
-            webScriptConfig = customInfo.mWebScriptConfiguration;
-            if (webScriptConfig == null) {
-                webScriptConfig = new CustomConfiguration();
-            }
-            classTableInfo = customInfo.mClassTableInfo;
-            if (classTableInfo == null) {
-                classTableInfo = new CmsFactory.ClassTableInfo();
-            }
-        } else {
-            webScriptConfig = new CustomConfiguration();
-            classTableInfo = new CmsFactory.ClassTableInfo();
+        Map<String, String> map = null;
+        switch (CUSTOM_TYPE) {
+            case CMS_CLASS:
+            case CMS_GRADE:
+                map = Loader.getCmsStuInfo(this);
+                if (map.size() < 2) {
+                    Toast.makeText(this, R.string.enrich_cms_info, Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                break;
+            case LIB_SEARCH:
+            case LIB_BORROW:
+                map = Loader.getLibStuInfo(this);
+                if (map.size() < 2) {
+                    Toast.makeText(this, R.string.enrich_lib_info, Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                break;
         }
-        setWebView();
-    }
-
-    private void setWebView() {
-        mClient = new SchoolWebViewClient();
-        mWebView.requestFocus();
-        mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.getSettings().setSupportZoom(true);
-        mWebView.getSettings().setDomStorageEnabled(true);
-        mWebView.getSettings().setUseWideViewPort(true);
-        mWebView.getSettings().setLoadWithOverviewMode(true);
-        mWebView.getSettings().setBuiltInZoomControls(true);
-        mWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-        mWebView.setWebViewClient(mClient);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            WebView.setWebContentsDebuggingEnabled(true);
+        if (map != null) {
+            USERNAME = map.get(getString(R.string.key_username));
+            PASSWORD = map.get(getString(R.string.key_password));
         }
-        mWebView.addJavascriptInterface(new JSInteraction(
-                new JSInteraction.ClickCallBack() {
-                    @Override
-                    public void onClick(String id) {
-                        ClickDialog dialog = ClickDialog.newInstance(new ClickDialog.CallBack() {
-                            @Override
-                            public void setResult(String key, String cmd, String value) {
-                                webScriptConfig.addAction(key, cmd);
-                                String command = cmd;
-                                command += TextUtils.isEmpty(value) ? "" : "\"" + value + "\");";
-                                mWebView.loadUrl("javascript:" + command);
-                            }
-                        }, id);
-                        dialog.show(getSupportFragmentManager(), "click_dialog");
-                    }
-                },
-                new JSInteraction.RawCallBack() {
-                    @Override
-                    public void onLoadRaw(String html) {
-                        html = html.replaceAll(Constants.BR, Constants.BR_REPLACER);
-                        Document document = Jsoup.parse(html);
-                        Elements tables = document.select("table");
-                        Map<String, Element> tableMap = new HashMap<>();
-                        for (Element element : tables) {
-                            String id = element.id();
-                            if (TextUtils.isEmpty(id)) {
-                                id = element.className();
-                            }
-                            tableMap.put(id, element);
-                        }
-                        if (!SchoolWebViewClient.commonMode && SchoolWebViewClient.replayMode && !TextUtils.isEmpty(classTableInfo.mClassTableID)) {
-                            List<Element> list = UniversityUtils.getRawClasses(tableMap.get(classTableInfo.mClassTableID), CustomActivity.this);
-                            List<EnrichedClassInfo> enrichedClasses = UniversityUtils.generateClasses(CustomActivity.this, list, classTableInfo);
-                            DBManger manger = DBManger.getInstance(CustomActivity.this);
-                            manger.updateClasses(enrichedClasses);
-                            Toast.makeText(CustomActivity.this, "获取课表成功, 请回到主界面查看课表", Toast.LENGTH_LONG).show();
-                        } else {
-                            TableChooseDialog
-                                    .newInstance(TableChooseDialog.CLASS_TABLE_DIALOG, tableMap, null)
-                                    .show(getSupportFragmentManager(), "table_choose");
-                        }
-                    }
-                }), JSInteraction.JSInterface);
-    }
-
-    private String getUrl(String input) {
-        Pattern pattern = Pattern.compile("^https?://");
-        if (!pattern.matcher(input).find()) {
-            input = "http://" + input;
-        }
-        return input;
     }
 
     @Override

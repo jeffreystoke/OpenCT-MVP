@@ -34,10 +34,11 @@ import java.util.regex.Pattern;
 
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.HTMLUtils.Form;
-import cc.metapro.openct.utils.HTMLUtils.FormHandler;
-import cc.metapro.openct.utils.HTMLUtils.FormUtils;
 import cc.metapro.openct.utils.SchoolInterceptor;
+import cc.metapro.openct.utils.webutils.Form;
+import cc.metapro.openct.utils.webutils.FormHandler;
+import cc.metapro.openct.utils.webutils.FormUtils;
+import okhttp3.HttpUrl;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 
@@ -56,27 +57,7 @@ public abstract class UniversityFactory {
 
     UniversityFactory(String sys, String url) {
         SYS = sys;
-        BASE_URL = url;
-        if (!BASE_URL.endsWith("/")) {
-            BASE_URL += "/";
-        }
-    }
-
-    @NonNull
-    static Map<String, Element> getTablesFromTargetPage(Document html) {
-        Map<String, Element> result = new HashMap<>();
-        Elements tables = html.select("table");
-        for (Element table : tables) {
-            String id = table.id();
-            if (TextUtils.isEmpty(id)) {
-                id = table.attr("name");
-                if (TextUtils.isEmpty(id)) {
-                    id = table.attr("class");
-                }
-            }
-            result.put(id, table);
-        }
-        return result;
+        BASE_URL = HttpUrl.parse(url).toString();
     }
 
     // 再次获取验证码

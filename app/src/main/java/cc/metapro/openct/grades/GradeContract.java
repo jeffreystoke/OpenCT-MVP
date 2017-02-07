@@ -24,7 +24,6 @@ import java.util.Map;
 import cc.metapro.openct.BaseView;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.data.university.item.GradeInfo;
-import cc.metapro.openct.utils.HTMLUtils.Form;
 
 @Keep
 public interface GradeContract {

@@ -65,12 +65,12 @@
             android:textAlignment="textStart"
             android:textColor="@color/material_white"/>
 
-        <WebView
+        <cc.metapro.interactiveweb.InteractiveWebView
             android:id="@+id/custom_web_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone">
-        </WebView>
+        </cc.metapro.interactiveweb.InteractiveWebView>
     </LinearLayout>
 
     <com.github.clans.fab.FloatingActionMenu

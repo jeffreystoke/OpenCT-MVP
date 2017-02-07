@@ -18,7 +18,6 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/tools"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_class_detail"
     android:layout_width="match_parent"
@@ -50,23 +49,24 @@
                 android:id="@+id/toolbar"
                 style="@style/AppTheme.Toolbar"
                 android:layout_marginTop="@dimen/toolbar_padding_top">
+
                 <Spinner
                     android:id="@+id/week"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:entries="@array/weekdays"/>
+                    android:entries="@array/weekdays"
+                    android:gravity="end"/>
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
-        android:src="@drawable/ic_edit"
-        app:layout_anchor="@id/appbar_layout"
-        app:layout_anchorGravity="bottom|end|right"
         style="@style/AppTheme.Fab"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_edit"
+        app:layout_anchor="@id/appbar_layout"
+        app:layout_anchorGravity="bottom|end|right"/>
 
 </android.support.design.widget.CoordinatorLayout>

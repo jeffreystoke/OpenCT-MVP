@@ -1,4 +1,4 @@
-package cc.metapro.openct.custom.dialogs;
+package cc.metapro.openct.customviews;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -38,6 +38,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.Constants;
 
@@ -72,8 +73,8 @@ public class TableSettingDialog extends DialogFragment {
             }
         }
         if (element != null) {
-            String sample = element.text().split(Constants.BR_REPLACER + Constants.BR_REPLACER + "+")[0];
-            mStrings = sample.split(Constants.BR_REPLACER);
+            String sample = element.text().split(HTMLUtils.BR_REPLACER + HTMLUtils.BR_REPLACER + "+")[0];
+            mStrings = sample.split(HTMLUtils.BR_REPLACER);
             mCallBack = callBack;
             return new TableSettingDialog();
         } else {

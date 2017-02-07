@@ -32,11 +32,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.data.university.item.BookInfo;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.HTMLUtils.Form;
-import cc.metapro.openct.utils.HTMLUtils.FormHandler;
-import cc.metapro.openct.utils.HTMLUtils.FormUtils;
+import cc.metapro.openct.utils.webutils.Form;
+import cc.metapro.openct.utils.webutils.FormHandler;
+import cc.metapro.openct.utils.webutils.FormUtils;
+import okhttp3.HttpUrl;
 import retrofit2.Call;
 
 @Keep
@@ -54,10 +56,10 @@ public class LibraryFactory extends UniversityFactory {
     }
 
     @NonNull
-    public Map<String, Element> getBorrowPageTables(String url) throws Exception {
+    public Document getBorrowPageDom(String url) throws Exception {
         String tablePage = mService.getPage(url, webHelper.getUserCenterURL()).execute().body();
-        tablePage = tablePage.replaceAll(Constants.BR, Constants.BR_REPLACER);
-        return getTablesFromTargetPage(Jsoup.parse(tablePage, url));
+        tablePage = tablePage.replaceAll(HTMLUtils.BR, HTMLUtils.BR_REPLACER);
+        return Jsoup.parse(tablePage, url);
     }
 
     /**
@@ -186,9 +188,8 @@ public class LibraryFactory extends UniversityFactory {
         String LOGIN_URL, LOGIN_REF, SEARCH_URL, SEARCH_REF;
 
         LibURLFactory(String libBaseURL) {
-            if (!libBaseURL.endsWith("/")) {
-                libBaseURL += "/";
-            }
+            libBaseURL = HttpUrl.parse(libBaseURL).toString();
+
             if (Constants.NJHUIWEN.equalsIgnoreCase(SYS)) {
                 SEARCH_URL = libBaseURL + "opac/search.php";
                 SEARCH_REF = libBaseURL + "opac/openlink.php";
