@@ -53,12 +53,6 @@ public class LinkSelectionDialog extends DialogFragment {
     RadioGroup mRadioGroup;
     private List<RadioButton> mRadioButtons;
 
-    /**
-     * @param type      种类
-     * @param elements
-     * @param presenter
-     * @return
-     */
     public static LinkSelectionDialog newInstance(String type, Elements elements, LoginPresenter presenter) {
         TYPE = type;
         mLinks = elements;
@@ -71,11 +65,7 @@ public class LinkSelectionDialog extends DialogFragment {
         for (int i = 0; i < mRadioButtons.size(); i++) {
             if (mRadioButtons.get(i).isChecked()) {
                 Element target = mLinks.get(i);
-                DBManger manger = DBManger.getInstance(getActivity());
-                AdvancedCustomInfo info = manger.getAdvancedCustomInfo(getActivity());
-                if (info == null) {
-                    info = new AdvancedCustomInfo(getActivity());
-                }
+                AdvancedCustomInfo info = DBManger.getAdvancedCustomInfo(getActivity());
                 if (CLASS_URL_DIALOG.equals(TYPE)) {
                     info.CLASS_URL_PATTERN = target.html();
                 } else if (GRADE_URL_DIALOG.equals(TYPE)) {
@@ -83,7 +73,7 @@ public class LinkSelectionDialog extends DialogFragment {
                 } else if (BORROW_URL_DIALOG.equals(TYPE)) {
                     info.BORROW_URL_PATTERN = target.html();
                 }
-                manger.updateAdvancedCustomClassInfo(info);
+                DBManger.getInstance(getActivity()).updateAdvancedCustomClassInfo(info);
                 mPresenter.loadTargetPage(getFragmentManager(), target.absUrl("href"));
                 break;
             }
@@ -103,6 +93,12 @@ public class LinkSelectionDialog extends DialogFragment {
         ButterKnife.bind(this, view);
         setView();
         return view;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
     }
 
     private void setView() {

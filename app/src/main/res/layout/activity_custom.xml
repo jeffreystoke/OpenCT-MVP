@@ -87,17 +87,6 @@
         fab:menu_labels_position="left">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_common"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_start"
-            app:fab_size="mini"
-            fab:fab_colorNormal="@color/colorAccent"
-            fab:fab_colorPressed="@color/colorAccent"
-            fab:fab_colorRipple="@color/colorAccent"
-            fab:fab_label="普通开始"/>
-
-        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -128,17 +117,14 @@
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_colorPressed="@color/colorAccent"
             fab:fab_colorRipple="@color/colorAccent"
-            fab:fab_label="录制回放"/>
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_help"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_help"
-            app:fab_size="mini"
-            fab:fab_colorNormal="@color/colorAccent"
-            fab:fab_colorPressed="@color/colorAccent"
-            fab:fab_colorRipple="@color/colorAccent"
-            fab:fab_label="无法填写内容?"/>
+            fab:fab_label="历史回放"/>
     </com.github.clans.fab.FloatingActionMenu>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_next"
+        style="@style/AppTheme.Fab"
+        android:src="@drawable/ic_next"
+        app:fab_label="下一步"
+        android:layout_gravity="center_vertical|start"
+        android:visibility="gone"/>
 </android.support.design.widget.CoordinatorLayout>

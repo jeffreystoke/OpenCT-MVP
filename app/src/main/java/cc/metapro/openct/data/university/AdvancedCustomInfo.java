@@ -28,6 +28,11 @@ public class AdvancedCustomInfo {
 
     public CmsFactory.ClassTableInfo mClassTableInfo;
 
+    public WebConfiguration mClassWebConfig;
+    public WebConfiguration mGradeWebConfig;
+    public WebConfiguration mBorrowWebConfig;
+//    public WebConfiguration mSearchWebConfig;
+
     public String CLASS_URL_PATTERN;
     public String GRADE_URL_PATTERN;
     public String BORROW_URL_PATTERN;
@@ -51,6 +56,18 @@ public class AdvancedCustomInfo {
 
     public void setClassTableInfo(CmsFactory.ClassTableInfo classTableInfo) {
         mClassTableInfo = classTableInfo;
+    }
+
+    public void setClassWebConfig(WebConfiguration classWebConfig) {
+        mClassWebConfig = classWebConfig;
+    }
+
+    public void setGradeWebConfig(WebConfiguration gradeWebConfig) {
+        mGradeWebConfig = gradeWebConfig;
+    }
+
+    public void setBorrowWebConfig(WebConfiguration borrowWebConfig) {
+        mBorrowWebConfig = borrowWebConfig;
     }
 
     @Override

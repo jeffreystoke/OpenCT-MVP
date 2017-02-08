@@ -114,7 +114,7 @@
         <!--基础自定义-->
         <PreferenceScreen
             android:summary="@string/tip_not_exist"
-            android:title="@string/basic_custom">
+            android:title="@string/custom">
             <CheckBoxPreference
                 android:key="@string/pref_custom_enable"
                 android:title="@string/enable_custom"/>
@@ -153,38 +153,6 @@
                     android:key="@string/pref_custom_lib_url"
                     android:title="@string/address"/>
             </PreferenceCategory>
-        </PreferenceScreen>
-        <!--高级自定义-->
-        <PreferenceScreen
-            android:summary="@string/adv_custom_tip"
-            android:title="@string/abv_custom">
-            <Preference
-                android:summary="@string/custom_your_class_fetch_way"
-                android:title="@string/class_table">
-                <intent
-                    android:action="cc.metapro.openct.custom"/>
-            </Preference>
-            <!--<Preference-->
-            <!--android:title="成绩查询"-->
-            <!--android:summary="自定义你的成绩获取方式">-->
-            <!--<intent-->
-            <!--android:action="cc.metapro.openct.custom"-->
-            <!--android:data="cms_grade"/>-->
-            <!--</Preference>-->
-            <!--<Preference-->
-            <!--android:title="图书馆检索"-->
-            <!--android:summary="自定义你的图书馆检索方式">-->
-            <!--<intent-->
-            <!--android:action="cc.metapro.openct.custom"-->
-            <!--android:data="lib_search"/>-->
-            <!--</Preference>-->
-            <!--<Preference-->
-            <!--android:title="借阅信息"-->
-            <!--android:summary="自定义你的借阅信息获取方式">-->
-            <!--<intent-->
-            <!--android:action="cc.metapro.openct.custom"-->
-            <!--android:data="lib_borrow"/>-->
-            <!--</Preference>-->
         </PreferenceScreen>
     </PreferenceCategory>
 

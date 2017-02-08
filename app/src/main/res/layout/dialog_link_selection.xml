@@ -15,34 +15,40 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/DialogTitleText"
+            android:text="@string/select_target_link"/>
 
         <RadioGroup
             android:id="@+id/radio_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:orientation="vertical"/>
-    </ScrollView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:id="@id/cancel"
-            style="@style/DialogButtonText"
-            android:text="@string/not_in_range_above"/>
-        <TextView
-            android:id="@+id/ok"
-            style="@style/DialogButtonText"
-            android:text="@string/ok"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@id/cancel"
+                style="@style/DialogButtonText"
+                android:text="@string/not_in_range_above"/>
+
+            <TextView
+                android:id="@+id/ok"
+                style="@style/DialogButtonText"
+                android:text="@string/ok"/>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</ScrollView>

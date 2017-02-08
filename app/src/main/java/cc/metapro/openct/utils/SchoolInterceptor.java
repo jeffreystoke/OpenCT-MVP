@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import cc.metapro.openct.data.openctservice.QuotePreservingCookieJar;
 import cc.metapro.openct.data.university.UniversityService;
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -34,10 +35,10 @@ public class SchoolInterceptor implements Interceptor {
 
     private static final String userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
     private redirectObserver<String> mObserver;
-    private String mURL;
+    private HttpUrl mUrl;
 
     public SchoolInterceptor(String URL) {
-        mURL = URL;
+        mUrl = HttpUrl.parse(URL);
     }
 
     public void setObserver(redirectObserver<String> observer) {
@@ -56,11 +57,7 @@ public class SchoolInterceptor implements Interceptor {
 
         if (response.code() == 302) {
             String location = response.headers().get("Location");
-            if (location.startsWith("/")) {
-                location = mURL + location;
-            } else {
-                location = mURL + "/" + location;
-            }
+            location = mUrl.newBuilder(location).toString();
             if (mObserver != null) {
                 mObserver.onRedirect(location);
             }

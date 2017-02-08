@@ -1,4 +1,4 @@
-package cc.metapro.openct.custom.dialogs;
+package cc.metapro.openct.custom;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -24,39 +24,37 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.rengwuxian.materialedittext.MaterialEditText;
-
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cc.metapro.interactiveweb.InteractiveWebView;
 import cc.metapro.openct.R;
 
 @Keep
-public class InputDialog extends DialogFragment {
+public class ClickDialog extends DialogFragment {
+    private static TypeCallback mTypeCallback;
 
-    private static InputCallBack mCallBack;
-    private static String mHint;
-    @BindView(R.id.content)
-    MaterialEditText mEditText;
-
-    public static InputDialog newInstance(String hint, InputCallBack callBack) {
-        mCallBack = callBack;
-        mHint = hint;
-        return new InputDialog();
+    public static ClickDialog newInstance(TypeCallback typeCallback) {
+        mTypeCallback = typeCallback;
+        return new ClickDialog();
     }
 
-    @OnClick(R.id.ok)
-    public void confirm() {
-        mCallBack.onConfirm(mEditText.getText().toString());
+    @OnClick(R.id.common)
+    public void backToEnter() {
+        mTypeCallback.onResult(InteractiveWebView.COMMON_INPUT_FLAG);
+        dismiss();
+    }
+
+    @OnClick(R.id.username)
+    public void setUsername() {
+        mTypeCallback.onResult(InteractiveWebView.USERNAME_INPUT_FLAG);
         dismiss();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_input, container);
+        View view = inflater.inflate(R.layout.dialog_click, container);
         ButterKnife.bind(this, view);
-        mEditText.setHint(mHint);
         return view;
     }
 
@@ -66,7 +64,7 @@ public class InputDialog extends DialogFragment {
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
     }
 
-    public interface InputCallBack {
-        void onConfirm(String result);
+    public interface TypeCallback {
+        void onResult(String type);
     }
 }

@@ -22,6 +22,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -48,27 +49,27 @@ public class BorrowInfo {
         }
     }
 
-    public boolean isExceeded() {
+    public boolean isExceeded(Date toDay) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
-        for (String value : mTitleValueMap.values()) {
-            try {
-                Date date = format.parse(value);
-                return date.before(new Date());
-            } catch (Exception ignored) {
+        try {
+            Date date = format.parse(mTitleValueMap.get("应还日期"));
+            return date.before(toDay);
+        } catch (Exception ignored) {
 
-            }
         }
         return false;
     }
 
     public String toFullString() {
         StringBuilder sb = new StringBuilder();
-        for (String key : mTitleValueMap.keySet()) {
-            sb.append(key).append(": ").append(mTitleValueMap.get(key)).append("\n\n");
-        }
+        if (mTitleValueMap != null && !mTitleValueMap.isEmpty()) {
+            for (String key : mTitleValueMap.keySet()) {
+                sb.append(key).append(": ").append(mTitleValueMap.get(key)).append("\n\n");
+            }
 
-        if (sb.charAt(sb.length() - 1) == '\n') {
-            sb.replace(sb.length() - 2, sb.length(), "");
+            if (sb.charAt(sb.length() - 1) == '\n') {
+                sb.replace(sb.length() - 2, sb.length(), "");
+            }
         }
         return sb.toString();
     }

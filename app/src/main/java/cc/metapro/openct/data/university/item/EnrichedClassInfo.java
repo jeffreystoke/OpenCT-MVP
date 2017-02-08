@@ -42,34 +42,11 @@ import cc.metapro.openct.utils.REHelper;
 public class EnrichedClassInfo {
 
     private String id;
-    /**
-     * 课程信息
-     */
     private ClassInfo mClassInfo;
-
-    /**
-     * 在 ScrollView 中的坐标
-     */
-    private int x, y;
-
-    /**
-     * 所有课程信息组件的基础长度, 宽度, 高度
-     */
-    private int width, height;
-
-    /**
-     * 背景色
-     */
+    private int y;
     private int color;
-
-    /**
-     * 星期几
-     */
     private int mDayOfWeek;
 
-    /**
-     * 用于用户创建课程信息
-     */
     public EnrichedClassInfo() {
         id = UUID.randomUUID().toString();
         color = Color.parseColor("#968bc34a");
@@ -89,20 +66,11 @@ public class EnrichedClassInfo {
     public EnrichedClassInfo(ClassInfo classInfo, int dayOfWeek, int dailySeq, int color) {
         id = UUID.randomUUID().toString();
         mClassInfo = classInfo;
-        x = Constants.CLASS_WIDTH * (dayOfWeek - 1);
-        y = Constants.CLASS_BASE_HEIGHT * (dailySeq - 1);
         this.color = color;
-        width = Constants.CLASS_WIDTH;
-        height = Constants.CLASS_BASE_HEIGHT * Constants.CLASS_LENGTH;
-
+        y = Constants.CLASS_BASE_HEIGHT * (dailySeq - 1);
         mDayOfWeek = dayOfWeek;
     }
 
-    /**
-     * 获取所有的课程信息 (课程和子课程 - 在同一个格子中包含的课程信息)
-     *
-     * @return a list of class info
-     */
     @NonNull
     public List<ClassInfo> getAllClasses() {
         if (isEmpty()) {
@@ -141,12 +109,6 @@ public class EnrichedClassInfo {
         return id;
     }
 
-    /**
-     * 生成课程信息的视图
-     *
-     * @param context 用于生成 CardView
-     * @param week    第几周 (<= 0 表示不比较周数, 直接添加)
-     */
     public void addViewTo(ViewGroup viewGroup, final FragmentActivity context, int week) {
         if (isEmpty()) {
             return;
@@ -168,18 +130,18 @@ public class EnrichedClassInfo {
         final CardView card = (CardView) LayoutInflater.from(context).inflate(R.layout.item_class_info, null);
         TextView textView = (TextView) card.findViewById(R.id.class_name);
         int length = target.getLength();
-        if (length >= 5) {
+        if (length > 5) {
             length = 1;
         }
 
-        if (length <= 1) {
+        if (length < 1) {
             length = 1;
             textView.setText(target.getName());
         } else {
             textView.setText(target.getName() + "@" + target.getPlace());
         }
 
-        card.setX(x);
+        card.setX(getX());
         card.setY(getY());
         card.setCardBackgroundColor(color);
 
@@ -191,11 +153,12 @@ public class EnrichedClassInfo {
         });
         viewGroup.addView(card);
         ViewGroup.LayoutParams params = card.getLayoutParams();
-        params.width = width;
+        params.width = Constants.CLASS_WIDTH;
         params.height = length * Constants.CLASS_BASE_HEIGHT;
     }
 
     private int getX() {
+        if (mClassInfo == null) return -1;
         return Constants.CLASS_WIDTH * (mDayOfWeek - 1);
     }
 
@@ -216,7 +179,6 @@ public class EnrichedClassInfo {
 
     public void setDayOfWeek(int dayOfWeek) {
         mDayOfWeek = dayOfWeek;
-        x = Constants.CLASS_WIDTH * (dayOfWeek - 1);
     }
 
     public int getWeekDay() {
@@ -267,7 +229,7 @@ public class EnrichedClassInfo {
     }
 
     public boolean equalsCoordinate(EnrichedClassInfo info) {
-        return mDayOfWeek == info.mDayOfWeek && getY() == info.getY();
+        return mDayOfWeek == info.mDayOfWeek && getY() == info.getY() && getX() == info.getX();
     }
 
     @Override

@@ -46,6 +46,7 @@ import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.grades.cet.CETService;
 import cc.metapro.openct.utils.ActivityUtils;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.webutils.Form;
 import cc.metapro.openct.utils.webutils.TableUtils;
 import io.reactivex.Observable;
@@ -219,7 +220,7 @@ class GradePresenter implements GradeContract.Presenter {
                         final AdvancedCustomInfo customInfo = manger.getAdvancedCustomInfo(mContext);
                         if (customInfo == null || TextUtils.isEmpty(customInfo.GRADE_TABLE_ID)) {
                             TableChooseDialog
-                                    .newInstance(TableChooseDialog.GRADE_TABLE_DIALOG, map, GradePresenter.this)
+                                    .newInstance(Constants.TYPE_GRADE, map, GradePresenter.this)
                                     .show(manager, "table_choose");
                         } else {
                             mGrades = UniversityUtils.generateInfo(TableUtils.getTablesFromTargetPage(map).get(customInfo.GRADE_TABLE_ID), GradeInfo.class);

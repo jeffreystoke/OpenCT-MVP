@@ -21,6 +21,11 @@ import android.support.annotation.Keep;
 @Keep
 public final class Constants {
 
+    public static final String TYPE_CLASS = "class";
+    public static final String TYPE_GRADE = "grade";
+    public static final String TYPE_SEARCH = "search";
+    public static final String TYPE_BORROW = "borrow";
+
     // encryption seed
     public static final String seed =
             "MGICAQACEQDkTyaa2c4v50mkZfyNT0HFAgMBAAECEDrkM9gTwLzYFoimr5b74KECCQD1rE5MzS2H7QIJAO3neDhgDY5AghQ4kbxQEgyTQIIYe3qGoSYgzkCCQCwrArrXqKPw";
