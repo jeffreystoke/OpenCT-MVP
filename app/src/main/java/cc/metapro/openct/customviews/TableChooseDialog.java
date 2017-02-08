@@ -41,8 +41,8 @@ import butterknife.OnClick;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.BorrowContract;
+import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.university.AdvancedCustomInfo;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.BorrowInfo;
@@ -50,14 +50,11 @@ import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.grades.GradeContract;
 import cc.metapro.openct.myclass.ClassContract;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.webutils.TableUtils;
 
 @Keep
 public class TableChooseDialog extends DialogFragment {
-
-    public static final String CLASS_TABLE_DIALOG = "class";
-    public static final String GRADE_TABLE_DIALOG = "grade";
-    public static final String BORROW_TABLE_DIALOG = "borrow";
 
     private static String TYPE;
 
@@ -80,24 +77,19 @@ public class TableChooseDialog extends DialogFragment {
     public void select() {
         final String tableId = tableIds.get(mViewPager.getCurrentItem());
         final DBManger manger = DBManger.getInstance(getActivity());
-        AdvancedCustomInfo infoTmp = manger.getAdvancedCustomInfo(getActivity());
-        if (infoTmp == null) {
-            infoTmp = new AdvancedCustomInfo(getActivity());
-        }
-        final AdvancedCustomInfo advInfo = infoTmp;
         Element targetTable = tableMap.get(tableId);
-        if (CLASS_TABLE_DIALOG.equals(TYPE)) {
+        if (Constants.TYPE_CLASS.equals(TYPE)) {
             final List<Element> rawInfoList = UniversityUtils.getRawClasses(targetTable, getActivity());
             try {
                 TableSettingDialog.newInstance(rawInfoList, new TableSettingDialog.TableSettingCallBack() {
                     @Override
-                    public void onFinish(Map<String, Integer> indexMap) {
-                        CmsFactory.ClassTableInfo info = getClassTableInfo(advInfo.mClassTableInfo, indexMap);
+                    public void onResult(Map<String, Integer> indexMap) {
+                        CmsFactory.ClassTableInfo info = getClassTableInfo(CustomActivity.advCustomInfo.mClassTableInfo, indexMap);
                         info.mClassTableID = tableId;
                         List<EnrichedClassInfo> classes = UniversityUtils.generateClasses(getActivity(), rawInfoList, info);
-                        advInfo.setClassTableInfo(info);
+                        CustomActivity.advCustomInfo.setClassTableInfo(info);
 
-                        manger.updateAdvancedCustomClassInfo(advInfo);
+                        manger.updateAdvancedCustomClassInfo(CustomActivity.advCustomInfo);
                         manger.updateClasses(classes);
                         if (mPresenter != null && mPresenter instanceof ClassContract.Presenter) {
                             ((ClassContract.Presenter) mPresenter).loadLocalClasses();
@@ -109,17 +101,17 @@ public class TableChooseDialog extends DialogFragment {
             } catch (Exception e) {
                 Toast.makeText(getContext(), R.string.sorry_for_unable_to_get_class_info, Toast.LENGTH_LONG).show();
             }
-        } else if (GRADE_TABLE_DIALOG.equals(TYPE)) {
-            advInfo.GRADE_TABLE_ID = tableId;
-            manger.updateAdvancedCustomClassInfo(advInfo);
+        } else if (Constants.TYPE_GRADE.equals(TYPE)) {
+            CustomActivity.advCustomInfo.GRADE_TABLE_ID = tableId;
+            manger.updateAdvancedCustomClassInfo(CustomActivity.advCustomInfo);
             manger.updateGrades(UniversityUtils.generateInfo(tableMap.get(tableId), GradeInfo.class));
             if (mPresenter != null && mPresenter instanceof GradeContract.Presenter) {
                 ((GradeContract.Presenter) mPresenter).loadLocalGrades();
             }
             dismiss();
-        } else if (BORROW_TABLE_DIALOG.equals(TYPE)) {
-            advInfo.BORROW_TABLE_ID = tableId;
-            manger.updateAdvancedCustomClassInfo(advInfo);
+        } else if (Constants.TYPE_BORROW.equals(TYPE)) {
+            CustomActivity.advCustomInfo.BORROW_TABLE_ID = tableId;
+            manger.updateAdvancedCustomClassInfo(CustomActivity.advCustomInfo);
             manger.updateBorrows(UniversityUtils.generateInfo(tableMap.get(tableId), BorrowInfo.class));
             if (mPresenter != null && mPresenter instanceof BorrowContract.Presenter) {
                 ((BorrowContract.Presenter) mPresenter).loadLocalBorrows();

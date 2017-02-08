@@ -40,7 +40,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
-import cc.metapro.openct.utils.Constants;
 
 @Keep
 public class TableSettingDialog extends DialogFragment {
@@ -99,7 +98,7 @@ public class TableSettingDialog extends DialogFragment {
                 Log.e(TAG, e.getMessage());
             }
         } else {
-            mCallBack.onFinish(mResultIndexMap);
+            mCallBack.onResult(mResultIndexMap);
             dismiss();
         }
     }
@@ -134,6 +133,6 @@ public class TableSettingDialog extends DialogFragment {
     }
 
     public interface TableSettingCallBack {
-        void onFinish(Map<String, Integer> indexMap);
+        void onResult(Map<String, Integer> indexMap);
     }
 }

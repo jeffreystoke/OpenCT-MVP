@@ -36,6 +36,8 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -119,8 +121,9 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
     public void showDue(@NonNull List<BorrowInfo> borrows) {
         try {
             List<BorrowInfo> dueInfo = new ArrayList<>(borrows.size());
+            Date toDay = Calendar.getInstance().getTime();
             for (BorrowInfo b : borrows) {
-                if (b.isExceeded()) {
+                if (b.isExceeded(toDay)) {
                     dueInfo.add(b);
                 }
             }

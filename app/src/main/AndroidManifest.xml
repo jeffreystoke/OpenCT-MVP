@@ -105,7 +105,7 @@
             android:name=".classdetail.ClassDetailActivity"
             android:label="@string/class_detail"
             android:parentActivityName=".myclass.ClassActivity"
-            android:windowSoftInputMode="adjustNothing|stateHidden">
+            android:windowSoftInputMode="adjustPan|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cc.metapro.openct.myclass.ClassActivity"/>

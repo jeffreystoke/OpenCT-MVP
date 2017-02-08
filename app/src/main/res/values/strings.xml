@@ -103,7 +103,7 @@
         \t1)点击右下角菜单 -> 回放按钮\n\n
         \t2)到达课表界面后点击结束即可生成</string>
     <string name="mail_addr">jeffctor@gmail.com</string>
-    <string name="tip_not_exist">如果你的学校不在列表中, 可以尝试自定义功能</string>
+    <string name="tip_not_exist">如果你的学校不在列表中, 可以使用自定义功能进行添加</string>
     <string name="custom_school">自定义学校</string>
     <string name="enter_captcha">请输入验证码</string>
     <string name="adv_custom_tip">如果基础自定义学校不成功, 可以尝试高级自定义\n你将会执行完整的定义过程(暂时只支持自定义课程表)</string>
@@ -189,7 +189,7 @@
     <string name="custom_finish_tip">课表解析完成, 请回到主界面查看课表\n部分信息可能需要修改\n\nTips: 尝试修改正则表达式进行匹配能得到更加准确的信息</string>
     <string name="sorry_for_unable_to_get_class_info">很遗憾, 没能在该页面解析到课程信息</string>
     <string name="no_adv_custom_config">还没有自定义过, 请点击开始自定义</string>
-    <string name="choose_table">选择目标信息所在的表格</string>
+    <string name="choose_table">左右滑动选择目标信息所在的表格</string>
     <string name="what_is_that">上面显示的是 ?</string>
     <string name="click_to_choose_your_school">点击选择你的学校</string>
     <string name="unable_to_enter_values">无法填写内容</string>
@@ -200,4 +200,5 @@
     <string name="captcha_input">验证码输入框</string>
     <string name="enter_value_accordingly">填写对应的值</string>
     <string name="common_input">普通输入框</string>
+    <string name="select_target_link">选择目标连接</string>
 </resources>

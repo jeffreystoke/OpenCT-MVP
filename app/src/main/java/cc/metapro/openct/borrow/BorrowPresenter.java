@@ -41,6 +41,7 @@ import cc.metapro.openct.data.university.AdvancedCustomInfo;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.utils.ActivityUtils;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.MyObserver;
 import cc.metapro.openct.utils.webutils.TableUtils;
 import io.reactivex.Observable;
@@ -182,10 +183,10 @@ class BorrowPresenter implements BorrowContract.Presenter {
                         storeBorrows();
                         loadLocalBorrows();
                     } else {
-                        ActivityUtils.showTableChooseDialog(manager, TableChooseDialog.BORROW_TABLE_DIALOG, document, BorrowPresenter.this);
+                        ActivityUtils.showTableChooseDialog(manager, Constants.TYPE_BORROW, document, BorrowPresenter.this);
                     }
                 } else {
-                    ActivityUtils.showTableChooseDialog(manager, TableChooseDialog.BORROW_TABLE_DIALOG, document, BorrowPresenter.this);
+                    ActivityUtils.showTableChooseDialog(manager, Constants.TYPE_BORROW, document, BorrowPresenter.this);
                 }
             }
 

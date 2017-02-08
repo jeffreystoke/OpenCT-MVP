@@ -32,6 +32,7 @@ import java.util.List;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
+import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
@@ -100,8 +101,9 @@ public class DBManger {
      *
      * @return 用户创建的高级自定义信息
      */
-    @Nullable
-    public AdvancedCustomInfo getAdvancedCustomInfo(Context context) {
+    @NonNull
+    public static AdvancedCustomInfo getAdvancedCustomInfo(Context context) {
+        DBManger.getInstance(context);
         Cursor cursor = null;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String name;
@@ -117,20 +119,27 @@ public class DBManger {
                     null, null, null);
             cursor.moveToFirst();
             AdvancedCustomInfo customInfo = StoreHelper.fromJson(cursor.getString(1), AdvancedCustomInfo.class);
-            try {
-                customInfo.mClassTableInfo.mNameRE = preferences.getString(context.getString(R.string.pref_class_name_re), "");
-                customInfo.mClassTableInfo.mTypeRE = preferences.getString(context.getString(R.string.pref_class_type_re), "");
-                customInfo.mClassTableInfo.mDuringRE = preferences.getString(context.getString(R.string.pref_class_during_re), "");
-                customInfo.mClassTableInfo.mTimeRE = preferences.getString(context.getString(R.string.pref_class_time_re), "");
-                customInfo.mClassTableInfo.mPlaceRE = preferences.getString(context.getString(R.string.pref_class_place_re), "");
-                customInfo.mClassTableInfo.mTeacherRE = preferences.getString(context.getString(R.string.pref_class_teacher_re), "");
-            } catch (Exception ignored) {
-
+            if (customInfo.mClassTableInfo == null) {
+                customInfo.mClassTableInfo = new CmsFactory.ClassTableInfo();
             }
+            customInfo.mClassTableInfo.mNameRE = preferences.getString(context.getString(R.string.pref_class_name_re), "");
+            customInfo.mClassTableInfo.mTypeRE = preferences.getString(context.getString(R.string.pref_class_type_re), "");
+            customInfo.mClassTableInfo.mDuringRE = preferences.getString(context.getString(R.string.pref_class_during_re), "");
+            customInfo.mClassTableInfo.mTimeRE = preferences.getString(context.getString(R.string.pref_class_time_re), "");
+            customInfo.mClassTableInfo.mPlaceRE = preferences.getString(context.getString(R.string.pref_class_place_re), "");
+            customInfo.mClassTableInfo.mTeacherRE = preferences.getString(context.getString(R.string.pref_class_teacher_re), "");
             return customInfo;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
-            return new AdvancedCustomInfo(context);
+            AdvancedCustomInfo customInfo = new AdvancedCustomInfo(context);
+            customInfo.mClassTableInfo = new CmsFactory.ClassTableInfo();
+            customInfo.mClassTableInfo.mNameRE = preferences.getString(context.getString(R.string.pref_class_name_re), "");
+            customInfo.mClassTableInfo.mTypeRE = preferences.getString(context.getString(R.string.pref_class_type_re), "");
+            customInfo.mClassTableInfo.mDuringRE = preferences.getString(context.getString(R.string.pref_class_during_re), "");
+            customInfo.mClassTableInfo.mTimeRE = preferences.getString(context.getString(R.string.pref_class_time_re), "");
+            customInfo.mClassTableInfo.mPlaceRE = preferences.getString(context.getString(R.string.pref_class_place_re), "");
+            customInfo.mClassTableInfo.mTeacherRE = preferences.getString(context.getString(R.string.pref_class_teacher_re), "");
+            return customInfo;
         } finally {
             if (cursor != null) {
                 cursor.close();

@@ -41,12 +41,13 @@ import cc.metapro.interactiveweb.utils.JSUtils;
 
 public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSetter, HTMLInspector {
 
-    private static final String CLICK_FLAG = "click";
-    private static final String INPUT_FLAG = "input";
+    public static final String CLICK_FLAG = "click_it";
+    public static final String COMMON_INPUT_FLAG = "common_input";
+    public static final String USERNAME_INPUT_FLAG = "username_input";
 
     private LinkedHashMap<String, Document> mVisitedPageDomMap = new LinkedHashMap<>();
     private InteractiveWebViewClient mWebViewClient = new InteractiveWebViewClient();
-    private WebConfiguration mConfiguration = new WebConfiguration();
+    private InteractiveWebChromeClient mChromeClient = new InteractiveWebChromeClient();
     private ClickCallback mUserClickCallback;
 
     public InteractiveWebView(Context context) {
@@ -62,16 +63,6 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     public InteractiveWebView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
-    }
-
-    @Deprecated
-    public void setWebViewClient(InteractiveWebViewClient webViewClient) {
-        throw new UnsupportedOperationException("InteractiveWebView uses its own webViewClient");
-    }
-
-    @Deprecated
-    public InteractiveWebViewClient getWebViewClient() {
-        throw new UnsupportedOperationException("InteractiveWebView uses its own webViewClient");
     }
 
     private void init() {
@@ -91,17 +82,11 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
                 if (JsInteraction.ON_CLICK == type) {
                     final Element element = Jsoup.parse(domItem, baseURL).body().children().first();
                     if (element != null) {
-                        mConfiguration.addAction(element, "");
                         if (mUserClickCallback != null) {
                             mUserClickCallback.onClick(element);
                         }
                     }
 
-                    if (HTMLUtils.isClickable(element)) {
-                        mConfiguration.addAction(element, CLICK_FLAG);
-                    } else if (HTMLUtils.isUserInput(element)) {
-                        mConfiguration.addAction(element, INPUT_FLAG);
-                    }
                 } else if (JsInteraction.ON_LOAD_SOURCE == type) {
                     domItem = domItem.replaceAll(HTMLUtils.BR, HTMLUtils.BR_REPLACER);
                     if (baseURL != null) {
@@ -112,10 +97,6 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
         }), JsInteraction.INTERFACE_NAME);
     }
 
-    public WebConfiguration getConfiguration() {
-        return mConfiguration;
-    }
-
     public void setUserClickCallback(ClickCallback callback) {
         mUserClickCallback = callback;
     }
@@ -124,14 +105,32 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
         mUserClickCallback = null;
     }
 
+    public void setPageFinishCallback(InteractiveWebViewClient.FinishCallBack callback) {
+        mChromeClient.setFinishCallBack(callback);
+    }
+
+    public void removePageFinishCallback() {
+        mChromeClient.removeFinishCallBack();
+    }
+
+    public void setOnStartCallBack(InteractiveWebViewClient.StartCallBack startCallBack) {
+        mWebViewClient.setOnStartCallBack(startCallBack);
+    }
+
+    public void removeOnStartCallBack() {
+        mWebViewClient.removeOnStartCallBack();
+    }
+
     @Override
     public boolean clickElementById(String id) {
         if (TextUtils.isEmpty(id)) return false;
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
-        Element element = document.getElementById(id);
-        if (element != null) {
-            JSUtils.clickById(this, id);
-            return true;
+        if (document != null) {
+            Element element = document.getElementById(id);
+            if (element != null) {
+                JSUtils.clickById(this, id);
+                return true;
+            }
         }
         return false;
     }
@@ -140,10 +139,12 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     public boolean clickElementsByName(String name) {
         if (TextUtils.isEmpty(name)) return false;
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
-        Elements elements = document.getElementsByAttributeValue("name", name);
-        if (!elements.isEmpty()) {
-            JSUtils.clickByName(this, name);
-            return true;
+        if (document != null) {
+            Elements elements = document.getElementsByAttributeValue("name", name);
+            if (!elements.isEmpty()) {
+                JSUtils.clickByName(this, name);
+                return true;
+            }
         }
         return false;
     }
@@ -152,10 +153,12 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     public boolean clickElementsByTag(String tag) {
         if (TextUtils.isEmpty(tag)) return false;
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
-        Elements elements = document.getElementsByTag(tag);
-        if (!elements.isEmpty()) {
-            JSUtils.clickByTag(this, tag);
-            return true;
+        if (document != null) {
+            Elements elements = document.getElementsByTag(tag);
+            if (!elements.isEmpty()) {
+                JSUtils.clickByTag(this, tag);
+                return true;
+            }
         }
         return false;
     }
@@ -164,12 +167,14 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     public boolean clickElementsByPattern(String pattern) {
         if (TextUtils.isEmpty(pattern)) return false;
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
-        Elements elements = document.getAllElements();
-        Pattern ptn = Pattern.compile(pattern);
-        for (Element element : elements) {
-            if (ptn.matcher(element.html()).find()) {
-                JSUtils.clickByPattern(this, pattern);
-                return true;
+        if (document != null) {
+            Elements elements = document.getAllElements();
+            Pattern ptn = Pattern.compile(pattern);
+            for (Element element : elements) {
+                if (ptn.matcher(element.html()).find()) {
+                    JSUtils.clickByPattern(this, pattern);
+                    return true;
+                }
             }
         }
         return false;
@@ -179,9 +184,11 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     public boolean setById(String id, String key, String value) {
         if (TextUtils.isEmpty(id)) return false;
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
-        if (document.getElementById(id) != null) {
-            JSUtils.setById(this, id, key, value);
-            return true;
+        if (document != null) {
+            if (document.getElementById(id) != null) {
+                JSUtils.setById(this, id, key, value);
+                return true;
+            }
         }
         return false;
     }
@@ -190,10 +197,12 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     public boolean setByTag(String tag, String key, String value) {
         if (TextUtils.isEmpty(tag)) return false;
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
-        Elements elements = document.getElementsByTag(tag);
-        if (!elements.isEmpty()) {
-            JSUtils.setByTag(this, tag, key, value);
-            return true;
+        if (document != null) {
+            Elements elements = document.getElementsByTag(tag);
+            if (!elements.isEmpty()) {
+                JSUtils.setByTag(this, tag, key, value);
+                return true;
+            }
         }
         return false;
     }
@@ -202,10 +211,12 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     public boolean setByName(String name, String key, String value) {
         if (TextUtils.isEmpty(name)) return false;
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
-        Elements elements = document.getElementsByAttributeValue("name", name);
-        if (!elements.isEmpty()) {
-            JSUtils.setByName(this, name, key, value);
-            return true;
+        if (document != null) {
+            Elements elements = document.getElementsByAttributeValue("name", name);
+            if (!elements.isEmpty()) {
+                JSUtils.setByName(this, name, key, value);
+                return true;
+            }
         }
         return false;
     }
@@ -214,12 +225,14 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     public boolean setByPattern(String pattern, String key, String value) {
         if (TextUtils.isEmpty(pattern)) return false;
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
-        Elements elements = document.getAllElements();
-        Pattern ptn = Pattern.compile(pattern);
-        for (Element element : elements) {
-            if (ptn.matcher(element.html()).find()) {
-                JSUtils.setByPattern(this, pattern, key, value);
-                return true;
+        if (document != null) {
+            Elements elements = document.getAllElements();
+            Pattern ptn = Pattern.compile(pattern);
+            for (Element element : elements) {
+                if (ptn.matcher(element.html()).find()) {
+                    JSUtils.setByPattern(this, pattern, key, value);
+                    return true;
+                }
             }
         }
         return false;

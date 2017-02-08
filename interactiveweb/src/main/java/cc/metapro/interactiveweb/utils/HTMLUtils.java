@@ -45,4 +45,8 @@ public class HTMLUtils {
                         || "submit".equalsIgnoreCase(element.attr("type"))
                         || "a".equalsIgnoreCase(element.tagName()));
     }
+
+    public static String getElementPattern(Element element) {
+        return element.html();
+    }
 }

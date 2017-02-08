@@ -36,6 +36,7 @@ import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
+import cc.metapro.openct.utils.PrefHelper;
 
 @Keep
 public class UniversityUtils {
@@ -54,6 +55,7 @@ public class UniversityUtils {
      */
     @NonNull
     public static List<Element> getRawClasses(Element table, Context context) {
+        if (table == null) return new ArrayList<>();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         if (preferences.getBoolean(context.getString(R.string.pref_class_line_based), false)) {
             List<Element> rawInfoList = new ArrayList<>();
@@ -109,11 +111,10 @@ public class UniversityUtils {
 
     @NonNull
     public static List<EnrichedClassInfo> generateClasses(Context context, List<Element> rawInfo, CmsFactory.ClassTableInfo info) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         List<ClassInfo> classes = new ArrayList<>(rawInfo.size());
         List<EnrichedClassInfo> enrichedClasses = new ArrayList<>(classes.size());
         int[] colors = context.getResources().getIntArray(R.array.class_background);
-        if (preferences.getBoolean(context.getString(R.string.pref_class_line_based), false)) {
+        if (PrefHelper.getBoolean(context, R.string.pref_class_line_based)) {
             for (Element td : rawInfo) {
                 classes.add(new ClassInfo(td.text(), info));
             }
@@ -153,6 +154,7 @@ public class UniversityUtils {
     }
 
     public static <T> List<T> generateInfo(Element targetTable, Class<T> tClass) {
+        if (targetTable == null) return new ArrayList<>();
         List<T> result = new ArrayList<>();
         Elements trs = targetTable.select("th");
         trs.addAll(targetTable.select("tr"));

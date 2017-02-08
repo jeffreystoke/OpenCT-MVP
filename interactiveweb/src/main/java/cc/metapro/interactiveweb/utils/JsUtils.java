@@ -152,31 +152,31 @@ public final class JSUtils {
                         "for(var i=0;i<elements.length;i++){" +
                         "if(pattern.exec(elements[i].outerHTML)){" +
                         "elements[i].click();" +
-                        "targets[i].setAttribute(\"" + key + "\",\"" + value + "\");" +
+                        "elements[i].setAttribute(\"" + key + "\",\"" + value + "\");" +
                         "}" +
                         "}");
             }
         });
     }
 
-    public static void getValueById(@NonNull final WebView webView, final String id) {
-        webView.post(new Runnable() {
-            @Override
-            public void run() {
-                webView.loadUrl("javascript:var trag=document.getElementById(\"" + id + "\");" +
-                        "window." + JsInteraction.INTERFACE_NAME + ".onValue(trag.value);");
-            }
-        });
-    }
-
-    public static void getValueByName(@NonNull final WebView webView, final String name) {
-        webView.post(new Runnable() {
-            @Override
-            public void run() {
-                webView.loadUrl("javascript:var targ = document.getElementsByName(\"" + name + "\")[0];" +
-                        "window." + JsInteraction.INTERFACE_NAME + ".onValue(trag.value);");
-            }
-        });
-    }
+//    public static void getValueById(@NonNull final WebView webView, final String id) {
+//        webView.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                webView.loadUrl("javascript:var trag=document.getElementById(\"" + id + "\");" +
+//                        "window." + JsInteraction.INTERFACE_NAME + ".onValue(trag.value);");
+//            }
+//        });
+//    }
+//
+//    public static void getValueByName(@NonNull final WebView webView, final String name) {
+//        webView.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                webView.loadUrl("javascript:var targ = document.getElementsByName(\"" + name + "\")[0];" +
+//                        "window." + JsInteraction.INTERFACE_NAME + ".onValue(trag.value);");
+//            }
+//        });
+//    }
 
 }

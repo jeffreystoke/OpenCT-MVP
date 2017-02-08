@@ -1,4 +1,4 @@
-package cc.metapro.interactiveweb;
+package cc.metapro.openct.data.university;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,32 +16,38 @@ package cc.metapro.interactiveweb;
  * limitations under the License.
  */
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 
 import cc.metapro.interactiveweb.utils.JSONHelper;
 
 public class WebConfiguration {
 
-    private LinkedHashMap<Element, String> mClickValueMap;
+    private List<String> mElementList;
+
+    private List<String> mCommands;
 
     public WebConfiguration() {
-        mClickValueMap = new LinkedHashMap<>();
+        mElementList = new ArrayList<>();
+        mCommands = new ArrayList<>();
     }
 
     public void addAction(Element element, String valueOrFlag) {
-        mClickValueMap.remove(element);
-        mClickValueMap.put(element, valueOrFlag);
+        mElementList.add(element.toString());
+        mCommands.add(valueOrFlag);
     }
 
-    public Set<Element> getAllElements() {
-        return mClickValueMap.keySet();
-    }
-
-    @Override
-    public String toString() {
-        return JSONHelper.toJson(this);
+    public LinkedHashMap<Element, String> getClickedCommands() {
+        LinkedHashMap<Element, String> map = new LinkedHashMap<>();
+        int i = 0;
+        for (String element : mElementList) {
+            map.put(Jsoup.parse(element).body().children().first(), mCommands.get(i++));
+        }
+        return map;
     }
 }

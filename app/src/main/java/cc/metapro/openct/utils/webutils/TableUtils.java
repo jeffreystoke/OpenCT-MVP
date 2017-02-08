@@ -30,6 +30,7 @@ public class TableUtils {
 
     @NonNull
     public static Map<String, Element> getTablesFromTargetPage(Document html) {
+        if (html == null) return new HashMap<>();
         Map<String, Element> result = new HashMap<>();
         Elements tables = html.select("table");
         for (Element table : tables) {
