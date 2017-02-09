@@ -16,9 +16,13 @@ package cc.metapro.openct.customviews;
  * limitations under the License.
  */
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,46 +57,51 @@ public class LinkSelectionDialog extends DialogFragment {
     RadioGroup mRadioGroup;
     private List<RadioButton> mRadioButtons;
 
-    public static LinkSelectionDialog newInstance(String type, Elements elements, LoginPresenter presenter) {
+    public static LinkSelectionDialog newInstance(String type, Elements allLinks, LoginPresenter presenter) {
         TYPE = type;
-        mLinks = elements;
+        mLinks = allLinks;
         mPresenter = presenter;
         return new LinkSelectionDialog();
     }
 
-    @OnClick(R.id.ok)
-    public void confirm() {
-        for (int i = 0; i < mRadioButtons.size(); i++) {
-            if (mRadioButtons.get(i).isChecked()) {
-                Element target = mLinks.get(i);
-                AdvancedCustomInfo info = DBManger.getAdvancedCustomInfo(getActivity());
-                if (CLASS_URL_DIALOG.equals(TYPE)) {
-                    info.CLASS_URL_PATTERN = target.html();
-                } else if (GRADE_URL_DIALOG.equals(TYPE)) {
-                    info.GRADE_URL_PATTERN = target.html();
-                } else if (BORROW_URL_DIALOG.equals(TYPE)) {
-                    info.BORROW_URL_PATTERN = target.html();
-                }
-                DBManger.getInstance(getActivity()).updateAdvancedCustomClassInfo(info);
-                mPresenter.loadTargetPage(getFragmentManager(), target.absUrl("href"));
-                break;
-            }
-        }
-        dismiss();
-    }
-
-    @OnClick(R.id.cancel)
-    public void moreOptions() {
-        // TODO: 17/2/7 显示所有链接选项
-    }
-
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_link_selection, container, false);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_link_selection, null);
         ButterKnife.bind(this, view);
         setView();
-        return view;
+        return new AlertDialog.Builder(getActivity())
+                .setView(view)
+                .setTitle(R.string.select_target_link)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        for (int i = 0; i < mRadioButtons.size(); i++) {
+                            if (mRadioButtons.get(i).isChecked()) {
+                                Element target = mLinks.get(i);
+                                AdvancedCustomInfo info = DBManger.getAdvancedCustomInfo(getActivity());
+                                if (CLASS_URL_DIALOG.equals(TYPE)) {
+                                    info.CLASS_URL_PATTERN = target.html();
+                                } else if (GRADE_URL_DIALOG.equals(TYPE)) {
+                                    info.GRADE_URL_PATTERN = target.html();
+                                } else if (BORROW_URL_DIALOG.equals(TYPE)) {
+                                    info.BORROW_URL_PATTERN = target.html();
+                                }
+                                DBManger.getInstance(getActivity()).updateAdvancedCustomClassInfo(info);
+                                mPresenter.loadTargetPage(getFragmentManager(), target.absUrl("href"));
+                                break;
+                            }
+                        }
+                        dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.not_in_range_above, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO: 17/2/9 显示更多链接
+                    }
+                })
+                .create();
     }
 
     @Override

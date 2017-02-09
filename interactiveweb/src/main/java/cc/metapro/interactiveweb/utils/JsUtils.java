@@ -159,24 +159,25 @@ public final class JSUtils {
         });
     }
 
-//    public static void getValueById(@NonNull final WebView webView, final String id) {
-//        webView.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                webView.loadUrl("javascript:var trag=document.getElementById(\"" + id + "\");" +
-//                        "window." + JsInteraction.INTERFACE_NAME + ".onValue(trag.value);");
-//            }
-//        });
-//    }
-//
-//    public static void getValueByName(@NonNull final WebView webView, final String name) {
-//        webView.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                webView.loadUrl("javascript:var targ = document.getElementsByName(\"" + name + "\")[0];" +
-//                        "window." + JsInteraction.INTERFACE_NAME + ".onValue(trag.value);");
-//            }
-//        });
-//    }
+    public static void foucsById(@NonNull final WebView webView, final String id) {
+        webView.post(new Runnable() {
+            @Override
+            public void run() {
+                webView.loadUrl("javascript:document.getElementById(\"" + id + "\").focus();");
+            }
+        });
+    }
 
+    public static void focusByName(@NonNull final WebView webView, final String name) {
+        webView.post(new Runnable() {
+            @Override
+            public void run() {
+                webView.loadUrl("javascript:" +
+                        "var targets = document.getElementsByName(\"" + name + "\");" +
+                        "for(var i = 0; i < targets.length; i++){" +
+                        "targets[i].focus();" +
+                        "}");
+            }
+        });
+    }
 }

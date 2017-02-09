@@ -63,11 +63,6 @@ public class DBManger {
         return manger;
     }
 
-    /**
-     * 更新高级自定义信息
-     *
-     * @param info 新的高级自定义信息
-     */
     public void updateAdvancedCustomClassInfo(AdvancedCustomInfo info) {
         mDatabase.beginTransaction();
         try {
@@ -96,11 +91,6 @@ public class DBManger {
         }
     }
 
-    /**
-     * 获取高级自定义信息
-     *
-     * @return 用户创建的高级自定义信息
-     */
     @NonNull
     public static AdvancedCustomInfo getAdvancedCustomInfo(Context context) {
         DBManger.getInstance(context);
@@ -147,11 +137,6 @@ public class DBManger {
         }
     }
 
-    /**
-     * 更新基础自定义的学校基本信息
-     *
-     * @param info 新的自定义学校信息
-     */
     public void updateCustomSchoolInfo(UniversityInfo info) {
         mDatabase.beginTransaction();
         try {
@@ -166,11 +151,6 @@ public class DBManger {
         }
     }
 
-    /**
-     * 获取自定义学校的基本信息
-     *
-     * @return 自定义学校的基本信息
-     */
     @Nullable
     UniversityInfo getCustomUniversity() {
         Cursor cursor = null;
@@ -214,11 +194,6 @@ public class DBManger {
         }
     }
 
-    /**
-     * 更新课程信息
-     *
-     * @param classes 新的课程信息
-     */
     public void updateClasses(@NonNull List<EnrichedClassInfo> classes) {
         mDatabase.beginTransaction();
         try {
@@ -260,11 +235,6 @@ public class DBManger {
         return new ArrayList<>(0);
     }
 
-    /**
-     * 更新成绩信息
-     *
-     * @param grades 新的成绩信息
-     */
     public void updateGrades(@NonNull List<GradeInfo> grades) {
         mDatabase.beginTransaction();
         try {
@@ -306,11 +276,6 @@ public class DBManger {
         return new ArrayList<>(0);
     }
 
-    /**
-     * 更新借阅信息
-     *
-     * @param borrow 新的借阅信息
-     */
     public void updateBorrows(@NonNull List<BorrowInfo> borrow) {
         mDatabase.beginTransaction();
         try {

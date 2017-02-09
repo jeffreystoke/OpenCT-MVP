@@ -183,10 +183,6 @@ public class ClassInfo {
         return TextUtils.isEmpty(mTime) ? null : mTime;
     }
 
-    public boolean isEmpty() {
-        return REHelper.isEmpty(mName);
-    }
-
     boolean hasSubClass() {
         return mSubClassInfo != null;
     }
@@ -215,6 +211,18 @@ public class ClassInfo {
         return TextUtils.isEmpty(mPlace) ? "" : mPlace;
     }
 
+    public boolean isOddWeek() {
+        return mOddWeek;
+    }
+
+    public boolean isEvenWeek() {
+        return mEvenWeek;
+    }
+
+    public boolean isEmpty() {
+        return REHelper.isEmpty(mName);
+    }
+
     @Override
     public String toString() {
         return StoreHelper.toJson(this);
@@ -238,14 +246,6 @@ public class ClassInfo {
             }
         }
         return false;
-    }
-
-    public boolean isOddWeek() {
-        return mOddWeek;
-    }
-
-    public boolean isEvenWeek() {
-        return mEvenWeek;
     }
 
     /**

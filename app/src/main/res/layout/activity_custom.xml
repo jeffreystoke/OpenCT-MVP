@@ -98,7 +98,7 @@
             fab:fab_label="录制开始"/>
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_ok"
+            android:id="@+id/fab_target"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_dest_ok"

@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -31,11 +32,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import cc.metapro.interactiveweb.InteractiveWebView;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.LibraryFactory;
 import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.PrefHelper;
 
 @Keep
 public class Loader {
@@ -47,6 +50,11 @@ public class Loader {
 
     public static void needUpdateUniversity() {
         needUpdateUniversity = true;
+    }
+
+    public static UniversityInfo getUniversity(Context context) {
+        checkUniversity(context);
+        return university;
     }
 
     public static LibraryFactory getLibrary(Context context) {
@@ -62,6 +70,7 @@ public class Loader {
     private static void checkUniversity(Context context) {
         if (university == null || needUpdateUniversity) {
             university = loadUniversity(context);
+            assert university != null;
             needUpdateUniversity = false;
         }
     }
@@ -111,21 +120,20 @@ public class Loader {
         return Integer.parseInt(preferences.getString(context.getString(R.string.pref_current_week), "1"));
     }
 
-    @NonNull
+    @Nullable
     private static UniversityInfo loadUniversity(final Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean custom = preferences.getBoolean(context.getString(R.string.pref_custom_enable), false);
+        boolean custom = PrefHelper.getBoolean(context, R.string.pref_custom_enable);
         DBManger manger = DBManger.getInstance(context);
-        String defaultSchool = context.getResources().getStringArray(R.array.school_names)[0];
 
-        UniversityInfo university;
+        UniversityInfo university = null;
         if (custom) {
             university = manger.getCustomUniversity();
         } else {
-            university = manger.getUniversity(preferences.getString(context.getString(R.string.pref_school_name), defaultSchool));
+            university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name));
         }
+
         if (university == null) {
-            university = manger.getUniversity(preferences.getString(context.getString(R.string.pref_school_name), defaultSchool));
+            university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name));
         }
 
         updateWeekSeq(context);

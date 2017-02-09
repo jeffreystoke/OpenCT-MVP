@@ -20,6 +20,7 @@ import android.content.Context;
 import android.support.annotation.Keep;
 
 import cc.metapro.openct.R;
+import cc.metapro.openct.custom.WebConfiguration;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.PrefHelper;
 

@@ -16,7 +16,11 @@ package cc.metapro.openct.customviews;
  * limitations under the License.
  */
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -34,6 +38,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.LoginPresenter;
@@ -45,7 +50,9 @@ public class FormDialog extends DialogFragment {
 
     private static Form mForm;
     private static LoginPresenter mPresenter;
-    private LinearLayout mBaseLinearLayout;
+
+    @BindView(R.id.form_content_layout)
+    LinearLayout mBaseLinearLayout;
 
     public static FormDialog newInstance(Form form, LoginPresenter presenter) {
         mForm = form;
@@ -53,50 +60,48 @@ public class FormDialog extends DialogFragment {
         return new FormDialog();
     }
 
-    @OnClick(R.id.cancel)
-    public void cancel() {
-        dismiss();
-    }
-
-    @OnClick(R.id.ok)
-    public void confirm() {
-        Map<String, String> map = new LinkedHashMap<>();
-        int j = 0;
-        for (int i = 0; i < mForm.size(); i++) {
-            Element target = mForm.getItemByIndex(i);
-            String tagName = target.tagName();
-            if ("select".equalsIgnoreCase(tagName)) {
-                Spinner spinner = (Spinner) mBaseLinearLayout.getChildAt(j++);
-                Elements elements = target.select("option");
-                map.put(target.attr("name"), elements.get(spinner.getSelectedItemPosition()).attr("value"));
-            } else if ("input".equalsIgnoreCase(tagName)) {
-                if ("text".equalsIgnoreCase(target.attr("type"))) {
-                    MaterialEditText editText = (MaterialEditText) mBaseLinearLayout.getChildAt(j++);
-                    map.put(target.attr("name"), editText.getText().toString());
-                } else if (Pattern.compile(FormUtils.INVISIBLE_FORM_ITEM_PATTERN).matcher(target.toString()).find()) {
-                    map.put(target.attr("name"), target.attr("value"));
-                }
-            } else {
-                map.put(target.attr("name"), target.attr("value"));
-            }
-        }
-        mPresenter.loadQuery(getFragmentManager(), mForm.getAction(), map);
-        dismiss();
-    }
-
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = FormUtils.getFormView(getContext(), container, mForm);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View view = FormUtils.getFormView(getContext(), null, mForm);
         ButterKnife.bind(this, view);
-        mBaseLinearLayout = (LinearLayout) view.findViewById(R.id.form_content_layout);
-
-        return view;
+        return new AlertDialog.Builder(getActivity())
+                .setView(view)
+                .setTitle("选择查询详情")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Map<String, String> map = new LinkedHashMap<>();
+                        int j = 0;
+                        for (int i = 0; i < mForm.size(); i++) {
+                            Element target = mForm.getItemByIndex(i);
+                            String tagName = target.tagName();
+                            if ("select".equalsIgnoreCase(tagName)) {
+                                Spinner spinner = (Spinner) mBaseLinearLayout.getChildAt(j++);
+                                Elements elements = target.select("option");
+                                map.put(target.attr("name"), elements.get(spinner.getSelectedItemPosition()).attr("value"));
+                            } else if ("input".equalsIgnoreCase(tagName)) {
+                                if ("text".equalsIgnoreCase(target.attr("type"))) {
+                                    MaterialEditText editText = (MaterialEditText) mBaseLinearLayout.getChildAt(j++);
+                                    map.put(target.attr("name"), editText.getText().toString());
+                                } else if (Pattern.compile(FormUtils.INVISIBLE_FORM_ITEM_PATTERN).matcher(target.toString()).find()) {
+                                    map.put(target.attr("name"), target.attr("value"));
+                                }
+                            } else {
+                                map.put(target.attr("name"), target.attr("value"));
+                            }
+                        }
+                        mPresenter.loadQuery(getFragmentManager(), mForm.getAction(), map);
+                        dismiss();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
+        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
     }
 }
