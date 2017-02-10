@@ -16,36 +16,20 @@ package cc.metapro.openct.utils;
  * limitations under the License.
  */
 
-import android.util.Log;
+import android.content.DialogInterface;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
+import java.lang.reflect.Field;
 
+public class DialogUtils {
 
-public abstract class MyObserver<T> implements Observer<T> {
-
-    private String TAG;
-
-    public MyObserver(String tag) {
-        TAG = tag;
+    public static void canCloseDialog(DialogInterface dialogInterface, boolean close) {
+        try {
+            Field field = dialogInterface.getClass().getSuperclass().getDeclaredField("mShowing");
+            field.setAccessible(true);
+            field.set(dialogInterface, close);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public void onSubscribe(Disposable d) {
-
-    }
-
-    @Override
-    public abstract void onNext(T t);
-
-    @Override
-    public void onError(Throwable e) {
-        ActivityUtils.dismissProgressDialog();
-        Log.e(TAG, e.getMessage(), e);
-    }
-
-    @Override
-    public void onComplete() {
-
-    }
 }

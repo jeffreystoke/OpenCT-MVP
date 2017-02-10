@@ -3,8 +3,8 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:gravity="center"
-              android:orientation="vertical">
+              android:orientation="vertical"
+              android:padding="20dp">
 
     <TextView
         android:id="@+id/captcha_image"
@@ -23,14 +23,4 @@
         android:inputType="text"
         android:textAlignment="center"
         app:met_floatingLabel="normal"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/ok"
-            style="@style/DialogButtonText"
-            android:text="@string/ok"/>
-    </LinearLayout>
 </LinearLayout>

@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import cc.metapro.interactiveweb.InteractiveWebView;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.LibraryFactory;

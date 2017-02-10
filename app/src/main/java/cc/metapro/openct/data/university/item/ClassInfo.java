@@ -41,7 +41,6 @@ import java.util.regex.Pattern;
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.data.university.CmsFactory;
-import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.REHelper;
 
@@ -80,37 +79,27 @@ public class ClassInfo {
     }
 
     public ClassInfo(String content, CmsFactory.ClassTableInfo info) {
-        mUid = UUID.randomUUID().toString();
+        this();
         String[] classes = content.split(HTMLUtils.BR_REPLACER + HTMLUtils.BR_REPLACER + "+");
         String s = classes[0];
         String[] tmp = s.split(HTMLUtils.BR_REPLACER);
 
         if (tmp.length > 0) {
-            int duringIndex = info.mDuringIndex;
-            int placeIndex = info.mPlaceIndex;
-            int timeIndex = info.mTimeIndex;
-            int teacherIndex = info.mTeacherIndex;
-            if (tmp.length == info.mClassStringCount - 1) {
-                duringIndex--;
-                placeIndex--;
-                timeIndex--;
-                teacherIndex--;
-            }
             mName = infoParser(info.mNameIndex, info.mNameRE, tmp);
             mType = infoParser(info.mTypeIndex, info.mTypeRE, tmp);
-            mTeacher = infoParser(teacherIndex, info.mTeacherRE, tmp);
-            mPlace = infoParser(placeIndex, info.mPlaceRE, tmp);
+            mTeacher = infoParser(info.mTeacherIndex, info.mTeacherRE, tmp);
+            mPlace = infoParser(info.mPlaceIndex, info.mPlaceRE, tmp);
 
-            if (timeIndex < tmp.length && timeIndex >= 0) {
-                mOddWeek = REHelper.isOddWeek(tmp[timeIndex]);
-                mEvenWeek = REHelper.isEvenWeek(tmp[timeIndex]);
+            if (info.mTimeIndex < tmp.length && info.mTimeIndex >= 0) {
+                mOddWeek = REHelper.isOddWeek(tmp[info.mTimeIndex]);
+                mEvenWeek = REHelper.isEvenWeek(tmp[info.mTimeIndex]);
             }
 
-            mTime = infoParser(timeIndex, info.mTimeRE, tmp);
+            mTime = infoParser(info.mTimeIndex, info.mTimeRE, tmp);
             if (!REHelper.isEmpty(mTime)) {
                 mTime = REHelper.delDoubleWidthChar(mTime);
             }
-            mDuring = infoParser(duringIndex, info.mDuringRE, tmp);
+            mDuring = infoParser(info.mDuringIndex, info.mDuringRE, tmp);
             if (REHelper.isEmpty(mDuring)) {
                 mDuring = REHelper.delDoubleWidthChar(mDuring);
             }

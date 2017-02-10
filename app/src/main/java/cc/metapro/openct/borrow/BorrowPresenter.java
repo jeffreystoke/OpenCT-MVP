@@ -21,7 +21,6 @@ import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import org.jsoup.nodes.Document;
@@ -33,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import cc.metapro.openct.R;
-import cc.metapro.openct.customviews.LinkSelectionDialog;
-import cc.metapro.openct.customviews.TableChooseDialog;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
@@ -80,7 +77,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
             }
         });
 
-        Observer<Boolean> observer = new MyObserver<Boolean>() {
+        Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
             @Override
             public void onNext(Boolean needCaptcha) {
                 ActivityUtils.dismissProgressDialog();
@@ -93,8 +90,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
 
             @Override
             public void onError(Throwable e) {
-                ActivityUtils.dismissProgressDialog();
-                Log.e(TAG, e.getMessage(), e);
+                super.onError(e);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         };
@@ -120,7 +116,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
             }
         });
 
-        Observer<Document> observer = new MyObserver<Document>() {
+        Observer<Document> observer = new MyObserver<Document>(TAG) {
 
             @Override
             public void onNext(Document document) {
@@ -129,24 +125,23 @@ class BorrowPresenter implements BorrowContract.Presenter {
                 if (links.isEmpty()) {
                     onError(new Exception("获取图书馆用户中心失败"));
                 } else {
-                    AdvancedCustomInfo info = mDBManger.getAdvancedCustomInfo(mContext);
-                    if (info != null && !TextUtils.isEmpty(info.BORROW_URL_PATTERN)) {
-                        Element target = document.select("a:matches("+info.BORROW_URL_PATTERN+")").first();
+                    Constants.checkAdvCustomInfo(mContext);
+                    if (!TextUtils.isEmpty(Constants.advCustomInfo.BORROW_URL_PATTERN)) {
+                        Element target = document.select("a:matches(" + Constants.advCustomInfo.BORROW_URL_PATTERN + ")").first();
                         if (target != null) {
                             loadTargetPage(manager, target.absUrl("href"));
                         } else {
-                            ActivityUtils.showLinkSelectionDialog(manager, LinkSelectionDialog.BORROW_URL_DIALOG, links, BorrowPresenter.this);
+                            ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_BORROW, document, BorrowPresenter.this);
                         }
                     } else {
-                        ActivityUtils.showLinkSelectionDialog(manager, LinkSelectionDialog.BORROW_URL_DIALOG, links, BorrowPresenter.this);
+                        ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_BORROW, document, BorrowPresenter.this);
                     }
                 }
             }
 
             @Override
             public void onError(Throwable e) {
-                ActivityUtils.dismissProgressDialog();
-                Log.e(TAG, e.getMessage(), e);
+                super.onError(e);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         };
@@ -170,18 +165,22 @@ class BorrowPresenter implements BorrowContract.Presenter {
             }
         });
 
-        Observer<Document> observer = new MyObserver<Document>() {
+        Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(Document document) {
                 ActivityUtils.dismissProgressDialog();
-                DBManger manger = DBManger.getInstance(mContext);
-                final AdvancedCustomInfo customInfo = manger.getAdvancedCustomInfo(mContext);
-                if (customInfo != null && !TextUtils.isEmpty(customInfo.BORROW_TABLE_ID)) {
+                AdvancedCustomInfo customInfo = DBManger.getAdvancedCustomInfo(mContext);
+                if (!TextUtils.isEmpty(customInfo.BORROW_TABLE_ID)) {
                     Map<String, Element> map = TableUtils.getTablesFromTargetPage(document);
                     if (!map.isEmpty()) {
                         mBorrows = UniversityUtils.generateInfo(map.get(customInfo.BORROW_TABLE_ID), BorrowInfo.class);
-                        storeBorrows();
-                        loadLocalBorrows();
+                        if (mBorrows.size() == 0) {
+                            Toast.makeText(mContext, R.string.borrows_empty, Toast.LENGTH_LONG).show();
+                        } else {
+                            storeBorrows();
+                            loadLocalBorrows();
+                            Toast.makeText(mContext, R.string.load_online_borrows_successful, Toast.LENGTH_LONG).show();
+                        }
                     } else {
                         ActivityUtils.showTableChooseDialog(manager, Constants.TYPE_BORROW, document, BorrowPresenter.this);
                     }
@@ -192,8 +191,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
 
             @Override
             public void onError(Throwable e) {
-                ActivityUtils.dismissProgressDialog();
-                Log.e(TAG, e.getMessage(), e);
+                super.onError(e);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         };
@@ -206,7 +204,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
     }
 
     @Override
-    public Disposable loadQuery(final FragmentManager manager, final String actionURL, Map<String, String> queryMap) {
+    public Disposable loadQuery(final FragmentManager manager, final String actionURL, Map<String, String> queryMap, boolean needNewPage) {
         return null;
     }
 
@@ -222,7 +220,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
             }
         });
 
-        Observer<List<BorrowInfo>> observer = new MyObserver<List<BorrowInfo>>() {
+        Observer<List<BorrowInfo>> observer = new MyObserver<List<BorrowInfo>>(TAG) {
             @Override
             public void onNext(List<BorrowInfo> borrows) {
                 if (borrows.size() != 0) {
@@ -233,8 +231,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
 
             @Override
             public void onError(Throwable e) {
-                ActivityUtils.dismissProgressDialog();
-                Log.e(TAG, e.getMessage(), e);
+                super.onError(e);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         };
@@ -252,8 +249,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
     @Override
     public void storeBorrows() {
         try {
-            DBManger manger = DBManger.getInstance(mContext);
-            manger.updateBorrows(mBorrows == null ? new ArrayList<BorrowInfo>(0) : mBorrows);
+            mDBManger.updateBorrows(mBorrows);
         } catch (Exception e) {
             Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
         }

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
-import android.webkit.URLUtil;
 import android.widget.Toast;
 
 import org.jsoup.nodes.Element;
@@ -37,7 +36,6 @@ import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.AdvancedCustomInfo;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
@@ -57,21 +55,19 @@ import static cc.metapro.interactiveweb.InteractiveWebView.CLICK_FLAG;
 
 public class CustomPresenter implements CustomContract.Presenter {
 
+    private static final String TAG = CustomPresenter.class.getSimpleName();
     private CustomContract.View mView;
     private Context mContext;
-
     private String USERNAME;
     private String PASSWORD;
-
     private int CMD_INDEX;
     private List<Map<Element, String>> commands;
     private Observer<Map<Element, String>> mObserver;
     private WebConfiguration mConfiguration;
     private String CUSTOM_TYPE;
-    public static AdvancedCustomInfo advCustomInfo;
 
 
-    public CustomPresenter(Context context, CustomContract.View view, String type) {
+    CustomPresenter(Context context, CustomContract.View view, String type) {
         mView = view;
         mContext = context;
         mView.setPresenter(this);
@@ -80,20 +76,20 @@ public class CustomPresenter implements CustomContract.Presenter {
 
     @Override
     public void start() {
-        advCustomInfo = DBManger.getAdvancedCustomInfo(mContext);
+        Constants.advCustomInfo = DBManger.getAdvancedCustomInfo(mContext);
         Map<String, String> userPassMap = null;
         switch (CUSTOM_TYPE) {
             case Constants.TYPE_CLASS:
                 userPassMap = Loader.getCmsStuInfo(mContext);
-                mConfiguration = advCustomInfo.mClassWebConfig;
+                mConfiguration = Constants.advCustomInfo.mClassWebConfig;
                 break;
             case Constants.TYPE_GRADE:
                 userPassMap = Loader.getCmsStuInfo(mContext);
-                mConfiguration = advCustomInfo.mGradeWebConfig;
+                mConfiguration = Constants.advCustomInfo.mGradeWebConfig;
                 break;
             case Constants.TYPE_BORROW:
                 userPassMap = Loader.getLibStuInfo(mContext);
-                mConfiguration = advCustomInfo.mBorrowWebConfig;
+                mConfiguration = Constants.advCustomInfo.mBorrowWebConfig;
                 break;
         }
 
@@ -173,7 +169,7 @@ public class CustomPresenter implements CustomContract.Presenter {
                     }
                 });
 
-        mObserver = new MyObserver<Map<Element, String>>() {
+        mObserver = new MyObserver<Map<Element, String>>(TAG) {
             @Override
             public void onSubscribe(Disposable d) {
                 super.onSubscribe(d);
@@ -234,7 +230,7 @@ public class CustomPresenter implements CustomContract.Presenter {
 
             @Override
             public void onError(Throwable e) {
-
+                super.onError(e);
             }
         };
 
@@ -253,21 +249,21 @@ public class CustomPresenter implements CustomContract.Presenter {
                 mObserver.onComplete();
                 switch (CUSTOM_TYPE) {
                     case Constants.TYPE_CLASS:
-                        if (!TextUtils.isEmpty(advCustomInfo.mClassTableInfo.mClassTableID)) {
+                        if (!TextUtils.isEmpty(Constants.advCustomInfo.mClassTableInfo.mClassTableID)) {
                             List<Element> rawClasses = UniversityUtils.getRawClasses(TableUtils
                                     .getTablesFromTargetPage(mWebView.getPageDom())
-                                    .get(advCustomInfo.mClassTableInfo.mClassTableID), mContext);
+                                    .get(Constants.advCustomInfo.mClassTableInfo.mClassTableID), mContext);
                             List<EnrichedClassInfo> classInfoList = UniversityUtils
-                                    .generateClasses(mContext, rawClasses, advCustomInfo.mClassTableInfo);
+                                    .generateClasses(mContext, rawClasses, Constants.advCustomInfo.mClassTableInfo);
                             DBManger.getInstance(mContext).updateClasses(classInfoList);
                             Toast.makeText(mContext, R.string.custom_finish_tip, Toast.LENGTH_LONG).show();
                         }
                         return;
                     case Constants.TYPE_GRADE:
-                        if (!TextUtils.isEmpty(advCustomInfo.GRADE_TABLE_ID)) {
+                        if (!TextUtils.isEmpty(Constants.advCustomInfo.GRADE_TABLE_ID)) {
                             List<GradeInfo> grades = UniversityUtils.generateInfo(TableUtils
                                     .getTablesFromTargetPage(mWebView.getPageDom())
-                                    .get(advCustomInfo.GRADE_TABLE_ID), GradeInfo.class);
+                                    .get(Constants.advCustomInfo.GRADE_TABLE_ID), GradeInfo.class);
                             DBManger.getInstance(mContext).updateGrades(grades);
                             Toast.makeText(mContext, "获取成绩信息成功, 请回到成绩信息界面查看", Toast.LENGTH_LONG).show();
                         }
@@ -275,10 +271,10 @@ public class CustomPresenter implements CustomContract.Presenter {
                     case Constants.TYPE_SEARCH:
                         return;
                     case Constants.TYPE_BORROW:
-                        if (!TextUtils.isEmpty(advCustomInfo.BORROW_TABLE_ID)) {
+                        if (!TextUtils.isEmpty(Constants.advCustomInfo.BORROW_TABLE_ID)) {
                             List<BorrowInfo> borrows = UniversityUtils.generateInfo(TableUtils
                                     .getTablesFromTargetPage(mWebView.getPageDom())
-                                    .get(advCustomInfo.BORROW_TABLE_ID), BorrowInfo.class);
+                                    .get(Constants.advCustomInfo.BORROW_TABLE_ID), BorrowInfo.class);
                             DBManger.getInstance(mContext).updateBorrows(borrows);
                             Toast.makeText(mContext, "获取借阅信息成功, 请回到借阅信息界面查看", Toast.LENGTH_LONG).show();
                         }

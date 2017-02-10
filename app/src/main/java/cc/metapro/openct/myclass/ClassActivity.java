@@ -53,7 +53,6 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.BorrowActivity;
 import cc.metapro.openct.classdetail.ClassDetailActivity;
-import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.grades.GradeActivity;
@@ -215,7 +214,7 @@ public class ClassActivity extends AppCompatActivity
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
             } else {
-                CustomActivity.actionStart(this, Constants.TYPE_CLASS);
+                mPresenter.loadOnlineInfo(getSupportFragmentManager());
             }
             return true;
         } else if (id == R.id.export_classes) {

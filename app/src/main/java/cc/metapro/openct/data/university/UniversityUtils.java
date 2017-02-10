@@ -30,12 +30,14 @@ import org.jsoup.select.Elements;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
 
 @Keep
@@ -43,16 +45,6 @@ public class UniversityUtils {
 
     private static final String CLASS_TABLE_PATTERN = "节|(\\d+)";
 
-    public static Elements getLinksByPattern(Document document, String pattern) {
-        return document.select("a:matches(" + pattern + ")");
-    }
-
-    /**
-     * 从网页课表表格中获取所有课程信息单元 (td - 按格显示课程, tr - 按行显示课程)
-     *
-     * @param table 网页原始表格
-     * @return 课程信息的原始状态
-     */
     @NonNull
     public static List<Element> getRawClasses(Element table, Context context) {
         if (table == null) return new ArrayList<>();
@@ -174,5 +166,29 @@ public class UniversityUtils {
             e.printStackTrace();
         }
         return result;
+    }
+
+    @NonNull
+    static String QZEncryption(String serverResponse, Map<String, String> loginMap) {
+        String scode = serverResponse.split("#")[0];
+        String sxh = serverResponse.split("#")[1];
+        String code = loginMap.get(Constants.USERNAME_KEY) + "%%%" + loginMap.get(Constants.PASSWORD_KEY);
+        String encoded = "";
+        for (int i = 0; i < code.length(); i++) {
+            if (i < 20) {
+                encoded = encoded + code.substring(i, i + 1) + scode.substring(0, Integer.parseInt(sxh.substring(i, i + 1)));
+                scode = scode.substring(Integer.parseInt(sxh.substring(i, i + 1)), scode.length());
+            } else {
+                encoded = encoded + code.substring(i, code.length());
+                i = code.length();
+            }
+        }
+
+        return encoded;
+    }
+
+    static String MD5Encryption(Map<String, String> loginMap) {
+        loginMap.get(Constants.PASSWORD_KEY);
+        return null;
     }
 }

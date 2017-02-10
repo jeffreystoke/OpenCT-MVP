@@ -24,12 +24,7 @@ import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import cc.metapro.interactiveweb.InteractiveWebView;
 import cc.metapro.openct.R;
 
@@ -46,6 +41,7 @@ public class ClickDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         return new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.question)
                 .setMessage(R.string.what_did_you_clicked)
                 .setPositiveButton(R.string.common_input, new DialogInterface.OnClickListener() {
                     @Override
@@ -67,7 +63,7 @@ public class ClickDialog extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
+        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
     }
 
     public interface TypeCallback {

@@ -189,7 +189,7 @@
     <string name="custom_finish_tip">课表解析完成, 请回到主界面查看课表\n部分信息可能需要修改\n\nTips: 尝试修改正则表达式进行匹配能得到更加准确的信息</string>
     <string name="sorry_for_unable_to_get_class_info">很遗憾, 没能在该页面解析到课程信息</string>
     <string name="no_adv_custom_config">还没有自定义过, 请点击开始自定义</string>
-    <string name="choose_table">左右滑动选择目标信息所在的表格</string>
+    <string name="swipe_choose_table">左右滑动选择目标信息</string>
     <string name="what_is_that">上面显示的是 ?</string>
     <string name="click_to_choose_your_school">点击选择你的学校</string>
     <string name="unable_to_enter_values">无法填写内容</string>
@@ -201,4 +201,11 @@
     <string name="enter_value_accordingly">填写对应的值</string>
     <string name="common_input">普通输入框</string>
     <string name="select_target_link">选择目标连接</string>
+    <string name="question">提问</string>
+    <string name="load_online_classes_successful">加载课程信息成功</string>
+    <string name="load_online_borrows_successful">加载借阅信息成功</string>
+    <string name="load_online_grades_successful">加载借阅信息成功</string>
+    <string name="borrows_empty">借阅信息为空</string>
+    <string name="grades_empty">成绩信息为空</string>
+    <string name="classes_empty">课程信息为空</string>
 </resources>

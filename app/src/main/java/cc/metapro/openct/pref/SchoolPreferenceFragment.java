@@ -76,6 +76,8 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
                             public void onClick(DialogInterface dialog, int which) {
                                 DBManger manger = DBManger.getInstance(getActivity());
                                 manger.delAdvancedCustomClassInfo();
+                                Constants.advCustomInfo = null;
+                                Constants.checkAdvCustomInfo(getActivity());
                             }
                         }).show();
                 return false;

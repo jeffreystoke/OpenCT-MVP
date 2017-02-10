@@ -23,12 +23,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -37,29 +40,27 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.university.AdvancedCustomInfo;
+import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.DialogUtils;
 
 
 public class LinkSelectionDialog extends DialogFragment {
 
-    public static final String CLASS_URL_DIALOG = "class";
-    public static final String GRADE_URL_DIALOG = "grade";
-    public static final String BORROW_URL_DIALOG = "borrow";
-
     private static String TYPE;
     private static Elements mLinks;
+    private static Document DOCUMENT;
     private static LoginPresenter mPresenter;
     @BindView(R.id.radio_group)
     RadioGroup mRadioGroup;
+
     private List<RadioButton> mRadioButtons;
 
-    public static LinkSelectionDialog newInstance(String type, Elements allLinks, LoginPresenter presenter) {
+    public static LinkSelectionDialog newInstance(String type, Document document, LoginPresenter presenter) {
         TYPE = type;
-        mLinks = allLinks;
+        DOCUMENT = document;
         mPresenter = presenter;
         return new LinkSelectionDialog();
     }
@@ -70,48 +71,79 @@ public class LinkSelectionDialog extends DialogFragment {
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_link_selection, null);
         ButterKnife.bind(this, view);
         setView();
-        return new AlertDialog.Builder(getActivity())
+        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setTitle("选择目标")
                 .setView(view)
-                .setTitle(R.string.select_target_link)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(android.R.string.ok, null)
+                .setNeutralButton(R.string.not_in_range_above, null)
+                .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button positiveButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
+                Button neutralButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEUTRAL);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(View v) {
                         for (int i = 0; i < mRadioButtons.size(); i++) {
                             if (mRadioButtons.get(i).isChecked()) {
                                 Element target = mLinks.get(i);
-                                AdvancedCustomInfo info = DBManger.getAdvancedCustomInfo(getActivity());
-                                if (CLASS_URL_DIALOG.equals(TYPE)) {
-                                    info.CLASS_URL_PATTERN = target.html();
-                                } else if (GRADE_URL_DIALOG.equals(TYPE)) {
-                                    info.GRADE_URL_PATTERN = target.html();
-                                } else if (BORROW_URL_DIALOG.equals(TYPE)) {
-                                    info.BORROW_URL_PATTERN = target.html();
+                                if (Constants.TYPE_CLASS.equals(TYPE)) {
+                                    Constants.advCustomInfo.CLASS_URL_PATTERN = target.html();
+                                } else if (Constants.TYPE_CLASS.equals(TYPE)) {
+                                    Constants.advCustomInfo.GRADE_URL_PATTERN = target.html();
+                                } else if (Constants.TYPE_CLASS.equals(TYPE)) {
+                                    Constants.advCustomInfo.BORROW_URL_PATTERN = target.html();
                                 }
-                                DBManger.getInstance(getActivity()).updateAdvancedCustomClassInfo(info);
+                                DBManger.getInstance(getActivity()).updateAdvancedCustomClassInfo(Constants.advCustomInfo);
                                 mPresenter.loadTargetPage(getFragmentManager(), target.absUrl("href"));
                                 break;
                             }
                         }
                         dismiss();
                     }
-                })
-                .setNegativeButton(R.string.not_in_range_above, new DialogInterface.OnClickListener() {
+                });
+
+                neutralButton.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO: 17/2/9 显示更多链接
+                    public void onClick(View v) {
+                        mLinks = DOCUMENT.select("a");
+                        addRadioOptions();
                     }
-                })
-                .create();
+                });
+            }
+        });
+        return dialog;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
+        Constants.checkAdvCustomInfo(getActivity());
     }
 
     private void setView() {
+        switch (TYPE) {
+            case Constants.TYPE_CLASS:
+                mLinks = DOCUMENT.select("a:matches(课表|课程)");
+                break;
+            case Constants.TYPE_GRADE:
+                mLinks = DOCUMENT.select("a:matches(成绩)");
+                break;
+            case Constants.TYPE_SEARCH:
+                break;
+            case Constants.TYPE_BORROW:
+                mLinks = DOCUMENT.select("a:matches(借阅)");
+                break;
+        }
+
+        addRadioOptions();
+    }
+
+    private void addRadioOptions() {
         mRadioButtons = new ArrayList<>(mLinks.size());
+        mRadioGroup.removeAllViews();
         for (Element link : mLinks) {
             RadioButton button = new RadioButton(getContext());
             button.setText(link.text());
@@ -119,4 +151,5 @@ public class LinkSelectionDialog extends DialogFragment {
             mRadioButtons.add(button);
         }
     }
+
 }

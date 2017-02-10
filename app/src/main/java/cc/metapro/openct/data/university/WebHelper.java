@@ -20,9 +20,13 @@ import android.text.TextUtils;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 
 import java.util.List;
+
+import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.webutils.Form;
 
 class WebHelper {
 
@@ -46,7 +50,7 @@ class WebHelper {
         return captchaURL;
     }
 
-    void setCaptchaURL(List<Document> documents) {
+    void setCaptchaURL(List<Document> documents, String system) {
         loop:
         for (Document document : documents) {
             loginPageDOM = document;
@@ -55,9 +59,14 @@ class WebHelper {
 
             // 遍历表单
             for (Element form : forms) {
-                Elements codeImg = form.select("img[src~=(?i)^(?!.*\\.(png|jpg|gif|ico)).*$");
-                codeImg.addAll(form.select("iframe[src~=(?i)^(?!.*\\.(png|jpg|gif|ico)).*$"));
-
+                Elements codeImg = form.select("img[src~=(?i)^(?!.*(png|jpg|gif|ico)).*$");
+                codeImg.addAll(form.select("iframe[src~=(?i)^(?!.*(png|jpg|gif|ico)).*$"));
+                if (Constants.KINGOSOFT.equalsIgnoreCase(system)) {
+                    Element captcha = new Element(Tag.valueOf("img"), document.baseUri());
+                    captcha.attr("src", "../sys/ValidateCode.aspx");
+                    codeImg.add(captcha);
+                    form.appendChild(form.parent().after(form));
+                }
                 // 获取验证码地址
                 for (Element img : codeImg) {
                     String url = img.absUrl("src");

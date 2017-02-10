@@ -25,11 +25,13 @@ import cc.metapro.openct.BaseView;
 public interface CustomContract {
 
     interface View extends BaseView<Presenter> {
+
         void disableNextStep();
 
         void enableNextStep();
 
         String getUrl();
+
     }
 
     interface Presenter extends BasePresenter {

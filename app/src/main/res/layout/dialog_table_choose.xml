@@ -21,25 +21,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/title"
-            style="@style/DialogTitleText"
-            android:text="@string/choose_table"/>
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/select"
-        style="@style/AppTheme.Fab"
-        android:layout_gravity="bottom|end"
-        android:src="@drawable/ic_select"/>
+        android:layout_height="wrap_content"/>
 </android.support.design.widget.CoordinatorLayout>

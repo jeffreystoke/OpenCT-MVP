@@ -35,7 +35,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.interactiveweb.InteractiveWebView;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.AdvancedCustomInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 
@@ -43,7 +42,7 @@ import cc.metapro.openct.utils.Constants;
 public class CustomActivity extends AppCompatActivity implements CustomContract.View {
 
     public static final String TAG = CustomActivity.class.getSimpleName();
-    
+
     public static String CUSTOM_TYPE = Constants.TYPE_CLASS;
 
     @BindView(R.id.toolbar)
@@ -58,11 +57,14 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
     ViewGroup mViewGroup;
     @BindView(R.id.fab_next)
     FloatingActionButton mFabNext;
-
     private CustomContract.Presenter mPresenter;
-
-    public static AdvancedCustomInfo advCustomInfo;
     private WebConfiguration mConfiguration;
+
+    public static void actionStart(Context context, String type) {
+        CUSTOM_TYPE = type;
+        Intent intent = new Intent(context, CustomActivity.class);
+        context.startActivity(intent);
+    }
 
     @OnClick(R.id.fab)
     public void startRecord() {
@@ -95,15 +97,15 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
     public void showTableChooseDialog() {
         switch (CUSTOM_TYPE) {
             case Constants.TYPE_CLASS:
-                advCustomInfo.setClassWebConfig(mConfiguration);
+                Constants.advCustomInfo.setClassWebConfig(mConfiguration);
                 break;
             case Constants.TYPE_GRADE:
-                advCustomInfo.setGradeWebConfig(mConfiguration);
+                Constants.advCustomInfo.setGradeWebConfig(mConfiguration);
                 break;
             case Constants.TYPE_SEARCH:
                 break;
             case Constants.TYPE_BORROW:
-                advCustomInfo.setBorrowWebConfig(mConfiguration);
+                Constants.advCustomInfo.setBorrowWebConfig(mConfiguration);
                 break;
         }
         ActivityUtils.showTableChooseDialog(getSupportFragmentManager(), CUSTOM_TYPE, mWebView.getPageDom(), null);
@@ -112,12 +114,6 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
     @OnClick(R.id.fab_next)
     public void nextStep() {
         mPresenter.nextStep(mWebView, getSupportFragmentManager());
-    }
-
-    public static void actionStart(Context context, String type) {
-        CUSTOM_TYPE = type;
-        Intent intent = new Intent(context, CustomActivity.class);
-        context.startActivity(intent);
     }
 
     @Override

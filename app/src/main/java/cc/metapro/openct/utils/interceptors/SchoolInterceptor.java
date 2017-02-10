@@ -1,4 +1,4 @@
-package cc.metapro.openct.utils;
+package cc.metapro.openct.utils.interceptors;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -33,29 +33,29 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class SchoolInterceptor implements Interceptor {
 
-    private static final String userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
-    private redirectObserver<String> mObserver;
+//    private static final String urlPattern = "((http|ftp|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\\&%_\\./-~-]*)?";
+    public static final String userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
+    private RedirectObserver<String> mObserver;
     private HttpUrl mUrl;
 
     public SchoolInterceptor(String URL) {
         mUrl = HttpUrl.parse(URL);
     }
 
-    public void setObserver(redirectObserver<String> observer) {
+    public void setObserver(RedirectObserver<String> observer) {
         mObserver = observer;
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-        Request newRequest = request
-                .newBuilder()
+        Request newRequest = request.newBuilder()
                 .header("User-Agent", userAgent)
                 .build();
 
         Response response = chain.proceed(newRequest);
 
-        if (response.code() == 302) {
+        if (response.isRedirect()) {
             String location = response.headers().get("Location");
             location = mUrl.newBuilder(location).toString();
             if (mObserver != null) {
@@ -80,7 +80,7 @@ public class SchoolInterceptor implements Interceptor {
                 .build().create(UniversityService.class);
     }
 
-    public interface redirectObserver<T> {
+    public interface RedirectObserver<T> {
 
         void onRedirect(T x);
 

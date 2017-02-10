@@ -62,9 +62,9 @@ public class SettingsActivity extends AppCompatActivity {
         UniversityInfo info = new UniversityInfo();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         info.cmsSys = pref.getString(getString(R.string.pref_custom_cms_sys), Constants.COMMON);
-        info.cmsURL = pref.getString(getString(R.string.pref_custom_cms_url), "http://openct.metapro.cc");
+        info.cmsURL = pref.getString(getString(R.string.pref_custom_cms_url), "");
         info.libSys = pref.getString(getString(R.string.pref_custom_lib_sys), Constants.NJHUIWEN);
-        info.libURL = pref.getString(getString(R.string.pref_custom_lib_url), "http://openct.metapro.cc");
+        info.libURL = pref.getString(getString(R.string.pref_custom_lib_url), "");
         manger.updateCustomSchoolInfo(info);
     }
 }

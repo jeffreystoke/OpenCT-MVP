@@ -63,6 +63,53 @@ public class DBManger {
         return manger;
     }
 
+    @NonNull
+    public static AdvancedCustomInfo getAdvancedCustomInfo(Context context) {
+        DBManger.getInstance(context);
+        Cursor cursor = null;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String name;
+        if (preferences.getBoolean(context.getString(R.string.pref_custom_enable), false)) {
+            name = preferences.getString(context.getString(R.string.pref_custom_school_name), "openct");
+        } else {
+            name = preferences.getString(context.getString(R.string.pref_school_name), context.getResources().getStringArray(R.array.school_names)[0]);
+        }
+        try {
+            cursor = mDatabase.query(
+                    DBHelper.ADV_CUSTOM_TABLE, null,
+                    DBHelper.SCHOOL_NAME + "=? COLLATE NOCASE", new String[]{name},
+                    null, null, null);
+            cursor.moveToFirst();
+            AdvancedCustomInfo customInfo = StoreHelper.fromJson(cursor.getString(1), AdvancedCustomInfo.class);
+            if (customInfo.mClassTableInfo == null) {
+                customInfo.mClassTableInfo = new CmsFactory.ClassTableInfo();
+            }
+
+            customInfo.mClassTableInfo.mNameRE = preferences.getString(context.getString(R.string.pref_class_name_re), "");
+            customInfo.mClassTableInfo.mTypeRE = preferences.getString(context.getString(R.string.pref_class_type_re), "");
+            customInfo.mClassTableInfo.mDuringRE = preferences.getString(context.getString(R.string.pref_class_during_re), "\\d+-\\d+");
+            customInfo.mClassTableInfo.mTimeRE = preferences.getString(context.getString(R.string.pref_class_time_re), "(\\d+,)+\\d+");
+            customInfo.mClassTableInfo.mPlaceRE = preferences.getString(context.getString(R.string.pref_class_place_re), "");
+            customInfo.mClassTableInfo.mTeacherRE = preferences.getString(context.getString(R.string.pref_class_teacher_re), "");
+            return customInfo;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+            AdvancedCustomInfo customInfo = new AdvancedCustomInfo(context);
+            customInfo.mClassTableInfo = new CmsFactory.ClassTableInfo();
+            customInfo.mClassTableInfo.mNameRE = preferences.getString(context.getString(R.string.pref_class_name_re), "");
+            customInfo.mClassTableInfo.mTypeRE = preferences.getString(context.getString(R.string.pref_class_type_re), "");
+            customInfo.mClassTableInfo.mDuringRE = preferences.getString(context.getString(R.string.pref_class_during_re), "\\d+-\\d+");
+            customInfo.mClassTableInfo.mTimeRE = preferences.getString(context.getString(R.string.pref_class_time_re), "(\\d+,)+\\d+");
+            customInfo.mClassTableInfo.mPlaceRE = preferences.getString(context.getString(R.string.pref_class_place_re), "");
+            customInfo.mClassTableInfo.mTeacherRE = preferences.getString(context.getString(R.string.pref_class_teacher_re), "");
+            return customInfo;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
     public void updateAdvancedCustomClassInfo(AdvancedCustomInfo info) {
         mDatabase.beginTransaction();
         try {
@@ -88,52 +135,6 @@ public class DBManger {
             Log.e(TAG, e.getMessage(), e);
         } finally {
             mDatabase.endTransaction();
-        }
-    }
-
-    @NonNull
-    public static AdvancedCustomInfo getAdvancedCustomInfo(Context context) {
-        DBManger.getInstance(context);
-        Cursor cursor = null;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String name;
-        if (preferences.getBoolean(context.getString(R.string.pref_custom_enable), false)) {
-            name = preferences.getString(context.getString(R.string.pref_custom_school_name), "openct");
-        } else {
-            name = preferences.getString(context.getString(R.string.pref_school_name), context.getResources().getStringArray(R.array.school_names)[0]);
-        }
-        try {
-            cursor = mDatabase.query(
-                    DBHelper.ADV_CUSTOM_TABLE, null,
-                    DBHelper.SCHOOL_NAME + "=? COLLATE NOCASE", new String[]{name},
-                    null, null, null);
-            cursor.moveToFirst();
-            AdvancedCustomInfo customInfo = StoreHelper.fromJson(cursor.getString(1), AdvancedCustomInfo.class);
-            if (customInfo.mClassTableInfo == null) {
-                customInfo.mClassTableInfo = new CmsFactory.ClassTableInfo();
-            }
-            customInfo.mClassTableInfo.mNameRE = preferences.getString(context.getString(R.string.pref_class_name_re), "");
-            customInfo.mClassTableInfo.mTypeRE = preferences.getString(context.getString(R.string.pref_class_type_re), "");
-            customInfo.mClassTableInfo.mDuringRE = preferences.getString(context.getString(R.string.pref_class_during_re), "");
-            customInfo.mClassTableInfo.mTimeRE = preferences.getString(context.getString(R.string.pref_class_time_re), "");
-            customInfo.mClassTableInfo.mPlaceRE = preferences.getString(context.getString(R.string.pref_class_place_re), "");
-            customInfo.mClassTableInfo.mTeacherRE = preferences.getString(context.getString(R.string.pref_class_teacher_re), "");
-            return customInfo;
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
-            AdvancedCustomInfo customInfo = new AdvancedCustomInfo(context);
-            customInfo.mClassTableInfo = new CmsFactory.ClassTableInfo();
-            customInfo.mClassTableInfo.mNameRE = preferences.getString(context.getString(R.string.pref_class_name_re), "");
-            customInfo.mClassTableInfo.mTypeRE = preferences.getString(context.getString(R.string.pref_class_type_re), "");
-            customInfo.mClassTableInfo.mDuringRE = preferences.getString(context.getString(R.string.pref_class_during_re), "");
-            customInfo.mClassTableInfo.mTimeRE = preferences.getString(context.getString(R.string.pref_class_time_re), "");
-            customInfo.mClassTableInfo.mPlaceRE = preferences.getString(context.getString(R.string.pref_class_place_re), "");
-            customInfo.mClassTableInfo.mTeacherRE = preferences.getString(context.getString(R.string.pref_class_teacher_re), "");
-            return customInfo;
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
     }
 
@@ -194,17 +195,19 @@ public class DBManger {
         }
     }
 
-    public void updateClasses(@NonNull List<EnrichedClassInfo> classes) {
+    public void updateClasses(@Nullable List<EnrichedClassInfo> classes) {
         mDatabase.beginTransaction();
         try {
             mDatabase.delete(DBHelper.CLASS_TABLE, null, null);
-            for (EnrichedClassInfo c : classes) {
-                String target = c.toString();
-                if (!TextUtils.isEmpty(target)) {
-                    mDatabase.execSQL(
-                            "INSERT INTO " + DBHelper.CLASS_TABLE + " VALUES(?, ?)",
-                            new Object[]{c.getId(), target}
-                    );
+            if (classes != null) {
+                for (EnrichedClassInfo c : classes) {
+                    String target = c.toString();
+                    if (!TextUtils.isEmpty(target)) {
+                        mDatabase.execSQL(
+                                "INSERT INTO " + DBHelper.CLASS_TABLE + " VALUES(?, ?)",
+                                new Object[]{c.getId(), target}
+                        );
+                    }
                 }
             }
             mDatabase.setTransactionSuccessful();
@@ -227,25 +230,27 @@ public class DBManger {
             return grades;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
+            return new ArrayList<>(0);
         } finally {
             if (cursor != null) {
                 cursor.close();
             }
         }
-        return new ArrayList<>(0);
     }
 
-    public void updateGrades(@NonNull List<GradeInfo> grades) {
+    public void updateGrades(@Nullable List<GradeInfo> grades) {
         mDatabase.beginTransaction();
         try {
             mDatabase.delete(DBHelper.GRADE_TABLE, null, null);
-            for (GradeInfo g : grades) {
-                String target = g.toString();
-                if (!TextUtils.isEmpty(target)) {
-                    mDatabase.execSQL(
-                            "INSERT INTO " + DBHelper.GRADE_TABLE + " VALUES(null, ?)",
-                            new Object[]{target}
-                    );
+            if (grades != null) {
+                for (GradeInfo g : grades) {
+                    String target = g.toString();
+                    if (!TextUtils.isEmpty(target)) {
+                        mDatabase.execSQL(
+                                "INSERT INTO " + DBHelper.GRADE_TABLE + " VALUES(null, ?)",
+                                new Object[]{target}
+                        );
+                    }
                 }
             }
             mDatabase.setTransactionSuccessful();
@@ -276,17 +281,19 @@ public class DBManger {
         return new ArrayList<>(0);
     }
 
-    public void updateBorrows(@NonNull List<BorrowInfo> borrow) {
+    public void updateBorrows(@Nullable List<BorrowInfo> borrow) {
         mDatabase.beginTransaction();
         try {
             mDatabase.delete(DBHelper.BORROW_TABLE, null, null);
-            for (BorrowInfo b : borrow) {
-                String target = b.toString();
-                if (!TextUtils.isEmpty(target)) {
-                    mDatabase.execSQL(
-                            "INSERT INTO " + DBHelper.BORROW_TABLE + " VALUES(null, ?)",
-                            new Object[]{target}
-                    );
+            if (borrow != null) {
+                for (BorrowInfo b : borrow) {
+                    String target = b.toString();
+                    if (!TextUtils.isEmpty(target)) {
+                        mDatabase.execSQL(
+                                "INSERT INTO " + DBHelper.BORROW_TABLE + " VALUES(null, ?)",
+                                new Object[]{target}
+                        );
+                    }
                 }
             }
             mDatabase.setTransactionSuccessful();
