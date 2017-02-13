@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!--周x-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,7 +57,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/week_class_seq"
+                android:id="@+id/seq"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="20dp"
@@ -64,7 +65,7 @@
                 android:orientation="vertical"/>
 
             <RelativeLayout
-                android:id="@+id/week_class_content"
+                android:id="@+id/content"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="14"/>

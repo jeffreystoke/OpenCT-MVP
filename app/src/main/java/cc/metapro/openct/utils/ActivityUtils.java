@@ -26,7 +26,6 @@ import android.support.v7.app.AlertDialog;
 import com.scottyab.aescrypt.AESCrypt;
 
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import java.security.GeneralSecurityException;
 

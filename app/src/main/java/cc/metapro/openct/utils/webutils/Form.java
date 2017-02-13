@@ -54,7 +54,7 @@ public class Form {
                     Elements options = e.select("option");
                     if (options != null) {
                         Element defaultOption = options.get(0);
-                        for (Element option: options) {
+                        for (Element option : options) {
                             if (option.hasAttr("selected")) {
                                 defaultOption = option;
                                 break;

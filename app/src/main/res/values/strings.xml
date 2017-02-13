@@ -183,7 +183,7 @@
     <string name="common">普通</string>
     <string name="class_teacher">授课教师</string>
     <string name="class_place">上课地点</string>
-    <string name="ical_create_success">创建成功, 文件 OpenCT_Classes.ics 保存在手机存储根目录中</string>
+    <string name="ical_create_success">创建成功, 文件 OpenCT Classes.ics 保存在手机存储根目录中</string>
     <string name="preparing_school_sys_info">正在准备校园系统信息…</string>
     <string name="no_write_permission">没有写出到外部存储权限, 无法导出</string>
     <string name="custom_finish_tip">课表解析完成, 请回到主界面查看课表\n部分信息可能需要修改\n\nTips: 尝试修改正则表达式进行匹配能得到更加准确的信息</string>
@@ -208,4 +208,8 @@
     <string name="borrows_empty">借阅信息为空</string>
     <string name="grades_empty">成绩信息为空</string>
     <string name="classes_empty">课程信息为空</string>
+    <string name="add_during">添加周期</string>
+    <string name="delete">删除</string>
+    <string name="weekly_class">本周课表</string>
+    <string name="weekly_class_empty">本周课表为空</string>
 </resources>

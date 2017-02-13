@@ -40,8 +40,8 @@ import cc.metapro.openct.utils.interceptors.SchoolInterceptor;
 import cc.metapro.openct.utils.webutils.Form;
 import cc.metapro.openct.utils.webutils.FormHandler;
 import cc.metapro.openct.utils.webutils.FormUtils;
-import okhttp3.HttpUrl;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.Response;
 
 @Keep
@@ -81,7 +81,9 @@ public abstract class UniversityFactory {
             }
         });
 
-        String userCenter = "";
+        Exception LOGIN_FAIL = new Exception("登录失败, 请检查您的用户名和密码\n" + "(以及验证码)");
+
+        String USER_CENTER = "";
 
         // 强智教务系统 (特殊处理)
         if (Constants.QZDATASOFT.equalsIgnoreCase(SYS)) {
@@ -89,15 +91,15 @@ public abstract class UniversityFactory {
             if (webHelper.getLoginForm() != null) {
                 final String serverResponse = mService.login(webHelper.getBaseURL() + "Logon.do?method=logon&flag=sess", getBaseURL(), new HashMap<String, String>(0)).execute().body();
                 String action = webHelper.getLoginForm().absUrl("action");
-                userCenter = mService.login(action, webHelper.getLoginPageURL(), new LinkedHashMap<String, String>(){{
+                USER_CENTER = mService.login(action, webHelper.getLoginPageURL(), new LinkedHashMap<String, String>() {{
                     put("useDogCode", "");
                     put("encoded", UniversityUtils.QZEncryption(serverResponse, loginMap));
                     put("RANDOMCODE", loginMap.get(Constants.CAPTCHA_KEY));
                 }}).execute().body();
-                if (loginSuccess || (!TextUtils.isEmpty(userCenter) && Pattern.compile(LOGIN_SUCCESS_PATTERN).matcher(userCenter).find())) {
-                    return Jsoup.parse(userCenter, webHelper.getUserCenterURL());
+                if (loginSuccess || (!TextUtils.isEmpty(USER_CENTER) && Pattern.compile(LOGIN_SUCCESS_PATTERN).matcher(USER_CENTER).find())) {
+                    return Jsoup.parse(USER_CENTER, webHelper.getUserCenterURL());
                 } else {
-                    throw new Exception("登录失败, 请检查您的用户名和密码\n(以及验证码)");
+                    throw LOGIN_FAIL;
                 }
             }
         }
@@ -111,7 +113,7 @@ public abstract class UniversityFactory {
             }
 
             Map<String, String> res = FormUtils.getLoginFiledMap(targetForm, loginMap, true);
-            if (Constants.KINGOSOFT.equalsIgnoreCase(SYS)){
+            if (Constants.KINGOSOFT.equalsIgnoreCase(SYS)) {
                 res.put("pcInfo", SchoolInterceptor.userAgent);
                 res.put("typeName", "学生");
                 res.put("txt_sdertfgsadscxcadsads", loginMap.get(Constants.CAPTCHA_KEY));
@@ -121,23 +123,23 @@ public abstract class UniversityFactory {
             String action = res.get(Constants.ACTION_KEY);
             res.remove(Constants.ACTION_KEY);
             Response<String> stringResponse = mService.login(action, webHelper.getLoginPageURL(), res).execute();
-            userCenter = stringResponse.body();
+            USER_CENTER = stringResponse.body();
 
             // 处理五秒防刷
-            if (userCenter.length() < 100) {
+            if (USER_CENTER.length() < 100) {
                 Thread.sleep(6 * 1000);
-                userCenter = mService.login(action, webHelper.getLoginPageURL(), res).execute().body();
+                USER_CENTER = mService.login(action, webHelper.getLoginPageURL(), res).execute().body();
             }
 
             // 登录完成, 检测结果
-            if (loginSuccess || (!TextUtils.isEmpty(userCenter) && Pattern.compile(LOGIN_SUCCESS_PATTERN).matcher(userCenter).find())) {
-                return Jsoup.parse(userCenter, webHelper.getUserCenterURL());
+            if (loginSuccess || (!TextUtils.isEmpty(USER_CENTER) && Pattern.compile(LOGIN_SUCCESS_PATTERN).matcher(USER_CENTER).find())) {
+                return Jsoup.parse(USER_CENTER, webHelper.getUserCenterURL());
             } else {
-                throw new Exception("登录失败, 请检查您的用户名和密码\n(以及验证码)");
+                throw LOGIN_FAIL;
             }
         }
 
-        return Jsoup.parse(userCenter, webHelper.getUserCenterURL());
+        return Jsoup.parse(USER_CENTER, webHelper.getUserCenterURL());
     }
 
     // 初次获取验证码
@@ -152,7 +154,10 @@ public abstract class UniversityFactory {
             }
         });
 
-        String loginPageHtml = mService.getPage(webHelper.getBaseURL(), null).execute().body();
+        Call<String> call = mService.getPage(webHelper.getBaseURL(), null);
+        Response<String> stringResponse = call.execute();
+        String loginPageHtml = stringResponse.body();
+
         Document document = Jsoup.parse(loginPageHtml, webHelper.getLoginPageURL());
         List<Document> domList = new ArrayList<>();
         domList.add(document);

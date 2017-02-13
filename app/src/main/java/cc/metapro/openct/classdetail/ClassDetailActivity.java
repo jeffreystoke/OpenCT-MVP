@@ -19,6 +19,8 @@ package cc.metapro.openct.classdetail;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -135,7 +137,7 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
         new ClassDetailPresenter(this, this);
     }
 
-    private void classInfoModified() {
+    void classInfoModified() {
         ClassInfo info = mDetailAdapter.getResultClass();
         mInfo.setClassInfo(info);
         mPresenter.storeClassInfo(mInfo);

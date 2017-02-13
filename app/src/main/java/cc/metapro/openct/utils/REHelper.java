@@ -18,10 +18,16 @@ package cc.metapro.openct.utils;
 
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import cc.metapro.openct.data.university.item.ClassInfo;
 
 @Keep
 public final class REHelper {
@@ -33,11 +39,23 @@ public final class REHelper {
     private static final String evenPatternString = "(双周?)";
     private static final String doubleWidthString = "[^\\x00-\\xff]";
 
+    public static List<int[]> getAllStartEnd(@Nullable String s) {
+        if (TextUtils.isEmpty(s)) {
+            return new ArrayList<>();
+        }
+        List<int[]> result = new ArrayList<>();
+        String[] duringStrings = s.split(ClassInfo.DURING_SEP);
+        for (String during : duringStrings) {
+            result.add(getStartEnd(during));
+        }
+        return result;
+    }
+
     /**
-     * 获取一节课的开始和结束时间, 课程周期, 范围 0 - 19
+     * 获取一节课的开始和结束时间, 课程周期, 范围 0 - 29
      */
     @NonNull
-    public static int[] getStartEnd(String s) {
+    public static int[] getStartEnd(@Nullable String s) {
         if (TextUtils.isEmpty(s)) {
             return new int[]{-1, -1};
         }

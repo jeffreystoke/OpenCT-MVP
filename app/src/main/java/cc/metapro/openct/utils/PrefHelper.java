@@ -75,6 +75,15 @@ public class PrefHelper {
         return mPref.getString(prefKey, "");
     }
 
+    public static int getInt(Context context, int resId) {
+        return getInt(context, context.getString(resId));
+    }
+
+    public static int getInt(Context context, String prefKey) {
+        checkPref(context);
+        return mPref.getInt(prefKey, 0);
+    }
+
     private static void checkPref(Context context) {
         if (mPref == null) {
             mPref = PreferenceManager.getDefaultSharedPreferences(context);

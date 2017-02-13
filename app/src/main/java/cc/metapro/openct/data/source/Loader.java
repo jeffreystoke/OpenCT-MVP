@@ -77,15 +77,14 @@ public class Loader {
     @NonNull
     public static Map<String, String> getLibStuInfo(Context context) {
         Map<String, String> map = new HashMap<>(2);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.pref_need_encryption), false);
+        boolean needEncrypt = PrefHelper.getBoolean(context, R.string.pref_need_encryption);
         try {
-            String password = preferences.getString(context.getString(R.string.pref_lib_password), "");
+            String password = PrefHelper.getString(context, R.string.pref_lib_password);
             if (needEncrypt) {
                 password = AESCrypt.decrypt(Constants.seed, password);
             }
             if (!TextUtils.isEmpty(password)) {
-                map.put(context.getString(R.string.key_username), preferences.getString(context.getString(R.string.pref_lib_username), ""));
+                map.put(context.getString(R.string.key_username), PrefHelper.getString(context, R.string.pref_lib_username));
                 map.put(context.getString(R.string.key_password), password);
             }
         } catch (Exception e) {
@@ -97,15 +96,14 @@ public class Loader {
     @NonNull
     public static Map<String, String> getCmsStuInfo(Context context) {
         Map<String, String> map = new HashMap<>(2);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean needEncrypt = preferences.getBoolean(context.getString(R.string.pref_need_encryption), false);
+        boolean needEncrypt = PrefHelper.getBoolean(context, R.string.pref_need_encryption);
         try {
-            String password = preferences.getString(context.getString(R.string.pref_cms_password), "");
+            String password = PrefHelper.getString(context, R.string.pref_cms_password);
             if (needEncrypt) {
                 password = AESCrypt.decrypt(Constants.seed, password);
             }
             if (!TextUtils.isEmpty(password)) {
-                map.put(context.getString(R.string.key_username), preferences.getString(context.getString(R.string.pref_cms_username), ""));
+                map.put(context.getString(R.string.key_username), PrefHelper.getString(context, R.string.pref_cms_username));
                 map.put(context.getString(R.string.key_password), password);
             }
         } catch (Exception e) {
@@ -142,12 +140,11 @@ public class Loader {
 
     private static void updateWeekSeq(Context context) {
         try {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            int lastSetWeek = Integer.parseInt(preferences.getString(context.getString(R.string.pref_week_set_week), "1"));
+            int lastSetWeek = PrefHelper.getInt(context, R.string.pref_week_set_week);
             Calendar cal = Calendar.getInstance(Locale.CHINA);
             cal.setFirstDayOfWeek(Calendar.MONDAY);
             int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
-            int currentWeek = Integer.parseInt(preferences.getString(context.getString(R.string.pref_current_week), "1"));
+            int currentWeek = Integer.parseInt(PrefHelper.getString(context, R.string.pref_current_week));
             if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
                 if (lastSetWeek == 53) {
                     currentWeek += weekOfYearWhenSetCurrentWeek;
@@ -160,10 +157,8 @@ public class Loader {
             if (currentWeek >= 30) {
                 currentWeek = 1;
             }
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(context.getString(R.string.pref_current_week), currentWeek + "");
-            editor.putInt(context.getString(R.string.pref_week_set_week), weekOfYearWhenSetCurrentWeek);
-            editor.apply();
+            PrefHelper.putString(context, R.string.pref_current_week, currentWeek + "");
+            PrefHelper.putInt(context, R.string.pref_week_set_week, weekOfYearWhenSetCurrentWeek);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }

@@ -25,7 +25,6 @@ import java.util.List;
 public class JsInteraction {
 
     public static final String INTERFACE_NAME = "WebInteractionInterface";
-    static final int ON_VALUE = 2;
     static final int ON_CLICK = 3;
     static final int ON_LOAD_SOURCE = 4;
     private List<CallBack> mCallBackList = new ArrayList<>();
@@ -59,15 +58,6 @@ public class JsInteraction {
         int N = mCallBackList.size();
         for (int i = 0; i < N; i++) {
             mCallBackList.get(i).onAction(ON_CLICK, element);
-        }
-    }
-
-    @Keep
-    @JavascriptInterface
-    public void onValue(String value) {
-        int N = mCallBackList.size();
-        for (int i = 0; i < N; i++) {
-            mCallBackList.get(i).onAction(ON_VALUE, value);
         }
     }
 

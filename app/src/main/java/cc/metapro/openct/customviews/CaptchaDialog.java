@@ -44,7 +44,6 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.data.university.UniversityFactory;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.DialogUtils;
 import cc.metapro.openct.utils.MyObserver;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -52,8 +51,6 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-
-import static android.R.attr.button;
 
 @Keep
 public class CaptchaDialog extends DialogFragment {
@@ -120,7 +117,7 @@ public class CaptchaDialog extends DialogFragment {
         ButterKnife.bind(this, view);
         setCaptchaImg();
 
-        final AlertDialog dialog = new  AlertDialog.Builder(getActivity())
+        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.captcha)
                 .setPositiveButton(android.R.string.ok, null)
                 .setView(view)

@@ -26,7 +26,6 @@ import org.jsoup.select.Elements;
 import java.util.List;
 
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.webutils.Form;
 
 class WebHelper {
 

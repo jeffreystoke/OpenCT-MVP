@@ -34,7 +34,6 @@ import net.fortuna.ical4j.model.property.Version;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.FileOutputStream;

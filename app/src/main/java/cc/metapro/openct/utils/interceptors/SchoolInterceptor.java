@@ -20,20 +20,27 @@ import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import cc.metapro.openct.data.openctservice.QuotePreservingCookieJar;
 import cc.metapro.openct.data.university.UniversityService;
+import okhttp3.Dns;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okio.BufferedSource;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class SchoolInterceptor implements Interceptor {
 
-//    private static final String urlPattern = "((http|ftp|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\\&%_\\./-~-]*)?";
+    private static final String URL_PATTERN = "((http|ftp|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9&%_\\./-~-]*)?";
+    private static final String JS_REDIRECT_PATTERN = "(window\\.location).*?" + URL_PATTERN;
     public static final String userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
     private RedirectObserver<String> mObserver;
     private HttpUrl mUrl;
@@ -60,6 +67,35 @@ public class SchoolInterceptor implements Interceptor {
             location = mUrl.newBuilder(location).toString();
             if (mObserver != null) {
                 mObserver.onRedirect(location);
+            }
+        } else {
+            // make javascript redirection to http 302 redirection
+            String type = response.body().contentType().toString();
+            if (type.contains("text/html")) {
+                String responseString = response.body().string();
+                Pattern pattern = Pattern.compile(JS_REDIRECT_PATTERN);
+                Matcher matcher = pattern.matcher(responseString);
+                if (matcher.find()) {
+                    String found = matcher.group();
+                    pattern = Pattern.compile(URL_PATTERN);
+                    matcher = pattern.matcher(found);
+                    if (matcher.find()) {
+                        found = matcher.group();
+                        found = mUrl.newBuilder(found).toString();
+                        if (mObserver != null) {
+                            mObserver.onRedirect(found);
+                        }
+                        response = response.newBuilder()
+                                .addHeader("Location", found)
+                                .code(302)
+                                .body(ResponseBody.create(response.body().contentType(), ""))
+                                .build();
+                    }
+                } else {
+                    response = response.newBuilder()
+                            .body(ResponseBody.create(response.body().contentType(), responseString))
+                            .build();
+                }
             }
         }
         return response;

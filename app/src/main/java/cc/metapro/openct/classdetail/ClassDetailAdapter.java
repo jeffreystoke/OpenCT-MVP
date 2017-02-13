@@ -16,23 +16,31 @@ package cc.metapro.openct.classdetail;
  * limitations under the License.
  */
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
@@ -40,14 +48,17 @@ import cc.metapro.openct.utils.REHelper;
 
 class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDetailViewHolder> {
 
-    private static boolean addClass = false;
+    private boolean addClass = false;
+    private ClassDetailActivity mContext;
     private LayoutInflater mInflater;
     private List<ClassInfo> mClasses;
     private SparseArray<ClassDetailViewHolder> mViewHolders;
 
-    ClassDetailAdapter(Context context, EnrichedClassInfo info) {
+    ClassDetailAdapter(ClassDetailActivity context, EnrichedClassInfo info) {
         mInflater = LayoutInflater.from(context);
+        mInflater.getContext();
         mClasses = info.getAllClasses();
+        mContext = context;
         addClass = false;
         if (mClasses.isEmpty()) {
             mClasses.add(new ClassInfo());
@@ -96,8 +107,10 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
             } else {
                 ClassDetailViewHolder viewHolder = mViewHolders.valueAt(i);
                 if (viewHolder != null) {
-                    tmp.setSubClassInfo(viewHolder.getClassInfo());
-                    tmp = tmp.getSubClassInfo();
+                    if (tmp != null) {
+                        tmp.setSubClassInfo(viewHolder.getClassInfo());
+                        tmp = tmp.getSubClassInfo();
+                    }
                 }
             }
         }
@@ -141,10 +154,17 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
         MaterialEditText mTimeStart;
         @BindView(R.id.time_end)
         MaterialEditText mTimeEnd;
-        @BindView(R.id.week_start)
-        MaterialEditText mWeekStart;
-        @BindView(R.id.week_end)
-        MaterialEditText mWeekEnd;
+        @BindView(R.id.during_content)
+        LinearLayout mDuringLayout;
+        @BindView(R.id.add_during)
+        TextView mAddDuring;
+
+        @OnClick(R.id.add_during)
+        void addDuringEditor() {
+            addDuringEditor(-1, -1);
+        }
+
+        private Map<MaterialEditText, MaterialEditText> mDuringMap = new HashMap<>();
 
         private String id;
 
@@ -163,11 +183,10 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                 int[] timeStartEnd = REHelper.getStartEnd(info.getTime());
                 mTimeStart.setText(timeStartEnd[0] + "");
                 mTimeEnd.setText(timeStartEnd[1] + "");
-
-                int[] duringStartEnd = REHelper.getStartEnd(info.getDuring());
-                mWeekStart.setText(duringStartEnd[0] + "");
-                mWeekEnd.setText(duringStartEnd[1] + "");
-
+                List<int[]> duringStartEnd = REHelper.getAllStartEnd(info.getDuring());
+                for (int[] startEnd : duringStartEnd) {
+                    addDuringEditor(startEnd[0], startEnd[1]);
+                }
                 mClassPlace.setText(info.getPlace());
 
                 if (info.isEvenWeek()) {
@@ -179,6 +198,8 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                 }
 
                 disableEdit();
+            } else {
+                addDuringEditor(0, 0);
             }
         }
 
@@ -192,8 +213,12 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
             mClassPlace.setEnabled(true);
             mTimeStart.setEnabled(true);
             mTimeEnd.setEnabled(true);
-            mWeekStart.setEnabled(true);
-            mWeekEnd.setEnabled(true);
+            mAddDuring.setEnabled(true);
+            for (MaterialEditText start : mDuringMap.keySet()) {
+                MaterialEditText end = mDuringMap.get(start);
+                start.setEnabled(true);
+                end.setEnabled(true);
+            }
         }
 
         void disableEdit() {
@@ -206,13 +231,26 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
             mClassPlace.setEnabled(false);
             mTimeStart.setEnabled(false);
             mTimeEnd.setEnabled(false);
-            mWeekStart.setEnabled(false);
-            mWeekEnd.setEnabled(false);
+            mAddDuring.setEnabled(false);
+            for (MaterialEditText start : mDuringMap.keySet()) {
+                MaterialEditText end = mDuringMap.get(start);
+                start.setEnabled(false);
+                end.setEnabled(false);
+            }
         }
 
         ClassInfo getClassInfo() {
             String name = mName.getText().toString();
-            String during = mWeekStart.getText().toString() + " - " + mWeekEnd.getText().toString();
+
+            String during = "";
+            for (MaterialEditText start : mDuringMap.keySet()) {
+                MaterialEditText end = mDuringMap.get(start);
+                if (!TextUtils.isEmpty(during)) {
+                    during += ClassInfo.DURING_SEP;
+                }
+                during += start.getText().toString() + " - " + end.getText().toString();
+            }
+
             String time = mTimeStart.getText().toString() + " - " + mTimeEnd.getText().toString();
             if (!REHelper.isEmpty(name) && !REHelper.isEmpty(during) && !REHelper.isEmpty(time)) {
                 String type = mType.getText().toString();
@@ -223,6 +261,82 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                 Toast.makeText(mName.getContext(), "请输入课程名称, 上课时间, 课程周期\n(这些都很重要)", Toast.LENGTH_LONG).show();
             }
             return null;
+        }
+
+        void addDuringEditor(int startWeek, int endWeek) {
+            final LinearLayout linearLayout = new LinearLayout(mDuringLayout.getContext());
+            linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+            final MaterialEditText start = new MaterialEditText(mDuringLayout.getContext());
+            start.setText(startWeek + "");
+            start.setHint(R.string.start);
+            start.setFloatingLabel(MaterialEditText.FLOATING_LABEL_NORMAL);
+            start.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+
+            TextView to = new TextView(mDuringLayout.getContext());
+            to.setText(R.string.to);
+            to.setPadding(10, 0, 10, 0);
+
+            final MaterialEditText end = new MaterialEditText(mDuringLayout.getContext());
+            end.setFloatingLabel(MaterialEditText.FLOATING_LABEL_NORMAL);
+            end.setHint(R.string.end);
+            end.setText(endWeek + "");
+            end.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+
+            TextView del = new TextView(mDuringLayout.getContext());
+            del.setText(R.string.delete);
+            del.setPadding(10, 0, 0, 0);
+            del.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mDuringMap.size() > 1) {
+                        mDuringMap.remove(start);
+                        mDuringLayout.removeView(linearLayout);
+                        mContext.classInfoModified();
+                        Snackbar.make(mDuringLayout, "已删除周期", BaseTransientBottomBar.LENGTH_INDEFINITE)
+                                .setAction(android.R.string.cancel, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        mDuringMap.put(start, end);
+                                        mDuringLayout.addView(linearLayout);
+                                        mContext.classInfoModified();
+                                    }
+                                }).show();
+                    } else {
+                        Toast.makeText(mDuringLayout.getContext(), "必须保留至少一个周期~", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
+            linearLayout.addView(start);
+            linearLayout.addView(to);
+            linearLayout.addView(end);
+            linearLayout.addView(del);
+
+            LinearLayout.LayoutParams startParams = (LinearLayout.LayoutParams) start.getLayoutParams();
+            startParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+            startParams.weight = 2;
+            startParams.width = 0;
+
+            LinearLayout.LayoutParams toParams = (LinearLayout.LayoutParams) to.getLayoutParams();
+            toParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+            toParams.width = LinearLayout.LayoutParams.WRAP_CONTENT;
+
+            LinearLayout.LayoutParams endParams = (LinearLayout.LayoutParams) end.getLayoutParams();
+            endParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+            endParams.weight = 2;
+            endParams.width = 0;
+
+            LinearLayout.LayoutParams delParams = (LinearLayout.LayoutParams) to.getLayoutParams();
+            delParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+            delParams.width = LinearLayout.LayoutParams.WRAP_CONTENT;
+
+            mDuringLayout.addView(linearLayout);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) linearLayout.getLayoutParams();
+            params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+            params.width = LinearLayout.LayoutParams.MATCH_PARENT;
+
+            mDuringMap.put(start, end);
         }
     }
 }

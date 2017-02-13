@@ -23,6 +23,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import cc.metapro.openct.R;
@@ -32,14 +33,14 @@ import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 
 @Keep
-public class WidgetService extends RemoteViewsService {
+public class DailyWidgetService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
         return new WidgetFactory(getApplicationContext(), intent);
     }
 
-    public static class WidgetFactory implements RemoteViewsFactory {
+    static class WidgetFactory implements RemoteViewsFactory {
 
         private static List<ClassInfo> mDailyClasses;
         private Context mContext;
@@ -49,8 +50,7 @@ public class WidgetService extends RemoteViewsService {
         }
 
         @Override
-        public void onCreate() {
-        }
+        public void onCreate() {}
 
         @Override
         public void onDataSetChanged() {
@@ -61,8 +61,8 @@ public class WidgetService extends RemoteViewsService {
             if (allClasses.size() != 0) {
                 for (EnrichedClassInfo info : allClasses) {
                     if (info.isToday()) {
-                        List<ClassInfo> infos = info.getAllClasses();
-                        for (ClassInfo c : infos) {
+                        List<ClassInfo> classes = info.getAllClasses();
+                        for (ClassInfo c : classes) {
                             if (c.hasClass(week)) {
                                 mDailyClasses.add(c);
                             }
@@ -70,6 +70,7 @@ public class WidgetService extends RemoteViewsService {
                     }
                 }
             }
+            Collections.sort(mDailyClasses);
         }
 
         @Override
@@ -90,7 +91,7 @@ public class WidgetService extends RemoteViewsService {
             ClassInfo classInfo = mDailyClasses.get(i);
 
             views.setTextViewText(R.id.widget_class_name, classInfo.getName());
-            views.setTextViewText(R.id.widget_class_place, classInfo.getTime() + " 节在 " + classInfo.getPlace());
+            views.setTextViewText(R.id.widget_class_place, classInfo.getTime() + " 节 在 " + classInfo.getPlace());
             return views;
         }
 
