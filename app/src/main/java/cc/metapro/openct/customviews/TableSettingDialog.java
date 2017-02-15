@@ -16,17 +16,19 @@ package cc.metapro.openct.customviews;
  * limitations under the License.
  */
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Keep;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.TextView;
 
 import org.jsoup.nodes.Element;
 
@@ -37,7 +39,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 
@@ -50,18 +51,18 @@ public class TableSettingDialog extends DialogFragment {
     public static final String DURING = "课程周期";
     public static final String PLACE = "上课地点";
     public static final String TEACHER = "授课教师";
-    public static final String[] titles = {NAME, TIME, TYPE, DURING, PLACE, TEACHER};
+
+    public static final String[] titles = {NAME, TIME, DURING, TYPE, PLACE, TEACHER};
     private static String[] mStrings;
     private static TableSettingCallBack mCallBack;
     private final String TAG = TableSettingDialog.class.getSimpleName();
-    @BindView(R.id.info)
-    TextView mInfo;
+
     @BindView(R.id.options_layout)
     ViewGroup mViewGroup;
     private List<CheckBox> mCheckBoxes;
     private int mIndex = 0;
 
-    private Map<String, Integer> mResultIndexMap;
+    private Map<String, Integer> mResultIndexMap = new HashMap<>();
 
     public static TableSettingDialog newInstance(List<Element> rawInfoList, TableSettingCallBack callBack) throws Exception {
         Element element = null;
@@ -81,7 +82,6 @@ public class TableSettingDialog extends DialogFragment {
         }
     }
 
-    @OnClick(R.id.ok)
     public void confirm() {
         for (CheckBox box : mCheckBoxes) {
             if (box.isChecked()) {
@@ -93,7 +93,7 @@ public class TableSettingDialog extends DialogFragment {
         mIndex++;
         if (mIndex < mStrings.length) {
             try {
-                mInfo.setText(mStrings[mIndex]);
+                getDialog().setTitle(mStrings[mIndex]);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -103,22 +103,36 @@ public class TableSettingDialog extends DialogFragment {
         }
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_table_setting, container);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_table_setting, null);
         ButterKnife.bind(this, view);
-        mInfo.setText(mStrings[0]);
-        mResultIndexMap = new HashMap<>();
+
+        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setTitle(mStrings[0])
+                .setMessage(R.string.what_is_that)
+                .setView(view)
+                .setPositiveButton(android.R.string.ok, null)
+                .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button button = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        confirm();
+                    }
+                });
+            }
+        });
+
         addClassTableOptions();
         setCancelable(false);
-        return view;
-    }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
+        return dialog;
     }
 
     private void addClassTableOptions() {

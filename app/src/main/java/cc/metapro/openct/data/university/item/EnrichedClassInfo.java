@@ -19,7 +19,7 @@ package cc.metapro.openct.data.university.item;
 import android.graphics.Color;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -39,13 +39,13 @@ import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.REHelper;
 
 @Keep
-public class EnrichedClassInfo {
+public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
 
     private String id;
     private ClassInfo mClassInfo;
-    private int y;
+    private int dailySeq;
+    private int dayOfWeek;
     private int color;
-    private int mDayOfWeek;
 
     public EnrichedClassInfo() {
         id = UUID.randomUUID().toString();
@@ -55,6 +55,7 @@ public class EnrichedClassInfo {
     public EnrichedClassInfo(ClassInfo info) {
         this();
         mClassInfo = info;
+        dailySeq = REHelper.getStartEnd(info.getTime())[0];
     }
 
     /**
@@ -66,9 +67,10 @@ public class EnrichedClassInfo {
     public EnrichedClassInfo(ClassInfo classInfo, int dayOfWeek, int dailySeq, int color) {
         id = UUID.randomUUID().toString();
         mClassInfo = classInfo;
+
+        this.dailySeq = dailySeq;
+        this.dayOfWeek = dayOfWeek;
         this.color = color;
-        y = Constants.CLASS_BASE_HEIGHT * (dailySeq - 1);
-        mDayOfWeek = dayOfWeek;
     }
 
     @NonNull
@@ -109,10 +111,12 @@ public class EnrichedClassInfo {
         return id;
     }
 
-    public void addViewTo(ViewGroup viewGroup, final FragmentActivity context, int week) {
+
+    public void addViewTo(ViewGroup viewGroup, final AppCompatActivity context, int week) {
         if (isEmpty()) {
             return;
         }
+
         ClassInfo target = null;
         if (week > 0) {
             List<ClassInfo> infoList = getAllClasses();
@@ -127,7 +131,8 @@ public class EnrichedClassInfo {
         } else {
             target = mClassInfo;
         }
-        final CardView card = (CardView) LayoutInflater.from(context).inflate(R.layout.item_class_info, null);
+
+        final CardView card = (CardView) LayoutInflater.from(context).inflate(R.layout.item_class_info, viewGroup, false);
         TextView textView = (TextView) card.findViewById(R.id.class_name);
         int length = target.getLength();
         if (length > 5) {
@@ -141,48 +146,38 @@ public class EnrichedClassInfo {
             textView.setText(target.getName() + "@" + target.getPlace());
         }
 
-        card.setX(getX());
-        card.setY(getY());
         card.setCardBackgroundColor(color);
-
         card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ClassDetailActivity.actionStart(context, EnrichedClassInfo.this);
             }
         });
+
+        card.setX((dayOfWeek - 1) * Constants.CLASS_WIDTH);
+        card.setY((dailySeq - 1) * Constants.CLASS_BASE_HEIGHT);
+
         viewGroup.addView(card);
         ViewGroup.LayoutParams params = card.getLayoutParams();
         params.width = Constants.CLASS_WIDTH;
         params.height = length * Constants.CLASS_BASE_HEIGHT;
     }
 
-    private int getX() {
-        if (mClassInfo == null) return -1;
-        return Constants.CLASS_WIDTH * (mDayOfWeek - 1);
-    }
-
-    private int getY() {
-        if (mClassInfo == null) return -1;
-        int timeStart = REHelper.getStartEnd(mClassInfo.getTime())[0];
-        return timeStart == -1 ? this.y : (timeStart - 1) * Constants.CLASS_BASE_HEIGHT;
-    }
-
     public boolean isToday() {
         Calendar calendar = Calendar.getInstance();
-        return weekDayTrans(mDayOfWeek) == calendar.get(Calendar.DAY_OF_WEEK);
+        return weekDayTrans(dayOfWeek) == calendar.get(Calendar.DAY_OF_WEEK);
     }
 
     public int getDayOfWeek() {
-        return mDayOfWeek;
+        return dayOfWeek;
     }
 
     public void setDayOfWeek(int dayOfWeek) {
-        mDayOfWeek = dayOfWeek;
+        this.dayOfWeek = dayOfWeek;
     }
 
     public int getWeekDay() {
-        return weekDayTrans(mDayOfWeek);
+        return weekDayTrans(dayOfWeek);
     }
 
     private int weekDayTrans(int i) {
@@ -217,6 +212,9 @@ public class EnrichedClassInfo {
 
     public void setClassInfo(ClassInfo info) {
         mClassInfo = info;
+        if (info != null) {
+            dailySeq = REHelper.getStartEnd(info.getTime())[0];
+        }
     }
 
     @Override
@@ -229,7 +227,7 @@ public class EnrichedClassInfo {
     }
 
     public boolean equalsCoordinate(EnrichedClassInfo info) {
-        return mDayOfWeek == info.mDayOfWeek && getY() == info.getY() && getX() == info.getX();
+        return dayOfWeek == info.dayOfWeek && dailySeq == info.dailySeq;
     }
 
     @Override
@@ -243,5 +241,14 @@ public class EnrichedClassInfo {
             return !TextUtils.isEmpty(id) && id.equals(classInfo.id);
         }
         return false;
+    }
+
+    @Override
+    public int compareTo(@NonNull EnrichedClassInfo o) {
+        if (dailySeq <= o.dailySeq) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 }

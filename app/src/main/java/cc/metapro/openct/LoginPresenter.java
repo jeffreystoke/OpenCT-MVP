@@ -52,6 +52,6 @@ public interface LoginPresenter extends BasePresenter {
      * @param actionURL form action absolute url
      * @param queryMap  form key value map
      */
-    Disposable loadQuery(final FragmentManager manager, final String actionURL, final Map<String, String> queryMap);
+    Disposable loadQuery(final FragmentManager manager, final String actionURL, final Map<String, String> queryMap, final boolean needNewPage);
 
 }

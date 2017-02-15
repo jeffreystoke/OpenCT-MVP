@@ -20,7 +20,6 @@ import android.content.Context;
 import android.support.annotation.Keep;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import org.jsoup.Jsoup;
@@ -32,29 +31,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
+import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.FormDialog;
-import cc.metapro.openct.customviews.LinkSelectionDialog;
 import cc.metapro.openct.customviews.TableChooseDialog;
 import cc.metapro.openct.data.openctservice.ServiceGenerator;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.AdvancedCustomInfo;
+import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.grades.cet.CETService;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.webutils.Form;
+import cc.metapro.openct.utils.MyObserver;
 import cc.metapro.openct.utils.webutils.TableUtils;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -64,210 +62,242 @@ class GradePresenter implements GradeContract.Presenter {
 
     private static final String TAG = GradePresenter.class.getSimpleName();
     private Context mContext;
-    private GradeContract.View mGradeFragment;
+    private GradeContract.View mView;
     private List<GradeInfo> mGrades;
     private DBManger mDBManger;
 
     GradePresenter(GradeContract.View view, Context context) {
         mContext = context;
-        mGradeFragment = view;
-        mGradeFragment.setPresenter(this);
+        mView = view;
+        mView.setPresenter(this);
         mDBManger = DBManger.getInstance(mContext);
     }
 
     @Override
     public Disposable loadOnlineInfo(final FragmentManager manager) {
         ActivityUtils.getProgressDialog(mContext, R.string.preparing_school_sys_info).show();
-        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+        Observable<Boolean> observable = Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 e.onNext(Loader.getCms(mContext).prepareOnlineInfo());
-                e.onComplete();
             }
-        })
-                .subscribeOn(Schedulers.newThread())
+        });
+
+        Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
+            @Override
+            public void onNext(Boolean needCaptcha) {
+                ActivityUtils.dismissProgressDialog();
+                if (needCaptcha) {
+                    ActivityUtils.showCaptchaDialog(manager, GradePresenter.this);
+                } else {
+                    loadUserCenter(manager, "");
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean needCaptcha) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        if (needCaptcha) {
-                            ActivityUtils.showCaptchaDialog(manager, GradePresenter.this);
-                        } else {
-                            loadUserCenter(manager, "");
-                        }
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, Boolean>() {
-                    @Override
-                    public Boolean apply(Throwable throwable) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, "获取校园信息失败\n" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, throwable.getMessage(), throwable);
-                        return false;
-                    }
-                })
-                .subscribe();
+                .subscribe(observer);
+
+        return null;
     }
 
     @Override
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
         ActivityUtils.getProgressDialog(mContext, R.string.login_to_system).show();
-        return Observable.create(new ObservableOnSubscribe<Elements>() {
+
+        Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
-            public void subscribe(ObservableEmitter<Elements> e) throws Exception {
+            public void subscribe(ObservableEmitter<Document> e) throws Exception {
                 Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
                 loginMap.put(mContext.getString(R.string.key_captcha), code);
-                Document document = Loader.getCms(mContext).login(loginMap);
-                Elements elements = UniversityUtils.getLinksByPattern(document, "成绩");
-                if (!elements.isEmpty()) {
-                    e.onNext(elements);
+                e.onNext(Loader.getCms(mContext).login(loginMap));
+            }
+        });
+
+        Observer<Document> observer = new MyObserver<Document>(TAG) {
+            @Override
+            public void onNext(final Document userCenterDom) {
+                ActivityUtils.dismissProgressDialog();
+                Constants.checkAdvCustomInfo(mContext);
+                final List<String> urlPatterns = Constants.advCustomInfo.getGradeUrlPatterns();
+                if (!urlPatterns.isEmpty()) {
+                    if (urlPatterns.size() == 1) {
+                        // fetch first page from user center, it will find the grade info page in most case
+                        Element target = HTMLUtils.getElementSimilar(userCenterDom, Jsoup.parse(urlPatterns.get(0)).body().children().first());
+                        if (target != null) {
+                            loadTargetPage(manager, target.absUrl("href"));
+                        }
+                    } else if (urlPatterns.size() > 1) {
+                        // fetch more page to reach class info page, especially in QZ Data Soft CMS System
+                        Observable<String> extraObservable = Observable.create(new ObservableOnSubscribe<String>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<String> e) throws Exception {
+                                CmsFactory factory = Loader.getCms(mContext);
+                                Document lastDom = userCenterDom;
+                                Element finalTarget = null;
+                                for (String pattern : urlPatterns) {
+                                    if (lastDom != null) {
+                                        finalTarget = HTMLUtils.getElementSimilar(lastDom, Jsoup.parse(pattern).body().children().first());
+                                    }
+                                    if (finalTarget != null) {
+                                        lastDom = factory.getClassPageDom(finalTarget.absUrl("href"));
+                                    }
+                                }
+                                e.onNext(finalTarget.absUrl("href"));
+                            }
+                        });
+
+                        Observer<String> extraObserver = new MyObserver<String>(TAG) {
+                            @Override
+                            public void onNext(String targetUrl) {
+                                loadTargetPage(manager, targetUrl);
+                            }
+                        };
+
+                        extraObservable.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(extraObserver);
+                    } else {
+                        ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_GRADE, userCenterDom, GradePresenter.this);
+                    }
                 } else {
-                    e.onComplete();
+                    ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_GRADE, userCenterDom, GradePresenter.this);
                 }
             }
-        })
-                .subscribeOn(Schedulers.newThread())
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<Elements>() {
-                    @Override
-                    public void accept(Elements links) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        AdvancedCustomInfo info = mDBManger.getAdvancedCustomInfo(mContext);
-                        if (info != null && !TextUtils.isEmpty(info.GRADE_URL_PATTERN)) {
-                            Pattern pattern = Pattern.compile(info.GRADE_URL_PATTERN);
-                            for (Element link : links) {
-                                if (pattern.matcher(link.html()).find()) {
-                                    loadTargetPage(manager, link.absUrl("href"));
-                                }
-                            }
-                        } else {
-                            LinkSelectionDialog
-                                    .newInstance(LinkSelectionDialog.GRADE_URL_DIALOG, links, GradePresenter.this)
-                                    .show(manager, "link_selection");
-                        }
-                    }
-                })
-                .doOnComplete(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, "未成功获取到跳转链接", Toast.LENGTH_LONG).show();
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, Elements>() {
-                    @Override
-                    public Elements apply(Throwable throwable) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        return new Elements(0);
-                    }
-                })
-                .subscribe();
+                .subscribe(observer);
+
+        return null;
     }
 
     @Override
     public Disposable loadTargetPage(final FragmentManager manager, final String url) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_grade_page).show();
-        return Observable.create(new ObservableOnSubscribe<Form>() {
+        Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
-            public void subscribe(ObservableEmitter<Form> e) throws Exception {
-                Form form = Loader.getCms(mContext).getGradePageForm(url);
-                if (form != null) {
-                    e.onNext(form);
-                } else {
-                    e.onComplete();
-                }
+            public void subscribe(ObservableEmitter<Document> e) throws Exception {
+                e.onNext(Loader.getCms(mContext).getGradePageDom(url));
             }
-        })
-                .subscribeOn(Schedulers.newThread())
+        });
+
+        Observer<Document> observer = new MyObserver<Document>(TAG) {
+            @Override
+            public void onNext(Document document) {
+                ActivityUtils.dismissProgressDialog();
+                FormDialog.newInstance(document, GradePresenter.this).show(manager, "form_dialog");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<Form>() {
-                    @Override
-                    public void accept(Form classes) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        FormDialog.newInstance(classes, GradePresenter.this).show(manager, "form_dialog");
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, Form>() {
-                    @Override
-                    public Form apply(Throwable throwable) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        return new Form();
-                    }
-                })
-                .subscribe();
+                .subscribe(observer);
+        return null;
     }
 
     @Override
-    public Disposable loadQuery(final FragmentManager manager, final String actionURL, final Map<String, String> queryMap) {
+    public Disposable loadQuery(final FragmentManager manager, final String actionURL, final Map<String, String> queryMap, final boolean needNewPage) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_grades).show();
-        return Observable.create(new ObservableOnSubscribe<Document>() {
+
+        Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
             public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                e.onNext(Loader.getCms(mContext).getGradePageTables(actionURL, queryMap));
-                e.onComplete();
+                e.onNext(Loader.getCms(mContext).getFinalGradePageDom(actionURL, queryMap, needNewPage));
             }
-        })
-                .subscribeOn(Schedulers.newThread())
+        });
+
+        Observer<Document> observer = new MyObserver<Document>(TAG) {
+            @Override
+            public void onNext(Document document) {
+                ActivityUtils.dismissProgressDialog();
+                Constants.checkAdvCustomInfo(mContext);
+
+                if (TextUtils.isEmpty(Constants.advCustomInfo.GRADE_TABLE_ID)) {
+                    TableChooseDialog
+                            .newInstance(Constants.TYPE_GRADE, document, GradePresenter.this)
+                            .show(manager, "table_choose");
+                } else {
+                    mGrades = UniversityUtils.generateInfo(
+                            TableUtils.getTablesFromTargetPage(document)
+                                    .get(Constants.advCustomInfo.GRADE_TABLE_ID),
+                            GradeInfo.class);
+                    if (mGrades.size() == 0) {
+                        Toast.makeText(mContext, R.string.grades_empty, Toast.LENGTH_LONG).show();
+                    } else {
+                        storeGrades();
+                        loadLocalGrades();
+                        Toast.makeText(mContext, R.string.load_online_grades_successful, Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<Document>() {
-                    @Override
-                    public void accept(Document map) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        DBManger manger = DBManger.getInstance(mContext);
-                        final AdvancedCustomInfo customInfo = manger.getAdvancedCustomInfo(mContext);
-                        if (customInfo == null || TextUtils.isEmpty(customInfo.GRADE_TABLE_ID)) {
-                            TableChooseDialog
-                                    .newInstance(Constants.TYPE_GRADE, map, GradePresenter.this)
-                                    .show(manager, "table_choose");
-                        } else {
-                            mGrades = UniversityUtils.generateInfo(TableUtils.getTablesFromTargetPage(map).get(customInfo.GRADE_TABLE_ID), GradeInfo.class);
-                            storeGrades();
-                            loadLocalGrades();
-                        }
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, Document>() {
-                    @Override
-                    public Document apply(Throwable throwable) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        return new Document("http://openct.metapro.cc");
-                    }
-                }).subscribe();
+                .subscribe(observer);
+
+        return null;
     }
 
     @Override
     public void loadLocalGrades() {
-        Observable
-                .create(new ObservableOnSubscribe<List<GradeInfo>>() {
-                    @Override
-                    public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
-                        DBManger manger = DBManger.getInstance(mContext);
-                        e.onNext(manger.getGrades());
-                        e.onComplete();
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
+        Observable<List<GradeInfo>> observable = Observable.create(new ObservableOnSubscribe<List<GradeInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
+                e.onNext(mDBManger.getGrades());
+            }
+        });
+
+        Observer<List<GradeInfo>> observer = new MyObserver<List<GradeInfo>>(TAG) {
+            @Override
+            public void onNext(List<GradeInfo> enrichedClasses) {
+                mGrades = enrichedClasses;
+                if (mGrades.size() > 0) {
+                    mView.onLoadGrades(mGrades);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<List<GradeInfo>>() {
-                    @Override
-                    public void accept(List<GradeInfo> gradeInfos) throws Exception {
-                        if (gradeInfos.size() != 0) {
-                            mGrades = gradeInfos;
-                            mGradeFragment.onLoadGrades(mGrades);
-                        }
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, List<GradeInfo>>() {
-                    @Override
-                    public List<GradeInfo> apply(Throwable throwable) throws Exception {
-                        Toast.makeText(mContext, mContext.getString(R.string.something_wrong) + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        return new ArrayList<>(0);
-                    }
-                }).subscribe();
+                .subscribe(observer);
     }
 
     @Override
@@ -309,7 +339,7 @@ class GradePresenter implements GradeContract.Presenter {
                 .doOnNext(new Consumer<Map<String, String>>() {
                     @Override
                     public void accept(Map<String, String> stringMap) throws Exception {
-                        mGradeFragment.onLoadCETGrade(stringMap);
+                        mView.onLoadCETGrade(stringMap);
                     }
                 })
                 .onErrorReturn(new Function<Throwable, Map<String, String>>() {
@@ -325,8 +355,7 @@ class GradePresenter implements GradeContract.Presenter {
     @Override
     public void storeGrades() {
         try {
-            DBManger manger = DBManger.getInstance(mContext);
-            manger.updateGrades(mGrades);
+            mDBManger.updateGrades(mGrades);
         } catch (Exception e) {
             Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -336,6 +365,7 @@ class GradePresenter implements GradeContract.Presenter {
     public void clearGrades() {
         mGrades = new ArrayList<>(0);
         storeGrades();
+        loadLocalGrades();
     }
 
     @Override

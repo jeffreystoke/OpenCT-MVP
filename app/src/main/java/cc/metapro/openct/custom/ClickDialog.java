@@ -16,16 +16,15 @@ package cc.metapro.openct.custom;
  * limitations under the License.
  */
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v7.app.AlertDialog;
 
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import cc.metapro.interactiveweb.InteractiveWebView;
 import cc.metapro.openct.R;
 
@@ -38,30 +37,33 @@ public class ClickDialog extends DialogFragment {
         return new ClickDialog();
     }
 
-    @OnClick(R.id.common)
-    public void backToEnter() {
-        mTypeCallback.onResult(InteractiveWebView.COMMON_INPUT_FLAG);
-        dismiss();
-    }
-
-    @OnClick(R.id.username)
-    public void setUsername() {
-        mTypeCallback.onResult(InteractiveWebView.USERNAME_INPUT_FLAG);
-        dismiss();
-    }
-
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_click, container);
-        ButterKnife.bind(this, view);
-        return view;
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        return new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.question)
+                .setMessage(R.string.what_did_you_clicked)
+                .setPositiveButton(R.string.common_input, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mTypeCallback.onResult(InteractiveWebView.COMMON_INPUT_FLAG);
+                        dismiss();
+                    }
+                })
+                .setNeutralButton(R.string.username_input, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mTypeCallback.onResult(InteractiveWebView.USERNAME_INPUT_FLAG);
+                        dismiss();
+                    }
+                })
+                .create();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
+        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
     }
 
     public interface TypeCallback {

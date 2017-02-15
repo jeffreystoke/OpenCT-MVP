@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -67,8 +68,8 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
         if (classes != null && classes.size() != 0) {
             for (EnrichedClassInfo info : classes) {
                 if (info.isToday()) {
-                    List<ClassInfo> infos = info.getAllClasses();
-                    for (ClassInfo c : infos) {
+                    List<ClassInfo> classList = info.getAllClasses();
+                    for (ClassInfo c : classList) {
                         if (c.hasClass(week)) {
                             mClasses.add(c);
                         }
@@ -76,6 +77,7 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
                 }
             }
         }
+        Collections.sort(mClasses);
     }
 
     boolean hasClassToday() {

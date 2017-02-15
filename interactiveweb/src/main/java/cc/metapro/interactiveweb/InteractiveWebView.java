@@ -124,13 +124,10 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     @Override
     public boolean clickElementById(String id) {
         if (TextUtils.isEmpty(id)) return false;
-        Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
-        if (document != null) {
-            Element element = document.getElementById(id);
-            if (element != null) {
-                JSUtils.clickById(this, id);
-                return true;
-            }
+        Element element = getElementById(id);
+        if (element != null) {
+            JSUtils.clickById(this, id);
+            return true;
         }
         return false;
     }
@@ -138,13 +135,10 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     @Override
     public boolean clickElementsByName(String name) {
         if (TextUtils.isEmpty(name)) return false;
-        Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
-        if (document != null) {
-            Elements elements = document.getElementsByAttributeValue("name", name);
-            if (!elements.isEmpty()) {
-                JSUtils.clickByName(this, name);
-                return true;
-            }
+        Elements elements = getElementsByName(name);
+        if (elements != null && !elements.isEmpty()) {
+            JSUtils.clickByName(this, name);
+            return true;
         }
         return false;
     }
@@ -152,13 +146,10 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     @Override
     public boolean clickElementsByTag(String tag) {
         if (TextUtils.isEmpty(tag)) return false;
-        Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
-        if (document != null) {
-            Elements elements = document.getElementsByTag(tag);
-            if (!elements.isEmpty()) {
-                JSUtils.clickByTag(this, tag);
-                return true;
-            }
+        Elements elements = getElementsByTag(tag);
+        if (elements != null && !elements.isEmpty()) {
+            JSUtils.clickByTag(this, tag);
+            return true;
         }
         return false;
     }
@@ -166,12 +157,12 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     @Override
     public boolean clickElementsByPattern(String pattern) {
         if (TextUtils.isEmpty(pattern)) return false;
-        Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
+        Document document = getPageDom();
         if (document != null) {
             Elements elements = document.getAllElements();
             Pattern ptn = Pattern.compile(pattern);
             for (Element element : elements) {
-                if (ptn.matcher(element.html()).find()) {
+                if (ptn.matcher(element.toString()).find()) {
                     JSUtils.clickByPattern(this, pattern);
                     return true;
                 }
@@ -183,7 +174,7 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     @Override
     public boolean setById(String id, String key, String value) {
         if (TextUtils.isEmpty(id)) return false;
-        Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
+        Document document = getPageDom();
         if (document != null) {
             if (document.getElementById(id) != null) {
                 JSUtils.setById(this, id, key, value);
@@ -196,13 +187,10 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     @Override
     public boolean setByTag(String tag, String key, String value) {
         if (TextUtils.isEmpty(tag)) return false;
-        Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
-        if (document != null) {
-            Elements elements = document.getElementsByTag(tag);
-            if (!elements.isEmpty()) {
-                JSUtils.setByTag(this, tag, key, value);
-                return true;
-            }
+        Elements elements = getElementsByTag(tag);
+        if (elements != null && !elements.isEmpty()) {
+            JSUtils.setByTag(this, tag, key, value);
+            return true;
         }
         return false;
     }
@@ -210,13 +198,10 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     @Override
     public boolean setByName(String name, String key, String value) {
         if (TextUtils.isEmpty(name)) return false;
-        Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
-        if (document != null) {
-            Elements elements = document.getElementsByAttributeValue("name", name);
-            if (!elements.isEmpty()) {
-                JSUtils.setByName(this, name, key, value);
-                return true;
-            }
+        Elements elements = getElementsByAttr("name", name);
+        if (elements != null && !elements.isEmpty()) {
+            JSUtils.setByName(this, name, key, value);
+            return true;
         }
         return false;
     }
@@ -224,12 +209,12 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     @Override
     public boolean setByPattern(String pattern, String key, String value) {
         if (TextUtils.isEmpty(pattern)) return false;
-        Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
+        Document document = getPageDom();
         if (document != null) {
             Elements elements = document.getAllElements();
             Pattern ptn = Pattern.compile(pattern);
             for (Element element : elements) {
-                if (ptn.matcher(element.html()).find()) {
+                if (ptn.matcher(element.toString()).find()) {
                     JSUtils.setByPattern(this, pattern, key, value);
                     return true;
                 }
@@ -284,6 +269,26 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     public Elements getElementsByAttr(String attr, @Nullable String value) {
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
         return document == null || TextUtils.isEmpty(attr) ? null : document.getElementsByAttributeValue(attr, value == null ? "" : value);
+    }
+
+    public boolean focusById(String id) {
+        if (TextUtils.isEmpty(id)) return false;
+        Element element = getElementById(id);
+        if (element != null) {
+            JSUtils.focusById(this, id);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean focusByName(String name) {
+        if (TextUtils.isEmpty(name)) return false;
+        Elements elements = getElementsByName(name);
+        if (elements != null && !elements.isEmpty()) {
+            JSUtils.focusByName(this, name);
+            return true;
+        }
+        return false;
     }
 
     public interface ClickCallback {

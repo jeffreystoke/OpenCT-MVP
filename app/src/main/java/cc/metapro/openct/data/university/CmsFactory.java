@@ -22,16 +22,13 @@ import android.support.annotation.Nullable;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import java.util.Map;
 
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.webutils.Form;
-import cc.metapro.openct.utils.webutils.FormHandler;
-import cc.metapro.openct.utils.webutils.TableUtils;
 import okhttp3.HttpUrl;
+import retrofit2.Response;
 
 @Keep
 public class CmsFactory extends UniversityFactory {
@@ -44,43 +41,45 @@ public class CmsFactory extends UniversityFactory {
     }
 
     @Nullable
-    public Form getClassPageFrom(String url) throws Exception {
+    public Document getClassPageDom(String url) throws Exception {
         CLASS_URL = HttpUrl.parse(url).toString();
-        String tablePage = mService.getPage(url, webHelper.getUserCenterURL()).execute().body();
-        FormHandler handler = new FormHandler(tablePage, url);
-        if (Constants.QZDATASOFT.equalsIgnoreCase(SYS)) {
-            return handler.getForm(1);
-        }
-        return handler.getForm(0);
+        Response<String> response = mService.getPage(url, webHelper.getUserCenterURL()).execute();
+        String tablePage = response.body();
+        return Jsoup.parse(tablePage, url);
     }
 
     @Nullable
-    public Form getGradePageForm(String url) throws Exception {
+    public Document getGradePageDom(String url) throws Exception {
         GRADE_URL = HttpUrl.parse(url).toString();
-        String tablePage = mService.getPage(url, webHelper.getUserCenterURL()).execute().body();
-        FormHandler handler = new FormHandler(tablePage, url);
-        return handler.getForm(0);
+        Response<String> response = mService.getPage(url, webHelper.getUserCenterURL()).execute();
+        String tablePage = response.body();
+        return Jsoup.parse(tablePage, url);
     }
 
     @NonNull
-    public Document getGradePageTables(String actionURL, Map<String, String> queryMap) throws Exception {
-        // 获取成绩表页面的所有表格 id -> Table
-        return getTables(actionURL, GRADE_URL, queryMap);
+    public Document getFinalGradePageDom(String actionURL, Map<String, String> queryMap, boolean needNewPage) throws Exception {
+        if (Constants.QZDATASOFT.equalsIgnoreCase(SYS)) {
+            actionURL = HttpUrl.parse(actionURL).newBuilder().encodedPath("/jsxsd/kscj/cjcx_list").build().url().toString();
+        }
+        return getFinalPageDom(actionURL, GRADE_URL, queryMap, needNewPage);
     }
 
     @NonNull
-    public Document getClassPageTables(String actionURL, Map<String, String> queryMap) throws Exception {
-        // 获取课程表页面的所有表格 id -> Table
-        return getTables(actionURL, CLASS_URL, queryMap);
+    public Document getFinalClassPageDom(String actionURL, Map<String, String> queryMap, boolean needNewPage) throws Exception {
+        return getFinalPageDom(actionURL, CLASS_URL, queryMap, needNewPage);
     }
 
     @NonNull
-    private Document getTables(String actionURL, String refer, Map<String, String> queryMap) throws Exception {
+    private Document getFinalPageDom(String actionURL, String refer, Map<String, String> queryMap, boolean needNewPage) throws Exception {
         String tablePage;
         if (Constants.QZDATASOFT.equalsIgnoreCase(SYS)) {
-            tablePage = mService.post(refer, refer, queryMap).execute().body();
+            tablePage = mService.post(actionURL, refer, queryMap).execute().body();
         } else {
-            tablePage = mService.getPage(actionURL, refer).execute().body();
+            if (needNewPage) {
+                tablePage = mService.post(actionURL, refer, queryMap).execute().body();
+            } else {
+                tablePage = mService.getPage(actionURL, refer).execute().body();
+            }
         }
         tablePage = tablePage.replaceAll(HTMLUtils.BR, HTMLUtils.BR_REPLACER);
 
@@ -89,12 +88,11 @@ public class CmsFactory extends UniversityFactory {
 
     public static class ClassTableInfo {
 
-        public int mNameIndex, mTypeIndex, mDuringIndex,
-                mPlaceIndex, mTimeIndex, mTeacherIndex, mClassStringCount;
+        public int mNameIndex, mTypeIndex, mDuringIndex, mPlaceIndex, mTimeIndex, mTeacherIndex;
 
         public String mClassTableID;
 
-        // Regular Expressions to parse class
+        // Regular Expressions for class info parse
         public String mNameRE, mTypeRE, mDuringRE, mTimeRE, mTeacherRE, mPlaceRE;
     }
 

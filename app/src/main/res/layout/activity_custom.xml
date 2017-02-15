@@ -90,15 +90,15 @@
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_record_start"
+            android:src="@drawable/ic_start"
             app:fab_size="mini"
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_colorPressed="@color/colorAccent"
             fab:fab_colorRipple="@color/colorAccent"
-            fab:fab_label="录制开始"/>
+            fab:fab_label="开始"/>
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_ok"
+            android:id="@+id/fab_target"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_dest_ok"
@@ -106,18 +106,18 @@
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_colorPressed="@color/colorAccent"
             fab:fab_colorRipple="@color/colorAccent"
-            fab:fab_label="到达页面"/>
+            fab:fab_label="到达"/>
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_replay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_replay"
-            app:fab_size="mini"
-            fab:fab_colorNormal="@color/colorAccent"
-            fab:fab_colorPressed="@color/colorAccent"
-            fab:fab_colorRipple="@color/colorAccent"
-            fab:fab_label="历史回放"/>
+        <!--<com.github.clans.fab.FloatingActionButton-->
+            <!--android:id="@+id/fab_replay"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_replay"-->
+            <!--app:fab_size="mini"-->
+            <!--fab:fab_colorNormal="@color/colorAccent"-->
+            <!--fab:fab_colorPressed="@color/colorAccent"-->
+            <!--fab:fab_colorRipple="@color/colorAccent"-->
+            <!--fab:fab_label="回放"/>-->
     </com.github.clans.fab.FloatingActionMenu>
 
     <android.support.design.widget.FloatingActionButton

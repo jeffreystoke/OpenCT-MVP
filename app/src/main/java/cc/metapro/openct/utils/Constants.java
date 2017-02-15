@@ -16,7 +16,12 @@ package cc.metapro.openct.utils;
  * limitations under the License.
  */
 
+import android.content.Context;
 import android.support.annotation.Keep;
+
+import cc.metapro.openct.data.source.DBManger;
+import cc.metapro.openct.data.university.AdvancedCustomInfo;
+import cc.metapro.openct.data.university.UniversityInfo;
 
 @Keep
 public final class Constants {
@@ -35,7 +40,6 @@ public final class Constants {
 
     public static final int DAILY_CLASSES = 12;
     public static final int CLASS_LENGTH = 1;
-
     // 正方系列
     public static final String ZFSOFT = "zfsoft";
     // 苏文
@@ -48,10 +52,9 @@ public final class Constants {
     public static final String KINGOSOFT = "kingosoft";
     // 清元优软
     public static final String URP = "urp";
-
     // 汇文
     public static final String NJHUIWEN = "njhuiwen";
-
+    public static AdvancedCustomInfo advCustomInfo;
     // map keys
     public static String ACTION_KEY;
     public static String USERNAME_KEY;
@@ -62,4 +65,8 @@ public final class Constants {
     public static String CAPTCHA_FILE;
     public static int CLASS_WIDTH = 0;
     public static int CLASS_BASE_HEIGHT = 0;
+
+    public static void checkAdvCustomInfo(Context context) {
+        advCustomInfo = DBManger.getAdvancedCustomInfo(context);
+    }
 }

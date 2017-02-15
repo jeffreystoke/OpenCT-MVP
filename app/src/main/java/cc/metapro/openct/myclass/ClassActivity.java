@@ -53,7 +53,6 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.BorrowActivity;
 import cc.metapro.openct.classdetail.ClassDetailActivity;
-import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.grades.GradeActivity;
@@ -66,6 +65,7 @@ public class ClassActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ClassContract.View {
 
     private static final int REQUEST_WRITE_STORAGE = 112;
+
     private static boolean showedPrompt;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -135,24 +135,33 @@ public class ClassActivity extends AppCompatActivity
     }
 
     @Override
-    public void updateClasses(List<EnrichedClassInfo> classes) {
+    public void updateClasses(@NonNull List<EnrichedClassInfo> classes) {
         int week = Loader.getCurrentWeek(this);
-
         // 更新学期课表视图
         View view = mClassPagerAdapter.getSemClassView();
-        ViewGroup seq = (ViewGroup) view.findViewById(R.id.sem_class_seq);
-        ViewGroup con = (ViewGroup) view.findViewById(R.id.sem_class_content);
-        addSeqViews(seq);
-        addContentView(con, classes, -1);
+        ViewGroup seq = (ViewGroup) view.findViewById(R.id.seq);
+        ViewGroup con = (ViewGroup) view.findViewById(R.id.content);
+        if (!classes.isEmpty()) {
+            addSeqViews(seq);
+            addContentView(con, classes, -1);
+        } else {
+            seq.removeAllViews();
+            con.removeAllViews();
+        }
 
         // 更新周课表视图
         mClassPagerAdapter.setWeekTitle(week);
         mClassPagerAdapter.notifyDataSetChanged();
         view = mClassPagerAdapter.getWeekClassView();
-        seq = (ViewGroup) view.findViewById(R.id.week_class_seq);
-        con = (ViewGroup) view.findViewById(R.id.week_class_content);
-        addSeqViews(seq);
-        addContentView(con, classes, week);
+        seq = (ViewGroup) view.findViewById(R.id.seq);
+        con = (ViewGroup) view.findViewById(R.id.content);
+        if (!classes.isEmpty()) {
+            addSeqViews(seq);
+            addContentView(con, classes, week);
+        } else {
+            seq.removeAllViews();
+            con.removeAllViews();
+        }
 
         // 更新当日课表视图
         mDailyClassAdapter.updateTodayClasses(classes, week);
@@ -215,7 +224,7 @@ public class ClassActivity extends AppCompatActivity
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
             } else {
-                CustomActivity.actionStart(this, Constants.TYPE_CLASS);
+                mPresenter.loadOnlineInfo(getSupportFragmentManager());
             }
             return true;
         } else if (id == R.id.export_classes) {
@@ -229,6 +238,8 @@ public class ClassActivity extends AppCompatActivity
             }
         } else if (id == R.id.add_class) {
             ClassDetailActivity.actionStart(this, new EnrichedClassInfo());
+        } else if (id == R.id.clear_classes) {
+            mPresenter.clearClasses();
         }
         return super.onOptionsItemSelected(item);
     }

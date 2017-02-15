@@ -15,7 +15,8 @@
         <activity
             android:name=".myclass.ClassActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
@@ -32,7 +33,8 @@
         <activity
             android:name=".grades.GradeActivity"
             android:label="@string/grade_list"
-            android:parentActivityName=".myclass.ClassActivity">
+            android:parentActivityName=".myclass.ClassActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cc.metapro.openct.myclass.ClassActivity"/>
@@ -40,7 +42,8 @@
         <activity
             android:name=".search.LibSearchActivity"
             android:label="@string/search_lib"
-            android:parentActivityName=".myclass.ClassActivity">
+            android:parentActivityName=".myclass.ClassActivity"
+            android:windowSoftInputMode="adjustPan|stateVisible">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cc.metapro.openct.myclass.ClassActivity"/>
@@ -48,7 +51,8 @@
         <activity
             android:name=".borrow.BorrowActivity"
             android:label="@string/borrow_info"
-            android:parentActivityName=".myclass.ClassActivity">
+            android:parentActivityName=".myclass.ClassActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cc.metapro.openct.myclass.ClassActivity"/>
@@ -58,7 +62,8 @@
         <activity
             android:name=".custom.CustomActivity"
             android:label="@string/custom"
-            android:parentActivityName=".myclass.ClassActivity">
+            android:parentActivityName=".myclass.ClassActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cc.metapro.openct.myclass.ClassActivity"/>
@@ -78,6 +83,40 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name=".classdetail.ClassDetailActivity"
+            android:label="@string/class_detail"
+            android:parentActivityName=".myclass.ClassActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cc.metapro.openct.myclass.ClassActivity"/>
+        </activity>
+        <activity android:name=".splash.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <!--<receiver-->
+            <!--android:name=".widget.WeeklyClassWidget"-->
+            <!--android:exported="true">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>-->
+                <!--<action android:name="android.intent.action.BOOT_COMPLETED"/>-->
+                <!--<action android:name="android.intent.action.DATE_CHANGED"/>-->
+                <!--<action android:name="android.intent.action.TIME_SET"/>-->
+                <!--<action android:name="android.intent.action.USER_PRESENT"/>-->
+                <!--<action android:name="cc.metapro.openct.action.UPDATE_ITEMS"/>-->
+            <!--</intent-filter>-->
+
+            <!--<meta-data-->
+                <!--android:name="android.appwidget.provider"-->
+                <!--android:resource="@xml/weekly_class_widget_info"/>-->
+        <!--</receiver>-->
 
         <receiver
             android:name=".widget.DailyClassWidget"
@@ -97,28 +136,9 @@
         </receiver>
 
         <service
-            android:name=".widget.WidgetService"
+            android:name=".widget.DailyWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS">
         </service>
-
-        <activity
-            android:name=".classdetail.ClassDetailActivity"
-            android:label="@string/class_detail"
-            android:parentActivityName=".myclass.ClassActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="cc.metapro.openct.myclass.ClassActivity"/>
-        </activity>
-        <activity android:name=".splash.SplashActivity">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

@@ -8,10 +8,14 @@
         app:showAsAction="never"/>
     <item
         android:id="@+id/add_class"
-        android:title="添加课程"
+        android:title="@string/add_class_info"
         app:showAsAction="never"/>
     <item
         android:id="@+id/export_classes"
         android:title="@string/export_to_ical"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/clear_classes"
+        android:title="@string/clear_classes"
         app:showAsAction="never"/>
 </menu>

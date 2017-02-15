@@ -36,14 +36,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
-import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.grades.cet.CETQueryDialog;
 import cc.metapro.openct.grades.cet.CETResultDialog;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.utils.ActivityUtils;
-import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
 @Keep
@@ -63,13 +61,12 @@ public class GradeActivity extends AppCompatActivity implements GradeContract.Vi
     @OnClick(R.id.fab)
     public void refresh() {
         Map<String, String> map = Loader.getCmsStuInfo(this);
-        if (map.size() == 0) {
+        if (map.size() < 2) {
             Toast.makeText(this, R.string.enrich_cms_info, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         } else {
-            CustomActivity.actionStart(this, Constants.TYPE_GRADE);
-//            mPresenter.loadOnlineInfo(getSupportFragmentManager());
+            mPresenter.loadOnlineInfo(getSupportFragmentManager());
         }
     }
 

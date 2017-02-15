@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 public class Form {
 
-    private final static String FORM_ITEM_PATTERN = "(select)|(input)|(textarea)|(button)|(datalist)|(keygen)|(output)";
+    public static final String FORM_ITEM_PATTERN = "(select)|(input)|(textarea)|(button)|(datalist)|(keygen)|(output)";
 
     private LinkedHashMap<String, Elements> mFormItems;
 
@@ -47,12 +47,19 @@ public class Form {
 
         mFormItems = new LinkedHashMap<>();
 
-        for (Element e : form.getAllElements()) {
+        Elements elements = form.getAllElements();
+        for (Element e : elements) {
             if (Pattern.compile(FORM_ITEM_PATTERN).matcher(e.tagName()).find()) {
                 if ("select".equalsIgnoreCase(e.tagName())) {
                     Elements options = e.select("option");
                     if (options != null) {
                         Element defaultOption = options.get(0);
+                        for (Element option : options) {
+                            if (option.hasAttr("selected")) {
+                                defaultOption = option;
+                                break;
+                            }
+                        }
                         e = e.attr("value", defaultOption.attr("value"));
                     }
                 }

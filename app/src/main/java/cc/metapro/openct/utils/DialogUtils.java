@@ -1,4 +1,4 @@
-package cc.metapro.interactiveweb.utils;
+package cc.metapro.openct.utils;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,13 +16,20 @@ package cc.metapro.interactiveweb.utils;
  * limitations under the License.
  */
 
-import com.google.gson.Gson;
+import android.content.DialogInterface;
 
-public class JSONHelper {
+import java.lang.reflect.Field;
 
-    private static final Gson GSON = new Gson();
+public class DialogUtils {
 
-    public static String toJson(Object o) {
-        return GSON.toJson(o);
+    public static void canCloseDialog(DialogInterface dialogInterface, boolean close) {
+        try {
+            Field field = dialogInterface.getClass().getSuperclass().getDeclaredField("mShowing");
+            field.setAccessible(true);
+            field.set(dialogInterface, close);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
 }

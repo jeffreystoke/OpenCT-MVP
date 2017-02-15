@@ -35,6 +35,9 @@ public class GradeInfo {
     public GradeInfo(Element th, Element tr) {
         mTitleValueMap = new HashMap<>();
         Elements titles = th.select("td");
+        if (titles.isEmpty()) {
+            titles = th.select("th");
+        }
         Elements values = tr.select("td");
         int i = 0;
         for (Element title : titles) {
@@ -50,9 +53,10 @@ public class GradeInfo {
         for (String key : mTitleValueMap.keySet()) {
             sb.append(key).append(": ").append(mTitleValueMap.get(key)).append("\n\n");
         }
-
-        if (sb.charAt(sb.length() - 1) == '\n') {
-            sb.replace(sb.length() - 2, sb.length(), "");
+        if (sb.length() > 2) {
+            if (sb.charAt(sb.length() - 1) == '\n') {
+                sb.replace(sb.length() - 2, sb.length(), "");
+            }
         }
         return sb.toString();
     }

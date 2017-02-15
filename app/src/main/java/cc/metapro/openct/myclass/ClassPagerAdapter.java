@@ -59,10 +59,10 @@ public class ClassPagerAdapter extends PagerAdapter {
         RecyclerViewHelper.setRecyclerView(mContext, mRecyclerView, mDailyClassAdapter);
         mViewList.add(td);
 
-        View tw = layoutInflater.inflate(R.layout.viewpager_class_current_week, parent, false);
+        View tw = layoutInflater.inflate(R.layout.viewpager_class_large, parent, false);
         mViewList.add(tw);
 
-        View ts = layoutInflater.inflate(R.layout.viewpager_class_current_sem, parent, false);
+        View ts = layoutInflater.inflate(R.layout.viewpager_class_large, parent, false);
         mViewList.add(ts);
     }
 

@@ -25,10 +25,13 @@
     native <methods>;
 }
 
+-keep class net.fortuna.ical4j.** { *; }
+
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -dontwarn retrofit2.Platform$Java8
 -dontwarn net.fortuna.ical4j.model.**
+-dontwarn org.slf4j.impl.**
 -dontwarn groovy.**
 -dontwarn org.codehaus.groovy.**
 -dontwarn org.apache.commons.logging.**

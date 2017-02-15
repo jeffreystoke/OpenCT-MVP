@@ -48,3 +48,6 @@ captures/
 
 # Keystore files
 *.jks
+app/src/main/assets/schools.json
+
+app/src/main/assets/school_info/

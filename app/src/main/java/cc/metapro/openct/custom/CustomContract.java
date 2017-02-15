@@ -1,4 +1,4 @@
-package cc.metapro.openct.myclass;
+package cc.metapro.openct.custom;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,32 +16,30 @@ package cc.metapro.openct.myclass;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
+import android.support.v4.app.FragmentManager;
 
-import java.util.List;
-
+import cc.metapro.interactiveweb.InteractiveWebView;
+import cc.metapro.openct.BasePresenter;
 import cc.metapro.openct.BaseView;
-import cc.metapro.openct.LoginPresenter;
-import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 
-@Keep
-public interface ClassContract {
+public interface CustomContract {
+
     interface View extends BaseView<Presenter> {
 
-        void updateClasses(List<EnrichedClassInfo> classes);
+        void disableNextStep();
+
+        void enableNextStep();
+
+        String getUrl();
 
     }
 
-    interface Presenter extends LoginPresenter {
+    interface Presenter extends BasePresenter {
 
-        void loadLocalClasses();
+        void setWebView(final InteractiveWebView webView, final FragmentManager manager);
 
-        void storeClasses();
+        void execCommands(final InteractiveWebView webView);
 
-        void exportClasses();
-
-        void clearClasses();
-
-        void loadFromExcel();
+        void nextStep(final InteractiveWebView webView, final FragmentManager manager);
     }
 }

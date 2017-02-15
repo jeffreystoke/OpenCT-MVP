@@ -18,18 +18,20 @@ package cc.metapro.openct.utils;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.Keep;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 
 import com.scottyab.aescrypt.AESCrypt;
 
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import java.security.GeneralSecurityException;
 
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
+import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.customviews.CaptchaDialog;
 import cc.metapro.openct.customviews.LinkSelectionDialog;
 import cc.metapro.openct.customviews.TableChooseDialog;
@@ -68,7 +70,7 @@ public final class ActivityUtils {
             if (cmsPasswordEncrypted) {
                 try {
                     PrefHelper.putBoolean(context, R.string.pref_cms_password_encrypted, false);
-                    String password = PrefHelper.getString(context, R.string.pref_cms_password);
+                    String password = PrefHelper.getString(context, R.string.pref_cms_password, "");
                     password = AESCrypt.decrypt(Constants.seed, password);
                     PrefHelper.putString(context, R.string.pref_cms_password, password);
                 } catch (GeneralSecurityException e) {
@@ -79,7 +81,7 @@ public final class ActivityUtils {
             if (libPasswordEncrypted) {
                 try {
                     PrefHelper.putBoolean(context, R.string.pref_lib_password_encrypted, false);
-                    String password = PrefHelper.getString(context, R.string.pref_lib_password);
+                    String password = PrefHelper.getString(context, R.string.pref_lib_password, "");
                     password = AESCrypt.decrypt(Constants.seed, password);
                     PrefHelper.putString(context, R.string.pref_cms_password, password);
                 } catch (GeneralSecurityException e) {
@@ -90,7 +92,7 @@ public final class ActivityUtils {
             if (!cmsPasswordEncrypted) {
                 try {
                     PrefHelper.putBoolean(context, R.string.pref_cms_password_encrypted, true);
-                    String password = PrefHelper.getString(context, R.string.pref_cms_password);
+                    String password = PrefHelper.getString(context, R.string.pref_cms_password, "");
                     password = AESCrypt.encrypt(Constants.seed, password);
                     PrefHelper.putString(context, R.string.pref_cms_password, password);
                 } catch (GeneralSecurityException e) {
@@ -101,7 +103,7 @@ public final class ActivityUtils {
             if (!libPasswordEncrypted) {
                 try {
                     PrefHelper.putBoolean(context, R.string.pref_lib_password_encrypted, true);
-                    String password = PrefHelper.getString(context, R.string.pref_lib_password);
+                    String password = PrefHelper.getString(context, R.string.pref_lib_password, "");
                     password = AESCrypt.encrypt(Constants.seed, password);
                     PrefHelper.putString(context, R.string.pref_lib_password, password);
                 } catch (GeneralSecurityException e) {
@@ -112,20 +114,37 @@ public final class ActivityUtils {
     }
 
     public static void showCaptchaDialog(FragmentManager manager, LoginPresenter presenter) {
-        CaptchaDialog
-                .newInstance(presenter)
-                .show(manager, "captcha_dialog");
+        try {
+            CaptchaDialog.newInstance(presenter).show(manager, "captcha_dialog");
+        } catch (Exception ignored) {
+
+        }
     }
 
-    public static void showLinkSelectionDialog(FragmentManager manager, String type, Elements links, LoginPresenter presenter) {
-        LinkSelectionDialog
-                .newInstance(type, links, presenter)
-                .show(manager, "link_selection_dialog");
+    public static void showLinkSelectionDialog(FragmentManager manager, String type, Document document, LoginPresenter presenter) {
+        LinkSelectionDialog.newInstance(type, document, presenter).show(manager, "link_selection_dialog");
     }
 
     public static void showTableChooseDialog(FragmentManager manager, String type, Document document, LoginPresenter presenter) {
-        TableChooseDialog
-                .newInstance(type, document, presenter)
-                .show(manager, "table_choose_dialog");
+        TableChooseDialog.newInstance(type, document, presenter).show(manager, "table_choose_dialog");
+    }
+
+    public static void showAdvCustomTip(final Context context, final String type) {
+        new AlertDialog.Builder(context)
+                .setTitle("获取信息失败")
+                .setMessage("是否使用网页进行导入?")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        CustomActivity.actionStart(context, type);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .create().show();
     }
 }

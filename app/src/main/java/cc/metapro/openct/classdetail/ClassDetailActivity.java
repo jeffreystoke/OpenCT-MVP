@@ -135,7 +135,7 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
         new ClassDetailPresenter(this, this);
     }
 
-    private void classInfoModified() {
+    void classInfoModified() {
         ClassInfo info = mDetailAdapter.getResultClass();
         mInfo.setClassInfo(info);
         mPresenter.storeClassInfo(mInfo);

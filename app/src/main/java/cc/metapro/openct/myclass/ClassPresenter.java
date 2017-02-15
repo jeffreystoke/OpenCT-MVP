@@ -32,38 +32,35 @@ import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Version;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
+import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.FormDialog;
-import cc.metapro.openct.customviews.LinkSelectionDialog;
-import cc.metapro.openct.customviews.TableChooseDialog;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.AdvancedCustomInfo;
+import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.utils.ActivityUtils;
-import cc.metapro.openct.utils.webutils.Form;
+import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.MyObserver;
+import cc.metapro.openct.utils.webutils.TableUtils;
 import cc.metapro.openct.widget.DailyClassWidget;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 @Keep
@@ -85,189 +82,232 @@ class ClassPresenter implements ClassContract.Presenter {
     @Override
     public Disposable loadOnlineInfo(final FragmentManager manager) {
         ActivityUtils.getProgressDialog(mContext, R.string.preparing_school_sys_info).show();
-        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+        Observable<Boolean> observable = Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 e.onNext(Loader.getCms(mContext).prepareOnlineInfo());
-                e.onComplete();
             }
-        })
-                .subscribeOn(Schedulers.newThread())
+        });
+
+        Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
+            @Override
+            public void onNext(Boolean needCaptcha) {
+                ActivityUtils.dismissProgressDialog();
+                if (needCaptcha) {
+                    ActivityUtils.showCaptchaDialog(manager, ClassPresenter.this);
+                } else {
+                    loadUserCenter(manager, "");
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean needCaptcha) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        if (needCaptcha) {
-                            ActivityUtils.showCaptchaDialog(manager, ClassPresenter.this);
-                        } else {
-                            loadUserCenter(manager, "");
-                        }
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, Boolean>() {
-                    @Override
-                    public Boolean apply(Throwable throwable) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, "获取校园信息失败\n" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, throwable.getMessage(), throwable);
-                        return false;
-                    }
-                })
-                .subscribe();
+                .subscribe(observer);
+
+        return null;
     }
 
     @Override
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
         ActivityUtils.getProgressDialog(mContext, R.string.login_to_system).show();
-        return Observable.create(new ObservableOnSubscribe<Elements>() {
+        Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
-            public void subscribe(ObservableEmitter<Elements> e) throws Exception {
+            public void subscribe(ObservableEmitter<Document> e) throws Exception {
                 Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
                 loginMap.put(mContext.getString(R.string.key_captcha), code);
-                Document document = Loader.getCms(mContext).login(loginMap);
-                Elements elements = UniversityUtils.getLinksByPattern(document, "课程|课表");
-                if (!elements.isEmpty()) {
-                    e.onNext(elements);
+                e.onNext(Loader.getCms(mContext).login(loginMap));
+            }
+        });
+
+        Observer<Document> observer = new MyObserver<Document>(TAG) {
+            @Override
+            public void onNext(final Document userCenterDom) {
+                ActivityUtils.dismissProgressDialog();
+                Constants.checkAdvCustomInfo(mContext);
+                final List<String> urlPatterns = Constants.advCustomInfo.getClassUrlPatterns();
+                if (!urlPatterns.isEmpty()) {
+                    if (urlPatterns.size() == 1) {
+                        // fetch first page from user center, it will find the class info page in most case
+                        Element target = HTMLUtils.getElementSimilar(userCenterDom, Jsoup.parse(urlPatterns.get(0)).body().children().first());
+                        if (target != null) {
+                            loadTargetPage(manager, target.absUrl("href"));
+                        } else {
+                            ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, userCenterDom, ClassPresenter.this);
+                        }
+                    } else if (urlPatterns.size() > 1) {
+                        // fetch more page to reach class info page, especially in QZ Data Soft CMS System
+                        Observable<String> extraObservable = Observable.create(new ObservableOnSubscribe<String>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<String> e) throws Exception {
+                                CmsFactory factory = Loader.getCms(mContext);
+                                Document lastDom = userCenterDom;
+                                Element finalTarget = null;
+                                for (String pattern : urlPatterns) {
+                                    if (lastDom != null) {
+                                        finalTarget = HTMLUtils.getElementSimilar(lastDom, Jsoup.parse(pattern).body().children().first());
+                                    }
+                                    if (finalTarget != null) {
+                                        lastDom = factory.getClassPageDom(finalTarget.absUrl("href"));
+                                    }
+                                }
+                                e.onNext(finalTarget.absUrl("href"));
+                            }
+                        });
+
+                        Observer<String> extraObserver = new MyObserver<String>(TAG) {
+                            @Override
+                            public void onNext(String targetUrl) {
+                                loadTargetPage(manager, targetUrl);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                super.onError(e);
+                                Toast.makeText(mContext, "根据之前的设置未能获取到预期的页面\n\n需要重新执行", Toast.LENGTH_LONG).show();
+                                ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, userCenterDom, ClassPresenter.this);
+                            }
+                        };
+
+                        extraObservable.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(extraObserver);
+                    } else {
+                        ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, userCenterDom, ClassPresenter.this);
+                    }
                 } else {
-                    e.onComplete();
+                    ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, userCenterDom, ClassPresenter.this);
                 }
             }
-        })
-                .subscribeOn(Schedulers.newThread())
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<Elements>() {
-                    @Override
-                    public void accept(Elements links) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        AdvancedCustomInfo info = mDBManger.getAdvancedCustomInfo(mContext);
-                        if (info != null && !TextUtils.isEmpty(info.CLASS_URL_PATTERN)) {
-                            Pattern pattern = Pattern.compile(info.CLASS_URL_PATTERN);
-                            for (Element link : links) {
-                                if (pattern.matcher(link.html()).find()) {
-                                    loadTargetPage(manager, link.absUrl("href"));
-                                }
-                            }
-                        } else {
-                            LinkSelectionDialog
-                                    .newInstance(LinkSelectionDialog.CLASS_URL_DIALOG, links, ClassPresenter.this)
-                                    .show(manager, "link_selection");
-                        }
-                    }
-                })
-                .doOnComplete(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, "未成功获取到跳转链接", Toast.LENGTH_LONG).show();
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, Elements>() {
-                    @Override
-                    public Elements apply(Throwable throwable) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        return new Elements(0);
-                    }
-                })
-                .subscribe();
+                .subscribe(observer);
+
+        return null;
     }
 
     @Override
     public Disposable loadTargetPage(final FragmentManager manager, final String url) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_class_page).show();
-        return Observable.create(new ObservableOnSubscribe<Form>() {
+
+        Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
-            public void subscribe(ObservableEmitter<Form> e) throws Exception {
-                Form form = Loader.getCms(mContext).getClassPageFrom(url);
-                if (form != null) {
-                    e.onNext(form);
-                } else {
-                    e.onComplete();
-                }
+            public void subscribe(ObservableEmitter<Document> e) throws Exception {
+                e.onNext(Loader.getCms(mContext).getClassPageDom(url));
             }
-        })
-                .subscribeOn(Schedulers.newThread())
+        });
+
+        Observer<Document> observer = new MyObserver<Document>(TAG) {
+            @Override
+            public void onNext(Document document) {
+                ActivityUtils.dismissProgressDialog();
+                FormDialog.newInstance(document, ClassPresenter.this).show(manager, "form_dialog");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<Form>() {
-                    @Override
-                    public void accept(Form classes) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        FormDialog.newInstance(classes, ClassPresenter.this).show(manager, "form_dialog");
-                    }
-                })
-                .doOnComplete(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, "获取课表页面失败", Toast.LENGTH_LONG).show();
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, Form>() {
-                    @Override
-                    public Form apply(Throwable throwable) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        return new Form();
-                    }
-                })
-                .subscribe();
+                .subscribe(observer);
+
+        return null;
     }
 
     @Override
-    public Disposable loadQuery(final FragmentManager manager, final String actionURL, final Map<String, String> queryMap) {
-//        ActivityUtils.getProgressDialog(mContext, R.string.loading_classes).show();
+    public Disposable loadQuery(final FragmentManager manager, final String actionURL, final Map<String, String> queryMap, final boolean needNewPage) {
+        ActivityUtils.getProgressDialog(mContext, R.string.loading_classes).show();
+        Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
+            @Override
+            public void subscribe(ObservableEmitter<Document> e) throws Exception {
+                e.onNext(Loader.getCms(mContext).getFinalClassPageDom(actionURL, queryMap, needNewPage));
+            }
+        });
+
+        Observer<Document> observer = new MyObserver<Document>(TAG) {
+            @Override
+            public void onNext(Document document) {
+                ActivityUtils.dismissProgressDialog();
+                Constants.checkAdvCustomInfo(mContext);
+                String tableId = Constants.advCustomInfo.mClassTableInfo.mClassTableID;
+                if (TextUtils.isEmpty(tableId)) {
+                    ActivityUtils.showTableChooseDialog(manager, Constants.TYPE_CLASS, document, ClassPresenter.this);
+                } else {
+                    Map<String, Element> map = TableUtils.getTablesFromTargetPage(document);
+                    List<Element> rawClasses = UniversityUtils.getRawClasses(map.get(tableId), mContext);
+                    mEnrichedClasses = UniversityUtils.generateClasses(mContext, rawClasses, Constants.advCustomInfo.mClassTableInfo);
+                    if (mEnrichedClasses.size() == 0) {
+                        Toast.makeText(mContext, R.string.classes_empty, Toast.LENGTH_LONG).show();
+                    } else {
+                        storeClasses();
+                        loadLocalClasses();
+                        Toast.makeText(mContext, R.string.load_online_classes_successful, Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+
         return null;
-//        return Observable.create(new ObservableOnSubscribe<Map<String, Element>>() {
-//            @Override
-//            public void subscribe(ObservableEmitter<Map<String, Element>> e) throws Exception {
-//                e.onNext(Loader.getCms(mContext).getClassPageTables(actionURL, queryMap));
-//                e.onComplete();
-//            }
-//        })
-//                .subscribeOn(Schedulers.newThread())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .doOnNext(new Consumer<Map<String, Element>>() {
-//                    @Override
-//                    public void accept(Map<String, Element> map) throws Exception {
-//                        ActivityUtils.dismissProgressDialog();
-//                        DBManger manger = DBManger.getInstance(mContext);
-//                        final AdvancedCustomInfo customInfo = manger.getAdvancedCustomInfo(mContext);
-//                        if (customInfo == null || customInfo.mClassTableInfo == null || TextUtils.isEmpty(customInfo.mClassTableInfo.mClassTableID)) {
-//                            TableChooseDialog
-//                                    .newInstance(TableChooseDialog.CLASS_TABLE_DIALOG, map, ClassPresenter.this)
-//                                    .show(manager, "table_choose");
-//                        } else {
-//                            List<Element> rawClasses = UniversityUtils.getRawClasses(map.get(customInfo.mClassTableInfo.mClassTableID), mContext);
-//                            mEnrichedClasses = UniversityUtils.generateClasses(mContext, rawClasses, customInfo.mClassTableInfo);
-//                            storeClasses();
-//                            loadLocalClasses();
-//                        }
-//                    }
-//                })
-//                .onErrorReturn(new Function<Throwable, Map<String, Element>>() {
-//                    @Override
-//                    public Map<String, Element> apply(Throwable throwable) throws Exception {
-//                        ActivityUtils.dismissProgressDialog();
-//                        throwable.printStackTrace();
-//                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-//                        return new HashMap<>();
-//                    }
-//                }).subscribe();
     }
 
     @Override
     public void loadLocalClasses() {
-        try {
-            DBManger manger = DBManger.getInstance(mContext);
-            mEnrichedClasses = manger.getClasses();
-            if (mEnrichedClasses.size() > 0) {
+        Observable<List<EnrichedClassInfo>> observable = Observable.create(new ObservableOnSubscribe<List<EnrichedClassInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<EnrichedClassInfo>> e) throws Exception {
+                e.onNext(mDBManger.getClasses());
+            }
+        });
+
+        Observer<List<EnrichedClassInfo>> observer = new MyObserver<List<EnrichedClassInfo>>(TAG) {
+            @Override
+            public void onNext(List<EnrichedClassInfo> enrichedClasses) {
+                mEnrichedClasses = enrichedClasses;
                 mView.updateClasses(mEnrichedClasses);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
 
     @Override
@@ -284,71 +324,73 @@ class ClassPresenter implements ClassContract.Presenter {
     @Override
     public void exportClasses() {
         ActivityUtils.getProgressDialog(mContext, R.string.creating_class_ical).show();
-        Observable
-                .create(new ObservableOnSubscribe<Calendar>() {
-                    @Override
-                    public void subscribe(ObservableEmitter<Calendar> e) throws Exception {
-                        FileOutputStream fos = null;
-                        try {
-                            int week = Loader.getCurrentWeek(mContext);
-                            Calendar calendar = new Calendar();
-                            calendar.getProperties().add(new ProdId("-//OpenCT Jeff//iCal4j 2.0//EN"));
-                            calendar.getProperties().add(Version.VERSION_2_0);
-                            calendar.getProperties().add(CalScale.GREGORIAN);
-                            for (EnrichedClassInfo c : mEnrichedClasses) {
-                                List<ClassInfo> classes = c.getAllClasses();
-                                for (ClassInfo classInfo : classes) {
-                                    VEvent event = classInfo.getEvent(week, c.getWeekDay());
-                                    if (event != null) {
-                                        calendar.getComponents().add(event);
-                                    }
-                                }
-                            }
-                            calendar.validate();
-
-                            File downloadDir = Environment.getExternalStorageDirectory();
-                            if (!downloadDir.exists()) {
-                                downloadDir.createNewFile();
-                            }
-
-                            File file = new File(downloadDir, "OpenCT_Classes.ics");
-                            fos = new FileOutputStream(file);
-                            CalendarOutputter calOut = new CalendarOutputter();
-                            calOut.output(calendar, fos);
-                            e.onComplete();
-                        } catch (Exception e1) {
-                            Log.e(TAG, e1.getMessage(), e1);
-                            e.onError(e1);
-                        } finally {
-                            if (fos != null) {
-                                try {
-                                    fos.close();
-                                } catch (Exception e1) {
-                                    Log.e(TAG, e1.getMessage(), e1);
-                                }
+        Observable<Calendar> observable = Observable.create(new ObservableOnSubscribe<Calendar>() {
+            @Override
+            public void subscribe(ObservableEmitter<Calendar> e) throws Exception {
+                FileOutputStream fos = null;
+                try {
+                    int week = Loader.getCurrentWeek(mContext);
+                    Calendar calendar = new Calendar();
+                    calendar.getProperties().add(new ProdId("-//OpenCT Jeff//iCal4j 2.0//EN"));
+                    calendar.getProperties().add(Version.VERSION_2_0);
+                    calendar.getProperties().add(CalScale.GREGORIAN);
+                    for (EnrichedClassInfo c : mEnrichedClasses) {
+                        List<ClassInfo> classes = c.getAllClasses();
+                        for (ClassInfo classInfo : classes) {
+                            VEvent event = classInfo.getEvent(week, c.getWeekDay());
+                            if (event != null) {
+                                calendar.getComponents().add(event);
                             }
                         }
                     }
-                })
-                .subscribeOn(Schedulers.newThread())
+                    calendar.validate();
+
+                    File downloadDir = Environment.getExternalStorageDirectory();
+                    if (!downloadDir.exists()) {
+                        downloadDir.createNewFile();
+                    }
+
+                    File file = new File(downloadDir, "OpenCT Classes.ics");
+                    fos = new FileOutputStream(file);
+                    CalendarOutputter calOut = new CalendarOutputter();
+                    calOut.output(calendar, fos);
+                    e.onNext(calendar);
+                } finally {
+                    if (fos != null) {
+                        try {
+                            fos.close();
+                        } catch (Exception e1) {
+                            Log.e(TAG, e1.getMessage(), e1);
+                        }
+                    }
+                }
+            }
+        });
+
+        Observer<Calendar> observer = new MyObserver<Calendar>(TAG) {
+            @Override
+            public void onNext(Calendar calendar) {
+                ActivityUtils.dismissProgressDialog();
+                Toast.makeText(mContext, R.string.ical_create_success, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                Toast.makeText(mContext, "创建日历信息时发生了异常\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnComplete(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Toast.makeText(mContext, R.string.ical_create_success, Toast.LENGTH_LONG).show();
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, Calendar>() {
-                    @Override
-                    public Calendar apply(Throwable throwable) throws Exception {
-                        ActivityUtils.dismissProgressDialog();
-                        Log.e(TAG, throwable.getMessage(), throwable);
-                        Toast.makeText(mContext, "创建日历信息时发生了异常\n" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        return new Calendar();
-                    }
-                })
-                .subscribe();
+                .subscribe(observer);
+    }
+
+    @Override
+    public void clearClasses() {
+        mEnrichedClasses = null;
+        storeClasses();
+        loadLocalClasses();
     }
 
     @Override

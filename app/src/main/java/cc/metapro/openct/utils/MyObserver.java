@@ -16,11 +16,19 @@ package cc.metapro.openct.utils;
  * limitations under the License.
  */
 
+import android.util.Log;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
 
 public abstract class MyObserver<T> implements Observer<T> {
+
+    private String TAG;
+
+    public MyObserver(String tag) {
+        TAG = tag;
+    }
 
     @Override
     public void onSubscribe(Disposable d) {
@@ -31,7 +39,10 @@ public abstract class MyObserver<T> implements Observer<T> {
     public abstract void onNext(T t);
 
     @Override
-    public abstract void onError(Throwable e);
+    public void onError(Throwable e) {
+        ActivityUtils.dismissProgressDialog();
+        Log.e(TAG, e.getMessage(), e);
+    }
 
     @Override
     public void onComplete() {

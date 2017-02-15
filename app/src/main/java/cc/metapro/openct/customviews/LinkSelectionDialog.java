@@ -16,15 +16,20 @@ package cc.metapro.openct.customviews;
  * limitations under the License.
  */
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.view.LayoutInflater;
+import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -33,81 +38,212 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.university.AdvancedCustomInfo;
+import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.university.CmsFactory;
+import cc.metapro.openct.utils.ActivityUtils;
+import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.MyObserver;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class LinkSelectionDialog extends DialogFragment {
 
-    public static final String CLASS_URL_DIALOG = "class";
-    public static final String GRADE_URL_DIALOG = "grade";
-    public static final String BORROW_URL_DIALOG = "borrow";
-
+    private static final String TAG = LinkSelectionDialog.class.getSimpleName();
     private static String TYPE;
     private static Elements mLinks;
+    private static Document DOCUMENT;
     private static LoginPresenter mPresenter;
     @BindView(R.id.radio_group)
     RadioGroup mRadioGroup;
+
     private List<RadioButton> mRadioButtons;
 
-    public static LinkSelectionDialog newInstance(String type, Elements elements, LoginPresenter presenter) {
+    public static LinkSelectionDialog newInstance(String type, Document document, LoginPresenter presenter) {
         TYPE = type;
-        mLinks = elements;
+        DOCUMENT = document;
         mPresenter = presenter;
         return new LinkSelectionDialog();
     }
 
-    @OnClick(R.id.ok)
-    public void confirm() {
-        for (int i = 0; i < mRadioButtons.size(); i++) {
-            if (mRadioButtons.get(i).isChecked()) {
-                Element target = mLinks.get(i);
-                AdvancedCustomInfo info = DBManger.getAdvancedCustomInfo(getActivity());
-                if (CLASS_URL_DIALOG.equals(TYPE)) {
-                    info.CLASS_URL_PATTERN = target.html();
-                } else if (GRADE_URL_DIALOG.equals(TYPE)) {
-                    info.GRADE_URL_PATTERN = target.html();
-                } else if (BORROW_URL_DIALOG.equals(TYPE)) {
-                    info.BORROW_URL_PATTERN = target.html();
-                }
-                DBManger.getInstance(getActivity()).updateAdvancedCustomClassInfo(info);
-                mPresenter.loadTargetPage(getFragmentManager(), target.absUrl("href"));
-                break;
-            }
-        }
-        dismiss();
-    }
-
-    @OnClick(R.id.cancel)
-    public void moreOptions() {
-        // TODO: 17/2/7 显示所有链接选项
-    }
-
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_link_selection, container, false);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_link_selection, null);
         ButterKnife.bind(this, view);
         setView();
-        return view;
+        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setTitle("选择目标")
+                .setView(view)
+                .setPositiveButton(android.R.string.ok, null)
+                .setNeutralButton(R.string.not_in_range_above, null)
+                .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                final Button positiveButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
+                final Button neutralButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEUTRAL);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        for (int i = 0; i < mRadioButtons.size(); i++) {
+                            if (mRadioButtons.get(i).isChecked()) {
+                                Element target = mLinks.get(i);
+                                if (Constants.TYPE_CLASS.equals(TYPE)) {
+                                    Constants.advCustomInfo.setFirstClassUrlPattern(target.toString());
+                                } else if (Constants.TYPE_GRADE.equals(TYPE)) {
+                                    Constants.advCustomInfo.setFirstGradeUrlPattern(target.toString());
+                                } else if (Constants.TYPE_BORROW.equals(TYPE)) {
+                                    Constants.advCustomInfo.setFirstBorrowPattern(target.toString());
+                                }
+                                DBManger.getInstance(getActivity()).updateAdvancedCustomClassInfo(Constants.advCustomInfo);
+                                Constants.checkAdvCustomInfo(getActivity());
+                                mPresenter.loadTargetPage(getFragmentManager(), target.absUrl("href"));
+                                break;
+                            }
+                        }
+                        dismiss();
+                    }
+                });
+
+                neutralButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        for (int i = 0; i < mRadioButtons.size(); i++) {
+                            if (mRadioButtons.get(i).isChecked()) {
+                                Element target = mLinks.get(i);
+                                if (Constants.TYPE_CLASS.equals(TYPE)) {
+                                    Constants.advCustomInfo.setFirstClassUrlPattern(target.toString());
+                                } else if (Constants.TYPE_GRADE.equals(TYPE)) {
+                                    Constants.advCustomInfo.setFirstGradeUrlPattern(target.toString());
+                                } else if (Constants.TYPE_BORROW.equals(TYPE)) {
+                                    Constants.advCustomInfo.setFirstBorrowPattern(target.toString());
+                                }
+                                break;
+                            }
+                        }
+                        mLinks = DOCUMENT.select("a");
+                        addRadioOptions();
+                        neutralButton.setText("点击跳转");
+                        positiveButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                for (int i = 0; i < mRadioButtons.size(); i++) {
+                                    if (mRadioButtons.get(i).isChecked()) {
+                                        Element target = mLinks.get(i);
+                                        if (Constants.TYPE_CLASS.equals(TYPE)) {
+                                            Constants.advCustomInfo.addClassUrlPattern(target.toString());
+                                        } else if (Constants.TYPE_GRADE.equals(TYPE)) {
+                                            Constants.advCustomInfo.addGradeUrlPattern(target.toString());
+                                        } else if (Constants.TYPE_BORROW.equals(TYPE)) {
+                                            Constants.advCustomInfo.addBorrowPattern(target.toString());
+                                        }
+                                        DBManger.getInstance(getActivity()).updateAdvancedCustomClassInfo(Constants.advCustomInfo);
+                                        Constants.checkAdvCustomInfo(getActivity());
+                                        mPresenter.loadTargetPage(getFragmentManager(), target.absUrl("href"));
+                                        break;
+                                    }
+                                }
+                                dismiss();
+                            }
+                        });
+                        neutralButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                for (int i = 0; i < mRadioButtons.size(); i++) {
+                                    if (mRadioButtons.get(i).isChecked()) {
+                                        Element target = mLinks.get(i);
+                                        if (Constants.TYPE_CLASS.equals(TYPE)) {
+                                            Constants.advCustomInfo.addClassUrlPattern(target.toString());
+                                        } else if (Constants.TYPE_GRADE.equals(TYPE)) {
+                                            Constants.advCustomInfo.addGradeUrlPattern(target.toString());
+                                        } else if (Constants.TYPE_BORROW.equals(TYPE)) {
+                                            Constants.advCustomInfo.addBorrowPattern(target.toString());
+                                        }
+                                        break;
+                                    }
+                                }
+                                if (Constants.TYPE_GRADE.equalsIgnoreCase(TYPE) || Constants.TYPE_CLASS.equalsIgnoreCase(TYPE)) {
+                                    for (int i = 0; i < mRadioButtons.size(); i++) {
+                                        if (mRadioButtons.get(i).isChecked()) {
+                                            final Element target = mLinks.get(i);
+                                            ActivityUtils.getProgressDialog(getActivity(), R.string.loading_target_page);
+                                            Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
+                                                @Override
+                                                public void subscribe(ObservableEmitter<Document> e) throws Exception {
+                                                    CmsFactory factory = Loader.getCms(getActivity());
+                                                    e.onNext(factory.getClassPageDom(target.absUrl("href")));
+                                                }
+                                            });
+
+                                            Observer<Document> observer = new MyObserver<Document>(TAG) {
+                                                @Override
+                                                public void onNext(Document document) {
+                                                    ActivityUtils.dismissProgressDialog();
+                                                    mLinks = document.select("a");
+                                                    addRadioOptions();
+                                                }
+                                            };
+
+                                            observable.subscribeOn(Schedulers.io())
+                                                    .observeOn(AndroidSchedulers.mainThread())
+                                                    .subscribe(observer);
+                                        }
+                                    }
+                                } else if (Constants.TYPE_BORROW.equalsIgnoreCase(TYPE)) {
+//                                    LibraryFactory factory = Loader.getLibrary(getActivity());
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        return dialog;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
+        Constants.checkAdvCustomInfo(getActivity());
     }
 
     private void setView() {
+        switch (TYPE) {
+            case Constants.TYPE_CLASS:
+                mLinks = DOCUMENT.select("a:matches(课表|课程)");
+                break;
+            case Constants.TYPE_GRADE:
+                mLinks = DOCUMENT.select("a:matches(成绩)");
+                break;
+            case Constants.TYPE_SEARCH:
+                break;
+            case Constants.TYPE_BORROW:
+                mLinks = DOCUMENT.select("a:matches(借阅)");
+                break;
+        }
+
+        addRadioOptions();
+    }
+
+    private void addRadioOptions() {
         mRadioButtons = new ArrayList<>(mLinks.size());
+        mRadioGroup.removeAllViews();
         for (Element link : mLinks) {
             RadioButton button = new RadioButton(getContext());
             button.setText(link.text());
+            button.setGravity(Gravity.CENTER);
             mRadioGroup.addView(button);
             mRadioButtons.add(button);
         }
     }
+
 }

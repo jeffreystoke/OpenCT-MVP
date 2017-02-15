@@ -18,8 +18,13 @@ package cc.metapro.openct.data.university;
 
 import android.content.Context;
 import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import cc.metapro.openct.R;
+import cc.metapro.openct.custom.WebConfiguration;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.PrefHelper;
 
@@ -32,26 +37,74 @@ public class AdvancedCustomInfo {
     public WebConfiguration mGradeWebConfig;
     public WebConfiguration mBorrowWebConfig;
 //    public WebConfiguration mSearchWebConfig;
-
-    public String CLASS_URL_PATTERN;
-    public String GRADE_URL_PATTERN;
-    public String BORROW_URL_PATTERN;
-
     public String GRADE_TABLE_ID;
     public String BORROW_TABLE_ID;
-
+    private List<String> mClassUrlPatterns;
+    private List<String> mGradeUrlPatterns;
+    private List<String> mBorrowUrlPatterns;
     private String mSchoolName;
 
     public AdvancedCustomInfo(Context context) {
         if (PrefHelper.getBoolean(context, R.string.pref_custom_enable)) {
-            mSchoolName = PrefHelper.getString(context, R.string.pref_school_name);
+            mSchoolName = PrefHelper.getString(context, R.string.pref_custom_school_name, "openct");
         } else {
-            mSchoolName = PrefHelper.getString(context, R.string.pref_school_name);
+            mSchoolName = PrefHelper.getString(context, R.string.pref_school_name, context.getResources().getStringArray(R.array.school_names)[0]);
         }
+    }
+
+    @NonNull
+    public List<String> getClassUrlPatterns() {
+        return mClassUrlPatterns == null ? new ArrayList<String>(0) : mClassUrlPatterns;
+    }
+
+    @NonNull
+    public List<String> getGradeUrlPatterns() {
+        return mGradeUrlPatterns == null ? new ArrayList<String>(0) : mGradeUrlPatterns;
+    }
+
+    @NonNull
+    public List<String> getBorrowUrlPatterns() {
+        return mBorrowUrlPatterns == null ? new ArrayList<String>(0) : mBorrowUrlPatterns;
     }
 
     public String getSchoolName() {
         return mSchoolName;
+    }
+
+    public void setFirstClassUrlPattern(String urlPattern) {
+        mClassUrlPatterns = new ArrayList<>();
+        mClassUrlPatterns.add(urlPattern);
+    }
+
+    public void setFirstGradeUrlPattern(String urlPattern) {
+        mGradeUrlPatterns = new ArrayList<>();
+        mGradeUrlPatterns.add(urlPattern);
+    }
+
+    public void setFirstBorrowPattern(String urlPattern) {
+        mBorrowUrlPatterns = new ArrayList<>();
+        mBorrowUrlPatterns.add(urlPattern);
+    }
+
+    public void addClassUrlPattern(String urlPattern) {
+        if (mClassUrlPatterns == null) {
+            mClassUrlPatterns = new ArrayList<>();
+        }
+        mClassUrlPatterns.add(urlPattern);
+    }
+
+    public void addGradeUrlPattern(String urlPattern) {
+        if (mGradeUrlPatterns == null) {
+            mGradeUrlPatterns = new ArrayList<>();
+        }
+        mGradeUrlPatterns.add(urlPattern);
+    }
+
+    public void addBorrowPattern(String urlPattern) {
+        if (mBorrowUrlPatterns == null) {
+            mBorrowUrlPatterns = new ArrayList<>();
+        }
+        mBorrowUrlPatterns.add(urlPattern);
     }
 
     public void setClassTableInfo(CmsFactory.ClassTableInfo classTableInfo) {

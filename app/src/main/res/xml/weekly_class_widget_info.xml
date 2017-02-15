@@ -15,18 +15,11 @@
   ~ limitations under the License.
   -->
 
-<ScrollView
+<appwidget-provider
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:scrollbars="vertical">
-
-    <LinearLayout
-        android:id="@+id/options_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-    </LinearLayout>
-
-</ScrollView>
+    android:initialLayout="@layout/widget_weekly_class"
+    android:minHeight="110dp"
+    android:minWidth="250dp"
+    android:resizeMode="vertical"
+    android:updatePeriodMillis="86400000">
+</appwidget-provider>
