@@ -64,21 +64,21 @@ public class CustomPresenter implements CustomContract.Presenter {
     private List<Map<Element, String>> commands;
     private Observer<Map<Element, String>> mObserver;
     private WebConfiguration mConfiguration;
-    private String CUSTOM_TYPE;
+    private String TYPE;
 
 
     CustomPresenter(Context context, CustomContract.View view, String type) {
         mView = view;
         mContext = context;
         mView.setPresenter(this);
-        CUSTOM_TYPE = type;
+        TYPE = type;
     }
 
     @Override
     public void start() {
         Constants.advCustomInfo = DBManger.getAdvancedCustomInfo(mContext);
         Map<String, String> userPassMap = null;
-        switch (CUSTOM_TYPE) {
+        switch (TYPE) {
             case Constants.TYPE_CLASS:
                 userPassMap = Loader.getCmsStuInfo(mContext);
                 mConfiguration = Constants.advCustomInfo.mClassWebConfig;
@@ -99,7 +99,7 @@ public class CustomPresenter implements CustomContract.Presenter {
         }
 
         if (mConfiguration == null) {
-            Toast.makeText(mContext, "还没有进行过定制, 请按提示进行定制", Toast.LENGTH_LONG).show();
+//            Toast.makeText(mContext, "还没有进行过定制, 请按提示进行定制", Toast.LENGTH_LONG).show();
             mConfiguration = new WebConfiguration();
         }
     }
@@ -219,7 +219,7 @@ public class CustomPresenter implements CustomContract.Presenter {
                         default:
                             if (!mWebView.setById(e.id(), "value", map.get(e))) {
                                 if (!mWebView.setByName(e.attr("name"), "value", map.get(e))) {
-                                    if (!mWebView.setByPattern(HTMLUtils.getElementPattern(e), "value", map.get(e))) {
+                                    if (!mWebView.setByPattern(e.toString(), "value", map.get(e))) {
                                         mWebView.setByTag(e.tagName(), "value", map.get(e));
                                     }
                                 }
@@ -247,7 +247,7 @@ public class CustomPresenter implements CustomContract.Presenter {
             } else {
                 Toast.makeText(mContext, "已经到达之前设置的终点了", Toast.LENGTH_SHORT).show();
                 mObserver.onComplete();
-                switch (CUSTOM_TYPE) {
+                switch (TYPE) {
                     case Constants.TYPE_CLASS:
                         if (!TextUtils.isEmpty(Constants.advCustomInfo.mClassTableInfo.mClassTableID)) {
                             List<Element> rawClasses = UniversityUtils.getRawClasses(TableUtils
@@ -280,7 +280,7 @@ public class CustomPresenter implements CustomContract.Presenter {
                         }
                         return;
                 }
-                ActivityUtils.showTableChooseDialog(manager, CUSTOM_TYPE, mWebView.getPageDom(), null);
+                ActivityUtils.showTableChooseDialog(manager, TYPE, mWebView.getPageDom(), null);
             }
         }
     }

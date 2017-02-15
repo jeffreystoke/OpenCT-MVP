@@ -17,10 +17,8 @@ package cc.metapro.openct.data.source;
  */
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.preference.PreferenceManager;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,6 +35,7 @@ import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
+import cc.metapro.openct.utils.PrefHelper;
 
 @Keep
 public class DBManger {
@@ -67,12 +66,11 @@ public class DBManger {
     public static AdvancedCustomInfo getAdvancedCustomInfo(Context context) {
         DBManger.getInstance(context);
         Cursor cursor = null;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String name;
-        if (preferences.getBoolean(context.getString(R.string.pref_custom_enable), false)) {
-            name = preferences.getString(context.getString(R.string.pref_custom_school_name), "openct");
+        if (PrefHelper.getBoolean(context, R.string.pref_custom_enable)) {
+            name = PrefHelper.getString(context, R.string.pref_custom_school_name, "openct");
         } else {
-            name = preferences.getString(context.getString(R.string.pref_school_name), context.getResources().getStringArray(R.array.school_names)[0]);
+            name = PrefHelper.getString(context, R.string.pref_school_name, context.getResources().getStringArray(R.array.school_names)[0]);
         }
         try {
             cursor = mDatabase.query(
@@ -85,23 +83,23 @@ public class DBManger {
                 customInfo.mClassTableInfo = new CmsFactory.ClassTableInfo();
             }
 
-            customInfo.mClassTableInfo.mNameRE = preferences.getString(context.getString(R.string.pref_class_name_re), "");
-            customInfo.mClassTableInfo.mTypeRE = preferences.getString(context.getString(R.string.pref_class_type_re), "");
-            customInfo.mClassTableInfo.mDuringRE = preferences.getString(context.getString(R.string.pref_class_during_re), "\\d+-\\d+");
-            customInfo.mClassTableInfo.mTimeRE = preferences.getString(context.getString(R.string.pref_class_time_re), "(\\d+,)+\\d+");
-            customInfo.mClassTableInfo.mPlaceRE = preferences.getString(context.getString(R.string.pref_class_place_re), "");
-            customInfo.mClassTableInfo.mTeacherRE = preferences.getString(context.getString(R.string.pref_class_teacher_re), "");
+            customInfo.mClassTableInfo.mNameRE = PrefHelper.getString(context, R.string.pref_class_name_re, "");
+            customInfo.mClassTableInfo.mTypeRE = PrefHelper.getString(context, R.string.pref_class_type_re, "");
+            customInfo.mClassTableInfo.mDuringRE = PrefHelper.getString(context, R.string.pref_class_during_re, "\\d+-\\d+");
+            customInfo.mClassTableInfo.mTimeRE = PrefHelper.getString(context, R.string.pref_class_time_re, "(\\d+,)+\\d+");
+            customInfo.mClassTableInfo.mPlaceRE = PrefHelper.getString(context, R.string.pref_class_place_re, "");
+            customInfo.mClassTableInfo.mTeacherRE = PrefHelper.getString(context, R.string.pref_class_teacher_re, "");
             return customInfo;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
             AdvancedCustomInfo customInfo = new AdvancedCustomInfo(context);
             customInfo.mClassTableInfo = new CmsFactory.ClassTableInfo();
-            customInfo.mClassTableInfo.mNameRE = preferences.getString(context.getString(R.string.pref_class_name_re), "");
-            customInfo.mClassTableInfo.mTypeRE = preferences.getString(context.getString(R.string.pref_class_type_re), "");
-            customInfo.mClassTableInfo.mDuringRE = preferences.getString(context.getString(R.string.pref_class_during_re), "\\d+-\\d+");
-            customInfo.mClassTableInfo.mTimeRE = preferences.getString(context.getString(R.string.pref_class_time_re), "(\\d+,)+\\d+");
-            customInfo.mClassTableInfo.mPlaceRE = preferences.getString(context.getString(R.string.pref_class_place_re), "");
-            customInfo.mClassTableInfo.mTeacherRE = preferences.getString(context.getString(R.string.pref_class_teacher_re), "");
+            customInfo.mClassTableInfo.mNameRE = PrefHelper.getString(context, R.string.pref_class_name_re, "");
+            customInfo.mClassTableInfo.mTypeRE = PrefHelper.getString(context, R.string.pref_class_type_re, "");
+            customInfo.mClassTableInfo.mDuringRE = PrefHelper.getString(context, R.string.pref_class_during_re, "\\d+-\\d+");
+            customInfo.mClassTableInfo.mTimeRE = PrefHelper.getString(context, R.string.pref_class_time_re, "(\\d+,)+\\d+");
+            customInfo.mClassTableInfo.mPlaceRE = PrefHelper.getString(context, R.string.pref_class_place_re, "");
+            customInfo.mClassTableInfo.mTeacherRE = PrefHelper.getString(context, R.string.pref_class_teacher_re, "");
             return customInfo;
         } finally {
             if (cursor != null) {

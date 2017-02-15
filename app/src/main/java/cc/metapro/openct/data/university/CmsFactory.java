@@ -58,6 +58,9 @@ public class CmsFactory extends UniversityFactory {
 
     @NonNull
     public Document getFinalGradePageDom(String actionURL, Map<String, String> queryMap, boolean needNewPage) throws Exception {
+        if (Constants.QZDATASOFT.equalsIgnoreCase(SYS)) {
+            actionURL = HttpUrl.parse(actionURL).newBuilder().encodedPath("/jsxsd/kscj/cjcx_list").build().url().toString();
+        }
         return getFinalPageDom(actionURL, GRADE_URL, queryMap, needNewPage);
     }
 
@@ -70,7 +73,7 @@ public class CmsFactory extends UniversityFactory {
     private Document getFinalPageDom(String actionURL, String refer, Map<String, String> queryMap, boolean needNewPage) throws Exception {
         String tablePage;
         if (Constants.QZDATASOFT.equalsIgnoreCase(SYS)) {
-            tablePage = mService.post(refer, refer, queryMap).execute().body();
+            tablePage = mService.post(actionURL, refer, queryMap).execute().body();
         } else {
             if (needNewPage) {
                 tablePage = mService.post(actionURL, refer, queryMap).execute().body();

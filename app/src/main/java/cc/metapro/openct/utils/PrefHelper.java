@@ -66,13 +66,13 @@ public class PrefHelper {
         return mPref.getBoolean(prefKey, false);
     }
 
-    public static String getString(Context context, int resId) {
-        return getString(context, context.getString(resId));
+    public static String getString(Context context, int resId, String defaultValue) {
+        return getString(context, context.getString(resId), defaultValue);
     }
 
-    public static String getString(Context context, String prefKey) {
+    public static String getString(Context context, String prefKey, String defaultValue) {
         checkPref(context);
-        return mPref.getString(prefKey, "");
+        return mPref.getString(prefKey, defaultValue);
     }
 
     public static int getInt(Context context, int resId) {

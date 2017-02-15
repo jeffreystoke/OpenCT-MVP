@@ -32,25 +32,35 @@ public final class JSUtils {
                     "targ.click();" +
                     "window." + JsInteraction.INTERFACE_NAME + ".onClicked(targ.outerHTML);}\"";
 
-    public static void injectClickListener(@NonNull WebView webView) {
-        webView.loadUrl("javascript:" +
-                "var script=document.createElement('script');" +
-                "var node = document.createTextNode(" + CLICK_LISTENER + ");" +
-                "script.appendChild(node);" +
-                "var body=document.getElementsByTagName(\"body\")[0];" +
-                "body.setAttribute(\"onmousedown\",\"getClick(event)\");" +
-                "var head = document.getElementsByTagName(\"head\")[0];" +
-                "head.appendChild(script);");
+    public static void injectClickListener(@NonNull final WebView webView) {
+        webView.post(new Runnable() {
+            @Override
+            public void run() {
+                webView.loadUrl("javascript:" +
+                        "var script=document.createElement('script');" +
+                        "var node = document.createTextNode(" + CLICK_LISTENER + ");" +
+                        "script.appendChild(node);" +
+                        "var body=document.getElementsByTagName(\"body\")[0];" +
+                        "body.setAttribute(\"onmousedown\",\"getClick(event)\");" +
+                        "var head = document.getElementsByTagName(\"head\")[0];" +
+                        "head.appendChild(script);");
+            }
+        });
     }
 
-    public static void loadPageSource(@NonNull WebView webView) {
-        webView.loadUrl("javascript:" +
-                "var frs=document.getElementsByTagName(\"iframe\");" +
-                "var frameContent=\"\";" +
-                "for(var i=0;i<frs.length;i++){" +
-                "frameContent=frameContent+frs[i].contentDocument.body.parentElement.outerHTML;" +
-                "}" +
-                "window." + JsInteraction.INTERFACE_NAME + ".getPageSource(document.getElementsByTagName('html')[0].innerHTML + frameContent);");
+    public static void loadPageSource(@NonNull final WebView webView) {
+        webView.post(new Runnable() {
+            @Override
+            public void run() {
+                webView.loadUrl("javascript:" +
+                        "var frs=document.getElementsByTagName(\"iframe\");" +
+                        "var frameContent=\"\";" +
+                        "for(var i=0;i<frs.length;i++){" +
+                        "frameContent=frameContent+frs[i].contentDocument.body.parentElement.outerHTML;" +
+                        "}" +
+                        "window." + JsInteraction.INTERFACE_NAME + ".getPageSource(document.getElementsByTagName('html')[0].innerHTML + frameContent);");
+            }
+        });
     }
 
     public static void clickById(@NonNull final WebView webView, final String id) {
@@ -159,7 +169,7 @@ public final class JSUtils {
         });
     }
 
-    public static void foucsById(@NonNull final WebView webView, final String id) {
+    public static void focusById(@NonNull final WebView webView, final String id) {
         webView.post(new Runnable() {
             @Override
             public void run() {

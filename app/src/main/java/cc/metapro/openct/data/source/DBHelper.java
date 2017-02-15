@@ -51,7 +51,7 @@ class DBHelper extends SQLiteOpenHelper {
         put(CUSTOM_TABLE, "(id INTEGER PRIMARY KEY AUTOINCREMENT, " + JSON + " TEXT)");
     }};
 
-    private static final int DB_VERSION = 60;
+    private static final int DB_VERSION = 70;
 
     private Context mContext;
 
@@ -82,7 +82,7 @@ class DBHelper extends SQLiteOpenHelper {
 
     private void updateSchools(SQLiteDatabase db) {
         try {
-            String schools = StoreHelper.getAssetText(mContext, "schools.json");
+            String schools = StoreHelper.getAssetText(mContext, "school_info/schools.json");
             List<UniversityInfo> schoolInfoList = StoreHelper.fromJsonList(schools, UniversityInfo.class);
 
             db.beginTransaction();

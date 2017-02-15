@@ -40,3 +40,7 @@
 
 -dontnote com.google.vending.**
 -dontnote com.android.vending.licensing.**
+
+-keepnames class ** { *; }
+-keepnames interface ** { *; }
+-keepnames enum ** { *; }

@@ -32,13 +32,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.FormDialog;
 import cc.metapro.openct.customviews.TableChooseDialog;
 import cc.metapro.openct.data.openctservice.ServiceGenerator;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.AdvancedCustomInfo;
+import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.grades.cet.CETService;
@@ -96,7 +97,7 @@ class GradePresenter implements GradeContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
-                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         };
@@ -123,25 +124,59 @@ class GradePresenter implements GradeContract.Presenter {
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
-            public void onNext(Document document) {
+            public void onNext(final Document userCenterDom) {
                 ActivityUtils.dismissProgressDialog();
-                AdvancedCustomInfo info = DBManger.getAdvancedCustomInfo(mContext);
-                if (!TextUtils.isEmpty(info.GRADE_URL_PATTERN)) {
-                    Element target = document.select("a:matches(" + info.GRADE_URL_PATTERN + ")").first();
-                    if (target != null) {
-                        loadTargetPage(manager, target.absUrl("href"));
+                Constants.checkAdvCustomInfo(mContext);
+                final List<String> urlPatterns = Constants.advCustomInfo.getGradeUrlPatterns();
+                if (!urlPatterns.isEmpty()) {
+                    if (urlPatterns.size() == 1) {
+                        // fetch first page from user center, it will find the grade info page in most case
+                        Element target = HTMLUtils.getElementSimilar(userCenterDom, Jsoup.parse(urlPatterns.get(0)).body().children().first());
+                        if (target != null) {
+                            loadTargetPage(manager, target.absUrl("href"));
+                        }
+                    } else if (urlPatterns.size() > 1) {
+                        // fetch more page to reach class info page, especially in QZ Data Soft CMS System
+                        Observable<String> extraObservable = Observable.create(new ObservableOnSubscribe<String>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<String> e) throws Exception {
+                                CmsFactory factory = Loader.getCms(mContext);
+                                Document lastDom = userCenterDom;
+                                Element finalTarget = null;
+                                for (String pattern : urlPatterns) {
+                                    if (lastDom != null) {
+                                        finalTarget = HTMLUtils.getElementSimilar(lastDom, Jsoup.parse(pattern).body().children().first());
+                                    }
+                                    if (finalTarget != null) {
+                                        lastDom = factory.getClassPageDom(finalTarget.absUrl("href"));
+                                    }
+                                }
+                                e.onNext(finalTarget.absUrl("href"));
+                            }
+                        });
+
+                        Observer<String> extraObserver = new MyObserver<String>(TAG) {
+                            @Override
+                            public void onNext(String targetUrl) {
+                                loadTargetPage(manager, targetUrl);
+                            }
+                        };
+
+                        extraObservable.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(extraObserver);
                     } else {
-                        ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_GRADE, document, GradePresenter.this);
+                        ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_GRADE, userCenterDom, GradePresenter.this);
                     }
                 } else {
-                    ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_GRADE, document, GradePresenter.this);
+                    ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_GRADE, userCenterDom, GradePresenter.this);
                 }
             }
 
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
-                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         };
@@ -173,6 +208,8 @@ class GradePresenter implements GradeContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         };
 
@@ -183,10 +220,7 @@ class GradePresenter implements GradeContract.Presenter {
     }
 
     @Override
-    public Disposable loadQuery(final FragmentManager manager,
-                                final String actionURL,
-                                final Map<String, String> queryMap,
-                                final boolean needNewPage) {
+    public Disposable loadQuery(final FragmentManager manager, final String actionURL, final Map<String, String> queryMap, final boolean needNewPage) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_grades).show();
 
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
@@ -224,6 +258,7 @@ class GradePresenter implements GradeContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };

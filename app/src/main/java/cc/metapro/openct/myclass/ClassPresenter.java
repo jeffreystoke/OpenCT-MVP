@@ -32,6 +32,7 @@ import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Version;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
@@ -40,11 +41,12 @@ import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
 
+import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.FormDialog;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.AdvancedCustomInfo;
+import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.ClassInfo;
 import cc.metapro.openct.data.university.item.EnrichedClassInfo;
@@ -127,18 +129,61 @@ class ClassPresenter implements ClassContract.Presenter {
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
-            public void onNext(Document document) {
+            public void onNext(final Document userCenterDom) {
                 ActivityUtils.dismissProgressDialog();
-                AdvancedCustomInfo info = DBManger.getAdvancedCustomInfo(mContext);
-                if (!TextUtils.isEmpty(info.CLASS_URL_PATTERN)) {
-                    Element target = document.select("a:matches(" + info.CLASS_URL_PATTERN + ")").first();
-                    if (target != null) {
-                        loadTargetPage(manager, target.absUrl("href"));
+                Constants.checkAdvCustomInfo(mContext);
+                final List<String> urlPatterns = Constants.advCustomInfo.getClassUrlPatterns();
+                if (!urlPatterns.isEmpty()) {
+                    if (urlPatterns.size() == 1) {
+                        // fetch first page from user center, it will find the class info page in most case
+                        Element target = HTMLUtils.getElementSimilar(userCenterDom, Jsoup.parse(urlPatterns.get(0)).body().children().first());
+                        if (target != null) {
+                            loadTargetPage(manager, target.absUrl("href"));
+                        } else {
+                            ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, userCenterDom, ClassPresenter.this);
+                        }
+                    } else if (urlPatterns.size() > 1) {
+                        // fetch more page to reach class info page, especially in QZ Data Soft CMS System
+                        Observable<String> extraObservable = Observable.create(new ObservableOnSubscribe<String>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<String> e) throws Exception {
+                                CmsFactory factory = Loader.getCms(mContext);
+                                Document lastDom = userCenterDom;
+                                Element finalTarget = null;
+                                for (String pattern : urlPatterns) {
+                                    if (lastDom != null) {
+                                        finalTarget = HTMLUtils.getElementSimilar(lastDom, Jsoup.parse(pattern).body().children().first());
+                                    }
+                                    if (finalTarget != null) {
+                                        lastDom = factory.getClassPageDom(finalTarget.absUrl("href"));
+                                    }
+                                }
+                                e.onNext(finalTarget.absUrl("href"));
+                            }
+                        });
+
+                        Observer<String> extraObserver = new MyObserver<String>(TAG) {
+                            @Override
+                            public void onNext(String targetUrl) {
+                                loadTargetPage(manager, targetUrl);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                super.onError(e);
+                                Toast.makeText(mContext, "根据之前的设置未能获取到预期的页面\n\n需要重新执行", Toast.LENGTH_LONG).show();
+                                ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, userCenterDom, ClassPresenter.this);
+                            }
+                        };
+
+                        extraObservable.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(extraObserver);
                     } else {
-                        ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, document, ClassPresenter.this);
+                        ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, userCenterDom, ClassPresenter.this);
                     }
                 } else {
-                    ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, document, ClassPresenter.this);
+                    ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, userCenterDom, ClassPresenter.this);
                 }
             }
 
@@ -170,9 +215,9 @@ class ClassPresenter implements ClassContract.Presenter {
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
-            public void onNext(Document form) {
+            public void onNext(Document document) {
                 ActivityUtils.dismissProgressDialog();
-                FormDialog.newInstance(form, ClassPresenter.this).show(manager, "form_dialog");
+                FormDialog.newInstance(document, ClassPresenter.this).show(manager, "form_dialog");
             }
 
             @Override
@@ -219,7 +264,6 @@ class ClassPresenter implements ClassContract.Presenter {
                         loadLocalClasses();
                         Toast.makeText(mContext, R.string.load_online_classes_successful, Toast.LENGTH_LONG).show();
                     }
-
                 }
             }
 
@@ -251,9 +295,7 @@ class ClassPresenter implements ClassContract.Presenter {
             @Override
             public void onNext(List<EnrichedClassInfo> enrichedClasses) {
                 mEnrichedClasses = enrichedClasses;
-                if (mEnrichedClasses.size() > 0) {
-                    mView.updateClasses(mEnrichedClasses);
-                }
+                mView.updateClasses(mEnrichedClasses);
             }
 
             @Override
@@ -342,6 +384,13 @@ class ClassPresenter implements ClassContract.Presenter {
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
+    }
+
+    @Override
+    public void clearClasses() {
+        mEnrichedClasses = null;
+        storeClasses();
+        loadLocalClasses();
     }
 
     @Override

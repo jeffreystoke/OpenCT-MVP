@@ -30,6 +30,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -113,52 +114,57 @@ public class TableChooseDialog extends DialogFragment {
     }
 
     public void select() {
-        final String tableId = tableIds.get(mViewPager.getCurrentItem());
-        final DBManger manger = DBManger.getInstance(getActivity());
-        final Context context = getActivity();
-        Element targetTable = tableMap.get(tableId);
-        switch (TYPE) {
-            case Constants.TYPE_CLASS:
-                final List<Element> rawInfoList = UniversityUtils.getRawClasses(targetTable, getActivity());
-                try {
-                    TableSettingDialog.newInstance(rawInfoList, new TableSettingDialog.TableSettingCallBack() {
-                        @Override
-                        public void onResult(Map<String, Integer> indexMap) {
-                            CmsFactory.ClassTableInfo info = generateClassTableInfo(Constants.advCustomInfo.mClassTableInfo, indexMap);
-                            info.mClassTableID = tableId;
-                            List<EnrichedClassInfo> classes = UniversityUtils.generateClasses(context, rawInfoList, info);
-                            Constants.advCustomInfo.setClassTableInfo(info);
+        if (!tableIds.isEmpty()) {
+            final String tableId = tableIds.get(mViewPager.getCurrentItem());
+            final DBManger manger = DBManger.getInstance(getActivity());
+            final Context context = getActivity();
+            Element targetTable = tableMap.get(tableId);
+            switch (TYPE) {
+                case Constants.TYPE_CLASS:
+                    final List<Element> rawInfoList = UniversityUtils.getRawClasses(targetTable, getActivity());
+                    try {
+                        TableSettingDialog.newInstance(rawInfoList, new TableSettingDialog.TableSettingCallBack() {
+                            @Override
+                            public void onResult(Map<String, Integer> indexMap) {
+                                CmsFactory.ClassTableInfo info = generateClassTableInfo(Constants.advCustomInfo.mClassTableInfo, indexMap);
+                                info.mClassTableID = tableId;
+                                List<EnrichedClassInfo> classes = UniversityUtils.generateClasses(context, rawInfoList, info);
+                                Constants.advCustomInfo.setClassTableInfo(info);
 
-                            manger.updateAdvancedCustomClassInfo(Constants.advCustomInfo);
-                            manger.updateClasses(classes);
-                            if (mPresenter != null && mPresenter instanceof ClassContract.Presenter) {
-                                ((ClassContract.Presenter) mPresenter).loadLocalClasses();
+                                manger.updateAdvancedCustomClassInfo(Constants.advCustomInfo);
+                                manger.updateClasses(classes);
+                                if (mPresenter != null && mPresenter instanceof ClassContract.Presenter) {
+                                    ((ClassContract.Presenter) mPresenter).loadLocalClasses();
+                                }
+                                Toast.makeText(context, R.string.custom_finish_tip, Toast.LENGTH_LONG).show();
                             }
-                            Toast.makeText(context, R.string.custom_finish_tip, Toast.LENGTH_LONG).show();
-                        }
-                    }).show(getFragmentManager(), "setting_dialog");
-                } catch (Exception e) {
-                    Toast.makeText(context, R.string.sorry_for_unable_to_get_class_info, Toast.LENGTH_LONG).show();
-                }
-                break;
-            case Constants.TYPE_GRADE:
-                Constants.advCustomInfo.GRADE_TABLE_ID = tableId;
-                manger.updateAdvancedCustomClassInfo(Constants.advCustomInfo);
-                manger.updateGrades(UniversityUtils.generateInfo(targetTable, GradeInfo.class));
-                if (mPresenter != null && mPresenter instanceof GradeContract.Presenter) {
-                    ((GradeContract.Presenter) mPresenter).loadLocalGrades();
-                }
-                break;
-            case Constants.TYPE_SEARCH:
-                break;
-            case Constants.TYPE_BORROW:
-                Constants.advCustomInfo.BORROW_TABLE_ID = tableId;
-                manger.updateAdvancedCustomClassInfo(Constants.advCustomInfo);
-                manger.updateBorrows(UniversityUtils.generateInfo(targetTable, BorrowInfo.class));
-                if (mPresenter != null && mPresenter instanceof BorrowContract.Presenter) {
-                    ((BorrowContract.Presenter) mPresenter).loadLocalBorrows();
-                }
-                break;
+                        }).show(getFragmentManager(), "setting_dialog");
+                        dismiss();
+                    } catch (Exception e) {
+                        Toast.makeText(context, R.string.sorry_for_unable_to_get_class_info, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                case Constants.TYPE_GRADE:
+                    Constants.advCustomInfo.GRADE_TABLE_ID = tableId;
+                    manger.updateAdvancedCustomClassInfo(Constants.advCustomInfo);
+                    manger.updateGrades(UniversityUtils.generateInfo(targetTable, GradeInfo.class));
+                    if (mPresenter != null && mPresenter instanceof GradeContract.Presenter) {
+                        ((GradeContract.Presenter) mPresenter).loadLocalGrades();
+                    }
+                    dismiss();
+                    break;
+                case Constants.TYPE_SEARCH:
+                    break;
+                case Constants.TYPE_BORROW:
+                    Constants.advCustomInfo.BORROW_TABLE_ID = tableId;
+                    manger.updateAdvancedCustomClassInfo(Constants.advCustomInfo);
+                    manger.updateBorrows(UniversityUtils.generateInfo(targetTable, BorrowInfo.class));
+                    if (mPresenter != null && mPresenter instanceof BorrowContract.Presenter) {
+                        ((BorrowContract.Presenter) mPresenter).loadLocalBorrows();
+                    }
+                    dismiss();
+                    break;
+            }
         }
     }
 
@@ -167,18 +173,29 @@ public class TableChooseDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_table_choose, null);
         ButterKnife.bind(this, view);
-        Constants.checkAdvCustomInfo(getActivity());
-        initView();
-        return new AlertDialog.Builder(getActivity())
+
+        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.swipe_choose_table)
+                .setPositiveButton(android.R.string.ok, null)
                 .setView(view)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                final Button positiveButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(View v) {
                         select();
                     }
-                })
-                .create();
+                });
+            }
+        });
+
+        Constants.checkAdvCustomInfo(getActivity());
+        initView();
+        return dialog;
     }
 
     private void initView() {

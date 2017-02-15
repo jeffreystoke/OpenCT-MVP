@@ -35,6 +35,7 @@ import java.util.Locale;
 public class BitMapUtils {
     /**
      * 截取scrollview的屏幕
+     *
      * @param scrollView
      * @return
      */
@@ -57,6 +58,7 @@ public class BitMapUtils {
 
     /**
      * 压缩图片
+     *
      * @param image
      * @return
      */
@@ -83,6 +85,7 @@ public class BitMapUtils {
 
     /**
      * 保存到sdcard
+     *
      * @param b
      * @return
      */

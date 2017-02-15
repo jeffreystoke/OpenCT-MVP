@@ -35,6 +35,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.interactiveweb.InteractiveWebView;
 import cc.metapro.openct.R;
+import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 
@@ -43,7 +44,7 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
 
     public static final String TAG = CustomActivity.class.getSimpleName();
 
-    public static String CUSTOM_TYPE = Constants.TYPE_CLASS;
+    public static String TYPE = Constants.TYPE_CLASS;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -61,7 +62,7 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
     private WebConfiguration mConfiguration;
 
     public static void actionStart(Context context, String type) {
-        CUSTOM_TYPE = type;
+        TYPE = type;
         Intent intent = new Intent(context, CustomActivity.class);
         context.startActivity(intent);
     }
@@ -81,21 +82,21 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
         mWebView.loadUrl(getUrl());
     }
 
-    @OnClick(R.id.fab_replay)
-    public void replay() {
-        mURL.setText(getUrl());
-
-        mWebView.removeUserClickCallback();
-
-        mFabNext.setVisibility(View.VISIBLE);
-        tipText.setVisibility(View.GONE);
-        mWebView.setVisibility(View.VISIBLE);
-        mPresenter.execCommands(mWebView);
-    }
+//    @OnClick(R.id.fab_replay)
+//    public void replay() {
+//        mURL.setText(getUrl());
+//
+//        mWebView.removeUserClickCallback();
+//
+//        mFabNext.setVisibility(View.VISIBLE);
+//        tipText.setVisibility(View.GONE);
+//        mWebView.setVisibility(View.VISIBLE);
+//        mPresenter.execCommands(mWebView);
+//    }
 
     @OnClick(R.id.fab_target)
     public void showTableChooseDialog() {
-        switch (CUSTOM_TYPE) {
+        switch (TYPE) {
             case Constants.TYPE_CLASS:
                 Constants.advCustomInfo.setClassWebConfig(mConfiguration);
                 break;
@@ -108,7 +109,7 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
                 Constants.advCustomInfo.setBorrowWebConfig(mConfiguration);
                 break;
         }
-        ActivityUtils.showTableChooseDialog(getSupportFragmentManager(), CUSTOM_TYPE, mWebView.getPageDom(), null);
+        ActivityUtils.showTableChooseDialog(getSupportFragmentManager(), TYPE, mWebView.getPageDom(), null);
     }
 
     @OnClick(R.id.fab_next)
@@ -129,7 +130,18 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
-        new CustomPresenter(this, this, CUSTOM_TYPE);
+        switch (TYPE) {
+            case Constants.TYPE_CLASS:
+            case Constants.TYPE_GRADE:
+                mURL.setText(Loader.university.cmsURL);
+                break;
+            case Constants.TYPE_BORROW:
+            case Constants.TYPE_SEARCH:
+                mURL.setText(Loader.university.libURL);
+                break;
+        }
+
+        new CustomPresenter(this, this, TYPE);
     }
 
     @Override

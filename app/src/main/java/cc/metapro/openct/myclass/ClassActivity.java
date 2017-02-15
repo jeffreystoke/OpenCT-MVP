@@ -135,14 +135,19 @@ public class ClassActivity extends AppCompatActivity
     }
 
     @Override
-    public void updateClasses(List<EnrichedClassInfo> classes) {
+    public void updateClasses(@NonNull List<EnrichedClassInfo> classes) {
         int week = Loader.getCurrentWeek(this);
         // 更新学期课表视图
         View view = mClassPagerAdapter.getSemClassView();
         ViewGroup seq = (ViewGroup) view.findViewById(R.id.seq);
         ViewGroup con = (ViewGroup) view.findViewById(R.id.content);
-        addSeqViews(seq);
-        addContentView(con, classes, -1);
+        if (!classes.isEmpty()) {
+            addSeqViews(seq);
+            addContentView(con, classes, -1);
+        } else {
+            seq.removeAllViews();
+            con.removeAllViews();
+        }
 
         // 更新周课表视图
         mClassPagerAdapter.setWeekTitle(week);
@@ -150,8 +155,13 @@ public class ClassActivity extends AppCompatActivity
         view = mClassPagerAdapter.getWeekClassView();
         seq = (ViewGroup) view.findViewById(R.id.seq);
         con = (ViewGroup) view.findViewById(R.id.content);
-        addSeqViews(seq);
-        addContentView(con, classes, week);
+        if (!classes.isEmpty()) {
+            addSeqViews(seq);
+            addContentView(con, classes, week);
+        } else {
+            seq.removeAllViews();
+            con.removeAllViews();
+        }
 
         // 更新当日课表视图
         mDailyClassAdapter.updateTodayClasses(classes, week);
@@ -228,6 +238,8 @@ public class ClassActivity extends AppCompatActivity
             }
         } else if (id == R.id.add_class) {
             ClassDetailActivity.actionStart(this, new EnrichedClassInfo());
+        } else if (id == R.id.clear_classes) {
+            mPresenter.clearClasses();
         }
         return super.onOptionsItemSelected(item);
     }

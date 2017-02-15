@@ -40,6 +40,8 @@ public interface ClassContract {
 
         void exportClasses();
 
+        void clearClasses();
+
         void loadFromExcel();
     }
 }

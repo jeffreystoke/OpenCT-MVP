@@ -16,7 +16,12 @@ package cc.metapro.interactiveweb.utils;
  * limitations under the License.
  */
 
+import android.support.annotation.Nullable;
+
+import org.jsoup.nodes.Attribute;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class HTMLUtils {
 
@@ -47,6 +52,29 @@ public class HTMLUtils {
     }
 
     public static String getElementPattern(Element element) {
-        return element.html();
+        return element.toString();
+    }
+
+    @Nullable
+    public static Element getElementSimilar(Document document, Element element) {
+        if (element == null) return null;
+        Elements elements = document.select(element.tagName());
+        Element result = null;
+        boolean found = true;
+        for (Element e : elements) {
+            result = e;
+            for (Attribute attribute : element.attributes()) {
+                if (!attribute.getValue().equals(e.attr(attribute.getKey()))) {
+                    found = false;
+                    break;
+                }
+            }
+            if (found) {
+                return result;
+            } else {
+                found = true;
+            }
+        }
+        return null;
     }
 }

@@ -23,17 +23,19 @@ import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.util.List;
 import java.util.Map;
 
+import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
+import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.utils.ActivityUtils;
@@ -90,6 +92,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_BORROW);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         };
@@ -116,31 +119,63 @@ class BorrowPresenter implements BorrowContract.Presenter {
         });
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
-
             @Override
-            public void onNext(Document document) {
+            public void onNext(final Document userCenterDom) {
                 ActivityUtils.dismissProgressDialog();
-                Elements links = document.select("a");
-                if (links.isEmpty()) {
-                    onError(new Exception("获取图书馆用户中心失败"));
-                } else {
-                    Constants.checkAdvCustomInfo(mContext);
-                    if (!TextUtils.isEmpty(Constants.advCustomInfo.BORROW_URL_PATTERN)) {
-                        Element target = document.select("a:matches(" + Constants.advCustomInfo.BORROW_URL_PATTERN + ")").first();
+                Constants.checkAdvCustomInfo(mContext);
+                final List<String> urlPatterns = Constants.advCustomInfo.getBorrowUrlPatterns();
+                if (!urlPatterns.isEmpty()) {
+                    if (urlPatterns.size() == 1) {
+                        // fetch first page from user center, it will find the borrow info page for most cases
+                        Element target = HTMLUtils.getElementSimilar(userCenterDom, Jsoup.parse(urlPatterns.get(0)).body().children().first());
                         if (target != null) {
                             loadTargetPage(manager, target.absUrl("href"));
-                        } else {
-                            ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_BORROW, document, BorrowPresenter.this);
                         }
+                    } else if (urlPatterns.size() > 1) {
+                        // fetch more page to reach class info page, especially in QZ Data Soft CMS System
+                        Observable<String> extraObservable = Observable.create(new ObservableOnSubscribe<String>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<String> e) throws Exception {
+                                CmsFactory factory = Loader.getCms(mContext);
+                                Document lastDom = userCenterDom;
+                                Element finalTarget = null;
+                                for (String pattern : urlPatterns) {
+                                    if (lastDom != null) {
+                                        finalTarget = HTMLUtils.getElementSimilar(lastDom, Jsoup.parse(pattern).body().children().first());
+                                    }
+                                    if (finalTarget != null) {
+                                        lastDom = factory.getClassPageDom(finalTarget.absUrl("href"));
+                                    }
+                                }
+
+                                if (finalTarget != null) {
+                                    e.onNext(finalTarget.absUrl("href"));
+                                }
+                            }
+                        });
+
+                        Observer<String> extraObserver = new MyObserver<String>(TAG) {
+                            @Override
+                            public void onNext(String targetUrl) {
+                                loadTargetPage(manager, targetUrl);
+                            }
+                        };
+
+                        extraObservable.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(extraObserver);
                     } else {
-                        ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_BORROW, document, BorrowPresenter.this);
+                        ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, userCenterDom, BorrowPresenter.this);
                     }
+                } else {
+                    ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, userCenterDom, BorrowPresenter.this);
                 }
             }
 
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_BORROW);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         };
@@ -191,6 +226,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_BORROW);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         };

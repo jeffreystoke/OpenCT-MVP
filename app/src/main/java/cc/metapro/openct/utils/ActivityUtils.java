@@ -70,7 +70,7 @@ public final class ActivityUtils {
             if (cmsPasswordEncrypted) {
                 try {
                     PrefHelper.putBoolean(context, R.string.pref_cms_password_encrypted, false);
-                    String password = PrefHelper.getString(context, R.string.pref_cms_password);
+                    String password = PrefHelper.getString(context, R.string.pref_cms_password, "");
                     password = AESCrypt.decrypt(Constants.seed, password);
                     PrefHelper.putString(context, R.string.pref_cms_password, password);
                 } catch (GeneralSecurityException e) {
@@ -81,7 +81,7 @@ public final class ActivityUtils {
             if (libPasswordEncrypted) {
                 try {
                     PrefHelper.putBoolean(context, R.string.pref_lib_password_encrypted, false);
-                    String password = PrefHelper.getString(context, R.string.pref_lib_password);
+                    String password = PrefHelper.getString(context, R.string.pref_lib_password, "");
                     password = AESCrypt.decrypt(Constants.seed, password);
                     PrefHelper.putString(context, R.string.pref_cms_password, password);
                 } catch (GeneralSecurityException e) {
@@ -92,7 +92,7 @@ public final class ActivityUtils {
             if (!cmsPasswordEncrypted) {
                 try {
                     PrefHelper.putBoolean(context, R.string.pref_cms_password_encrypted, true);
-                    String password = PrefHelper.getString(context, R.string.pref_cms_password);
+                    String password = PrefHelper.getString(context, R.string.pref_cms_password, "");
                     password = AESCrypt.encrypt(Constants.seed, password);
                     PrefHelper.putString(context, R.string.pref_cms_password, password);
                 } catch (GeneralSecurityException e) {
@@ -103,7 +103,7 @@ public final class ActivityUtils {
             if (!libPasswordEncrypted) {
                 try {
                     PrefHelper.putBoolean(context, R.string.pref_lib_password_encrypted, true);
-                    String password = PrefHelper.getString(context, R.string.pref_lib_password);
+                    String password = PrefHelper.getString(context, R.string.pref_lib_password, "");
                     password = AESCrypt.encrypt(Constants.seed, password);
                     PrefHelper.putString(context, R.string.pref_lib_password, password);
                 } catch (GeneralSecurityException e) {
@@ -114,7 +114,11 @@ public final class ActivityUtils {
     }
 
     public static void showCaptchaDialog(FragmentManager manager, LoginPresenter presenter) {
-        CaptchaDialog.newInstance(presenter).show(manager, "captcha_dialog");
+        try {
+            CaptchaDialog.newInstance(presenter).show(manager, "captcha_dialog");
+        } catch (Exception ignored) {
+
+        }
     }
 
     public static void showLinkSelectionDialog(FragmentManager manager, String type, Document document, LoginPresenter presenter) {

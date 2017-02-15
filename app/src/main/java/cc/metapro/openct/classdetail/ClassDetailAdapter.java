@@ -158,19 +158,17 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
         LinearLayout mDuringLayout;
         @BindView(R.id.add_during)
         TextView mAddDuring;
-
-        @OnClick(R.id.add_during)
-        void addDuringEditor() {
-            addDuringEditor(-1, -1);
-        }
-
         private Map<MaterialEditText, MaterialEditText> mDuringMap = new HashMap<>();
-
         private String id;
 
         ClassDetailViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+
+        @OnClick(R.id.add_during)
+        void addDuringEditor() {
+            addDuringEditor(-1, -1);
         }
 
         void setInfo(@NonNull ClassInfo info) {

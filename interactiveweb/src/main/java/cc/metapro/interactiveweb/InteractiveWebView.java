@@ -162,7 +162,7 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
             Elements elements = document.getAllElements();
             Pattern ptn = Pattern.compile(pattern);
             for (Element element : elements) {
-                if (ptn.matcher(element.html()).find()) {
+                if (ptn.matcher(element.toString()).find()) {
                     JSUtils.clickByPattern(this, pattern);
                     return true;
                 }
@@ -214,7 +214,7 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
             Elements elements = document.getAllElements();
             Pattern ptn = Pattern.compile(pattern);
             for (Element element : elements) {
-                if (ptn.matcher(element.html()).find()) {
+                if (ptn.matcher(element.toString()).find()) {
                     JSUtils.setByPattern(this, pattern, key, value);
                     return true;
                 }
@@ -275,7 +275,7 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
         if (TextUtils.isEmpty(id)) return false;
         Element element = getElementById(id);
         if (element != null) {
-            JSUtils.foucsById(this, id);
+            JSUtils.focusById(this, id);
             return true;
         }
         return false;

@@ -55,7 +55,6 @@ public final class Constants {
     // 汇文
     public static final String NJHUIWEN = "njhuiwen";
     public static AdvancedCustomInfo advCustomInfo;
-    public static UniversityInfo universityInfo;
     // map keys
     public static String ACTION_KEY;
     public static String USERNAME_KEY;
@@ -68,8 +67,6 @@ public final class Constants {
     public static int CLASS_BASE_HEIGHT = 0;
 
     public static void checkAdvCustomInfo(Context context) {
-        if (advCustomInfo == null) {
-            advCustomInfo = DBManger.getAdvancedCustomInfo(context);
-        }
+        advCustomInfo = DBManger.getAdvancedCustomInfo(context);
     }
 }

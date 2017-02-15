@@ -45,15 +45,10 @@ public class Loader {
 
     private static boolean needUpdateUniversity;
 
-    private static UniversityInfo university;
+    public static UniversityInfo university;
 
     public static void needUpdateUniversity() {
         needUpdateUniversity = true;
-    }
-
-    public static UniversityInfo getUniversity(Context context) {
-        checkUniversity(context);
-        return university;
     }
 
     public static LibraryFactory getLibrary(Context context) {
@@ -79,12 +74,12 @@ public class Loader {
         Map<String, String> map = new HashMap<>(2);
         boolean needEncrypt = PrefHelper.getBoolean(context, R.string.pref_need_encryption);
         try {
-            String password = PrefHelper.getString(context, R.string.pref_lib_password);
+            String password = PrefHelper.getString(context, R.string.pref_lib_password, "");
             if (needEncrypt) {
                 password = AESCrypt.decrypt(Constants.seed, password);
             }
             if (!TextUtils.isEmpty(password)) {
-                map.put(context.getString(R.string.key_username), PrefHelper.getString(context, R.string.pref_lib_username));
+                map.put(context.getString(R.string.key_username), PrefHelper.getString(context, R.string.pref_lib_username, ""));
                 map.put(context.getString(R.string.key_password), password);
             }
         } catch (Exception e) {
@@ -98,12 +93,12 @@ public class Loader {
         Map<String, String> map = new HashMap<>(2);
         boolean needEncrypt = PrefHelper.getBoolean(context, R.string.pref_need_encryption);
         try {
-            String password = PrefHelper.getString(context, R.string.pref_cms_password);
+            String password = PrefHelper.getString(context, R.string.pref_cms_password, "");
             if (needEncrypt) {
                 password = AESCrypt.decrypt(Constants.seed, password);
             }
             if (!TextUtils.isEmpty(password)) {
-                map.put(context.getString(R.string.key_username), PrefHelper.getString(context, R.string.pref_cms_username));
+                map.put(context.getString(R.string.key_username), PrefHelper.getString(context, R.string.pref_cms_username, ""));
                 map.put(context.getString(R.string.key_password), password);
             }
         } catch (Exception e) {
@@ -119,18 +114,17 @@ public class Loader {
 
     @Nullable
     private static UniversityInfo loadUniversity(final Context context) {
-        boolean custom = PrefHelper.getBoolean(context, R.string.pref_custom_enable);
         DBManger manger = DBManger.getInstance(context);
 
         UniversityInfo university = null;
-        if (custom) {
+        if (PrefHelper.getBoolean(context, R.string.pref_custom_enable)) {
             university = manger.getCustomUniversity();
         } else {
-            university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name));
+            university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name, context.getResources().getStringArray(R.array.school_names)[0]));
         }
 
         if (university == null) {
-            university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name));
+            university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name, context.getResources().getStringArray(R.array.school_names)[0]));
         }
 
         updateWeekSeq(context);
@@ -144,7 +138,7 @@ public class Loader {
             Calendar cal = Calendar.getInstance(Locale.CHINA);
             cal.setFirstDayOfWeek(Calendar.MONDAY);
             int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
-            int currentWeek = Integer.parseInt(PrefHelper.getString(context, R.string.pref_current_week));
+            int currentWeek = Integer.parseInt(PrefHelper.getString(context, R.string.pref_current_week, "1"));
             if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
                 if (lastSetWeek == 53) {
                     currentWeek += weekOfYearWhenSetCurrentWeek;

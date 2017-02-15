@@ -147,8 +147,10 @@ public class UniversityUtils {
     public static <T> List<T> generateInfo(Element targetTable, Class<T> tClass) {
         if (targetTable == null) return new ArrayList<>();
         List<T> result = new ArrayList<>();
-        Elements trs = targetTable.select("th");
-        trs.addAll(targetTable.select("tr"));
+        Elements trs = targetTable.select("tr");
+        if (trs.select("th").isEmpty()) {
+            trs.addAll(0, targetTable.select("th"));
+        }
         Element th = trs.first();
         trs.remove(0);
         Constructor<T> c;

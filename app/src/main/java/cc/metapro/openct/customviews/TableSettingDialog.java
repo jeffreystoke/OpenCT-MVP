@@ -52,7 +52,7 @@ public class TableSettingDialog extends DialogFragment {
     public static final String PLACE = "上课地点";
     public static final String TEACHER = "授课教师";
 
-    public static final String[] titles = {NAME, TIME, TYPE, DURING, PLACE, TEACHER};
+    public static final String[] titles = {NAME, TIME, DURING, TYPE, PLACE, TEACHER};
     private static String[] mStrings;
     private static TableSettingCallBack mCallBack;
     private final String TAG = TableSettingDialog.class.getSimpleName();

@@ -16,7 +16,7 @@
         <item>正方</item>
         <item>强智</item>
         <item>苏文</item>
-        <item>青果</item>
+        <item>青果 (测试)</item>
         <item>普通适配 (测试)</item>
     </string-array>
 
@@ -159,6 +159,7 @@
         <item>沈阳工程学院</item>
         <item>沈阳工学院(仅教务网)</item>
         <item>沈阳理工大学(仅教务网)</item>
+        <item>苏州大学</item>
         <item>四川大学锦城学院(仅教务网)</item>
         <item>四川电影电视学院(仅教务网)</item>
         <item>四川理工学院(仅教务网)</item>
@@ -181,6 +182,7 @@
         <item>中国科学技术大学</item>
         <item>中国科学院大学(仅教务网)</item>
         <item>中国矿业大学</item>
+        <item>中南林业科技大学(仅教务网)</item>
         <item>中南财经政法大学(仅教务网)</item>
         <item>中南大学(仅教务网)</item>
         <item>中南民族大学</item>

@@ -17,6 +17,7 @@ package cc.metapro.openct.data.university;
  */
 
 import android.text.TextUtils;
+import android.webkit.URLUtil;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,34 +27,36 @@ import org.jsoup.select.Elements;
 import java.util.List;
 
 import cc.metapro.openct.utils.Constants;
+import okhttp3.HttpUrl;
 
 class WebHelper {
 
-    private String baseURL;
-    private String captchaURL;
-    private String loginPageURL;
-    private String userCenterURL;
+    private HttpUrl mBaseUrl;
+    private HttpUrl mCaptchaUrl;
+    private HttpUrl mLoginPageUrl;
+    private HttpUrl mUserCenterUrl;
     private Element loginForm;
     private Document loginPageDOM;
 
     WebHelper(String baseURL) {
-        this.baseURL = baseURL;
-        loginPageURL = baseURL;
+        mBaseUrl = HttpUrl.parse(URLUtil.guessUrl(baseURL));
+        mLoginPageUrl = mBaseUrl;
+        mUserCenterUrl = mBaseUrl;
     }
 
     String getBaseURL() {
-        return baseURL;
+        return mBaseUrl.toString();
     }
 
     String getCaptchaURL() {
-        return captchaURL;
+        return mCaptchaUrl == null ? null : mCaptchaUrl.toString();
     }
 
     void setCaptchaURL(List<Document> documents, String system) {
         loop:
         for (Document document : documents) {
             loginPageDOM = document;
-            loginPageURL = document.baseUri();
+            mLoginPageUrl = HttpUrl.parse(document.baseUri());
             Elements forms = document.select("form");
 
             // 遍历表单
@@ -71,7 +74,7 @@ class WebHelper {
                     String url = img.absUrl("src");
                     if (!TextUtils.isEmpty(url)) {
                         loginForm = form;
-                        captchaURL = url;
+                        mCaptchaUrl = HttpUrl.parse(URLUtil.guessUrl(url));
                         break loop;
                     }
                 }
@@ -88,20 +91,20 @@ class WebHelper {
     }
 
     String getLoginPageURL() {
-        return loginPageURL;
+        return mLoginPageUrl.toString();
     }
 
     void setLoginPageURL(String loginPageURL) {
-        this.loginPageURL = loginPageURL;
+        mLoginPageUrl = mLoginPageUrl.newBuilder(loginPageURL).build();
         // 设置默认用户中心首页为登录页, 防止未跳转的情况
-        userCenterURL = loginPageURL;
+        mUserCenterUrl = mLoginPageUrl;
     }
 
     String getUserCenterURL() {
-        return userCenterURL;
+        return mUserCenterUrl.toString();
     }
 
     void setUserCenterURL(String userCenterURL) {
-        this.userCenterURL = userCenterURL;
+        mUserCenterUrl = mUserCenterUrl.newBuilder(userCenterURL).build();
     }
 }

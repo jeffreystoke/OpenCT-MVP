@@ -27,6 +27,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -66,7 +67,24 @@ public class FormDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View view = FormUtils.getFormView(getContext(), null, mForm);
+        FormHandler handler = new FormHandler(document);
+        if (Constants.QZDATASOFT.equalsIgnoreCase(Loader.university.cmsSys)) {
+            mForm = handler.getForm(1);
+            if (mForm == null) {
+                mForm = handler.getForm(0);
+            }
+        } else {
+            mForm = handler.getForm(0);
+        }
+        View view = null;
+        try {
+            view = FormUtils.getFormView(getContext(), null, mForm);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getActivity(), "根据之前的设置未能获取到预期的页面\n\n请到设置 -> 表格设置 -> 点击 清空链接/表格选择", Toast.LENGTH_LONG).show();
+            dismiss();
+            return new AlertDialog.Builder(getActivity()).create();
+        }
         ButterKnife.bind(this, view);
         return new AlertDialog.Builder(getActivity())
                 .setView(view)
@@ -112,15 +130,5 @@ public class FormDialog extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Constants.universityInfo == null) {
-            Constants.universityInfo = Loader.getUniversity(getActivity());
-        }
-
-        FormHandler handler = new FormHandler(document);
-        if (Constants.QZDATASOFT.equalsIgnoreCase(Constants.universityInfo.cmsSys)) {
-            mForm = handler.getForm(1);
-        } else {
-            mForm = handler.getForm(0);
-        }
     }
 }

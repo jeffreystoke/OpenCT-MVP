@@ -50,7 +50,8 @@ public class DailyWidgetService extends RemoteViewsService {
         }
 
         @Override
-        public void onCreate() {}
+        public void onCreate() {
+        }
 
         @Override
         public void onDataSetChanged() {
