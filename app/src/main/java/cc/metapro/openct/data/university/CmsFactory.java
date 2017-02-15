@@ -43,7 +43,7 @@ public class CmsFactory extends UniversityFactory {
     @Nullable
     public Document getClassPageDom(String url) throws Exception {
         CLASS_URL = HttpUrl.parse(url).toString();
-        Response<String> response = mService.getPage(url, webHelper.getUserCenterURL()).execute();
+        Response<String> response = mService.getPage(url).execute();
         String tablePage = response.body();
         return Jsoup.parse(tablePage, url);
     }
@@ -51,7 +51,7 @@ public class CmsFactory extends UniversityFactory {
     @Nullable
     public Document getGradePageDom(String url) throws Exception {
         GRADE_URL = HttpUrl.parse(url).toString();
-        Response<String> response = mService.getPage(url, webHelper.getUserCenterURL()).execute();
+        Response<String> response = mService.getPage(url).execute();
         String tablePage = response.body();
         return Jsoup.parse(tablePage, url);
     }
@@ -73,12 +73,12 @@ public class CmsFactory extends UniversityFactory {
     private Document getFinalPageDom(String actionURL, String refer, Map<String, String> queryMap, boolean needNewPage) throws Exception {
         String tablePage;
         if (Constants.QZDATASOFT.equalsIgnoreCase(SYS)) {
-            tablePage = mService.post(actionURL, refer, queryMap).execute().body();
+            tablePage = mService.post(actionURL, queryMap).execute().body();
         } else {
             if (needNewPage) {
-                tablePage = mService.post(actionURL, refer, queryMap).execute().body();
+                tablePage = mService.post(actionURL, queryMap).execute().body();
             } else {
-                tablePage = mService.getPage(actionURL, refer).execute().body();
+                tablePage = mService.getPage(actionURL).execute().body();
             }
         }
         tablePage = tablePage.replaceAll(HTMLUtils.BR, HTMLUtils.BR_REPLACER);

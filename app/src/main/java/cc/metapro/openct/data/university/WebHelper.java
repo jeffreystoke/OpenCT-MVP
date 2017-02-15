@@ -24,10 +24,18 @@ import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import cc.metapro.openct.data.openctservice.QuotePreservingCookieJar;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.interceptors.SchoolInterceptor;
 import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 class WebHelper {
 
@@ -35,17 +43,41 @@ class WebHelper {
     private HttpUrl mCaptchaUrl;
     private HttpUrl mLoginPageUrl;
     private HttpUrl mUserCenterUrl;
+
     private Element loginForm;
     private Document loginPageDOM;
+    private SchoolInterceptor mInterceptor;
 
     WebHelper(String baseURL) {
         mBaseUrl = HttpUrl.parse(URLUtil.guessUrl(baseURL));
         mLoginPageUrl = mBaseUrl;
         mUserCenterUrl = mBaseUrl;
+
+        mInterceptor = new SchoolInterceptor(mBaseUrl);
     }
 
-    String getBaseURL() {
-        return mBaseUrl.toString();
+    UniversityService createSchoolService() {
+        return new Retrofit.Builder()
+                .baseUrl("http://example.com/")
+                .client(new OkHttpClient.Builder()
+                        .addNetworkInterceptor(mInterceptor)
+                        .followRedirects(true)
+                        .connectTimeout(30, TimeUnit.SECONDS)
+                        .cookieJar(new QuotePreservingCookieJar(new CookieManager() {{
+                            setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+                        }})).build()
+                )
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .build()
+                .create(UniversityService.class);
+    }
+
+    SchoolInterceptor getInterceptor() {
+        return mInterceptor;
+    }
+
+    HttpUrl getBaseURL() {
+        return mBaseUrl;
     }
 
     String getCaptchaURL() {

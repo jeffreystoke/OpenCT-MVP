@@ -47,7 +47,6 @@ public class LibraryFactory extends UniversityFactory {
     private static final String TAG = LibraryFactory.class.getSimpleName();
     private static final Pattern nextPagePattern = Pattern.compile("(下一?1?页)");
     private static String nextPageURL = "";
-    private static String queryTmp = "";
     private LibURLFactory mURLFactory;
 
     public LibraryFactory(String libSys, String libBaseURL) {
@@ -57,7 +56,7 @@ public class LibraryFactory extends UniversityFactory {
 
     @NonNull
     public Document getBorrowPageDom(String url) throws Exception {
-        String tablePage = mService.getPage(url, webHelper.getUserCenterURL()).execute().body();
+        String tablePage = mService.getPage(url).execute().body();
         tablePage = tablePage.replaceAll(HTMLUtils.BR, HTMLUtils.BR_REPLACER);
         return Jsoup.parse(tablePage, url);
     }
@@ -69,10 +68,9 @@ public class LibraryFactory extends UniversityFactory {
     public List<BookInfo> search(@NonNull Map<String, String> searchMap) throws Exception {
         checkService();
         nextPageURL = "";
-        queryTmp = "";
         String searchPage = null;
         try {
-            searchPage = mService.getPage(mURLFactory.SEARCH_URL, null).execute().body();
+            searchPage = mService.getPage(mURLFactory.SEARCH_URL).execute().body();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
         }
@@ -92,8 +90,7 @@ public class LibraryFactory extends UniversityFactory {
 
         String action = postMap.get(Constants.ACTION_KEY);
         postMap.remove(Constants.ACTION_KEY);
-        Call<String> call = mService.searchLibrary(action, action, postMap);
-        queryTmp = call.request().url().toString();
+        Call<String> call = mService.searchLibrary(action, postMap);
         String resultPage = call.execute().body();
         prepareNextPageURL(resultPage);
         return TextUtils.isEmpty(resultPage) ? new ArrayList<BookInfo>(0) : parseBook(resultPage);
@@ -106,7 +103,7 @@ public class LibraryFactory extends UniversityFactory {
             return new ArrayList<>(0);
         }
         if (Constants.NJHUIWEN.equalsIgnoreCase(SYS)) {
-            resultPage = mService.getPage(nextPageURL, queryTmp).execute().body();
+            resultPage = mService.getPage(nextPageURL).execute().body();
         }
         prepareNextPageURL(resultPage);
         return TextUtils.isEmpty(resultPage) ? new ArrayList<BookInfo>(0) : parseBook(resultPage);

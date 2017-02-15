@@ -49,7 +49,7 @@ public abstract class UniversityFactory {
 
     private static final String LOGIN_SUCCESS_PATTERN = "(当前)|(个人)";
 
-    static WebHelper webHelper;
+    private static WebHelper webHelper;
     static UniversityService mService;
     static String SYS;
     private static SchoolInterceptor interceptor;
@@ -64,7 +64,7 @@ public abstract class UniversityFactory {
 
     // 再次获取验证码
     public static void getOneMoreCAPTCHA() throws IOException {
-        Response<ResponseBody> bodyResponse = mService.getCAPTCHA(webHelper.getCaptchaURL(), webHelper.getLoginPageURL()).execute();
+        Response<ResponseBody> bodyResponse = mService.getCAPTCHA(webHelper.getCaptchaURL()).execute();
         ResponseBody body = bodyResponse.body();
         StoreHelper.storeBytes(Constants.CAPTCHA_FILE, body.byteStream());
     }
@@ -89,9 +89,15 @@ public abstract class UniversityFactory {
         if (Constants.QZDATASOFT.equalsIgnoreCase(SYS)) {
             // 无需验证码则没有加密 -> 使用普通方法
             if (webHelper.getLoginForm() != null) {
-                final String serverResponse = mService.login(webHelper.getBaseURL() + "Logon.do?method=logon&flag=sess", getBaseURL(), new HashMap<String, String>(0)).execute().body();
+                String urlTmp = webHelper.getBaseURL()
+                        .newBuilder("/Logon.do?method=logon&flag=sess")
+                        .build().toString();
+
+                final String serverResponse = mService.post(urlTmp, new HashMap<String, String>(0)).execute().body();
+
                 String action = webHelper.getLoginForm().absUrl("action");
-                USER_CENTER = mService.login(action, webHelper.getLoginPageURL(), new LinkedHashMap<String, String>() {{
+
+                USER_CENTER = mService.post(action, new LinkedHashMap<String, String>() {{
                     put("useDogCode", "");
                     put("encoded", UniversityUtils.QZEncryption(serverResponse, loginMap));
                     put("RANDOMCODE", loginMap.get(Constants.CAPTCHA_KEY));
@@ -122,13 +128,13 @@ public abstract class UniversityFactory {
 
             String action = res.get(Constants.ACTION_KEY);
             res.remove(Constants.ACTION_KEY);
-            Response<String> stringResponse = mService.login(action, webHelper.getLoginPageURL(), res).execute();
+            Response<String> stringResponse = mService.post(action, res).execute();
             USER_CENTER = stringResponse.body();
 
             // 处理五秒防刷
             if (USER_CENTER.length() < 100) {
                 Thread.sleep(6 * 1000);
-                USER_CENTER = mService.login(action, webHelper.getLoginPageURL(), res).execute().body();
+                USER_CENTER = mService.post(action, res).execute().body();
             }
 
             // 登录完成, 检测结果
@@ -154,7 +160,7 @@ public abstract class UniversityFactory {
             }
         });
 
-        Call<String> call = mService.getPage(webHelper.getBaseURL(), null);
+        Call<String> call = mService.getPage(webHelper.getBaseURL().toString());
         Response<String> stringResponse = call.execute();
         String loginPageHtml = stringResponse.body();
 
@@ -173,7 +179,7 @@ public abstract class UniversityFactory {
                 url = iFrame.absUrl("src");
             }
             if (!TextUtils.isEmpty(url)) {
-                String frame = mService.getPage(url, webHelper.getLoginPageURL()).execute().body();
+                String frame = mService.getPage(url).execute().body();
                 domList.add(Jsoup.parse(frame, url));
             }
         }
@@ -184,7 +190,7 @@ public abstract class UniversityFactory {
         // 获取验证码
         String captchaURL = webHelper.getCaptchaURL();
         if (!TextUtils.isEmpty(captchaURL)) {
-            Response<ResponseBody> bodyResponse = mService.getCAPTCHA(captchaURL, webHelper.getLoginPageURL()).execute();
+            Response<ResponseBody> bodyResponse = mService.getCAPTCHA(captchaURL).execute();
             ResponseBody body = bodyResponse.body();
             StoreHelper.storeBytes(Constants.CAPTCHA_FILE, body.byteStream());
             return true;
@@ -194,10 +200,10 @@ public abstract class UniversityFactory {
     }
 
     void checkService() {
-        if (interceptor == null) {
+        if (webHelper == null) {
             webHelper = new WebHelper(getBaseURL());
-            interceptor = new SchoolInterceptor(webHelper.getBaseURL());
-            mService = interceptor.createSchoolService();
+            interceptor = webHelper.getInterceptor();
+            mService = webHelper.createSchoolService();
         }
     }
 

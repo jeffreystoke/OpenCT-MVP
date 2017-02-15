@@ -40,10 +40,13 @@ public class SchoolInterceptor implements Interceptor {
     private static final String URL_PATTERN = "((http|ftp|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9&%_\\./-~-]*)?";
     private static final String JS_REDIRECT_PATTERN = "(window\\.location).*?" + URL_PATTERN;
     private RedirectObserver<String> mObserver;
-    private HttpUrl mUrl;
 
-    public SchoolInterceptor(String URL) {
-        mUrl = HttpUrl.parse(URL);
+    private HttpUrl mBaseUrl;
+    private HttpUrl mRefer;
+
+    public SchoolInterceptor(HttpUrl baseUrl) {
+        mBaseUrl = baseUrl;
+        mRefer = mBaseUrl;
     }
 
     public void setObserver(RedirectObserver<String> observer) {
@@ -53,23 +56,27 @@ public class SchoolInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-        Request newRequest = request.newBuilder()
+        Request realRequest = request.newBuilder()
                 .header("User-Agent", userAgent)
+                .header("Referer", mRefer.toString())
                 .build();
 
-        Response response = chain.proceed(newRequest);
+        Response response = chain.proceed(realRequest);
 
         if (response.isRedirect()) {
             String location = response.headers().get("Location");
-            location = mUrl.newBuilder(location).toString();
+            location = mBaseUrl.newBuilder(location).toString();
             if (mObserver != null) {
                 mObserver.onRedirect(location);
             }
         } else {
-            // make javascript redirection to http 302 redirection
             String type = response.body().contentType().toString();
             if (type.contains("text/html")) {
+                // generate new mRefer accordingly
+                mRefer = mRefer.newBuilder(request.url().toString()).build();
                 String responseString = response.body().string();
+
+                // make javascript redirection to http 302 redirection
                 Pattern pattern = Pattern.compile(JS_REDIRECT_PATTERN);
                 Matcher matcher = pattern.matcher(responseString);
                 if (matcher.find()) {
@@ -78,10 +85,11 @@ public class SchoolInterceptor implements Interceptor {
                     matcher = pattern.matcher(found);
                     if (matcher.find()) {
                         found = matcher.group();
-                        found = mUrl.newBuilder(found).toString();
+                        found = mBaseUrl.newBuilder(found).toString();
                         if (mObserver != null) {
                             mObserver.onRedirect(found);
                         }
+
                         response = response.newBuilder()
                                 .addHeader("Location", found)
                                 .code(302)
@@ -96,21 +104,6 @@ public class SchoolInterceptor implements Interceptor {
             }
         }
         return response;
-    }
-
-    public UniversityService createSchoolService() {
-        return new Retrofit.Builder()
-                .baseUrl("http://openct.metapro.cc/")
-                .client(new OkHttpClient.Builder()
-                        .addNetworkInterceptor(this)
-                        .followRedirects(true)
-                        .connectTimeout(30, TimeUnit.SECONDS)
-                        .cookieJar(new QuotePreservingCookieJar(new CookieManager() {{
-                            setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-                        }})).build()
-                )
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .build().create(UniversityService.class);
     }
 
     public interface RedirectObserver<T> {

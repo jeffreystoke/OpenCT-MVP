@@ -36,19 +36,19 @@ public interface UniversityService {
 
     @POST
     @FormUrlEncoded
-    Call<String> login(@Url String url, @Header("Referer") String referer, @FieldMap Map<String, String> loginMap);
+    Call<String> login(@Url String url, @FieldMap Map<String, String> loginMap);
 
     @POST
     @FormUrlEncoded
-    Call<String> post(@Url String url, @Header("Referer") String refer, @FieldMap Map<String, String> postMap);
+    Call<String> post(@Url String url, @FieldMap Map<String, String> postMap);
 
     @Streaming
     @GET
-    Call<ResponseBody> getCAPTCHA(@Url String url, @Header("Referer") String refer);
+    Call<ResponseBody> getCAPTCHA(@Url String url);
 
     @GET
-    Call<String> searchLibrary(@Url String url, @Header("Referer") String refer, @QueryMap Map<String, String> searchMap);
+    Call<String> searchLibrary(@Url String url, @QueryMap Map<String, String> searchMap);
 
     @GET
-    Call<String> getPage(@Url String url, @Header("Referer") String refer);
+    Call<String> getPage(@Url String url);
 }
