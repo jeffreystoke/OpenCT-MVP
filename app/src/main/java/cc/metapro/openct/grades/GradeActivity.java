@@ -36,12 +36,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
+import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.grades.cet.CETQueryDialog;
 import cc.metapro.openct.grades.cet.CETResultDialog;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.utils.ActivityUtils;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
 @Keep
@@ -133,6 +135,8 @@ public class GradeActivity extends AppCompatActivity implements GradeContract.Vi
             mPresenter.clearGrades();
         } else if (id == R.id.query) {
             showCETDialog();
+        } else if (id == R.id.custom) {
+            CustomActivity.actionStart(this, Constants.TYPE_GRADE);
         }
         return super.onOptionsItemSelected(item);
     }

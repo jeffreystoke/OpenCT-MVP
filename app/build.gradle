@@ -23,8 +23,8 @@ android {
         applicationId "cc.metapro.openct"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 30
-        versionName "0.8.0"
+        versionCode 31
+        versionName "0.8.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled false

@@ -33,44 +33,35 @@ import retrofit2.Response;
 @Keep
 public class CmsFactory extends UniversityFactory {
 
-    private static String CLASS_URL;
-    private static String GRADE_URL;
+    private static String INFO_PAGE_URL;
 
     public CmsFactory(String cmsSys, String baseURL) {
         super(cmsSys, baseURL);
     }
 
     @Nullable
-    public Document getClassPageDom(String url) throws Exception {
-        CLASS_URL = HttpUrl.parse(url).toString();
-        Response<String> response = mService.getPage(url).execute();
-        String tablePage = response.body();
-        return Jsoup.parse(tablePage, url);
-    }
-
-    @Nullable
-    public Document getGradePageDom(String url) throws Exception {
-        GRADE_URL = HttpUrl.parse(url).toString();
+    public Document getPageDom(String url) throws Exception {
+        INFO_PAGE_URL = HttpUrl.parse(url).toString();
         Response<String> response = mService.getPage(url).execute();
         String tablePage = response.body();
         return Jsoup.parse(tablePage, url);
     }
 
     @NonNull
-    public Document getFinalGradePageDom(String actionURL, Map<String, String> queryMap, boolean needNewPage) throws Exception {
+    public Document queryGradePageDom(String actionURL, Map<String, String> queryMap, boolean needNewPage) throws Exception {
         if (Constants.QZDATASOFT.equalsIgnoreCase(SYS)) {
             actionURL = HttpUrl.parse(actionURL).newBuilder().encodedPath("/jsxsd/kscj/cjcx_list").build().url().toString();
         }
-        return getFinalPageDom(actionURL, GRADE_URL, queryMap, needNewPage);
+        return getFinalPageDom(actionURL, queryMap, needNewPage);
     }
 
     @NonNull
-    public Document getFinalClassPageDom(String actionURL, Map<String, String> queryMap, boolean needNewPage) throws Exception {
-        return getFinalPageDom(actionURL, CLASS_URL, queryMap, needNewPage);
+    public Document queryClassPageDom(String actionURL, Map<String, String> queryMap, boolean needNewPage) throws Exception {
+        return getFinalPageDom(actionURL, queryMap, needNewPage);
     }
 
     @NonNull
-    private Document getFinalPageDom(String actionURL, String refer, Map<String, String> queryMap, boolean needNewPage) throws Exception {
+    private Document getFinalPageDom(String actionURL, Map<String, String> queryMap, boolean needNewPage) throws Exception {
         String tablePage;
         if (Constants.QZDATASOFT.equalsIgnoreCase(SYS)) {
             tablePage = mService.post(actionURL, queryMap).execute().body();
@@ -81,9 +72,7 @@ public class CmsFactory extends UniversityFactory {
                 tablePage = mService.getPage(actionURL).execute().body();
             }
         }
-        tablePage = tablePage.replaceAll(HTMLUtils.BR, HTMLUtils.BR_REPLACER);
-
-        return Jsoup.parse(tablePage, refer);
+        return Jsoup.parse(tablePage, INFO_PAGE_URL);
     }
 
     public static class ClassTableInfo {

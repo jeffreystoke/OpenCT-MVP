@@ -115,7 +115,7 @@ public abstract class UniversityFactory {
             FormHandler formHandler = new FormHandler(loginPageDom);
             Form targetForm = webHelper.getLoginForm() == null ? formHandler.getForm(0) : new Form(webHelper.getLoginForm());
             if (targetForm == null) {
-                throw new Exception("观测到学校服务器出了点问题~\n");
+                throw new Exception("观测到学校服务器出了点问题~");
             }
 
             Map<String, String> res = FormUtils.getLoginFiledMap(targetForm, loginMap, true);
@@ -131,15 +131,24 @@ public abstract class UniversityFactory {
             Response<String> stringResponse = mService.post(action, res).execute();
             USER_CENTER = stringResponse.body();
 
-            // 处理五秒防刷
+            // beat 5 seconds restriction
             if (USER_CENTER.length() < 100) {
                 Thread.sleep(6 * 1000);
                 USER_CENTER = mService.post(action, res).execute().body();
             }
 
-            // 登录完成, 检测结果
+            Document document = Jsoup.parse(USER_CENTER, webHelper.getUserCenterURL());
+            Elements frames = document.select("frame");
+            frames.addAll(document.select("iframe"));
+            for (Element frame : frames) {
+                String url = frame.absUrl("src");
+                if (!TextUtils.isEmpty(url)) {
+                    document.append(mService.getPage(url).execute().body());
+                }
+            }
+            // login finish, check results
             if (loginSuccess || (!TextUtils.isEmpty(USER_CENTER) && Pattern.compile(LOGIN_SUCCESS_PATTERN).matcher(USER_CENTER).find())) {
-                return Jsoup.parse(USER_CENTER, webHelper.getUserCenterURL());
+                return document;
             } else {
                 throw LOGIN_FAIL;
             }

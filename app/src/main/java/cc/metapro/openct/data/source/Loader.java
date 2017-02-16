@@ -51,6 +51,11 @@ public class Loader {
         needUpdateUniversity = true;
     }
 
+    public static UniversityInfo getUniversity(Context context) {
+        checkUniversity(context);
+        return university;
+    }
+
     public static LibraryFactory getLibrary(Context context) {
         checkUniversity(context);
         return new LibraryFactory(university.libSys, university.libURL);

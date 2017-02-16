@@ -74,6 +74,7 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
         settings.setBuiltInZoomControls(true);
+
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         addJavascriptInterface(new JsInteraction(new JsInteraction.CallBack() {
             @Override

@@ -68,7 +68,7 @@ public class FormDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         FormHandler handler = new FormHandler(document);
-        if (Constants.QZDATASOFT.equalsIgnoreCase(Loader.university.cmsSys)) {
+        if (Constants.QZDATASOFT.equalsIgnoreCase(Loader.getUniversity(getActivity()).cmsSys)) {
             mForm = handler.getForm(1);
             if (mForm == null) {
                 mForm = handler.getForm(0);

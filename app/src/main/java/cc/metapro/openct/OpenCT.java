@@ -21,8 +21,6 @@ import android.support.annotation.Keep;
 
 @Keep
 public class OpenCT extends Application {
-
-
     @Override
     public void onCreate() {
         super.onCreate();

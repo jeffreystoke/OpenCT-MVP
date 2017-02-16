@@ -155,7 +155,7 @@ class ClassPresenter implements ClassContract.Presenter {
                                         finalTarget = HTMLUtils.getElementSimilar(lastDom, Jsoup.parse(pattern).body().children().first());
                                     }
                                     if (finalTarget != null) {
-                                        lastDom = factory.getClassPageDom(finalTarget.absUrl("href"));
+                                        lastDom = factory.getPageDom(finalTarget.absUrl("href"));
                                     }
                                 }
                                 e.onNext(finalTarget.absUrl("href"));
@@ -209,7 +209,7 @@ class ClassPresenter implements ClassContract.Presenter {
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
             public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                e.onNext(Loader.getCms(mContext).getClassPageDom(url));
+                e.onNext(Loader.getCms(mContext).getPageDom(url));
             }
         });
 
@@ -241,7 +241,7 @@ class ClassPresenter implements ClassContract.Presenter {
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
             public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                e.onNext(Loader.getCms(mContext).getFinalClassPageDom(actionURL, queryMap, needNewPage));
+                e.onNext(Loader.getCms(mContext).queryClassPageDom(actionURL, queryMap, needNewPage));
             }
         });
 

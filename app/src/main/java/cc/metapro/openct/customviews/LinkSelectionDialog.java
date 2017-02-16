@@ -133,28 +133,6 @@ public class LinkSelectionDialog extends DialogFragment {
                         mLinks = DOCUMENT.select("a");
                         addRadioOptions();
                         neutralButton.setText("点击跳转");
-                        positiveButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                for (int i = 0; i < mRadioButtons.size(); i++) {
-                                    if (mRadioButtons.get(i).isChecked()) {
-                                        Element target = mLinks.get(i);
-                                        if (Constants.TYPE_CLASS.equals(TYPE)) {
-                                            Constants.advCustomInfo.addClassUrlPattern(target.toString());
-                                        } else if (Constants.TYPE_GRADE.equals(TYPE)) {
-                                            Constants.advCustomInfo.addGradeUrlPattern(target.toString());
-                                        } else if (Constants.TYPE_BORROW.equals(TYPE)) {
-                                            Constants.advCustomInfo.addBorrowPattern(target.toString());
-                                        }
-                                        DBManger.getInstance(getActivity()).updateAdvancedCustomClassInfo(Constants.advCustomInfo);
-                                        Constants.checkAdvCustomInfo(getActivity());
-                                        mPresenter.loadTargetPage(getFragmentManager(), target.absUrl("href"));
-                                        break;
-                                    }
-                                }
-                                dismiss();
-                            }
-                        });
                         neutralButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -180,16 +158,16 @@ public class LinkSelectionDialog extends DialogFragment {
                                                 @Override
                                                 public void subscribe(ObservableEmitter<Document> e) throws Exception {
                                                     CmsFactory factory = Loader.getCms(getActivity());
-                                                    e.onNext(factory.getClassPageDom(target.absUrl("href")));
+                                                    e.onNext(factory.getPageDom(target.absUrl("href")));
                                                 }
                                             });
 
                                             Observer<Document> observer = new MyObserver<Document>(TAG) {
                                                 @Override
                                                 public void onNext(Document document) {
-                                                    ActivityUtils.dismissProgressDialog();
                                                     mLinks = document.select("a");
                                                     addRadioOptions();
+                                                    ActivityUtils.dismissProgressDialog();
                                                 }
                                             };
 
@@ -201,6 +179,28 @@ public class LinkSelectionDialog extends DialogFragment {
                                 } else if (Constants.TYPE_BORROW.equalsIgnoreCase(TYPE)) {
 //                                    LibraryFactory factory = Loader.getLibrary(getActivity());
                                 }
+                            }
+                        });
+                        positiveButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                for (int i = 0; i < mRadioButtons.size(); i++) {
+                                    if (mRadioButtons.get(i).isChecked()) {
+                                        Element target = mLinks.get(i);
+                                        if (Constants.TYPE_CLASS.equals(TYPE)) {
+                                            Constants.advCustomInfo.addClassUrlPattern(target.toString());
+                                        } else if (Constants.TYPE_GRADE.equals(TYPE)) {
+                                            Constants.advCustomInfo.addGradeUrlPattern(target.toString());
+                                        } else if (Constants.TYPE_BORROW.equals(TYPE)) {
+                                            Constants.advCustomInfo.addBorrowPattern(target.toString());
+                                        }
+                                        DBManger.getInstance(getActivity()).updateAdvancedCustomClassInfo(Constants.advCustomInfo);
+                                        Constants.checkAdvCustomInfo(getActivity());
+                                        mPresenter.loadTargetPage(getFragmentManager(), target.absUrl("href"));
+                                        break;
+                                    }
+                                }
+                                dismiss();
                             }
                         });
                     }
@@ -237,8 +237,9 @@ public class LinkSelectionDialog extends DialogFragment {
     private void addRadioOptions() {
         mRadioButtons = new ArrayList<>(mLinks.size());
         mRadioGroup.removeAllViews();
+
         for (Element link : mLinks) {
-            RadioButton button = new RadioButton(getContext());
+            RadioButton button = new RadioButton(getActivity());
             button.setText(link.text());
             button.setGravity(Gravity.CENTER);
             mRadioGroup.addView(button);

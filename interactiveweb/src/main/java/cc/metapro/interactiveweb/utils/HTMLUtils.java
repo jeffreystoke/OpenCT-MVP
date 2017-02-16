@@ -44,6 +44,10 @@ public class HTMLUtils {
         return element != null && "input".equalsIgnoreCase(element.tagName());
     }
 
+    public static boolean isFrame(Element element) {
+        return element != null && ("frame".equalsIgnoreCase(element.tagName()) || "iframe".equalsIgnoreCase(element.tagName()));
+    }
+
     public static boolean isClickable(Element element) {
         return element != null &&
                 ("button".equalsIgnoreCase(element.tagName())

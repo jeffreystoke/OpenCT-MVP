@@ -148,7 +148,7 @@ class GradePresenter implements GradeContract.Presenter {
                                         finalTarget = HTMLUtils.getElementSimilar(lastDom, Jsoup.parse(pattern).body().children().first());
                                     }
                                     if (finalTarget != null) {
-                                        lastDom = factory.getClassPageDom(finalTarget.absUrl("href"));
+                                        lastDom = factory.getPageDom(finalTarget.absUrl("href"));
                                     }
                                 }
                                 e.onNext(finalTarget.absUrl("href"));
@@ -194,7 +194,7 @@ class GradePresenter implements GradeContract.Presenter {
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
             public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                e.onNext(Loader.getCms(mContext).getGradePageDom(url));
+                e.onNext(Loader.getCms(mContext).getPageDom(url));
             }
         });
 
@@ -226,7 +226,7 @@ class GradePresenter implements GradeContract.Presenter {
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
             public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                e.onNext(Loader.getCms(mContext).getFinalGradePageDom(actionURL, queryMap, needNewPage));
+                e.onNext(Loader.getCms(mContext).queryGradePageDom(actionURL, queryMap, needNewPage));
             }
         });
 
@@ -237,9 +237,7 @@ class GradePresenter implements GradeContract.Presenter {
                 Constants.checkAdvCustomInfo(mContext);
 
                 if (TextUtils.isEmpty(Constants.advCustomInfo.GRADE_TABLE_ID)) {
-                    TableChooseDialog
-                            .newInstance(Constants.TYPE_GRADE, document, GradePresenter.this)
-                            .show(manager, "table_choose");
+                    ActivityUtils.showTableChooseDialog(manager,Constants.TYPE_GRADE, document, GradePresenter.this);
                 } else {
                     mGrades = UniversityUtils.generateInfo(
                             TableUtils.getTablesFromTargetPage(document)

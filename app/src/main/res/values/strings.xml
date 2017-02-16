@@ -211,4 +211,5 @@
     <string name="weekly_class">本周课表</string>
     <string name="weekly_class_empty">本周课表为空</string>
     <string name="clear_classes">清空课程</string>
+    <string name="advanced_custom">从网页导入</string>
 </resources>

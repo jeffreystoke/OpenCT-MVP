@@ -18,7 +18,9 @@ package cc.metapro.interactiveweb;
 
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
+import android.net.http.SslError;
 import android.os.Build;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -70,6 +72,11 @@ public class InteractiveWebViewClient extends WebViewClient {
         if (mStartCallBack != null) {
             mStartCallBack.onPageStart();
         }
+    }
+
+    @Override
+    public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+        handler.proceed();
     }
 
     @Override

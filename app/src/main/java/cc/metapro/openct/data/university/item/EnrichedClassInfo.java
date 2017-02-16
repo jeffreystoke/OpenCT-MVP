@@ -43,8 +43,8 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
 
     private String id;
     private ClassInfo mClassInfo;
-    private int dailySeq;
-    private int dayOfWeek;
+    private int dailySeq = 1;
+    private int dayOfWeek = 1;
     private int color;
 
     public EnrichedClassInfo() {
@@ -251,4 +251,5 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
             return -1;
         }
     }
+
 }

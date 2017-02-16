@@ -144,7 +144,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
                                         finalTarget = HTMLUtils.getElementSimilar(lastDom, Jsoup.parse(pattern).body().children().first());
                                     }
                                     if (finalTarget != null) {
-                                        lastDom = factory.getClassPageDom(finalTarget.absUrl("href"));
+                                        lastDom = factory.getPageDom(finalTarget.absUrl("href"));
                                     }
                                 }
 

@@ -129,15 +129,15 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
-
+        Loader.needUpdateUniversity();
         switch (TYPE) {
             case Constants.TYPE_CLASS:
             case Constants.TYPE_GRADE:
-                mURL.setText(Loader.university.cmsURL);
+                mURL.setText(Loader.getUniversity(this).cmsURL);
                 break;
             case Constants.TYPE_BORROW:
             case Constants.TYPE_SEARCH:
-                mURL.setText(Loader.university.libURL);
+                mURL.setText(Loader.getUniversity(this).libURL);
                 break;
         }
 
