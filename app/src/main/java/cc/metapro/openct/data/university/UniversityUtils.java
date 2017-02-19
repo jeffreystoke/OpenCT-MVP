@@ -26,7 +26,6 @@ import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 
 import java.lang.reflect.Constructor;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +33,8 @@ import java.util.regex.Pattern;
 
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.item.ClassInfo;
-import cc.metapro.openct.data.university.item.EnrichedClassInfo;
+import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
 
@@ -116,7 +115,7 @@ public class UniversityUtils {
                     }
                     targetTrs.add(trs.get(i));
 
-                    i+=sum;
+                    i += sum;
                 }
 
                 targetTrs.remove(0);
@@ -171,27 +170,17 @@ public class UniversityUtils {
     }
 
     @NonNull
-    public static List<EnrichedClassInfo> generateClasses(Context
-                                                                  context, List<Element> rawInfo, CmsFactory.ClassTableInfo info) {
-        List<ClassInfo> classes = new ArrayList<>(rawInfo.size());
-        List<EnrichedClassInfo> enrichedClasses = new ArrayList<>(classes.size());
+    public static Classes generateClasses(Context context, List<Element> rawInfo, CmsFactory.ClassTableInfo info) {
+        Classes enrichedClasses = new Classes();
         int[] colors = context.getResources().getIntArray(R.array.class_background);
         if (PrefHelper.getBoolean(context, R.string.pref_class_line_based)) {
-            for (Element td : rawInfo) {
-                classes.add(new ClassInfo(td.text(), info));
-            }
-            for (ClassInfo c : classes) {
-                if (!c.isEmpty()) {
-
-                    enrichedClasses.add(new EnrichedClassInfo(c));
+            for (Element c : rawInfo) {
+                if (c.hasText()) {
+                    enrichedClasses.add(new EnrichedClassInfo(c.text(), 1, info));
                 }
             }
         } else {
-            for (Element td : rawInfo) {
-                classes.add(new ClassInfo(td.text(), info));
-            }
-            int dailyClasses = classes.size() / 7;
-
+            int dailyClasses = rawInfo.size() / 7;
             for (int i = 0; i < 7; i++) {
                 int colorIndex = i;
                 if (colorIndex > colors.length) {
@@ -202,13 +191,13 @@ public class UniversityUtils {
                     if (colorIndex >= colors.length) {
                         colorIndex = 0;
                     }
-                    ClassInfo classInfo = classes.get(j * 7 + i);
-                    if (classInfo == null) {
+                    Element td = rawInfo.get(j * 7 + i);
+                    if (td == null) {
                         continue;
                     }
 
-                    if (!classInfo.isEmpty()) {
-                        enrichedClasses.add(new EnrichedClassInfo(classInfo, i + 1, j + 1, colors[colorIndex]));
+                    if (td.hasText()) {
+                        enrichedClasses.add(new EnrichedClassInfo(td.text(), i + 1, info));
                     }
                 }
             }

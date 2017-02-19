@@ -26,65 +26,50 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.item.ClassInfo;
-import cc.metapro.openct.data.university.item.EnrichedClassInfo;
+import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.university.item.classinfo.SingleClass;
 
 @Keep
 class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassViewHolder> {
 
-    private List<ClassInfo> mClasses;
+    private List<SingleClass> mTodayClasses = new ArrayList<>(0);
 
-    private Context mContext;
+    private LayoutInflater mInflater;
 
     DailyClassAdapter(Context context) {
-        mContext = context;
-        mClasses = new ArrayList<>(0);
+        mInflater = LayoutInflater.from(context);
     }
 
     @Override
     public ClassViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_class, parent, false);
+        View view = mInflater.inflate(R.layout.item_class, parent, false);
         return new ClassViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ClassViewHolder holder, int position) {
-        holder.setInfo(mClasses.get(position));
+        holder.setInfo(mTodayClasses.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return mClasses.size();
+        return mTodayClasses.size();
     }
 
-    void updateTodayClasses(List<EnrichedClassInfo> classes, int week) {
-        mClasses = new ArrayList<>(0);
-        if (classes != null && classes.size() != 0) {
-            for (EnrichedClassInfo info : classes) {
-                if (info.isToday()) {
-                    List<ClassInfo> classList = info.getAllClasses();
-                    for (ClassInfo c : classList) {
-                        if (c.hasClass(week)) {
-                            mClasses.add(c);
-                        }
-                    }
-                }
-            }
-        }
-        Collections.sort(mClasses);
+    void updateTodayClasses(Classes classes, int week) {
+        mTodayClasses = classes.getTodayClasses(week);
     }
 
     boolean hasClassToday() {
-        return mClasses != null && mClasses.size() > 0;
+        return mTodayClasses != null && mTodayClasses.size() > 0;
     }
 
-    class ClassViewHolder extends RecyclerView.ViewHolder {
+    static class ClassViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.class_name)
         TextView mClassName;
@@ -97,13 +82,22 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
             ButterKnife.bind(this, itemView);
         }
 
-        void setInfo(ClassInfo info) {
+        void setInfo(SingleClass info) {
             mClassName.setText(info.getName());
             String content = "";
-            if (!TextUtils.isEmpty(info.getTime())) content += "今天 " + info.getTime() + " 节 ";
-            if (!TextUtils.isEmpty(info.getPlace())) content += "在 " + info.getPlace();
+
+            if (!TextUtils.isEmpty(info.getTime())) {
+                content += "今天 " + info.getTime() + " 节";
+            }
+
+            if (!TextUtils.isEmpty(info.getPlace())) {
+                if (!TextUtils.isEmpty(content)) {
+                    content += ", ";
+                }
+                content += "在 " + info.getPlace();
+            }
+
             mTimePlace.setText(content);
         }
     }
-
 }

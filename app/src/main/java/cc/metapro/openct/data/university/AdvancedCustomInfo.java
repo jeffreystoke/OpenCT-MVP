@@ -36,7 +36,7 @@ public class AdvancedCustomInfo {
     public WebConfiguration mClassWebConfig;
     public WebConfiguration mGradeWebConfig;
     public WebConfiguration mBorrowWebConfig;
-//    public WebConfiguration mSearchWebConfig;
+    //    public WebConfiguration mSearchWebConfig;
     public String GRADE_TABLE_ID;
     public String BORROW_TABLE_ID;
     private List<String> mClassUrlPatterns;

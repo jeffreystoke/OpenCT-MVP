@@ -21,8 +21,7 @@ import android.content.Context;
 import java.util.List;
 
 import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.university.item.EnrichedClassInfo;
-import cc.metapro.openct.widget.DailyClassWidget;
+import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 
 class ClassDetailPresenter implements ClassDetailContract.Presenter {
 
@@ -58,21 +57,21 @@ class ClassDetailPresenter implements ClassDetailContract.Presenter {
         if (!found) {
             found = false;
             for (EnrichedClassInfo enrichedClassInfo : mEnrichedClasses) {
-                if (enrichedClassInfo.equalsCoordinate(info)) {
-                    found = true;
-                    mEnrichedClasses.remove(enrichedClassInfo);
-                    enrichedClassInfo.addClassInfo(info.getFirstClassInfo());
-                    mEnrichedClasses.add(enrichedClassInfo);
-                    break;
-                }
+//                if (enrichedClassInfo.equalsCoordinate(info)) {
+//                    found = true;
+//                    mEnrichedClasses.remove(enrichedClassInfo);
+//                    enrichedClassInfo.addClassInfo(info.getFirstClassInfo());
+//                    mEnrichedClasses.add(enrichedClassInfo);
+//                    break;
+//                }
             }
             if (!found) {
                 mEnrichedClasses.add(info);
             }
         }
 
-        DBManger manger = DBManger.getInstance(mContext);
-        manger.updateClasses(mEnrichedClasses);
-        DailyClassWidget.update(mContext);
+//        DBManger manger = DBManger.getInstance(mContext);
+//        manger.updateClasses(mEnrichedClasses);
+//        DailyClassWidget.update(mContext);
     }
 }

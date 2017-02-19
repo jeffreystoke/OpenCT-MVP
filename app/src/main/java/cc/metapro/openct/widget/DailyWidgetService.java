@@ -22,15 +22,13 @@ import android.support.annotation.Keep;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.item.ClassInfo;
-import cc.metapro.openct.data.university.item.EnrichedClassInfo;
+import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.university.item.classinfo.SingleClass;
 
 @Keep
 public class DailyWidgetService extends RemoteViewsService {
@@ -42,7 +40,7 @@ public class DailyWidgetService extends RemoteViewsService {
 
     static class WidgetFactory implements RemoteViewsFactory {
 
-        private static List<ClassInfo> mDailyClasses;
+        private static List<SingleClass> mDailyClasses;
         private Context mContext;
 
         WidgetFactory(Context context, Intent intent) {
@@ -57,21 +55,8 @@ public class DailyWidgetService extends RemoteViewsService {
         public void onDataSetChanged() {
             DBManger manger = DBManger.getInstance(mContext);
             int week = Loader.getCurrentWeek(mContext);
-            List<EnrichedClassInfo> allClasses = manger.getClasses();
-            mDailyClasses = new ArrayList<>(0);
-            if (allClasses.size() != 0) {
-                for (EnrichedClassInfo info : allClasses) {
-                    if (info.isToday()) {
-                        List<ClassInfo> classes = info.getAllClasses();
-                        for (ClassInfo c : classes) {
-                            if (c.hasClass(week)) {
-                                mDailyClasses.add(c);
-                            }
-                        }
-                    }
-                }
-            }
-            Collections.sort(mDailyClasses);
+            Classes allClasses = manger.getClasses();
+            mDailyClasses = allClasses.getTodayClasses(week);
         }
 
         @Override
@@ -89,7 +74,7 @@ public class DailyWidgetService extends RemoteViewsService {
                 return null;
             }
             RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_list);
-            ClassInfo classInfo = mDailyClasses.get(i);
+            SingleClass classInfo = mDailyClasses.get(i);
 
             views.setTextViewText(R.id.widget_class_name, classInfo.getName());
             views.setTextViewText(R.id.widget_class_place, classInfo.getTime() + " 节 在 " + classInfo.getPlace());

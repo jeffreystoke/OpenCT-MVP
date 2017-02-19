@@ -21,7 +21,6 @@ import android.support.annotation.Keep;
 
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
-import cc.metapro.openct.data.university.UniversityInfo;
 
 @Keep
 public final class Constants {
@@ -54,7 +53,7 @@ public final class Constants {
     public static final String URP = "urp";
     // 汇文
     public static final String NJHUIWEN = "njhuiwen";
-    public static AdvancedCustomInfo advCustomInfo;
+
     // map keys
     public static String ACTION_KEY;
     public static String USERNAME_KEY;
@@ -65,6 +64,8 @@ public final class Constants {
     public static String CAPTCHA_FILE;
     public static int CLASS_WIDTH = 0;
     public static int CLASS_BASE_HEIGHT = 0;
+
+    public static AdvancedCustomInfo advCustomInfo;
 
     public static void checkAdvCustomInfo(Context context) {
         advCustomInfo = DBManger.getAdvancedCustomInfo(context);

@@ -42,6 +42,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,10 +53,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.BorrowActivity;
-import cc.metapro.openct.classdetail.ClassDetailActivity;
 import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.item.EnrichedClassInfo;
+import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.grades.GradeActivity;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
@@ -127,21 +128,21 @@ public class ClassActivity extends AppCompatActivity
         }
     }
 
-    private void addContentView(ViewGroup content, List<EnrichedClassInfo> classes, int thisWeek) {
+    private void addContentView(GridLayout content, List<EnrichedClassInfo> classes, int thisWeek) {
         if (content == null) return;
         content.removeAllViews();
         for (EnrichedClassInfo info : classes) {
-            info.addViewTo(content, this, thisWeek);
+            info.addViewTo(content, getLayoutInflater(), thisWeek);
         }
     }
 
     @Override
-    public void updateClasses(@NonNull List<EnrichedClassInfo> classes) {
+    public void updateClasses(@NonNull Classes classes) {
         int week = Loader.getCurrentWeek(this);
         // 更新学期课表视图
         View view = mClassPagerAdapter.getSemClassView();
         ViewGroup seq = (ViewGroup) view.findViewById(R.id.seq);
-        ViewGroup con = (ViewGroup) view.findViewById(R.id.content);
+        GridLayout con = (GridLayout) view.findViewById(R.id.content);
         if (!classes.isEmpty()) {
             addSeqViews(seq);
             addContentView(con, classes, -1);
@@ -155,7 +156,7 @@ public class ClassActivity extends AppCompatActivity
         mClassPagerAdapter.notifyDataSetChanged();
         view = mClassPagerAdapter.getWeekClassView();
         seq = (ViewGroup) view.findViewById(R.id.seq);
-        con = (ViewGroup) view.findViewById(R.id.content);
+        con = (GridLayout) view.findViewById(R.id.content);
         if (!classes.isEmpty()) {
             addSeqViews(seq);
             addContentView(con, classes, week);
@@ -238,7 +239,7 @@ public class ClassActivity extends AppCompatActivity
                 mPresenter.exportClasses();
             }
         } else if (id == R.id.add_class) {
-            ClassDetailActivity.actionStart(this, new EnrichedClassInfo());
+//            ClassDetailActivity.actionStart(this, new EnrichedClassInfo());
         } else if (id == R.id.clear_classes) {
             mPresenter.clearClasses();
         } else if (id == R.id.custom) {

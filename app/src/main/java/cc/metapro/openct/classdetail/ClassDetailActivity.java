@@ -19,15 +19,12 @@ package cc.metapro.openct.classdetail;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
@@ -41,8 +38,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.item.ClassInfo;
-import cc.metapro.openct.data.university.item.EnrichedClassInfo;
+import cc.metapro.openct.data.university.item.classinfo.ClassInfo;
+import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
 public class ClassDetailActivity extends AppCompatActivity implements ClassDetailContract.View {
@@ -97,7 +94,7 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
         if (editEnabled) {
             editEnabled = false;
             mFab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_edit));
-            mInfo.setDayOfWeek(mDayOfWeekSpinner.getSelectedItemPosition() + 1);
+//            mInfo.setDayOfWeek(mDayOfWeekSpinner.getSelectedItemPosition() + 1);
             mDayOfWeekSpinner.setEnabled(false);
             mDetailAdapter.disableEdit();
             classInfoModified();
@@ -126,7 +123,7 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
         mCollapsingToolbarLayout.setContentScrimColor(mInfo.getColor());
         mDetailAdapter = new ClassDetailAdapter(this, mInfo);
         if (!mDetailAdapter.isAddClass()) {
-            mDayOfWeekSpinner.setSelection(mInfo.getDayOfWeek() - 1, true);
+//            mDayOfWeekSpinner.setSelection(mInfo.getDayOfWeek() - 1, true);
             mDayOfWeekSpinner.setEnabled(false);
         } else {
             toggleEnable();
@@ -137,7 +134,7 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
 
     void classInfoModified() {
         ClassInfo info = mDetailAdapter.getResultClass();
-        mInfo.setClassInfo(info);
+//        mInfo.setClassInfo(info);
         mPresenter.storeClassInfo(mInfo);
     }
 
@@ -156,21 +153,21 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
                 mDetailAdapter.removeItem(position);
                 mDetailAdapter.notifyDataSetChanged();
                 classInfoModified();
-                Snackbar.make(mRecyclerView, toDel.getName() + " 已删除", BaseTransientBottomBar.LENGTH_INDEFINITE)
-                        .setAction(R.string.cancel, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mDetailAdapter.addItem(position, toDel);
-                                mDetailAdapter.notifyDataSetChanged();
-                                mRecyclerView.smoothScrollToPosition(position);
-                                mRecyclerView.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        classInfoModified();
-                                    }
-                                }, 500);
-                            }
-                        }).show();
+//                Snackbar.make(mRecyclerView, toDel.getName() + " 已删除", BaseTransientBottomBar.LENGTH_INDEFINITE)
+//                        .setAction(R.string.cancel, new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                mDetailAdapter.addItem(position, toDel);
+//                                mDetailAdapter.notifyDataSetChanged();
+//                                mRecyclerView.smoothScrollToPosition(position);
+//                                mRecyclerView.postDelayed(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        classInfoModified();
+//                                    }
+//                                }, 500);
+//                            }
+//                        }).show();
             }
         });
     }

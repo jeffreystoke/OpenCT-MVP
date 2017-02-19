@@ -38,4 +38,27 @@ public final class DateHelper {
         now.set(Calendar.DATE, now.get(Calendar.DATE) + day);
         return now.getTime();
     }
+
+    public static int weekDayTrans(int i) {
+        if (i > 0 && i < 8) {
+            switch (i) {
+                case 1:
+                    return Calendar.MONDAY;
+                case 2:
+                    return Calendar.TUESDAY;
+                case 3:
+                    return Calendar.WEDNESDAY;
+                case 4:
+                    return Calendar.THURSDAY;
+                case 5:
+                    return Calendar.FRIDAY;
+                case 6:
+                    return Calendar.SATURDAY;
+                case 7:
+                    return Calendar.SUNDAY;
+            }
+        }
+        return -1;
+    }
+
 }

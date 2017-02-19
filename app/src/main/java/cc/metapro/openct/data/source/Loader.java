@@ -17,8 +17,6 @@ package cc.metapro.openct.data.source;
  */
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,10 +40,8 @@ import cc.metapro.openct.utils.PrefHelper;
 @Keep
 public class Loader {
     private static final String TAG = Loader.class.getSimpleName();
-
-    private static boolean needUpdateUniversity;
-
     public static UniversityInfo university;
+    private static boolean needUpdateUniversity;
 
     public static void needUpdateUniversity() {
         needUpdateUniversity = true;
@@ -113,8 +109,7 @@ public class Loader {
     }
 
     public static int getCurrentWeek(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return Integer.parseInt(preferences.getString(context.getString(R.string.pref_current_week), "1"));
+        return Integer.parseInt(PrefHelper.getString(context, R.string.pref_current_week, "1"));
     }
 
     @Nullable

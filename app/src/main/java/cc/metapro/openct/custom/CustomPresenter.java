@@ -20,8 +20,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
 import android.widget.Toast;
 
 import org.jsoup.nodes.Element;
@@ -40,8 +38,8 @@ import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.BorrowInfo;
-import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
+import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.MyObserver;

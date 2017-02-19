@@ -41,7 +41,7 @@ public class TableUtils {
                     id = table.attr("class");
                 }
             }
-            if (result.get(id) == null){
+            if (result.get(id) == null) {
                 result.put(id, table);
             }
         }

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cc.metapro.openct.data.university.item.ClassInfo;
+import cc.metapro.openct.data.university.item.classinfo.ClassInfo;
 
 @Keep
 public final class REHelper {

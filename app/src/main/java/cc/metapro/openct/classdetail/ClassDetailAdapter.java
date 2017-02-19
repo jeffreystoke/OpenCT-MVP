@@ -16,7 +16,6 @@ package cc.metapro.openct.classdetail;
  * limitations under the License.
  */
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
@@ -42,8 +41,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.item.ClassInfo;
-import cc.metapro.openct.data.university.item.EnrichedClassInfo;
+import cc.metapro.openct.data.university.item.classinfo.ClassInfo;
+import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.REHelper;
 
 class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDetailViewHolder> {
@@ -57,11 +56,11 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
     ClassDetailAdapter(ClassDetailActivity context, EnrichedClassInfo info) {
         mInflater = LayoutInflater.from(context);
         mInflater.getContext();
-        mClasses = info.getAllClasses();
+//        mClasses = info.getAllClasses();
         mContext = context;
         addClass = false;
         if (mClasses.isEmpty()) {
-            mClasses.add(new ClassInfo());
+//            mClasses.add(new ClassInfo());
             addClass = true;
         }
         mViewHolders = new SparseArray<>(mClasses.size());
@@ -98,23 +97,24 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
 
     @Nullable
     ClassInfo getResultClass() {
-        ClassInfo result = null;
-        ClassInfo tmp = null;
-        for (int i = 0; i < mViewHolders.size(); i++) {
-            if (i == 0) {
-                result = mViewHolders.valueAt(i).getClassInfo();
-                tmp = result;
-            } else {
-                ClassDetailViewHolder viewHolder = mViewHolders.valueAt(i);
-                if (viewHolder != null) {
-                    if (tmp != null) {
-                        tmp.setSubClassInfo(viewHolder.getClassInfo());
-                        tmp = tmp.getSubClassInfo();
-                    }
-                }
-            }
-        }
-        return result;
+//        ClassInfo result = null;
+//        ClassInfo tmp = null;
+//        for (int i = 0; i < mViewHolders.size(); i++) {
+//            if (i == 0) {
+//                result = mViewHolders.valueAt(i).getClassInfo();
+//                tmp = result;
+//            } else {
+//                ClassDetailViewHolder viewHolder = mViewHolders.valueAt(i);
+//                if (viewHolder != null) {
+//                    if (tmp != null) {
+//                        tmp.setSubClassInfo(viewHolder.getClassInfo());
+//                        tmp = tmp.getSubClassInfo();
+//                    }
+//                }
+//            }
+//        }
+//        return result;
+        return null;
     }
 
     @Override
@@ -125,7 +125,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
 
     @Override
     public void onBindViewHolder(ClassDetailViewHolder holder, int position) {
-        holder.setInfo(mClasses.get(position));
+//        holder.setInfo(mClasses.get(position));
         mViewHolders.put(position, holder);
     }
 
@@ -171,35 +171,34 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
             addDuringEditor(-1, -1);
         }
 
-        void setInfo(@NonNull ClassInfo info) {
-            id = info.getId();
-            if (!addClass) {
-                mName.setText(info.getName());
-                mType.setText(info.getType());
-                mTeacher.setText(info.getTeacher());
-
-                int[] timeStartEnd = REHelper.getStartEnd(info.getTime());
-                mTimeStart.setText(timeStartEnd[0] + "");
-                mTimeEnd.setText(timeStartEnd[1] + "");
-                List<int[]> duringStartEnd = REHelper.getAllStartEnd(info.getDuring());
-                for (int[] startEnd : duringStartEnd) {
-                    addDuringEditor(startEnd[0], startEnd[1]);
-                }
-                mClassPlace.setText(info.getPlace());
-
-                if (info.isEvenWeek()) {
-                    mEvenRadio.setChecked(true);
-                } else if (info.isOddWeek()) {
-                    mOddRadio.setChecked(true);
-                } else {
-                    mCommonRadio.setChecked(true);
-                }
-
-                disableEdit();
-            } else {
-                addDuringEditor(0, 0);
-            }
-        }
+//        void setInfo(@NonNull ClassInfo info) {
+//            if (!addClass) {
+//                mName.setText(info.getName());
+//                mType.setText(info.getType());
+//                mTeacher.setText(info.getTeacher());
+//
+//                int[] timeStartEnd = REHelper.getStartEnd(info.getTime());
+//                mTimeStart.setText(timeStartEnd[0] + "");
+//                mTimeEnd.setText(timeStartEnd[1] + "");
+//                List<int[]> duringStartEnd = REHelper.getAllStartEnd(info.getDuring());
+//                for (int[] startEnd : duringStartEnd) {
+//                    addDuringEditor(startEnd[0], startEnd[1]);
+//                }
+//                mClassPlace.setText(info.getPlace());
+//
+//                if (info.isEvenWeek()) {
+//                    mEvenRadio.setChecked(true);
+//                } else if (info.isOddWeek()) {
+//                    mOddRadio.setChecked(true);
+//                } else {
+//                    mCommonRadio.setChecked(true);
+//                }
+//
+//                disableEdit();
+//            } else {
+//                addDuringEditor(0, 0);
+//            }
+//        }
 
         void enableEdit() {
             mName.setEnabled(true);
@@ -244,7 +243,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
             for (MaterialEditText start : mDuringMap.keySet()) {
                 MaterialEditText end = mDuringMap.get(start);
                 if (!TextUtils.isEmpty(during)) {
-                    during += ClassInfo.DURING_SEP;
+//                    during += ClassInfo.DURING_SEP;
                 }
                 during += start.getText().toString() + " - " + end.getText().toString();
             }
@@ -254,7 +253,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                 String type = mType.getText().toString();
                 String teacher = mTeacher.getText().toString();
                 String place = mClassPlace.getText().toString();
-                return new ClassInfo(id, name, type, time, during, teacher, place, mOddRadio.isChecked(), mEvenRadio.isChecked());
+//                return new ClassInfo(name, type, teacher, place);
             } else {
                 Toast.makeText(mName.getContext(), "请输入课程名称, 上课时间, 课程周期\n(这些都很重要)", Toast.LENGTH_LONG).show();
             }

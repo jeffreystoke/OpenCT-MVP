@@ -35,7 +35,6 @@ import java.util.Map;
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.FormDialog;
-import cc.metapro.openct.customviews.TableChooseDialog;
 import cc.metapro.openct.data.openctservice.ServiceGenerator;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
@@ -237,7 +236,7 @@ class GradePresenter implements GradeContract.Presenter {
                 Constants.checkAdvCustomInfo(mContext);
 
                 if (TextUtils.isEmpty(Constants.advCustomInfo.GRADE_TABLE_ID)) {
-                    ActivityUtils.showTableChooseDialog(manager,Constants.TYPE_GRADE, document, GradePresenter.this);
+                    ActivityUtils.showTableChooseDialog(manager, Constants.TYPE_GRADE, document, GradePresenter.this);
                 } else {
                     mGrades = UniversityUtils.generateInfo(
                             TableUtils.getTablesFromTargetPage(document)

@@ -33,8 +33,9 @@ import cc.metapro.openct.data.university.AdvancedCustomInfo;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.data.university.item.BorrowInfo;
-import cc.metapro.openct.data.university.item.EnrichedClassInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
+import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.PrefHelper;
 
 @Keep
@@ -203,7 +204,7 @@ public class DBManger {
                     if (!TextUtils.isEmpty(target)) {
                         mDatabase.execSQL(
                                 "INSERT INTO " + DBHelper.CLASS_TABLE + " VALUES(?, ?)",
-                                new Object[]{c.getId(), target}
+                                new Object[]{c.getName(), target}
                         );
                     }
                 }
@@ -215,20 +216,20 @@ public class DBManger {
     }
 
     @NonNull
-    public List<EnrichedClassInfo> getClasses() {
+    public Classes getClasses() {
         Cursor cursor = null;
         try {
             cursor = mDatabase.query(DBHelper.CLASS_TABLE, null, null, null, null, null, null);
             cursor.moveToFirst();
-            List<EnrichedClassInfo> grades = new ArrayList<>();
+            Classes classes = new Classes();
             while (!cursor.isAfterLast()) {
-                grades.add(StoreHelper.fromJson(cursor.getString(1), EnrichedClassInfo.class));
+                classes.add(StoreHelper.fromJson(cursor.getString(1), EnrichedClassInfo.class));
                 cursor.moveToNext();
             }
-            return grades;
+            return classes;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
-            return new ArrayList<>(0);
+            return new Classes();
         } finally {
             if (cursor != null) {
                 cursor.close();

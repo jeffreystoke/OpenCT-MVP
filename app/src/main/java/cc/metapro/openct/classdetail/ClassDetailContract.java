@@ -18,7 +18,7 @@ package cc.metapro.openct.classdetail;
 
 import cc.metapro.openct.BasePresenter;
 import cc.metapro.openct.BaseView;
-import cc.metapro.openct.data.university.item.EnrichedClassInfo;
+import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 
 interface ClassDetailContract {
 

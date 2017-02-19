@@ -48,10 +48,9 @@ import retrofit2.Response;
 public abstract class UniversityFactory {
 
     private static final String LOGIN_SUCCESS_PATTERN = "(当前)|(个人)";
-
-    private static WebHelper webHelper;
     static UniversityService mService;
     static String SYS;
+    private static WebHelper webHelper;
     private static SchoolInterceptor interceptor;
     private static String BASE_URL;
 

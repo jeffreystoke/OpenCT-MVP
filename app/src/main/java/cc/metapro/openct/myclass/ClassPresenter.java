@@ -48,10 +48,11 @@ import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.UniversityUtils;
-import cc.metapro.openct.data.university.item.ClassInfo;
-import cc.metapro.openct.data.university.item.EnrichedClassInfo;
+import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.ICalHelper;
 import cc.metapro.openct.utils.MyObserver;
 import cc.metapro.openct.utils.webutils.TableUtils;
 import cc.metapro.openct.widget.DailyClassWidget;
@@ -68,7 +69,7 @@ class ClassPresenter implements ClassContract.Presenter {
 
     private final String TAG = ClassPresenter.class.getSimpleName();
     private ClassContract.View mView;
-    private List<EnrichedClassInfo> mEnrichedClasses;
+    private Classes mEnrichedClasses;
     private Context mContext;
     private DBManger mDBManger;
 
@@ -284,16 +285,16 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public void loadLocalClasses() {
-        Observable<List<EnrichedClassInfo>> observable = Observable.create(new ObservableOnSubscribe<List<EnrichedClassInfo>>() {
+        Observable<Classes> observable = Observable.create(new ObservableOnSubscribe<Classes>() {
             @Override
-            public void subscribe(ObservableEmitter<List<EnrichedClassInfo>> e) throws Exception {
+            public void subscribe(ObservableEmitter<Classes> e) throws Exception {
                 e.onNext(mDBManger.getClasses());
             }
         });
 
-        Observer<List<EnrichedClassInfo>> observer = new MyObserver<List<EnrichedClassInfo>>(TAG) {
+        Observer<Classes> observer = new MyObserver<Classes>(TAG) {
             @Override
-            public void onNext(List<EnrichedClassInfo> enrichedClasses) {
+            public void onNext(Classes enrichedClasses) {
                 mEnrichedClasses = enrichedClasses;
                 mView.updateClasses(mEnrichedClasses);
             }
@@ -335,12 +336,11 @@ class ClassPresenter implements ClassContract.Presenter {
                     calendar.getProperties().add(Version.VERSION_2_0);
                     calendar.getProperties().add(CalScale.GREGORIAN);
                     for (EnrichedClassInfo c : mEnrichedClasses) {
-                        List<ClassInfo> classes = c.getAllClasses();
-                        for (ClassInfo classInfo : classes) {
-                            VEvent event = classInfo.getEvent(week, c.getWeekDay());
-                            if (event != null) {
-                                calendar.getComponents().add(event);
-                            }
+                        try {
+                            List<VEvent> events = ICalHelper.getClassEvents(mContext, week, c);
+                            calendar.getComponents().addAll(events);
+                        } catch (Exception ignored) {
+
                         }
                     }
                     calendar.validate();
