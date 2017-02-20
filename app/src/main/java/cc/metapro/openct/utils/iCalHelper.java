@@ -16,8 +16,8 @@ package cc.metapro.openct.utils;
  * limitations under the License.
  */
 
-import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.SparseArray;
 
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.ParameterFactoryImpl;
@@ -38,42 +38,34 @@ import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import cc.metapro.openct.data.university.item.classinfo.ClassDuring;
-import cc.metapro.openct.data.university.item.classinfo.ClassInfo;
 import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 
 public class ICalHelper {
 
     @NonNull
-    public static List<VEvent> getClassEvents(Context context, int week, EnrichedClassInfo info) throws URISyntaxException, SocketException {
+    public static List<VEvent> getClassEvents(SparseArray<Calendar> classTimeMap, int week, EnrichedClassInfo info) throws URISyntaxException, SocketException {
         List<VEvent> result = new ArrayList<>();
-        Map<ClassTime, List<ClassDuring>> map = info.getTimeMap();
-        for (ClassTime time : map.keySet()) {
-            VEvent event = getClassEvent(context, info.getClassInfo(), time, map.get(time), week);
-            if (event != null) {
-                result.add(event);
+        for (ClassTime time : info.getTimeSet()) {
+            for (ClassDuring during : time.getDuringSet()) {
+                VEvent event = getClassEvent(classTimeMap, info, time, during, week);
+                if (event != null) {
+                    result.add(event);
+                }
             }
         }
 
         return result;
     }
 
-    private static VEvent getClassEvent(Context context, ClassInfo info, ClassTime time, List<ClassDuring> duringList, int week) throws URISyntaxException, SocketException {
+    private static VEvent getClassEvent(SparseArray<Calendar> classTimeMap, EnrichedClassInfo info, ClassTime time, ClassDuring during, int week) throws URISyntaxException, SocketException {
         Calendar now = Calendar.getInstance();
-        List<Integer> lastWeeks = new ArrayList<>();
-        List<Integer> firstWeeks = new ArrayList<>();
-        for (ClassDuring during : duringList) {
-            lastWeeks.add(during.getLastWeek());
-            firstWeeks.add(during.getFirstWeek());
-        }
 
-        int endWeek = Collections.max(lastWeeks);
-        int startWeek = Collections.min(firstWeeks);
+        int endWeek = during.getEndWeek();
+        int startWeek = during.getStartWeek();
 
         int dayAfter = (now.get(Calendar.WEEK_OF_YEAR) + endWeek - week - 1) * 7;
         int dayBefore = Math.abs((now.get(Calendar.WEEK_OF_YEAR) + startWeek - week - 1) * 7);
@@ -83,18 +75,21 @@ public class ICalHelper {
         recur.setInterval(1);
         RRule rule = new RRule(recur);
 
+        Calendar startTime = classTimeMap.get(time.getDailySeq());
+        Calendar endTime = classTimeMap.get(time.getDailySeq() + time.getLength());
+
         Calendar dailyStart = Calendar.getInstance();
         dailyStart.setTime(DateHelper.getDateBefore(now.getTime(), dayBefore));
-        dailyStart.set(Calendar.HOUR_OF_DAY, 8);
-        dailyStart.set(Calendar.MINUTE, 0);
-        dailyStart.set(Calendar.DAY_OF_WEEK, time.getWeekDay());
+        dailyStart.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+        dailyStart.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+        dailyStart.set(Calendar.DAY_OF_WEEK, DateHelper.weekDayTrans(time.getWeekDay()));
         DateTime start = new DateTime(dailyStart.getTime());
 
         Calendar dailyEnd = Calendar.getInstance();
         dailyEnd.setTime(DateHelper.getDateBefore(now.getTime(), dayBefore));
-        dailyEnd.set(Calendar.HOUR_OF_DAY, 17);
-        dailyEnd.set(Calendar.MINUTE, 0);
-        dailyEnd.set(Calendar.DAY_OF_WEEK, time.getWeekDay());
+        dailyEnd.set(Calendar.HOUR_OF_DAY, endTime.get(Calendar.HOUR_OF_DAY));
+        dailyEnd.set(Calendar.MINUTE, endTime.get(Calendar.MINUTE));
+        dailyEnd.set(Calendar.DAY_OF_WEEK, DateHelper.weekDayTrans(time.getWeekDay()));
         DateTime end = new DateTime(dailyEnd.getTime());
 
         ParameterList paraList = new ParameterList();
@@ -110,11 +105,12 @@ public class ICalHelper {
 
         // set event
         event.getProperties().add(new Uid(new UidGenerator("OPENCT").generateUid().getValue()));
-        event.getProperties().add(new Location(info.getPlace()));
+        event.getProperties().add(new Location(time.getPlace()));
 
         event.getProperties().add(new Description(time.getTime() + " 节"));
         event.getProperties().add(rdate);
         event.getProperties().add(rule);
         return event;
     }
+
 }

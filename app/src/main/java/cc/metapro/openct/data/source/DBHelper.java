@@ -51,7 +51,7 @@ class DBHelper extends SQLiteOpenHelper {
         put(CUSTOM_TABLE, "(id INTEGER PRIMARY KEY AUTOINCREMENT, " + JSON + " TEXT)");
     }};
 
-    private static final int DB_VERSION = 72;
+    private static final int DB_VERSION = 80;
 
     private Context mContext;
 

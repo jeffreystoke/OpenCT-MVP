@@ -22,10 +22,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseArray;
 
 import com.scottyab.aescrypt.AESCrypt;
 
+import net.fortuna.ical4j.data.CalendarParser;
+import net.fortuna.ical4j.data.CalendarParserImpl;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -158,4 +166,20 @@ public class Loader {
         }
     }
 
+    public static SparseArray<Calendar> getClassTime(Context context) {
+        int size = Integer.parseInt(PrefHelper.getString(context, R.string.pref_daily_class_count, "12"));
+        SparseArray<Calendar> result = new SparseArray<>(size);
+        for (int i = 0; i < size; i++) {
+            DateFormat format = DateFormat.getDateInstance();
+            try {
+                Date date = format.parse(PrefHelper.getString(context, "class_time_" + i, ""));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                result.put(i, calendar);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
 }

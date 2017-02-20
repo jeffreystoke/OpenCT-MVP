@@ -38,7 +38,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.item.classinfo.ClassInfo;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
@@ -133,7 +132,7 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
     }
 
     void classInfoModified() {
-        ClassInfo info = mDetailAdapter.getResultClass();
+//        ClassInfo info = mDetailAdapter.getResultClass();
 //        mInfo.setClassInfo(info);
         mPresenter.storeClassInfo(mInfo);
     }
@@ -149,10 +148,10 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
 
             @Override
             public void onItemDismiss(final int position) {
-                final ClassInfo toDel = mDetailAdapter.getItem(position);
-                mDetailAdapter.removeItem(position);
-                mDetailAdapter.notifyDataSetChanged();
-                classInfoModified();
+//                final ClassInfo toDel = mDetailAdapter.getItem(position);
+//                mDetailAdapter.removeItem(position);
+//                mDetailAdapter.notifyDataSetChanged();
+//                classInfoModified();
 //                Snackbar.make(mRecyclerView, toDel.getName() + " 已删除", BaseTransientBottomBar.LENGTH_INDEFINITE)
 //                        .setAction(R.string.cancel, new View.OnClickListener() {
 //                            @Override

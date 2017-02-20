@@ -16,8 +16,6 @@ package cc.metapro.openct.data.university;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
-
 import java.util.Map;
 
 import okhttp3.ResponseBody;
@@ -30,12 +28,7 @@ import retrofit2.http.QueryMap;
 import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
-@Keep
-public interface UniversityService {
-
-    @POST
-    @FormUrlEncoded
-    Call<String> login(@Url String url, @FieldMap Map<String, String> loginMap);
+interface UniversityService {
 
     @POST
     @FormUrlEncoded

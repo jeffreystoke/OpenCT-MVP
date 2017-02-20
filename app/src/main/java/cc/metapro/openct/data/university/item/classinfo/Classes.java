@@ -21,27 +21,34 @@ import android.support.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+
+import cc.metapro.openct.utils.REHelper;
 
 
 public class Classes extends ArrayList<EnrichedClassInfo> {
 
     @Override
     public boolean add(EnrichedClassInfo classInfo) {
+        if (REHelper.isEmpty(classInfo.getName()))
+            return false;
         EnrichedClassInfo targetInfo = null;
+
         for (EnrichedClassInfo c : this) {
             if (c.equals(classInfo)) {
                 targetInfo = c;
                 break;
             }
         }
+
         if (targetInfo != null) {
-            remove(targetInfo);
+            super.remove(targetInfo);
             targetInfo.combine(classInfo);
             super.add(targetInfo);
         } else {
             super.add(classInfo);
         }
-        return super.add(classInfo);
+        return true;
     }
 
     @Override
@@ -53,13 +60,12 @@ public class Classes extends ArrayList<EnrichedClassInfo> {
     public List<SingleClass> getTodayClasses(int week) {
         List<SingleClass> todayClasses = new ArrayList<>();
         for (EnrichedClassInfo info : this) {
-            List<ClassTime> timeList = info.hasClassToday(week);
+            Set<ClassTime> timeList = info.hasClassToday(week);
             if (!timeList.isEmpty()) {
                 for (ClassTime time : timeList) {
-                    ClassInfo classInfo = info.getTimeMap().get(time);
-                    String place = classInfo.getPlace();
-                    String teacher = classInfo.getTeacher();
-                    todayClasses.add(new SingleClass(info.getName(), info.getType(), time, place, teacher));
+                    String place = time.getPlace();
+                    String teacher = time.getTeacher();
+                    todayClasses.add(new SingleClass(info.getName(), info.getType(), time, place, teacher, info.getColor()));
                 }
             }
         }
@@ -69,19 +75,32 @@ public class Classes extends ArrayList<EnrichedClassInfo> {
 
     @NonNull
     public List<SingleClass> getWeekClasses(int week) {
-        List<SingleClass> todayClasses = new ArrayList<>();
+        List<SingleClass> weekClasses = new ArrayList<>();
         for (EnrichedClassInfo info : this) {
-            List<ClassTime> timeList = info.hasClassThisWeek(week);
+            Set<ClassTime> timeList = info.hasClassThisWeek(week);
             if (!timeList.isEmpty()) {
                 for (ClassTime time : timeList) {
-                    ClassInfo classInfo = info.getTimeMap().get(time);
-                    String place = classInfo.getPlace();
-                    String teacher = classInfo.getTeacher();
-                    todayClasses.add(new SingleClass(info.getName(), info.getType(), time, place, teacher));
+                    String place = time.getPlace();
+                    String teacher = time.getTeacher();
+                    weekClasses.add(new SingleClass(info.getName(), info.getType(), time, place, teacher, info.getColor()));
                 }
             }
         }
-        Collections.sort(todayClasses);
+        return weekClasses;
+    }
+
+    public List<SingleClass> getAllClasses() {
+        List<SingleClass> todayClasses = new ArrayList<>();
+        for (EnrichedClassInfo info : this) {
+            Set<ClassTime> timeList = info.getTimeSet();
+            if (!timeList.isEmpty()) {
+                for (ClassTime time : timeList) {
+                    String place = time.getPlace();
+                    String teacher = time.getTeacher();
+                    todayClasses.add(new SingleClass(info.getName(), info.getType(), time, place, teacher, info.getColor()));
+                }
+            }
+        }
         return todayClasses;
     }
 }

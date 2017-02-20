@@ -76,8 +76,20 @@
                 android:singleLine="true"
                 android:title="@string/password"/>
         </PreferenceScreen>
+        <!--课程设置-->
         <PreferenceScreen
-            android:summary="设置校园信息表格的解析"
+            android:key="@string/pref_class_settings"
+            android:title="课程设置"
+            android:summary="设定每日课程数以及每节课的时间, 显示课程信息以及导出到 iCal 文件时将会使用这些信息">
+            <EditTextPreference
+                android:title="每日课程数"
+                android:key="@string/pref_daily_class_count"
+                android:defaultValue="12"
+                android:inputType="numberDecimal"/>
+        </PreferenceScreen>
+        <!--表格设置-->
+        <PreferenceScreen
+            android:summary="设置校园表格的相关信息, 用于解析课表"
             android:title="表格设置">
             <CheckBoxPreference
                 android:defaultValue="false"
@@ -111,7 +123,7 @@
                     android:title="上课地点"/>
             </PreferenceCategory>
         </PreferenceScreen>
-        <!--基础自定义-->
+        <!--自定义-->
         <PreferenceScreen
             android:summary="@string/tip_not_exist"
             android:title="@string/custom">

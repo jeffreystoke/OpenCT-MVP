@@ -152,4 +152,8 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+
+    <string name="pref_class_settings">class_settings</string>
+    <!--一天几节课-->
+    <string name="pref_daily_class_count">daily_class_count</string>
 </resources>

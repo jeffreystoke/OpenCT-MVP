@@ -17,53 +17,49 @@ package cc.metapro.openct.data.university.item.classinfo;
  */
 
 import android.graphics.Color;
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
+import android.support.v4.util.ArraySet;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.GridLayout;
-import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import cc.metapro.interactiveweb.utils.HTMLUtils;
-import cc.metapro.openct.R;
-import cc.metapro.openct.classdetail.ClassDetailActivity;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.utils.ClassInfoHelper;
-import cc.metapro.openct.utils.Constants;
 
 /**
  * One EnrichedClassInfo Object has one ClassInfo Object
  */
-@Keep
 public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
 
     private String name;
 
     private String type;
 
-    private Map<ClassTime, ClassInfo> mTimeMap = new HashMap<>();
+    private Set<ClassTime> mTimeSet = new ArraySet<>();
 
     private int color = Color.parseColor("#968bc34a");
 
-    public EnrichedClassInfo(String content, int weekday, CmsFactory.ClassTableInfo info) {
+    /**
+     * only one class info content should be there
+     *
+     * @param content string class info content
+     * @param weekday day of week
+     * @param info    cms class table for class info generation
+     * @param color   color of background, same classes share the same color
+     */
+    public EnrichedClassInfo(String content, int weekday, int dailySeq, int color, CmsFactory.ClassTableInfo info) {
+        this(content, weekday, dailySeq, info);
+        this.color = color;
+    }
+
+    public EnrichedClassInfo(String content, int weekday, int dailySeq, CmsFactory.ClassTableInfo info) {
         String[] tmp = content.split(HTMLUtils.BR_REPLACER);
         name = ClassInfoHelper.infoParser(info.mNameIndex, info.mNameRE, tmp);
         type = ClassInfoHelper.infoParser(info.mTypeIndex, info.mTypeRE, tmp);
-
-        ClassTime time = new ClassTime(tmp[info.mTimeIndex], weekday);
-        ClassInfo classInfo = new ClassInfo(content, info);
-        mTimeMap.put(time, classInfo);
+        mTimeSet.add(new ClassTime(weekday, dailySeq, tmp, info));
     }
 
     public String getName() {
@@ -90,14 +86,19 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
         this.color = color;
     }
 
+    /**
+     * judge whether this class is on schedule in this week
+     *
+     * @param week current week or selected week
+     * @return time when has class this week
+     */
     @NonNull
-    public List<ClassTime> hasClassThisWeek(int week) {
-        List<ClassTime> result = new ArrayList<>();
-        for (ClassTime time : mTimeMap.keySet()) {
-            ClassInfo info = mTimeMap.get(time);
-            Set<ClassDuring> duringList = info.getDuringSet();
-            if (duringList != null) {
-                for (ClassDuring during : duringList) {
+    Set<ClassTime> hasClassThisWeek(int week) {
+        Set<ClassTime> result = new ArraySet<>();
+        for (ClassTime time : mTimeSet) {
+            Set<ClassDuring> duringSet = time.getDuringSet();
+            if (duringSet != null) {
+                for (ClassDuring during : duringSet) {
                     if (during.hasClass(week)) {
                         result.add(time);
                     }
@@ -107,12 +108,18 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
         return result;
     }
 
+    /**
+     * judge whether this class is on schedule today
+     *
+     * @param week current week or selected week
+     * @return time when has class today
+     */
     @NonNull
-    public List<ClassTime> hasClassToday(int week) {
+    Set<ClassTime> hasClassToday(int week) {
         Calendar calendar = Calendar.getInstance();
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-        List<ClassTime> timeList = hasClassThisWeek(week);
-        List<ClassTime> result = new ArrayList<>();
+        Set<ClassTime> timeList = hasClassThisWeek(week);
+        Set<ClassTime> result = new ArraySet<>();
         for (ClassTime time : timeList) {
             if (time.inSameDay(dayOfWeek)) {
                 result.add(time);
@@ -121,61 +128,23 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
         return result;
     }
 
-    public void combine(EnrichedClassInfo info) {
+    /**
+     * merge class with same name to one, the differences should be in time, place, teacher, during
+     * and time is the key of them
+     *
+     * @param info another class info which has the same name with this one
+     */
+    void combine(EnrichedClassInfo info) {
         if (info == null) return;
-        mTimeMap.putAll(info.getTimeMap());
+        mTimeSet.addAll(info.getTimeSet());
     }
 
-    public void addViewTo(GridLayout gridLayout, final LayoutInflater inflater, int week) {
-        if (isEmpty()) return;
-
-        List<ClassTime> timeList = hasClassThisWeek(week);
-        if (week > 0 && timeList.isEmpty()) {
-            return;
-        } else if (week < 0) {
-            timeList = new ArrayList<>();
-            for (ClassTime time : mTimeMap.keySet()) {
-                timeList.add(time);
-            }
-        }
-
-        for (ClassTime time : timeList) {
-            final CardView card = (CardView) inflater.inflate(R.layout.item_class_info, gridLayout, false);
-            TextView textView = (TextView) card.findViewById(R.id.class_name);
-            int length = time.getLength();
-            if (length > 5 || length < 1) {
-                length = 1;
-                textView.setText(name);
-            } else {
-                for (ClassInfo info : mTimeMap.values()) {
-                    textView.setText(name + "@" + info.getPlace());
-                }
-            }
-
-            card.setCardBackgroundColor(color);
-            card.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ClassDetailActivity.actionStart(inflater.getContext(), EnrichedClassInfo.this);
-                }
-            });
-
-            card.setX((time.getWeekDay() - 1) * Constants.CLASS_WIDTH);
-            card.setY((time.getDailySeq() - 1) * Constants.CLASS_BASE_HEIGHT);
-
-            gridLayout.addView(card);
-            ViewGroup.LayoutParams params = card.getLayoutParams();
-            params.width = Constants.CLASS_WIDTH;
-            params.height = length * Constants.CLASS_BASE_HEIGHT;
-        }
+    public Set<ClassTime> getTimeSet() {
+        return mTimeSet;
     }
 
     public boolean isEmpty() {
-        return mTimeMap == null || mTimeMap.isEmpty();
-    }
-
-    public Map<ClassTime, ClassInfo> getTimeMap() {
-        return mTimeMap;
+        return mTimeSet == null || mTimeSet.isEmpty();
     }
 
     @Override
@@ -196,10 +165,10 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
 
     @Override
     public int compareTo(@NonNull EnrichedClassInfo o) {
-        for (ClassTime time : mTimeMap.keySet()) {
-            for (ClassTime time1 : o.mTimeMap.keySet()) {
-                if (time.inSameDay(time1) && time.getDailySeq() <= time1.getDailySeq()) {
-                    return -1;
+        for (ClassTime time : mTimeSet) {
+            for (ClassTime time1 : o.mTimeSet) {
+                if (time.inSameDay(time1)) {
+                    return time.compareTo(time1);
                 }
             }
         }

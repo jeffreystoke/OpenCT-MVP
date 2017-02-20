@@ -37,6 +37,7 @@ import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
+import cc.metapro.openct.utils.REHelper;
 
 @Keep
 public class UniversityUtils {
@@ -171,38 +172,42 @@ public class UniversityUtils {
 
     @NonNull
     public static Classes generateClasses(Context context, List<Element> rawInfo, CmsFactory.ClassTableInfo info) {
-        Classes enrichedClasses = new Classes();
+        Classes classes = new Classes();
         int[] colors = context.getResources().getIntArray(R.array.class_background);
         if (PrefHelper.getBoolean(context, R.string.pref_class_line_based)) {
             for (Element c : rawInfo) {
                 if (c.hasText()) {
-                    enrichedClasses.add(new EnrichedClassInfo(c.text(), 1, info));
+                    classes.add(new EnrichedClassInfo(c.text(), 1, 1,info));
                 }
             }
         } else {
             int dailyClasses = rawInfo.size() / 7;
+            PrefHelper.putString(context, R.string.pref_daily_class_count, dailyClasses + "");
             for (int i = 0; i < 7; i++) {
                 int colorIndex = i;
                 if (colorIndex > colors.length) {
                     colorIndex /= 3;
                 }
+
                 for (int j = 0; j < dailyClasses; j++) {
                     colorIndex++;
                     if (colorIndex >= colors.length) {
                         colorIndex = 0;
                     }
                     Element td = rawInfo.get(j * 7 + i);
-                    if (td == null) {
-                        continue;
-                    }
-
-                    if (td.hasText()) {
-                        enrichedClasses.add(new EnrichedClassInfo(td.text(), i + 1, info));
+                    if (td != null) {
+                        String text = td.text();
+                        if (!REHelper.isEmpty(text)) {
+                            String[] classStrings = text.split(HTMLUtils.BR_REPLACER + HTMLUtils.BR_REPLACER + "+");
+                            for (String klass : classStrings) {
+                                classes.add(new EnrichedClassInfo(klass, i + 1, j + 1, colors[colorIndex], info));
+                            }
+                        }
                     }
                 }
             }
         }
-        return enrichedClasses;
+        return classes;
     }
 
     public static <T> List<T> generateInfo(Element targetTable, Class<T> tClass) {
@@ -257,11 +262,11 @@ public class UniversityUtils {
 //
 //    }
 
-    static String MD5Encryption(Map<String, String> loginMap) {
-        String username = loginMap.get(Constants.USERNAME_KEY);
-        String password = loginMap.get(Constants.PASSWORD_KEY);
-        String captcha = loginMap.get(Constants.CAPTCHA_KEY);
-
-        return null;
-    }
+//    static String MD5Encryption(Map<String, String> loginMap) {
+//        String username = loginMap.get(Constants.USERNAME_KEY);
+//        String password = loginMap.get(Constants.PASSWORD_KEY);
+//        String captcha = loginMap.get(Constants.CAPTCHA_KEY);
+//
+//        return null;
+//    }
 }

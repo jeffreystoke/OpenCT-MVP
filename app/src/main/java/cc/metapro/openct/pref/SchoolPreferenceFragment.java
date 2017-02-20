@@ -24,6 +24,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -40,6 +41,7 @@ import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.myclass.schoolselection.SchoolSelectionActivity;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.widget.DailyClassWidget;
 
 public class SchoolPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
@@ -63,6 +65,22 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         setHasOptionsMenu(false);
         ButterKnife.bind(this, getActivity());
         mPreferences = new ArrayList<>();
+
+        PreferenceScreen screen = (PreferenceScreen) findPreference(getString(R.string.pref_class_settings));
+        int count = Integer.parseInt(PrefHelper.getString(getActivity(), R.string.pref_daily_class_count, "12"));
+        for (int i = 0; i < count; i++) {
+            Preference preference = new Preference(getActivity());
+            preference.setKey("class_time_" + i);
+            preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    // TODO: 17/2/20 add datePickerDialog here
+                    return false;
+                }
+            });
+            screen.addPreference(preference);
+            mPreferences.add(preference);
+        }
 
         findPreference(getString(R.string.pref_custom_action_clear)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override

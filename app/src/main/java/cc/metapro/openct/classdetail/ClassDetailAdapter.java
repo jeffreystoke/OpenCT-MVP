@@ -16,12 +16,10 @@ package cc.metapro.openct.classdetail;
  * limitations under the License.
  */
 
-import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,23 +32,20 @@ import android.widget.Toast;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.item.classinfo.ClassInfo;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
-import cc.metapro.openct.utils.REHelper;
 
 class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDetailViewHolder> {
 
     private boolean addClass = false;
     private ClassDetailActivity mContext;
     private LayoutInflater mInflater;
-    private List<ClassInfo> mClasses;
+    //    private List<ClassInfo> mClasses;
     private SparseArray<ClassDetailViewHolder> mViewHolders;
 
     ClassDetailAdapter(ClassDetailActivity context, EnrichedClassInfo info) {
@@ -59,11 +54,11 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
 //        mClasses = info.getAllClasses();
         mContext = context;
         addClass = false;
-        if (mClasses.isEmpty()) {
+//        if (mClasses.isEmpty()) {
 //            mClasses.add(new ClassInfo());
-            addClass = true;
-        }
-        mViewHolders = new SparseArray<>(mClasses.size());
+//            addClass = true;
+//        }
+//        mViewHolders = new SparseArray<>(mClasses.size());
     }
 
     boolean isAddClass() {
@@ -82,21 +77,21 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
         }
     }
 
-    ClassInfo getItem(int i) {
-        return mClasses.get(i);
-    }
+//    ClassInfo getItem(int i) {
+//        return mClasses.get(i);
+//    }
 
-    void addItem(int i, ClassInfo info) {
-        mClasses.add(i, info);
-    }
+//    void addItem(int i, ClassInfo info) {
+//        mClasses.add(i, info);
+//    }
 
     void removeItem(int i) {
-        mClasses.remove(i);
+//        mClasses.remove(i);
         mViewHolders.remove(i);
     }
 
-    @Nullable
-    ClassInfo getResultClass() {
+//    @Nullable
+//    ClassInfo getResultClass() {
 //        ClassInfo result = null;
 //        ClassInfo tmp = null;
 //        for (int i = 0; i < mViewHolders.size(); i++) {
@@ -114,8 +109,8 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
 //            }
 //        }
 //        return result;
-        return null;
-    }
+//        return null;
+//    }
 
     @Override
     public ClassDetailViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -131,7 +126,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
 
     @Override
     public int getItemCount() {
-        return mClasses.size();
+        return 0;
     }
 
     class ClassDetailViewHolder extends RecyclerView.ViewHolder {
@@ -180,7 +175,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
 //                int[] timeStartEnd = REHelper.getStartEnd(info.getTime());
 //                mTimeStart.setText(timeStartEnd[0] + "");
 //                mTimeEnd.setText(timeStartEnd[1] + "");
-//                List<int[]> duringStartEnd = REHelper.getAllStartEnd(info.getDuring());
+//                List<int[]> duringStartEnd = REHelper.getAllStartEnd(info.getClassDuring());
 //                for (int[] startEnd : duringStartEnd) {
 //                    addDuringEditor(startEnd[0], startEnd[1]);
 //                }
@@ -236,29 +231,29 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
             }
         }
 
-        ClassInfo getClassInfo() {
-            String name = mName.getText().toString();
-
-            String during = "";
-            for (MaterialEditText start : mDuringMap.keySet()) {
-                MaterialEditText end = mDuringMap.get(start);
-                if (!TextUtils.isEmpty(during)) {
-//                    during += ClassInfo.DURING_SEP;
-                }
-                during += start.getText().toString() + " - " + end.getText().toString();
-            }
-
-            String time = mTimeStart.getText().toString() + " - " + mTimeEnd.getText().toString();
-            if (!REHelper.isEmpty(name) && !REHelper.isEmpty(during) && !REHelper.isEmpty(time)) {
-                String type = mType.getText().toString();
-                String teacher = mTeacher.getText().toString();
-                String place = mClassPlace.getText().toString();
-//                return new ClassInfo(name, type, teacher, place);
-            } else {
-                Toast.makeText(mName.getContext(), "请输入课程名称, 上课时间, 课程周期\n(这些都很重要)", Toast.LENGTH_LONG).show();
-            }
-            return null;
-        }
+//        ClassInfo getClassInfo() {
+//            String name = mName.getText().toString();
+//
+//            String during = "";
+//            for (MaterialEditText start : mDuringMap.keySet()) {
+//                MaterialEditText end = mDuringMap.get(start);
+//                if (!TextUtils.isEmpty(during)) {
+////                    during += ClassInfo.DURING_SEP;
+//                }
+//                during += start.getText().toString() + " - " + end.getText().toString();
+//            }
+//
+//            String time = mTimeStart.getText().toString() + " - " + mTimeEnd.getText().toString();
+//            if (!REHelper.isEmpty(name) && !REHelper.isEmpty(during) && !REHelper.isEmpty(time)) {
+//                String type = mType.getText().toString();
+//                String teacher = mTeacher.getText().toString();
+//                String place = mClassPlace.getText().toString();
+////                return new ClassInfo(name, type, teacher, place);
+//            } else {
+//                Toast.makeText(mName.getContext(), "请输入课程名称, 上课时间, 课程周期\n(这些都很重要)", Toast.LENGTH_LONG).show();
+//            }
+//            return null;
+//        }
 
         void addDuringEditor(int startWeek, int endWeek) {
             final LinearLayout linearLayout = new LinearLayout(mDuringLayout.getContext());

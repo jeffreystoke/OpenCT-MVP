@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseArray;
 import android.widget.Toast;
 
 import net.fortuna.ical4j.data.CalendarOutputter;
@@ -296,7 +297,12 @@ class ClassPresenter implements ClassContract.Presenter {
             @Override
             public void onNext(Classes enrichedClasses) {
                 mEnrichedClasses = enrichedClasses;
-                mView.updateClasses(mEnrichedClasses);
+                try {
+                    mView.updateClasses(mEnrichedClasses);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
 
             @Override
@@ -335,9 +341,10 @@ class ClassPresenter implements ClassContract.Presenter {
                     calendar.getProperties().add(new ProdId("-//OpenCT Jeff//iCal4j 2.0//EN"));
                     calendar.getProperties().add(Version.VERSION_2_0);
                     calendar.getProperties().add(CalScale.GREGORIAN);
+                    SparseArray<java.util.Calendar> calendarSparseArray = Loader.getClassTime(mContext);
                     for (EnrichedClassInfo c : mEnrichedClasses) {
                         try {
-                            List<VEvent> events = ICalHelper.getClassEvents(mContext, week, c);
+                            List<VEvent> events = ICalHelper.getClassEvents(calendarSparseArray, week, c);
                             calendar.getComponents().addAll(events);
                         } catch (Exception ignored) {
 

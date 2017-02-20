@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <!--周x-->
@@ -64,11 +65,13 @@
                 android:layout_weight="1"
                 android:orientation="vertical"/>
 
-            <GridLayout
+            <android.support.v7.widget.GridLayout
                 android:id="@+id/content"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="14"/>
+                android:layout_weight="14"
+                app:columnCount="7"
+                app:rowCount="12"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

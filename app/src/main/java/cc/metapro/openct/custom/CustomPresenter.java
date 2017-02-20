@@ -39,6 +39,7 @@ import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
+import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
@@ -253,7 +254,7 @@ public class CustomPresenter implements CustomContract.Presenter {
                             List<Element> rawClasses = UniversityUtils.getRawClasses(TableUtils
                                     .getTablesFromTargetPage(mWebView.getPageDom())
                                     .get(Constants.advCustomInfo.mClassTableInfo.mClassTableID), mContext);
-                            List<EnrichedClassInfo> classInfoList = UniversityUtils
+                            Classes classInfoList = UniversityUtils
                                     .generateClasses(mContext, rawClasses, Constants.advCustomInfo.mClassTableInfo);
                             DBManger.getInstance(mContext).updateClasses(classInfoList);
                             Toast.makeText(mContext, R.string.custom_finish_tip, Toast.LENGTH_LONG).show();

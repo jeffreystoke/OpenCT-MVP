@@ -35,6 +35,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -42,7 +43,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +57,7 @@ import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
+import cc.metapro.openct.data.university.item.classinfo.SingleClass;
 import cc.metapro.openct.grades.GradeActivity;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
@@ -128,11 +129,17 @@ public class ClassActivity extends AppCompatActivity
         }
     }
 
-    private void addContentView(GridLayout content, List<EnrichedClassInfo> classes, int thisWeek) {
+    private void addContentView(GridLayout content, Classes classes, int thisWeek) {
         if (content == null) return;
         content.removeAllViews();
-        for (EnrichedClassInfo info : classes) {
-            info.addViewTo(content, getLayoutInflater(), thisWeek);
+        if (thisWeek < 0) {
+            for (SingleClass singleClass : classes.getAllClasses()) {
+                singleClass.addViewTo(content, getLayoutInflater());
+            }
+        } else {
+            for (SingleClass singleClass : classes.getWeekClasses(thisWeek)) {
+                singleClass.addViewTo(content, getLayoutInflater());
+            }
         }
     }
 

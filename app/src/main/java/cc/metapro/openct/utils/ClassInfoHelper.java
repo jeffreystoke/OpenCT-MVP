@@ -21,21 +21,23 @@ import android.text.TextUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cc.metapro.openct.data.university.item.classinfo.ClassDuring;
+
 public class ClassInfoHelper {
 
     public static int getLength(String time) {
         int[] tmp = REHelper.getStartEnd(time);
-        return tmp[1] - tmp[0];
+        return tmp[1] - tmp[0] + 1;
     }
 
     public static String infoParser(int idx, String re, String[] contents) {
         if (idx < contents.length && idx >= 0) {
             String content = contents[idx];
             if (!TextUtils.isEmpty(re)) {
-                Pattern pattern = Pattern.compile(re);
-                Matcher m = pattern.matcher(content);
-                if (m.find())
-                    content = m.group();
+                Matcher matcher = Pattern.compile(re).matcher(content);
+                if (matcher.find()) {
+                    content = matcher.group();
+                }
             }
             return content;
         } else {
@@ -43,17 +45,27 @@ public class ClassInfoHelper {
         }
     }
 
-    public static boolean[] getDuring(String during) {
+    public static ClassDuring getClassDuring(String duringRe, String rawDuring) {
         boolean[] weeks = new boolean[30];
+        for (int i = 0; i < weeks.length; i++) {
+            weeks[i] = false;
+        }
 
-        return weeks;
-    }
-
-    public static boolean isEven(String during) {
-        return Pattern.compile("双周?").matcher(during).find();
-    }
-
-    public static boolean isOdd(String during) {
-        return Pattern.compile("单周?").matcher(during).find();
+        String during = rawDuring;
+        if (!TextUtils.isEmpty(duringRe)) {
+            Matcher matcher = Pattern.compile(duringRe).matcher(rawDuring);
+            if (matcher.find()) {
+                during = matcher.group();
+            }
+        }
+        int[] result = REHelper.getStartEnd(during);
+        if (result[0] >= 0 && result[0] <= weeks.length && result[1] >= result[0] && result[1] <= weeks.length) {
+            for (int i = result[0] - 1; i <= result[1] - 1; i++) {
+                weeks[i] = true;
+            }
+        }
+        boolean odd = Pattern.compile("单周?").matcher(rawDuring).find();
+        boolean even = Pattern.compile("双周?").matcher(rawDuring).find();
+        return new ClassDuring(weeks, odd, even);
     }
 }

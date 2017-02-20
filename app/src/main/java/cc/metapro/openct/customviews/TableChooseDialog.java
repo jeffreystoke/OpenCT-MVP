@@ -51,6 +51,7 @@ import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
+import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.grades.GradeContract;
 import cc.metapro.openct.myclass.ClassContract;
@@ -128,7 +129,7 @@ public class TableChooseDialog extends DialogFragment {
                             public void onResult(Map<String, Integer> indexMap) {
                                 CmsFactory.ClassTableInfo info = generateClassTableInfo(Constants.advCustomInfo.mClassTableInfo, indexMap);
                                 info.mClassTableID = tableId;
-                                List<EnrichedClassInfo> classes = UniversityUtils.generateClasses(context, rawInfoList, info);
+                                Classes classes = UniversityUtils.generateClasses(context, rawInfoList, info);
                                 Constants.advCustomInfo.setClassTableInfo(info);
 
                                 manger.updateAdvancedCustomClassInfo(Constants.advCustomInfo);

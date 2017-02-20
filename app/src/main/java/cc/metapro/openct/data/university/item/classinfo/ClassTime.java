@@ -17,7 +17,11 @@ package cc.metapro.openct.data.university.item.classinfo;
  */
 
 import android.support.annotation.NonNull;
+import android.support.v4.util.ArraySet;
 
+import java.util.Set;
+
+import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.utils.ClassInfoHelper;
 import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.REHelper;
@@ -28,13 +32,63 @@ public class ClassTime implements Comparable<ClassTime> {
     private int dailySeq;
     private int length;
 
-    public ClassTime(String time, int weekDay) {
+    private String teacher;
+    private String place;
+    private Set<ClassDuring> mDuringSet = new ArraySet<>();
+
+    ClassTime(int weekDay, int dailySeq, String[] contents, CmsFactory.ClassTableInfo info) {
+        this(ClassInfoHelper.infoParser(info.mTimeIndex, info.mTimeRE, contents), weekDay, dailySeq);
+        teacher = ClassInfoHelper.infoParser(info.mTeacherIndex, info.mTeacherRE, contents);
+        place = ClassInfoHelper.infoParser(info.mPlaceIndex, info.mPlaceRE, contents);
+        String rawDuring = "";
+        if (info.mDuringIndex < contents.length && info.mDuringIndex >= 0) {
+            rawDuring = contents[info.mDuringIndex];
+        }
+        mDuringSet.add(ClassInfoHelper.getClassDuring(info.mDuringRE, rawDuring));
+    }
+
+    private ClassTime(String time, int weekDay, int dailySeq) {
         length = ClassInfoHelper.getLength(time);
         if (length <= 0 || length > 5) {
             length = 1;
         }
-        dailySeq = REHelper.getStartEnd(time)[0];
+        this.dailySeq = dailySeq;
+        if (this.dailySeq <= 0) {
+            this.dailySeq = 1;
+        }
         this.weekDay = weekDay;
+    }
+
+    public String getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(String teacher) {
+        this.teacher = teacher;
+    }
+
+    public String getPlace() {
+        return place;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
+    public Set<ClassDuring> getDuringSet() {
+        return mDuringSet;
+    }
+
+    public void addDuring(ClassDuring during) {
+        mDuringSet.add(during);
+    }
+
+    public void removeDuring(ClassDuring during) {
+        mDuringSet.remove(during);
+    }
+
+    public boolean isEmpty() {
+        return mDuringSet == null || mDuringSet.isEmpty();
     }
 
     public int getWeekDay() {

@@ -44,14 +44,14 @@ public class ClassDuring {
         return false;
     }
 
-    public int getLastWeek() {
+    public int getEndWeek() {
         for (int i = weeks.length - 1; i >= 0; i--) {
             if (weeks[i]) return i + 1;
         }
         return 0;
     }
 
-    public int getFirstWeek() {
+    public int getStartWeek() {
         for (int i = 0; i < weeks.length; i++) {
             if (weeks[i]) return i + 1;
         }
