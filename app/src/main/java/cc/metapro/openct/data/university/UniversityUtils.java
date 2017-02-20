@@ -177,7 +177,7 @@ public class UniversityUtils {
         if (PrefHelper.getBoolean(context, R.string.pref_class_line_based)) {
             for (Element c : rawInfo) {
                 if (c.hasText()) {
-                    classes.add(new EnrichedClassInfo(c.text(), 1, 1,info));
+                    classes.add(new EnrichedClassInfo(c.text(), 1, 1, info));
                 }
             }
         } else {

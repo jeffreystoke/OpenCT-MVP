@@ -17,28 +17,16 @@ package cc.metapro.openct.myclass;
  */
 
 import android.content.Context;
-import android.os.Environment;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.SparseArray;
 import android.widget.Toast;
-
-import net.fortuna.ical4j.data.CalendarOutputter;
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.property.CalScale;
-import net.fortuna.ical4j.model.property.ProdId;
-import net.fortuna.ical4j.model.property.Version;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -50,10 +38,8 @@ import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
-import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.ICalHelper;
 import cc.metapro.openct.utils.MyObserver;
 import cc.metapro.openct.utils.webutils.TableUtils;
 import cc.metapro.openct.widget.DailyClassWidget;
@@ -317,8 +303,7 @@ class ClassPresenter implements ClassContract.Presenter {
                 .subscribe(observer);
     }
 
-    @Override
-    public void storeClasses() {
+    private void storeClasses() {
         try {
             DBManger manger = DBManger.getInstance(mContext);
             manger.updateClasses(mEnrichedClasses);
@@ -326,83 +311,6 @@ class ClassPresenter implements ClassContract.Presenter {
         } catch (Exception e) {
             Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
         }
-    }
-
-    @Override
-    public void exportClasses() {
-        ActivityUtils.getProgressDialog(mContext, R.string.creating_class_ical).show();
-        Observable<Calendar> observable = Observable.create(new ObservableOnSubscribe<Calendar>() {
-            @Override
-            public void subscribe(ObservableEmitter<Calendar> e) throws Exception {
-                FileOutputStream fos = null;
-                try {
-                    int week = Loader.getCurrentWeek(mContext);
-                    Calendar calendar = new Calendar();
-                    calendar.getProperties().add(new ProdId("-//OpenCT Jeff//iCal4j 2.0//EN"));
-                    calendar.getProperties().add(Version.VERSION_2_0);
-                    calendar.getProperties().add(CalScale.GREGORIAN);
-                    SparseArray<java.util.Calendar> calendarSparseArray = Loader.getClassTime(mContext);
-                    for (EnrichedClassInfo c : mEnrichedClasses) {
-                        try {
-                            List<VEvent> events = ICalHelper.getClassEvents(calendarSparseArray, week, c);
-                            calendar.getComponents().addAll(events);
-                        } catch (Exception ignored) {
-
-                        }
-                    }
-                    calendar.validate();
-
-                    File downloadDir = Environment.getExternalStorageDirectory();
-                    if (!downloadDir.exists()) {
-                        downloadDir.createNewFile();
-                    }
-
-                    File file = new File(downloadDir, "OpenCT Classes.ics");
-                    fos = new FileOutputStream(file);
-                    CalendarOutputter calOut = new CalendarOutputter();
-                    calOut.output(calendar, fos);
-                    e.onNext(calendar);
-                } finally {
-                    if (fos != null) {
-                        try {
-                            fos.close();
-                        } catch (Exception e1) {
-                            Log.e(TAG, e1.getMessage(), e1);
-                        }
-                    }
-                }
-            }
-        });
-
-        Observer<Calendar> observer = new MyObserver<Calendar>(TAG) {
-            @Override
-            public void onNext(Calendar calendar) {
-                ActivityUtils.dismissProgressDialog();
-                Toast.makeText(mContext, R.string.ical_create_success, Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                super.onError(e);
-                Toast.makeText(mContext, "创建日历信息时发生了异常\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
-
-    @Override
-    public void clearClasses() {
-        mEnrichedClasses = null;
-        storeClasses();
-        loadLocalClasses();
-    }
-
-    @Override
-    public void loadFromExcel() {
-
     }
 
     @Override

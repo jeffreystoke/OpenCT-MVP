@@ -172,7 +172,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
 //                mType.setText(info.getType());
 //                mTeacher.setText(info.getTeacher());
 //
-//                int[] timeStartEnd = REHelper.getStartEnd(info.getTime());
+//                int[] timeStartEnd = REHelper.getStartEnd(info.getTimeString());
 //                mTimeStart.setText(timeStartEnd[0] + "");
 //                mTimeEnd.setText(timeStartEnd[1] + "");
 //                List<int[]> duringStartEnd = REHelper.getAllStartEnd(info.getClassDuring());

@@ -18,7 +18,6 @@ package cc.metapro.openct.widget;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.Keep;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -27,22 +26,22 @@ import java.util.List;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.data.university.item.classinfo.SingleClass;
 
-@Keep
-public class DailyWidgetService extends RemoteViewsService {
+public class WeeklyWidgetService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new DailyWidgetFactory(getApplicationContext(), intent);
+        return new WeeklyWidgetFactory(getApplicationContext(), intent);
     }
 
-    private static class DailyWidgetFactory implements RemoteViewsFactory {
+    private static class WeeklyWidgetFactory implements RemoteViewsFactory {
 
-        private static List<SingleClass> mDailyClasses;
+        private static List<SingleClass> mWeeklyClasses;
         private Context mContext;
 
-        DailyWidgetFactory(Context context, Intent intent) {
+        WeeklyWidgetFactory(Context context, Intent intent) {
             mContext = context;
         }
 
@@ -54,7 +53,7 @@ public class DailyWidgetService extends RemoteViewsService {
         public void onDataSetChanged() {
             DBManger manger = DBManger.getInstance(mContext);
             int week = Loader.getCurrentWeek(mContext);
-            mDailyClasses = manger.getClasses().getTodayClasses(week);
+            mWeeklyClasses = manger.getClasses().getWeekClasses(week);
         }
 
         @Override
@@ -63,20 +62,24 @@ public class DailyWidgetService extends RemoteViewsService {
 
         @Override
         public int getCount() {
-            return mDailyClasses.size();
+            return Loader.getClassTime(mContext).size() * 7;
         }
 
         @Override
         public RemoteViews getViewAt(int i) {
-            if (i < 0 || i >= getCount()) {
-                return null;
-            }
-            RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_list);
-            SingleClass classInfo = mDailyClasses.get(i);
+            int dailySeq = i / 7 + 1;
+            int weekDay = i % 7 + 1;
 
-            views.setTextViewText(R.id.widget_class_name, classInfo.getName());
-            views.setTextViewText(R.id.widget_class_place, classInfo.getTimeString() + " 节 在 " + classInfo.getPlace());
-            return views;
+            for (SingleClass singleClass : mWeeklyClasses) {
+                ClassTime time = singleClass.getClassTime();
+                if (time.inSameDay(weekDay) && time.getDailySeq() == dailySeq) {
+                    RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_class_info);
+                    views.setTextViewText(R.id.class_info, singleClass.getName() + "@" + singleClass.getPlace());
+                    return views;
+                }
+            }
+
+            return null;
         }
 
         @Override

@@ -79,13 +79,13 @@
         <!--课程设置-->
         <PreferenceScreen
             android:key="@string/pref_class_settings"
-            android:title="课程设置"
-            android:summary="设定每日课程数以及每节课的时间, 显示课程信息以及导出到 iCal 文件时将会使用这些信息">
+            android:summary="设定每日课程数以及每节课的时间, 显示课程信息以及导出到 iCal 文件时将会使用这些信息"
+            android:title="课程设置">
             <EditTextPreference
-                android:title="每日课程数"
-                android:key="@string/pref_daily_class_count"
                 android:defaultValue="12"
-                android:inputType="numberDecimal"/>
+                android:inputType="numberDecimal"
+                android:key="@string/pref_daily_class_count"
+                android:title="每日课程数"/>
         </PreferenceScreen>
         <!--表格设置-->
         <PreferenceScreen

@@ -52,7 +52,6 @@ import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
-import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.grades.GradeContract;
 import cc.metapro.openct.myclass.ClassContract;
 import cc.metapro.openct.utils.Constants;

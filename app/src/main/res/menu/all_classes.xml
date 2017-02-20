@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~  Copyright 2016 - 2017 OpenCT open source class table
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/add_class"
+        android:icon="@drawable/ic_add"
+        android:title="@string/add_class_info"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/import_from_excel"
+        android:title="@string/import_from_excel"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/custom"
+        android:title="@string/advanced_custom"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/export_classes"
+        android:title="@string/export_to_ical"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/clear_classes"
+        android:title="@string/clear_classes"
+        app:showAsAction="never"/>
+</menu>

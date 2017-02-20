@@ -24,7 +24,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.SparseArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,20 +79,24 @@ public class DBManger {
                     DBHelper.SCHOOL_NAME + "=? COLLATE NOCASE", new String[]{name},
                     null, null, null);
             cursor.moveToFirst();
-            AdvancedCustomInfo customInfo = StoreHelper.fromJson(cursor.getString(1), AdvancedCustomInfo.class);
-            if (customInfo.mClassTableInfo == null) {
-                customInfo.mClassTableInfo = new CmsFactory.ClassTableInfo();
-            }
+            if (!cursor.isAfterLast()) {
+                AdvancedCustomInfo customInfo = StoreHelper.fromJson(cursor.getString(1), AdvancedCustomInfo.class);
+                if (customInfo.mClassTableInfo == null) {
+                    customInfo.mClassTableInfo = new CmsFactory.ClassTableInfo();
+                }
 
-            customInfo.mClassTableInfo.mNameRE = PrefHelper.getString(context, R.string.pref_class_name_re, "");
-            customInfo.mClassTableInfo.mTypeRE = PrefHelper.getString(context, R.string.pref_class_type_re, "");
-            customInfo.mClassTableInfo.mDuringRE = PrefHelper.getString(context, R.string.pref_class_during_re, "\\d+-\\d+");
-            customInfo.mClassTableInfo.mTimeRE = PrefHelper.getString(context, R.string.pref_class_time_re, "(\\d+,)+\\d+");
-            customInfo.mClassTableInfo.mPlaceRE = PrefHelper.getString(context, R.string.pref_class_place_re, "");
-            customInfo.mClassTableInfo.mTeacherRE = PrefHelper.getString(context, R.string.pref_class_teacher_re, "");
-            return customInfo;
+                customInfo.mClassTableInfo.mNameRE = PrefHelper.getString(context, R.string.pref_class_name_re, "");
+                customInfo.mClassTableInfo.mTypeRE = PrefHelper.getString(context, R.string.pref_class_type_re, "");
+                customInfo.mClassTableInfo.mDuringRE = PrefHelper.getString(context, R.string.pref_class_during_re, "\\d+-\\d+");
+                customInfo.mClassTableInfo.mTimeRE = PrefHelper.getString(context, R.string.pref_class_time_re, "(\\d+,)+\\d+");
+                customInfo.mClassTableInfo.mPlaceRE = PrefHelper.getString(context, R.string.pref_class_place_re, "");
+                customInfo.mClassTableInfo.mTeacherRE = PrefHelper.getString(context, R.string.pref_class_teacher_re, "");
+                return customInfo;
+            } else {
+                throw new Exception("need init advancedCustomInfo");
+            }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Log.v(TAG, e.getMessage(), e);
             AdvancedCustomInfo customInfo = new AdvancedCustomInfo(context);
             customInfo.mClassTableInfo = new CmsFactory.ClassTableInfo();
             customInfo.mClassTableInfo.mNameRE = PrefHelper.getString(context, R.string.pref_class_name_re, "");

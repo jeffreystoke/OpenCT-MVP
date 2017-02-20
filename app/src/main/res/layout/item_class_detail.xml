@@ -51,9 +51,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:paddingRight="10dp"
                 android:paddingEnd="10dp"
                 android:paddingLeft="0dp"
+                android:paddingRight="10dp"
                 android:paddingStart="0dp"
                 android:text="@string/class_time"/>
 
@@ -93,25 +93,25 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:paddingRight="10dp"
+                android:orientation="vertical"
                 android:paddingEnd="10dp"
                 android:paddingLeft="0dp"
-                android:paddingStart="0dp"
-                android:orientation="vertical">
+                android:paddingRight="10dp"
+                android:paddingStart="0dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    android:gravity="center"
                     android:layout_weight="2"
+                    android:gravity="center"
                     android:text="@string/class_during"/>
 
                 <TextView
                     android:id="@+id/add_during"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    android:gravity="center"
                     android:layout_weight="1"
+                    android:gravity="center"
                     android:text="@string/add_during"/>
             </LinearLayout>
 

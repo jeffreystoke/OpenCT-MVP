@@ -86,8 +86,8 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
             mClassName.setText(info.getName());
             String content = "";
 
-            if (!TextUtils.isEmpty(info.getTime())) {
-                content += "今天 " + info.getTime() + " 节";
+            if (!TextUtils.isEmpty(info.getTimeString())) {
+                content += "今天 " + info.getTimeString() + " 节";
             }
 
             if (!TextUtils.isEmpty(info.getPlace())) {

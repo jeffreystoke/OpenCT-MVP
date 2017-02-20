@@ -19,12 +19,12 @@ package cc.metapro.openct.data.university.item.classinfo;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArraySet;
 
+import java.util.Calendar;
 import java.util.Set;
 
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.utils.ClassInfoHelper;
 import cc.metapro.openct.utils.DateHelper;
-import cc.metapro.openct.utils.REHelper;
 
 public class ClassTime implements Comparable<ClassTime> {
 
@@ -105,18 +105,22 @@ public class ClassTime implements Comparable<ClassTime> {
 
     public String getTime() {
         if (length == 1) {
-            return dailySeq + "";
+            return "第 " + dailySeq + "";
         } else {
             return dailySeq + " - " + (dailySeq + length - 1);
         }
     }
 
-    public boolean inSameDay(ClassTime time) {
+    boolean inSameDay(ClassTime time) {
         return time != null && time.weekDay == weekDay;
     }
 
+    boolean inSameDay(Calendar calendar) {
+        return DateHelper.weekDayTrans(weekDay) == calendar.get(Calendar.DAY_OF_WEEK);
+    }
+
     public boolean inSameDay(int weekDay) {
-        return DateHelper.weekDayTrans(this.weekDay) == weekDay;
+        return this.weekDay == weekDay;
     }
 
     @Override

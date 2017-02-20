@@ -20,7 +20,7 @@
             style="@style/ItemContentText"/>
 
         <TextView
-            android:id="@+id/content"
+            android:id="@+id/name"
             style="@style/ItemContentText"/>
 
         <TextView

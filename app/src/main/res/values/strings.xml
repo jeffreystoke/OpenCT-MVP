@@ -160,7 +160,7 @@
     <string name="enter_address">输入地址</string>
     <string name="no_related_books">没有查询到相关书籍</string>
     <string name="no_more_results">没有更多结果了</string>
-    <string name="add_class_info">添加课程</string>
+    <string name="edit_class_info">编辑课程</string>
 
     <string name="encrypt_fail">加密失败, 请关闭加密选项</string>
     <string name="encrypted">已加密</string>
@@ -212,4 +212,9 @@
     <string name="weekly_class_empty">本周课表为空</string>
     <string name="clear_classes">清空课程</string>
     <string name="advanced_custom">从网页导入</string>
+    <string name="no_class_weekly">本周没有课, 尽情学!习!吧!</string>
+    <string name="add_class_info">添加课程</string>
+    <string name="import_from_excel">从Excel导入</string>
+    <string name="all_classes">所有课程</string>
+    <string name="edit">编辑</string>
 </resources>

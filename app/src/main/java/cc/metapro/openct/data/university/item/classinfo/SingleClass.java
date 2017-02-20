@@ -52,8 +52,12 @@ public class SingleClass implements Comparable<SingleClass> {
         return type;
     }
 
-    public String getTime() {
+    public String getTimeString() {
         return time.getTime();
+    }
+
+    public ClassTime getClassTime() {
+        return time;
     }
 
     public String getPlace() {

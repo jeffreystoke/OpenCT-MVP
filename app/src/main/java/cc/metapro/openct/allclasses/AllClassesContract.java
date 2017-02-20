@@ -1,4 +1,4 @@
-package cc.metapro.openct.myclass;
+package cc.metapro.openct.allclasses;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,23 +16,24 @@ package cc.metapro.openct.myclass;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
-
+import cc.metapro.openct.BasePresenter;
 import cc.metapro.openct.BaseView;
-import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 
-@Keep
-public interface ClassContract {
+interface AllClassesContract {
+
     interface View extends BaseView<Presenter> {
-
         void updateClasses(Classes classes);
-
     }
 
-    interface Presenter extends LoginPresenter {
+    interface Presenter extends BasePresenter {
 
-        void loadLocalClasses();
+        void exportClasses();
 
+        void clearClasses();
+
+        void loadFromExcel();
+
+        void storeCLasses(Classes classes);
     }
 }

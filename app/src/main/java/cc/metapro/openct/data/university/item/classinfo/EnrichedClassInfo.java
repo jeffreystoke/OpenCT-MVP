@@ -117,11 +117,10 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
     @NonNull
     Set<ClassTime> hasClassToday(int week) {
         Calendar calendar = Calendar.getInstance();
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         Set<ClassTime> timeList = hasClassThisWeek(week);
         Set<ClassTime> result = new ArraySet<>();
         for (ClassTime time : timeList) {
-            if (time.inSameDay(dayOfWeek)) {
+            if (time.inSameDay(calendar)) {
                 result.add(time);
             }
         }

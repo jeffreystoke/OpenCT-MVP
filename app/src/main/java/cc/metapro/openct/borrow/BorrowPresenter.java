@@ -165,10 +165,10 @@ class BorrowPresenter implements BorrowContract.Presenter {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(extraObserver);
                     } else {
-                        ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, userCenterDom, BorrowPresenter.this);
+                        ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_BORROW, userCenterDom, BorrowPresenter.this);
                     }
                 } else {
-                    ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, userCenterDom, BorrowPresenter.this);
+                    ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_BORROW, userCenterDom, BorrowPresenter.this);
                 }
             }
 

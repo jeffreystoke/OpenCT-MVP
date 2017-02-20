@@ -21,10 +21,8 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.widget.RemoteViews;
-
-import java.io.FileNotFoundException;
 
 import cc.metapro.openct.R;
 
@@ -32,18 +30,17 @@ import static cc.metapro.openct.widget.DailyClassWidget.UPDATE_ITEMS;
 
 public class WeeklyClassWidget extends AppWidgetProvider {
 
-    public static final String WEEKLY_PIC_NAME = "weekly_pic";
+    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+        Intent intent = new Intent(context, WeeklyWidgetService.class);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_weekly_class);
-        views.setEmptyView(R.id.classes, R.id.empty_view);
-        try {
-            views.setImageViewBitmap(R.id.classes, BitmapFactory.decodeStream(context.openFileInput(WEEKLY_PIC_NAME)));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        views.setRemoteAdapter(R.id.widget_class_content, intent);
+        views.setEmptyView(R.id.widget_class_content, R.id.empty_view);
+
         appWidgetManager.updateAppWidget(appWidgetId, views);
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_class_content);
     }
 
     @Override

@@ -88,7 +88,7 @@ class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewHolder>
         @BindView(R.id.author)
         TextView mAuthor;
 
-        @BindView(R.id.content)
+        @BindView(R.id.name)
         TextView mContent;
 
         @BindView(R.id.store_info)

@@ -57,8 +57,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cc.metapro.openct.myclass.ClassActivity"/>
         </activity>
-        <activity android:name=".search.BookDetailActivity">
-        </activity>
         <activity
             android:name=".custom.CustomActivity"
             android:label="@string/custom"
@@ -92,7 +90,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cc.metapro.openct.myclass.ClassActivity"/>
         </activity>
-        <activity android:name=".splash.SplashActivity">
+        <activity
+            android:name=".splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -100,24 +99,39 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name=".search.BookDetailActivity">
+        </activity>
+        <activity
+            android:name=".allclasses.AllClassesActivity"
+            android:label="@string/all_classes"
+            android:parentActivityName=".myclass.ClassActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cc.metapro.openct.myclass.ClassActivity"/>
+        </activity>
 
-        <!--<receiver-->
-            <!--android:name=".widget.WeeklyClassWidget"-->
-            <!--android:exported="true">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>-->
-                <!--<action android:name="android.intent.action.BOOT_COMPLETED"/>-->
-                <!--<action android:name="android.intent.action.DATE_CHANGED"/>-->
-                <!--<action android:name="android.intent.action.TIME_SET"/>-->
-                <!--<action android:name="android.intent.action.USER_PRESENT"/>-->
-                <!--<action android:name="cc.metapro.openct.action.UPDATE_ITEMS"/>-->
-            <!--</intent-filter>-->
+        <receiver
+            android:name=".widget.WeeklyClassWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.DATE_CHANGED"/>
+                <action android:name="android.intent.action.TIME_SET"/>
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                <action android:name="cc.metapro.openct.action.UPDATE_ITEMS"/>
+            </intent-filter>
 
-            <!--<meta-data-->
-                <!--android:name="android.appwidget.provider"-->
-                <!--android:resource="@xml/weekly_class_widget_info"/>-->
-        <!--</receiver>-->
-
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weekly_class_widget_info"/>
+        </receiver>
+        <service
+            android:name=".widget.WeeklyWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS">
+        </service>
         <receiver
             android:name=".widget.DailyClassWidget"
             android:exported="true">
@@ -134,7 +148,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/daily_class_widget_info"/>
         </receiver>
-
         <service
             android:name=".widget.DailyWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS">
