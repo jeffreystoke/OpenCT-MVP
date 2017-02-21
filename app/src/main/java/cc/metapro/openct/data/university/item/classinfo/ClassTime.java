@@ -17,24 +17,33 @@ package cc.metapro.openct.data.university.item.classinfo;
  */
 
 import android.support.annotation.NonNull;
-import android.support.v4.util.ArraySet;
 
 import java.util.Calendar;
-import java.util.Set;
 
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.utils.ClassInfoHelper;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.DateHelper;
 
 public class ClassTime implements Comparable<ClassTime> {
 
-    private int weekDay;
-    private int dailySeq;
-    private int length;
+    private int weekDay = 1;
+    private int dailySeq = 1;
+    private int length = 1;
 
-    private String teacher;
-    private String place;
-    private Set<ClassDuring> mDuringSet = new ArraySet<>();
+    private String teacher = "";
+    private String place = "";
+
+    private boolean[] weeks = new boolean[Constants.WEEKS];
+
+    public ClassTime(ClassTime classTime) {
+        place = classTime.place;
+        teacher = classTime.teacher;
+    }
+
+    public ClassTime() {
+
+    }
 
     ClassTime(int weekDay, int dailySeq, String[] contents, CmsFactory.ClassTableInfo info) {
         this(ClassInfoHelper.infoParser(info.mTimeIndex, info.mTimeRE, contents), weekDay, dailySeq);
@@ -44,7 +53,8 @@ public class ClassTime implements Comparable<ClassTime> {
         if (info.mDuringIndex < contents.length && info.mDuringIndex >= 0) {
             rawDuring = contents[info.mDuringIndex];
         }
-        mDuringSet.add(ClassInfoHelper.getClassDuring(info.mDuringRE, rawDuring));
+
+        weeks = ClassInfoHelper.combineDuring(info.mDuringRE, rawDuring, weeks);
     }
 
     private ClassTime(String time, int weekDay, int dailySeq) {
@@ -71,24 +81,27 @@ public class ClassTime implements Comparable<ClassTime> {
         return place;
     }
 
+    public void setWeekDay(int weekDay) {
+        this.weekDay = weekDay;
+    }
+
+    public void setDailySeq(int dailySeq) {
+        this.dailySeq = dailySeq;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
     public void setPlace(String place) {
         this.place = place;
     }
 
-    public Set<ClassDuring> getDuringSet() {
-        return mDuringSet;
-    }
-
-    public void addDuring(ClassDuring during) {
-        mDuringSet.add(during);
-    }
-
-    public void removeDuring(ClassDuring during) {
-        mDuringSet.remove(during);
-    }
-
-    public boolean isEmpty() {
-        return mDuringSet == null || mDuringSet.isEmpty();
+    public boolean hasClass(int week) {
+        if (weeks == null) {
+            weeks = new boolean[Constants.WEEKS];
+        }
+        return week > 0 && week <= Constants.WEEKS && weeks[week - 1];
     }
 
     public int getWeekDay() {
@@ -119,8 +132,39 @@ public class ClassTime implements Comparable<ClassTime> {
         return DateHelper.weekDayTrans(weekDay) == calendar.get(Calendar.DAY_OF_WEEK);
     }
 
+    public void enableWeek(int week) {
+        if (weeks == null) {
+            weeks = new boolean[Constants.WEEKS];
+        }
+        if (week > 0 && week <= Constants.WEEKS) {
+            weeks[week - 1] = true;
+        }
+    }
+
+    public void disableWeek(int week) {
+        if (weeks == null) {
+            weeks = new boolean[Constants.WEEKS];
+        }
+        if (week > 0 && week <= Constants.WEEKS) {
+            weeks[week - 1] = false;
+        }
+    }
+
     public boolean inSameDay(int weekDay) {
         return this.weekDay == weekDay;
+    }
+
+    void combineDuring(boolean[] during) {
+        if (during == null) return;
+        for (int i = 0; i < during.length; i++) {
+            if (during[i]) {
+                this.weeks[i] = true;
+            }
+        }
+    }
+
+    boolean[] getDuring() {
+        return weeks;
     }
 
     @Override
@@ -129,9 +173,10 @@ public class ClassTime implements Comparable<ClassTime> {
             return true;
         } else if (obj instanceof ClassTime) {
             ClassTime time = (ClassTime) obj;
-            return time.weekDay == weekDay && time.dailySeq == dailySeq && time.length == length;
+            return time.weekDay == weekDay
+                    && time.dailySeq == dailySeq;
         }
-        return super.equals(obj);
+        return false;
     }
 
     @Override

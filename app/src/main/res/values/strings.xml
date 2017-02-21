@@ -170,8 +170,8 @@
     <string name="class_detail">课程详情</string>
     <string name="choose_background">选择背景色</string>
     <string name="class_name">课程名称</string>
-    <string name="class_type">课程类型</string>
-    <string name="class_time">上课时间</string>
+    <string name="class_type">类型</string>
+    <string name="class_time">时间</string>
     <string name="start">开始</string>
     <string name="to">到</string>
     <string name="end">结束</string>
@@ -217,4 +217,7 @@
     <string name="import_from_excel">从Excel导入</string>
     <string name="all_classes">所有课程</string>
     <string name="edit">编辑</string>
+    <string name="sep"> - </string>
+    <string name="jie">节</string>
+    <string name="save">保存</string>
 </resources>

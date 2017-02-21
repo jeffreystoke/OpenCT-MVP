@@ -19,10 +19,13 @@ package cc.metapro.openct.allclasses;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Environment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.SparseArray;
 import android.widget.Toast;
+
+import com.google.gson.JsonParser;
 
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
@@ -38,8 +41,10 @@ import java.util.List;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
+import cc.metapro.openct.data.university.item.classinfo.SingleClass;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.ICalHelper;
 import cc.metapro.openct.utils.MyObserver;
@@ -152,8 +157,14 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
     }
 
     @Override
-    public void loadFromExcel() {
+    public void loadFromExcel(FragmentManager manager) {
+        ExcelDialog.newInstance(new ExcelDialog.ExcelCallback() {
+            @Override
+            public void onJsonResult(String json) {
+                List<SingleClass> singleClasses = StoreHelper.fromJsonList(json, SingleClass.class);
 
+            }
+        }).show(manager, "excel_dialog");
     }
 
     @Override

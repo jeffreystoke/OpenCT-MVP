@@ -15,13 +15,12 @@
   ~ limitations under the License.
   -->
 
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/class_info"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/text_view_card_style_blue"
-    android:gravity="top"
-    android:textSize="12sp">
-
-</TextView>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <stroke android:width="2dp" android:color="@color/azure"/>
+    <corners android:radius="3dp"/>
+    <padding
+        android:bottom="5dp"
+        android:left="5dp"
+        android:right="5dp"
+        android:top="5dp"/>
+</shape>

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~  Copyright 2016 - 2017 OpenCT open source class table
   ~
@@ -15,11 +14,6 @@
   ~ limitations under the License.
   -->
 
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <corners android:radius="3dp"/>
-    <padding
-        android:bottom="5dp"
-        android:left="5dp"
-        android:right="5dp"
-        android:top="5dp"/>
-</shape>
+<resources>
+    <string name="app_name">ExcelModule</string>
+</resources>

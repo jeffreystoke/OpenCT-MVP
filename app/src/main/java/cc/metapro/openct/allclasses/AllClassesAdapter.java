@@ -29,15 +29,15 @@ import org.xdty.preference.colorpicker.ColorPickerSwatch;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
+import cc.metapro.openct.classdetail.ClassDetailActivity;
 import cc.metapro.openct.data.university.item.classinfo.ClassTime;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.DateHelper;
 
 import static cc.metapro.openct.allclasses.AllClassesActivity.allClasses;
 
 
-class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.AllClassesViewHolder> {
+class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassViewHolder> {
 
     private LayoutInflater mInflater;
     private AppCompatActivity mActivity;
@@ -47,17 +47,13 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.AllClasse
         mActivity = activity;
     }
 
-    Classes getResult() {
-        return allClasses;
+    @Override
+    public ClassViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new ClassViewHolder(mInflater.inflate(R.layout.item_class_all, parent, false));
     }
 
     @Override
-    public AllClassesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new AllClassesViewHolder(mInflater.inflate(R.layout.item_class_all, parent, false));
-    }
-
-    @Override
-    public void onBindViewHolder(AllClassesViewHolder holder, int position) {
+    public void onBindViewHolder(ClassViewHolder holder, int position) {
         holder.setInfo(allClasses.get(position), mActivity, position);
     }
 
@@ -66,7 +62,7 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.AllClasse
         return allClasses == null ? 0 : allClasses.size();
     }
 
-    static class AllClassesViewHolder extends RecyclerView.ViewHolder {
+    static class ClassViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.color)
         TextView mColor;
@@ -80,7 +76,7 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.AllClasse
         @BindView(R.id.edit)
         TextView mEdit;
 
-        AllClassesViewHolder(View itemView) {
+        ClassViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -115,7 +111,7 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.AllClasse
             mEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO: 17/2/20 start edit class activity
+                    ClassDetailActivity.actionStart(mName.getContext(), position);
                 }
             });
         }

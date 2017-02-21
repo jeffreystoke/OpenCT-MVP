@@ -1,4 +1,4 @@
-package cc.metapro.openct.allclasses;
+package cc.metapro.excelmodule;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,26 +16,11 @@ package cc.metapro.openct.allclasses;
  * limitations under the License.
  */
 
-import android.support.v4.app.FragmentManager;
+import android.content.Context;
 
-import cc.metapro.openct.BasePresenter;
-import cc.metapro.openct.BaseView;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
+public class ExcelHelper {
 
-interface AllClassesContract {
+    public static void readExcel(Context context, String fileName) {
 
-    interface View extends BaseView<Presenter> {
-        void updateClasses(Classes classes);
-    }
-
-    interface Presenter extends BasePresenter {
-
-        void exportClasses();
-
-        void clearClasses();
-
-        void loadFromExcel(FragmentManager manager);
-
-        void storeCLasses(Classes classes);
     }
 }

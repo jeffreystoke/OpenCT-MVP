@@ -33,40 +33,42 @@
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar_layout"
-        style="@style/AppTheme.AppBarLayout">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/AppTheme.Toolbar">
 
-            <ImageView
-                android:id="@+id/appbar_image"
-                style="@style/AppTheme.AppBarImage"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                style="@style/AppTheme.Toolbar"
-                android:layout_marginTop="@dimen/toolbar_padding_top">
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/name"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="2"
+                    android:hint="@string/class_name"
+                    android:lines="1"
+                    app:met_floatingLabel="normal"/>
 
-                <Spinner
-                    android:id="@+id/week"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/weekdays"
-                    android:gravity="end"/>
-            </android.support.v7.widget.Toolbar>
-        </android.support.design.widget.CollapsingToolbarLayout>
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/type"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:hint="@string/class_type"
+                    android:lines="1"
+                    app:met_floatingLabel="normal"/>
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        style="@style/AppTheme.Fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_edit"
-        app:layout_anchor="@id/appbar_layout"
-        app:layout_anchorGravity="bottom|end|right"/>
-
 </android.support.design.widget.CoordinatorLayout>

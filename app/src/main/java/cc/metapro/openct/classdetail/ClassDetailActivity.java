@@ -19,90 +19,66 @@ package cc.metapro.openct.classdetail;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
+import android.support.v4.util.ArraySet;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.widget.ImageView;
-import android.widget.Spinner;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
+import com.rengwuxian.materialedittext.MaterialEditText;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 
-import org.xdty.preference.colorpicker.ColorPickerDialog;
-import org.xdty.preference.colorpicker.ColorPickerSwatch;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import cc.metapro.openct.R;
+import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
+import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.RecyclerViewHelper;
+
+import static cc.metapro.openct.allclasses.AllClassesActivity.allClasses;
 
 public class ClassDetailActivity extends AppCompatActivity implements ClassDetailContract.View {
 
-    private static EnrichedClassInfo mInfo;
+    static int mIndex;
+
+    static EnrichedClassInfo mInfoEditing;
+
+    static List<ClassTime> classTimes;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @BindView(R.id.fab)
-    FloatingActionButton mFab;
-
-    @BindView(R.id.appbar_image)
-    ImageView mImageView;
-
     @BindView(R.id.recycler_view)
     SwipeMenuRecyclerView mRecyclerView;
 
-    @BindView(R.id.collapsing_toolbar_layout)
-    CollapsingToolbarLayout mCollapsingToolbarLayout;
+    @BindView(R.id.name)
+    MaterialEditText mName;
 
-    @BindView(R.id.week)
-    Spinner mDayOfWeekSpinner;
+    @BindView(R.id.type)
+    MaterialEditText mType;
 
     private ClassDetailAdapter mDetailAdapter;
-    private ClassDetailContract.Presenter mPresenter;
-    private boolean editEnabled = false;
 
-    public static void actionStart(Context context, EnrichedClassInfo info) {
-        mInfo = info;
+    private ClassDetailContract.Presenter mPresenter;
+
+    public static void actionStart(Context context, int index) {
+        mIndex = index;
+        mInfoEditing = allClasses.get(mIndex);
+        classTimes = new ArrayList<>();
+        for (ClassTime time : mInfoEditing.getTimeSet()) {
+            classTimes.add(time);
+        }
         Intent intent = new Intent(context, ClassDetailActivity.class);
         context.startActivity(intent);
-    }
-
-    @OnClick(R.id.appbar_image)
-    public void showColorPicker() {
-        ColorPickerDialog dialog = ColorPickerDialog.newInstance(R.string.choose_background, getResources().getIntArray(R.array.class_background), mInfo.getColor(), 4, 8);
-        dialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
-            @Override
-            public void onColorSelected(int color) {
-                mInfo.setColor(color);
-                mImageView.setBackgroundColor(color);
-                mCollapsingToolbarLayout.setContentScrimColor(color);
-                classInfoModified();
-            }
-        });
-        dialog.show(getFragmentManager(), "color_picker");
-    }
-
-    @OnClick(R.id.fab)
-    public void toggleEnable() {
-        if (editEnabled) {
-            editEnabled = false;
-            mFab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_edit));
-//            mInfo.setDayOfWeek(mDayOfWeekSpinner.getSelectedItemPosition() + 1);
-            mDayOfWeekSpinner.setEnabled(false);
-            mDetailAdapter.disableEdit();
-            classInfoModified();
-        } else {
-            editEnabled = true;
-            mFab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_dest_ok));
-            mDayOfWeekSpinner.setEnabled(true);
-            mDetailAdapter.enableEdit();
-        }
     }
 
     @Override
@@ -113,31 +89,17 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-        ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            ab.setDisplayHomeAsUpEnabled(true);
-        }
+        mToolbar.setTitle("");
 
-        mImageView.setBackgroundColor(mInfo.getColor());
-        mCollapsingToolbarLayout.setContentScrimColor(mInfo.getColor());
-        mDetailAdapter = new ClassDetailAdapter(this, mInfo);
-        if (!mDetailAdapter.isAddClass()) {
-//            mDayOfWeekSpinner.setSelection(mInfo.getDayOfWeek() - 1, true);
-            mDayOfWeekSpinner.setEnabled(false);
-        } else {
-            toggleEnable();
-        }
-        setRecyclerView();
         new ClassDetailPresenter(this, this);
-    }
 
-    void classInfoModified() {
-//        ClassInfo info = mDetailAdapter.getResultClass();
-//        mInfo.setClassInfo(info);
-        mPresenter.storeClassInfo(mInfo);
+        mName.setText(mInfoEditing.getName());
+        mType.setText(mInfoEditing.getType());
+        setRecyclerView();
     }
 
     private void setRecyclerView() {
+        mDetailAdapter = new ClassDetailAdapter(this);
         RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mDetailAdapter);
         mRecyclerView.setItemViewSwipeEnabled(true);
         mRecyclerView.setOnItemMoveListener(new OnItemMoveListener() {
@@ -148,27 +110,56 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
 
             @Override
             public void onItemDismiss(final int position) {
-//                final ClassInfo toDel = mDetailAdapter.getItem(position);
-//                mDetailAdapter.removeItem(position);
-//                mDetailAdapter.notifyDataSetChanged();
-//                classInfoModified();
-//                Snackbar.make(mRecyclerView, toDel.getName() + " 已删除", BaseTransientBottomBar.LENGTH_INDEFINITE)
-//                        .setAction(R.string.cancel, new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                mDetailAdapter.addItem(position, toDel);
-//                                mDetailAdapter.notifyDataSetChanged();
-//                                mRecyclerView.smoothScrollToPosition(position);
-//                                mRecyclerView.postDelayed(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        classInfoModified();
-//                                    }
-//                                }, 500);
-//                            }
-//                        }).show();
+                final ClassTime toRemove = classTimes.get(position);
+                classTimes.remove(toRemove);
+                mDetailAdapter.notifyDataSetChanged();
+                final String message = mInfoEditing.getName() + " " + DateHelper.weekDayToChinese(toRemove.getWeekDay()) + " " + toRemove.getTime() + " 节";
+                final Snackbar snackbar = Snackbar.make(mRecyclerView, message + " 已删除", BaseTransientBottomBar.LENGTH_INDEFINITE);
+                snackbar.setAction(android.R.string.cancel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        classTimes.add(toRemove);
+                        mDetailAdapter.notifyDataSetChanged();
+                        snackbar.dismiss();
+                        Snackbar.make(mRecyclerView, message + " 已恢复", BaseTransientBottomBar.LENGTH_LONG).show();
+                        mRecyclerView.smoothScrollToPosition(classTimes.size() - 1);
+                    }
+                });
+                snackbar.show();
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.all_classes, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.add) {
+            if (!classTimes.isEmpty()) {
+                classTimes.add(new ClassTime(classTimes.get(classTimes.size() - 1)));
+            } else {
+                classTimes.add(new ClassTime());
+            }
+            mDetailAdapter.notifyDataSetChanged();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        allClasses.remove(mInfoEditing);
+        mInfoEditing.setName(mName.getText().toString());
+        mInfoEditing.setType(mType.getText().toString());
+        Set<ClassTime> timeSet = new ArraySet<>();
+        timeSet.addAll(classTimes);
+        mInfoEditing.setTimeSet(timeSet);
+        allClasses.add(mInfoEditing);
+        super.onBackPressed();
     }
 
     @Override

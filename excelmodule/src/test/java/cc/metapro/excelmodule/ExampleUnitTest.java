@@ -1,4 +1,4 @@
-package cc.metapro.openct.allclasses;
+package cc.metapro.excelmodule;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,26 +16,18 @@ package cc.metapro.openct.allclasses;
  * limitations under the License.
  */
 
-import android.support.v4.app.FragmentManager;
+import org.junit.Test;
 
-import cc.metapro.openct.BasePresenter;
-import cc.metapro.openct.BaseView;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
+import static org.junit.Assert.*;
 
-interface AllClassesContract {
-
-    interface View extends BaseView<Presenter> {
-        void updateClasses(Classes classes);
-    }
-
-    interface Presenter extends BasePresenter {
-
-        void exportClasses();
-
-        void clearClasses();
-
-        void loadFromExcel(FragmentManager manager);
-
-        void storeCLasses(Classes classes);
+/**
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ */
+public class ExampleUnitTest {
+    @Test
+    public void addition_isCorrect() throws Exception {
+        assertEquals(4, 2 + 2);
     }
 }

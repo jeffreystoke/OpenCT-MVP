@@ -18,12 +18,15 @@ package cc.metapro.openct.utils;
 
 import android.content.Context;
 import android.support.annotation.Keep;
+import android.widget.Spinner;
 
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
 
 @Keep
 public final class Constants {
+
+    public static final int WEEKS = 30;
 
     public static final String TYPE_CLASS = "class";
     public static final String TYPE_GRADE = "grade";

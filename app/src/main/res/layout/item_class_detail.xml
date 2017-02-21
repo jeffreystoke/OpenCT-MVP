@@ -26,135 +26,73 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="10dp">
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/class_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/class_name"
-            app:met_floatingLabel="normal"/>
-
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/class_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/class_type"
-            app:met_floatingLabel="normal"/>
+        <Spinner
+            android:id="@+id/week_day"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:entries="@array/weekdays"
+            android:gravity="center"
+            android:padding="5dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:paddingEnd="10dp"
-                android:paddingLeft="0dp"
-                android:paddingRight="10dp"
-                android:paddingStart="0dp"
-                android:text="@string/class_time"/>
+            android:orientation="horizontal"
+            android:padding="5dp">
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/time_start"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="3"
+                android:gravity="center"
                 android:hint="@string/start"
                 android:inputType="numberDecimal"
                 app:met_floatingLabel="normal"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingEnd="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingStart="10dp"
-                android:text="@string/to"/>
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/sep"/>
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/time_end"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="3"
+                android:gravity="center"
                 android:hint="@string/end"
                 android:inputType="numberDecimal"
                 app:met_floatingLabel="normal"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/jie"
+                android:textSize="18sp"/>
         </LinearLayout>
 
-        <LinearLayout
+        <android.support.v7.widget.GridLayout
+            android:id="@+id/during_grid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingEnd="10dp"
-                android:paddingLeft="0dp"
-                android:paddingRight="10dp"
-                android:paddingStart="0dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="2"
-                    android:gravity="center"
-                    android:text="@string/class_during"/>
-
-                <TextView
-                    android:id="@+id/add_during"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="@string/add_during"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/during_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"/>
-        </LinearLayout>
-
-        <RadioGroup
-            android:id="@+id/even_odd_radio_group"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/odd"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/odd_week"/>
-
-            <RadioButton
-                android:id="@+id/even"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/even_week"/>
-
-            <RadioButton
-                android:id="@+id/common"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/common"/>
-        </RadioGroup>
+            app:columnCount="6"
+            app:rowCount="5">
+        </android.support.v7.widget.GridLayout>
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/class_teacher"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/class_teacher"
+            android:padding="5dp"
             app:met_floatingLabel="normal"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
@@ -162,6 +100,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/class_place"
+            android:padding="5dp"
             app:met_floatingLabel="normal"/>
+
+        <TextView
+            android:id="@+id/edit"
+            android:text="@string/edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
     </LinearLayout>
 </android.support.v7.widget.CardView>

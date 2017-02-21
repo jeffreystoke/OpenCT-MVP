@@ -47,14 +47,12 @@ import cc.metapro.openct.utils.RecyclerViewHelper;
 public class AllClassesActivity extends AppCompatActivity implements AllClassesContract.View {
 
     private static final int REQUEST_WRITE_STORAGE = 112;
-
+    public static Classes allClasses;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.recycler_view)
     SwipeMenuRecyclerView mRecyclerView;
     private AllClassesAdapter mAdapter;
-    static Classes allClasses;
-
     private AllClassesContract.Presenter mPresenter;
 
     @Override
@@ -64,10 +62,6 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
 
         new AllClassesPresenter(this, this);
     }
@@ -91,6 +85,7 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        mPresenter.storeCLasses(allClasses);
         int id = item.getItemId();
         if (id == R.id.export_classes) {
             // export to iCal
@@ -110,6 +105,7 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
             CustomActivity.actionStart(this, Constants.TYPE_CLASS);
         } else if (id == R.id.import_from_excel) {
             // import from excel
+            mPresenter.loadFromExcel(getSupportFragmentManager());
         } else if (id == R.id.add_class) {
             // add a new class info
         }
@@ -131,7 +127,9 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
 
     @Override
     public void updateClasses(Classes classes) {
-        allClasses = classes;
+        if (allClasses == null || allClasses.isEmpty() || classes.isEmpty()) {
+            allClasses = classes;
+        }
         mAdapter = new AllClassesAdapter(this);
         RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mAdapter);
         mRecyclerView.setItemViewSwipeEnabled(true);
@@ -155,7 +153,7 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
                         mAdapter.notifyDataSetChanged();
                         snackbar.dismiss();
                         Snackbar.make(mRecyclerView, toRemove.getName() + " 已恢复", BaseTransientBottomBar.LENGTH_LONG).show();
-                        mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                        mRecyclerView.smoothScrollToPosition(0);
                     }
                 });
                 snackbar.show();
@@ -165,7 +163,8 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
 
     @Override
     public void onBackPressed() {
-        mPresenter.storeCLasses(mAdapter.getResult());
+        mPresenter.storeCLasses(allClasses);
+        allClasses = null;
         super.onBackPressed();
     }
 

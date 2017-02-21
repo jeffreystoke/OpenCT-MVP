@@ -22,6 +22,7 @@ import android.support.annotation.Keep;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cc.metapro.openct.R;
@@ -39,7 +40,7 @@ public class DailyWidgetService extends RemoteViewsService {
 
     private static class DailyWidgetFactory implements RemoteViewsFactory {
 
-        private static List<SingleClass> mDailyClasses;
+        private List<SingleClass> mDailyClasses = new ArrayList<>();
         private Context mContext;
 
         DailyWidgetFactory(Context context, Intent intent) {
@@ -63,7 +64,7 @@ public class DailyWidgetService extends RemoteViewsService {
 
         @Override
         public int getCount() {
-            return mDailyClasses.size();
+            return mDailyClasses == null ? 0 : mDailyClasses.size();
         }
 
         @Override

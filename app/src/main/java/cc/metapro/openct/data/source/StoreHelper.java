@@ -77,7 +77,7 @@ public final class StoreHelper {
         return gson.toJson(o);
     }
 
-    static <T> List<T> fromJsonList(String jsonList, Class<T> classType) {
+    public static <T> List<T> fromJsonList(String jsonList, Class<T> classType) {
         JsonArray array = new JsonParser().parse(jsonList).getAsJsonArray();
         List<T> result = new ArrayList<>();
         for (JsonElement element : array) {

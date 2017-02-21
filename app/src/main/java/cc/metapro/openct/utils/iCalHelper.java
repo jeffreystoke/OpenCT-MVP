@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import cc.metapro.openct.data.university.item.classinfo.ClassDuring;
 import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 
@@ -50,8 +49,11 @@ public class ICalHelper {
     public static List<VEvent> getClassEvents(SparseArray<Calendar> classTimeMap, int week, EnrichedClassInfo info) throws URISyntaxException, SocketException {
         List<VEvent> result = new ArrayList<>();
         for (ClassTime time : info.getTimeSet()) {
-            for (ClassDuring during : time.getDuringSet()) {
-                VEvent event = getClassEvent(classTimeMap, info, time, during, week);
+            for (int i = 1; i <= 30; i++) {
+                int j = i;
+                while (time.hasClass(j++)) ;
+                j--;
+                VEvent event = getClassEvent(classTimeMap, info, time, i, j, week);
                 if (event != null) {
                     result.add(event);
                 }
@@ -61,14 +63,11 @@ public class ICalHelper {
         return result;
     }
 
-    private static VEvent getClassEvent(SparseArray<Calendar> classTimeMap, EnrichedClassInfo info, ClassTime time, ClassDuring during, int week) throws URISyntaxException, SocketException {
+    private static VEvent getClassEvent(SparseArray<Calendar> classTimeMap, EnrichedClassInfo info, ClassTime time, int startWeek, int endWeek, int currentWeek) throws URISyntaxException, SocketException {
         Calendar now = Calendar.getInstance();
 
-        int endWeek = during.getEndWeek();
-        int startWeek = during.getStartWeek();
-
-        int dayAfter = (now.get(Calendar.WEEK_OF_YEAR) + endWeek - week - 1) * 7;
-        int dayBefore = Math.abs((now.get(Calendar.WEEK_OF_YEAR) + startWeek - week - 1) * 7);
+        int dayAfter = (now.get(Calendar.WEEK_OF_YEAR) + endWeek - currentWeek - 1) * 7;
+        int dayBefore = Math.abs((now.get(Calendar.WEEK_OF_YEAR) + startWeek - currentWeek - 1) * 7);
 
         // repeat every week until endDate
         Recur recur = new Recur(Recur.WEEKLY, new DateTime(DateHelper.getDateAfter(now.getTime(), dayAfter)));

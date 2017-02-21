@@ -16,12 +16,11 @@ package cc.metapro.openct.utils;
  * limitations under the License.
  */
 
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import cc.metapro.openct.data.university.item.classinfo.ClassDuring;
 
 public class ClassInfoHelper {
 
@@ -45,7 +44,7 @@ public class ClassInfoHelper {
         }
     }
 
-    public static ClassDuring getClassDuring(String duringRe, String rawDuring) {
+    private static boolean[] getDuring(String duringRe, String rawDuring) {
         boolean[] weeks = new boolean[30];
         for (int i = 0; i < weeks.length; i++) {
             weeks[i] = false;
@@ -66,6 +65,34 @@ public class ClassInfoHelper {
         }
         boolean odd = Pattern.compile("单周?").matcher(rawDuring).find();
         boolean even = Pattern.compile("双周?").matcher(rawDuring).find();
-        return new ClassDuring(weeks, odd, even);
+
+        if (odd) {
+            for (int i = 1; i < 30; i += 2) {
+                if (weeks[i]) {
+                    weeks[i] = false;
+                }
+            }
+        } else if (even) {
+            for (int i = 0; i < 30; i += 2) {
+                if (weeks[i]) {
+                    weeks[i] = false;
+                }
+            }
+        }
+        return weeks;
+    }
+
+    public static boolean[] combineDuring(String duringRe, String rawDuring, @Nullable boolean[] old) {
+        if (old == null) {
+            return getDuring(duringRe, rawDuring);
+        }
+
+        boolean[] tmp = getDuring(duringRe, rawDuring);
+        for (int i = 0; i < 30; i++) {
+            if (tmp[i]) {
+                old[i] = true;
+            }
+        }
+        return old;
     }
 }

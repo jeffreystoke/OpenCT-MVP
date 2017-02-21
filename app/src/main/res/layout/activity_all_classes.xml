@@ -37,8 +37,6 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_marginTop="@dimen/toolbar_padding_top"/>
+            style="@style/AppTheme.Toolbar"/>
     </android.support.design.widget.AppBarLayout>
 </android.support.design.widget.CoordinatorLayout>

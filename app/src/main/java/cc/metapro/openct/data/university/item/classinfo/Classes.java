@@ -44,9 +44,9 @@ public class Classes extends ArrayList<EnrichedClassInfo> {
         if (targetInfo != null) {
             super.remove(targetInfo);
             targetInfo.combine(classInfo);
-            super.add(targetInfo);
+            super.add(0, targetInfo);
         } else {
-            super.add(classInfo);
+            super.add(0, classInfo);
         }
         return true;
     }

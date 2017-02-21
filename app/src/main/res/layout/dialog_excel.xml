@@ -15,13 +15,16 @@
   ~ limitations under the License.
   -->
 
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/class_info"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/text_view_card_style_blue"
-    android:gravity="top"
-    android:textSize="12sp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
-</TextView>
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/excel_content"
+        android:lines="4"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:layout_height="wrap_content"
+        android:hint="将表格粘贴至此"/>
+</LinearLayout>

@@ -96,13 +96,8 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
     Set<ClassTime> hasClassThisWeek(int week) {
         Set<ClassTime> result = new ArraySet<>();
         for (ClassTime time : mTimeSet) {
-            Set<ClassDuring> duringSet = time.getDuringSet();
-            if (duringSet != null) {
-                for (ClassDuring during : duringSet) {
-                    if (during.hasClass(week)) {
-                        result.add(time);
-                    }
-                }
+            if (time.hasClass(week)) {
+                result.add(time);
             }
         }
         return result;
@@ -135,7 +130,29 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
      */
     void combine(EnrichedClassInfo info) {
         if (info == null) return;
-        mTimeSet.addAll(info.getTimeSet());
+        ArraySet<ClassTime> mixedTime = new ArraySet<>();
+        mixedTime.addAll(mTimeSet);
+
+        for (ClassTime time : info.getTimeSet()) {
+            boolean found = false;
+            for (ClassTime myTime : mTimeSet) {
+                if (myTime.equals(time)) {
+                    found = true;
+                    myTime.combineDuring(time.getDuring());
+                    mixedTime.add(myTime);
+                }
+            }
+            if (!found) {
+                mixedTime.add(time);
+            }
+        }
+        mTimeSet = mixedTime;
+    }
+
+    public void setTimeSet(Set<ClassTime> timeSet) {
+        if (timeSet != null && !timeSet.isEmpty()) {
+            mTimeSet = timeSet;
+        }
     }
 
     public Set<ClassTime> getTimeSet() {
