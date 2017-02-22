@@ -21,6 +21,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayout;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import cc.metapro.openct.R;
@@ -69,8 +70,10 @@ public class SingleClass implements Comparable<SingleClass> {
         return teacher;
     }
 
-    public void addViewTo(GridLayout gridLayout, LayoutInflater inflater) {
+    public void addViewTo(ViewGroup gridLayout, LayoutInflater inflater) {
         final CardView card = (CardView) inflater.inflate(R.layout.item_class_info, gridLayout, false);
+        card.setCardBackgroundColor(color);
+
         TextView textView = (TextView) card.findViewById(R.id.class_name);
         int length = time.getDailyEnd() - time.getDailySeq() + 1;
         if (length > 5 || length < 1) {
@@ -80,29 +83,23 @@ public class SingleClass implements Comparable<SingleClass> {
             textView.setText(name + "@" + time.getPlace());
         }
 
-        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+//        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+
         //设置所在列的宽度和高度
-        params.width = Constants.CLASS_WIDTH;
-        params.height = length * Constants.CLASS_BASE_HEIGHT;
-        int row = time.getDailySeq() - 1;
-        int col = time.getWeekDay() - 1;
-        params.rowSpec = GridLayout.spec(row);
-        params.columnSpec = GridLayout.spec(col);
+//        int row = time.getDailySeq() - 1;
+//        int col = time.getWeekDay() - 1;
+        card.setX((time.getWeekDay() - 1) * Constants.CLASS_WIDTH);
+        card.setY((time.getDailySeq() - 1) * Constants.CLASS_BASE_HEIGHT);
+        gridLayout.addView(card);
+        card.getLayoutParams().height = length * Constants.CLASS_BASE_HEIGHT;
+        card.getLayoutParams().width = Constants.CLASS_WIDTH;
 
-        card.setCardBackgroundColor(color);
-        card.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // TODO: 17/2/22  go to class detail activity
-            }
-        });
+//        params.rowSpec = GridLayout.spec(row);
+//        params.columnSpec = GridLayout.spec(col);
+//        if (row > gridLayout.getRowCount()) {
+//            gridLayout.setRowCount(row + length + 1);
+//        }
 
-        if (row > gridLayout.getRowCount()) {
-            gridLayout.setRowCount(row + length + 1);
-            GridLayoutHelper.fillGrids(gridLayout);
-        }
-
-        gridLayout.addView(card, params);
 //        GridLayoutHelper.addViewToGridlayout(gridLayout, card, params);
     }
 

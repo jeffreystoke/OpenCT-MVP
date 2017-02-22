@@ -101,8 +101,8 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
             }
         } else if (id == R.id.clear_classes) {
             // clear all classes
-            mPresenter.clearClasses();
             needUpdate = true;
+            mPresenter.clearClasses();
         } else if (id == R.id.custom) {
             // import from web
             CustomActivity.actionStart(this, Constants.TYPE_CLASS);

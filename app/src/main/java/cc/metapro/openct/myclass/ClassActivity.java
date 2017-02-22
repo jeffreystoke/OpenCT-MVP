@@ -122,10 +122,9 @@ public class ClassActivity extends AppCompatActivity
         }
     }
 
-    private void addContentView(GridLayout content, Classes classes, int thisWeek) {
+    private void addContentView(ViewGroup content, Classes classes, int thisWeek) {
         if (content == null) return;
         content.removeAllViews();
-        GridLayoutHelper.fillGrids(content);
         if (thisWeek < 0) {
             for (SingleClass singleClass : classes.getAllClasses()) {
                 singleClass.addViewTo(content, getLayoutInflater());
@@ -135,6 +134,7 @@ public class ClassActivity extends AppCompatActivity
                 singleClass.addViewTo(content, getLayoutInflater());
             }
         }
+//        GridLayoutHelper.fillGrids(content);
     }
 
     @Override
@@ -143,7 +143,7 @@ public class ClassActivity extends AppCompatActivity
         // 更新学期课表视图
         View view = mClassPagerAdapter.getSemClassView();
         ViewGroup seq = (ViewGroup) view.findViewById(R.id.seq);
-        GridLayout con = (GridLayout) view.findViewById(R.id.name);
+        ViewGroup con = (ViewGroup) view.findViewById(R.id.name);
         if (!classes.isEmpty()) {
             addSeqViews(seq);
             addContentView(con, classes, -1);
@@ -157,7 +157,7 @@ public class ClassActivity extends AppCompatActivity
         mClassPagerAdapter.notifyDataSetChanged();
         view = mClassPagerAdapter.getWeekClassView();
         seq = (ViewGroup) view.findViewById(R.id.seq);
-        con = (GridLayout) view.findViewById(R.id.name);
+        con = (ViewGroup) view.findViewById(R.id.name);
         if (!classes.isEmpty()) {
             addSeqViews(seq);
             addContentView(con, classes, week);
@@ -278,4 +278,5 @@ public class ClassActivity extends AppCompatActivity
         Constants.SEARCH_CONTENT_KEY = getString(R.string.key_search_content);
         Constants.DAILY_CLASSES = Integer.parseInt(PrefHelper.getString(this, R.string.pref_daily_class_count, "12"));
     }
+
 }

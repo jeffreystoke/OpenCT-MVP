@@ -25,6 +25,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+import android.preference.SwitchPreference;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -52,9 +53,13 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
     private Preference mCurrentWeekPreference;
     private Preference mCmsPasswordPreference;
     private Preference mLibPasswordPreference;
-    private CheckBoxPreference mCustomEnablePreference;
+    private SwitchPreference mCustomEnablePreference;
     private Preference mCustomSchoolNamePreference;
+    private Preference mDailyClassCountPreference;
+    private PreferenceScreen mClassSettingScreen;
     private List<Preference> mPreferences;
+
+    private List<Preference> mTimePreferences;
 
     public SchoolPreferenceFragment() {
 
@@ -67,9 +72,13 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         setHasOptionsMenu(false);
         ButterKnife.bind(this, getActivity());
         mPreferences = new ArrayList<>();
+        mTimePreferences = new ArrayList<>();
 
-        PreferenceScreen screen = (PreferenceScreen) findPreference(getString(R.string.pref_class_settings));
-        addTimePreferences(screen);
+        mDailyClassCountPreference = findPreference(getString(R.string.pref_daily_class_count));
+        mPreferences.add(mDailyClassCountPreference);
+
+        mClassSettingScreen = (PreferenceScreen) findPreference(getString(R.string.pref_class_settings));
+        addTimePreferences();
 
         findPreference(getString(R.string.pref_custom_action_clear)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -115,14 +124,14 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         mLibPasswordPreference = findPreference(getString(R.string.pref_lib_password));
         mPreferences.add(mLibPasswordPreference);
 
-        mCustomEnablePreference = (CheckBoxPreference) findPreference(getString(R.string.pref_custom_enable));
+        mCustomEnablePreference = (SwitchPreference) findPreference(getString(R.string.pref_custom_enable));
         mCustomEnablePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (mCustomEnablePreference.isChecked()) {
-                    bindSummary(mSchoolPreference, preference.getSharedPreferences().getString(mCustomSchoolNamePreference.getKey(), ""));
+                    bindSummary(mSchoolPreference, PrefHelper.getString(getActivity(), mCustomSchoolNamePreference.getKey(), ""));
                 } else {
-                    bindSummary(mSchoolPreference, preference.getSharedPreferences().getString(mSchoolPreference.getKey(), ""));
+                    bindSummary(mSchoolPreference, PrefHelper.getString(getActivity(), mSchoolPreference.getKey(), ""));
                 }
                 return true;
             }
@@ -146,7 +155,6 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         mPreferences.add(findPreference(getString(R.string.pref_class_during_re)));
         mPreferences.add(findPreference(getString(R.string.pref_class_teacher_re)));
         mPreferences.add(findPreference(getString(R.string.pref_class_place_re)));
-        mPreferences.add(findPreference(getString(R.string.pref_daily_class_count)));
         mPreferences.add(findPreference(getString(R.string.pref_every_class_time)));
         mPreferences.add(findPreference(getString(R.string.pref_rest_time)));
         bindListener();
@@ -160,23 +168,33 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         }
     }
 
-    private void addTimePreferences(PreferenceScreen screen) {
+    private void addTimePreferences() {
         int count = Integer.parseInt(PrefHelper.getString(getActivity(), R.string.pref_daily_class_count, "12"));
+        for (Preference preference : mTimePreferences) {
+            mClassSettingScreen.removePreference(preference);
+            mPreferences.remove(preference);
+        }
+        mTimePreferences.clear();
+
         for (int i = 0; i < count; i++) {
             Preference preference = new Preference(getActivity());
             final String key = Constants.TIME_PREFIX + i;
-            String defaultValue = "0" + (8 + i) + ":0" + 0;
+            String prefix = "";
+            if (8 + i < 10) prefix += "0";
+            int t = (8 + i) > 23 ? 23 : (8 + i);
+            final String defaultValue = prefix + t + ":00";
             preference.setKey(key);
             preference.setTitle("第 " + (i + 1) + " 节");
             preference.setDefaultValue(defaultValue);
             String value = PrefHelper.getString(getActivity(), key, defaultValue);
             preference.setSummary(value);
-            final int[] parts = REHelper.getUserSetTime(value);
 
             mPreferences.add(preference);
             preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(final Preference preference) {
+                    final String value = PrefHelper.getString(getActivity(), key, defaultValue);
+                    final int[] parts = REHelper.getUserSetTime(value);
                     TimePickerDialog dialog = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
@@ -197,8 +215,9 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
                     return true;
                 }
             });
-            screen.addPreference(preference);
+            mClassSettingScreen.addPreference(preference);
             mPreferences.add(preference);
+            mTimePreferences.add(preference);
         }
     }
 
@@ -217,6 +236,10 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
             return encryption(preference, value, R.string.pref_cms_password, R.string.pref_cms_password_encrypted);
         } else if (preference.equals(mLibPasswordPreference)) {
             return encryption(preference, value, R.string.pref_lib_password, R.string.pref_lib_password_encrypted);
+        } else if (preference.equals(mDailyClassCountPreference)) {
+            PrefHelper.putString(getActivity(), R.string.pref_daily_class_count, value);
+            addTimePreferences();
+            return false;
         }
         return true;
     }

@@ -81,15 +81,11 @@
                 android:layout_weight="1"
                 android:orientation="vertical"/>
 
-            <android.support.v7.widget.GridLayout
+            <RelativeLayout
                 android:id="@+id/name"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="14"
-                app:columnCount="7"
-                app:columnOrderPreserved="true"
-                app:rowCount="12"
-                app:rowOrderPreserved="true"/>
+                android:layout_weight="14"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

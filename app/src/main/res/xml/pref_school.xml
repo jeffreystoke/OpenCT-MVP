@@ -137,7 +137,7 @@
         <PreferenceScreen
             android:summary="@string/tip_not_exist"
             android:title="@string/custom">
-            <CheckBoxPreference
+            <SwitchPreference
                 android:key="@string/pref_custom_enable"
                 android:title="@string/enable_custom"/>
             <EditTextPreference
