@@ -53,6 +53,7 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
     Toolbar mToolbar;
     @BindView(R.id.recycler_view)
     SwipeMenuRecyclerView mRecyclerView;
+    private boolean needUpdate = true;
     private AllClassesAdapter mAdapter;
     private AllClassesContract.Presenter mPresenter;
 
@@ -101,15 +102,20 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
         } else if (id == R.id.clear_classes) {
             // clear all classes
             mPresenter.clearClasses();
+            needUpdate = true;
         } else if (id == R.id.custom) {
             // import from web
             CustomActivity.actionStart(this, Constants.TYPE_CLASS);
+            needUpdate = true;
         } else if (id == R.id.import_from_excel) {
             // import from excel
             mPresenter.loadFromExcel(getSupportFragmentManager());
+            needUpdate = true;
         } else if (id == R.id.add_class) {
             // add a new class info
             allClasses.add(new EnrichedClassInfo("新课程", "必修", new ClassTime()));
+            mPresenter.storeClasses(allClasses);
+            needUpdate = false;
             mAdapter.notifyDataSetChanged();
             ClassDetailActivity.actionStart(this, 0);
         }
@@ -117,22 +123,10 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_WRITE_STORAGE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mPresenter.exportClasses();
-                } else {
-                    Toast.makeText(this, R.string.no_write_permission, Toast.LENGTH_LONG).show();
-                }
-        }
-    }
-
-    @Override
     public void updateClasses(Classes classes) {
-        if (allClasses == null || allClasses.isEmpty() || classes.isEmpty()) {
+        if ((allClasses == null || allClasses.isEmpty()) && needUpdate) {
             allClasses = classes;
+            needUpdate = false;
         }
         mAdapter = new AllClassesAdapter(this);
         RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mAdapter);
@@ -172,4 +166,16 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
         super.onBackPressed();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_WRITE_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mPresenter.exportClasses();
+                } else {
+                    Toast.makeText(this, R.string.no_write_permission, Toast.LENGTH_LONG).show();
+                }
+        }
+    }
 }

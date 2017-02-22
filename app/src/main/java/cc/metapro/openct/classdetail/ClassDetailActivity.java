@@ -143,7 +143,7 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
             if (!classTimes.isEmpty()) {
                 classTimes.add(new ClassTime(classTimes.get(classTimes.size() - 1)));
             } else {
-                classTimes.add(new ClassTime());
+                classTimes.add(0, new ClassTime());
             }
             mDetailAdapter.notifyDataSetChanged();
         }

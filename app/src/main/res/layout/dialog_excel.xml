@@ -22,9 +22,9 @@
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/excel_content"
-        android:lines="4"
         android:layout_width="match_parent"
-        android:layout_margin="10dp"
         android:layout_height="wrap_content"
-        android:hint="将表格粘贴至此"/>
+        android:layout_margin="10dp"
+        android:hint="将表格粘贴至此"
+        android:lines="4"/>
 </LinearLayout>

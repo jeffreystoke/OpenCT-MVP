@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.GridLayoutHelper;
 
 public class SingleClass implements Comparable<SingleClass> {
 
@@ -83,29 +84,23 @@ public class SingleClass implements Comparable<SingleClass> {
         //设置所在列的宽度和高度
         params.width = Constants.CLASS_WIDTH;
         params.height = length * Constants.CLASS_BASE_HEIGHT;
-        params.rowSpec = GridLayout.spec(time.getDailySeq() - 1);//行的位置。
-        params.columnSpec = GridLayout.spec(time.getWeekDay() - 1);//列的位置。
+        int row = time.getDailySeq() - 1;
+        int col = time.getWeekDay() - 1;
+        params.rowSpec = GridLayout.spec(row);
+        params.columnSpec = GridLayout.spec(col);
 
         card.setCardBackgroundColor(color);
         card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                    ClassDetailActivity.actionStart(inflater.getContext(), EnrichedClassInfo.this);
+                // TODO: 17/2/22  go to class detail activity
             }
         });
 
-//        int x = (time.getWeekDay() - 1) * Constants.CLASS_WIDTH;
-//        int y = (time.getDailySeq() - 1) * Constants.CLASS_BASE_HEIGHT;
-
-        for (int i = 0; i < gridLayout.getChildCount(); i++) {
-            View view = gridLayout.getChildAt(i);
-            if (params.equals(view.getLayoutParams())) {
-                gridLayout.removeView(view);
-            }
+        if (row > gridLayout.getRowCount()) {
+            gridLayout.setRowCount(row + length + 1);
+            GridLayoutHelper.fillGrids(gridLayout);
         }
-
-//        card.setX(x);
-//        card.setY(y);
 
         gridLayout.addView(card, params);
     }

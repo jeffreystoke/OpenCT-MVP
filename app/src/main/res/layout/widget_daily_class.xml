@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/material_white"
+    android:background="@color/material_white_dark"
     android:orientation="vertical"
     android:padding="@dimen/widget_margin">
 
@@ -28,9 +28,10 @@
             android:id="@+id/widget_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@color/material_white"
-            android:dividerHeight="3dp"
+            android:divider="@color/material_white_dark"
+            android:dividerHeight="10dp"
             android:minHeight="40dp"
+            android:padding="5dp"
             tools:listitem="@layout/item_widget_list"/>
 
         <TextView
@@ -39,6 +40,6 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/no_daily_classes"
-            android:textColor="@color/material_black"/>
+            android:textColor="@color/material_grey"/>
     </FrameLayout>
 </LinearLayout>

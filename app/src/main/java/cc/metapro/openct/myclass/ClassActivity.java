@@ -56,6 +56,7 @@ import cc.metapro.openct.grades.GradeActivity;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.GridLayoutHelper;
 
 @Keep
 public class ClassActivity extends AppCompatActivity
@@ -124,6 +125,7 @@ public class ClassActivity extends AppCompatActivity
     private void addContentView(GridLayout content, Classes classes, int thisWeek) {
         if (content == null) return;
         content.removeAllViews();
+        GridLayoutHelper.fillGrids(content);
         if (thisWeek < 0) {
             for (SingleClass singleClass : classes.getAllClasses()) {
                 singleClass.addViewTo(content, getLayoutInflater());

@@ -76,6 +76,7 @@ public class DailyWidgetService extends RemoteViewsService {
             SingleClass classInfo = mDailyClasses.get(i);
 
             views.setTextViewText(R.id.widget_class_name, classInfo.getName());
+            views.setTextViewText(R.id.widget_class_type, classInfo.getType());
             views.setTextViewText(R.id.widget_class_place, classInfo.getTimeString() + " 节 在 " + classInfo.getPlace());
             return views;
         }

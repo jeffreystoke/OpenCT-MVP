@@ -16,15 +16,28 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/material_white_dark"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/widget_title"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/material_black"
+        android:gravity="center_vertical|start"
+        android:paddingEnd="0dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="0dp"
+        android:paddingStart="10dp"
+        android:text="@string/weekly_class"
+        android:textColor="@color/material_white"/>
     <!--周x-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/material_black"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -35,31 +48,38 @@
 
         <TextView
             style="@style/TextAppearance.AppCompat.SeqText"
-            android:text="@string/monday"/>
+            android:text="@string/monday"
+            android:textColor="@color/material_white"/>
 
         <TextView
             style="@style/TextAppearance.AppCompat.SeqText"
-            android:text="@string/tuesday"/>
+            android:text="@string/tuesday"
+            android:textColor="@color/material_white"/>
 
         <TextView
             style="@style/TextAppearance.AppCompat.SeqText"
-            android:text="@string/wednesday"/>
+            android:text="@string/wednesday"
+            android:textColor="@color/material_white"/>
 
         <TextView
             style="@style/TextAppearance.AppCompat.SeqText"
-            android:text="@string/thursday"/>
+            android:text="@string/thursday"
+            android:textColor="@color/material_white"/>
 
         <TextView
             style="@style/TextAppearance.AppCompat.SeqText"
-            android:text="@string/friday"/>
+            android:text="@string/friday"
+            android:textColor="@color/material_white"/>
 
         <TextView
             style="@style/TextAppearance.AppCompat.SeqText"
-            android:text="@string/saturday"/>
+            android:text="@string/saturday"
+            android:textColor="@color/material_white"/>
 
         <TextView
             style="@style/TextAppearance.AppCompat.SeqText"
-            android:text="@string/sunday"/>
+            android:text="@string/sunday"
+            android:textColor="@color/material_white"/>
     </LinearLayout>
 
     <GridLayout
@@ -67,7 +87,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:columnCount="7"
-        android:rowCount="12"/>
+        android:rowCount="12"
+        android:scrollbars="vertical"/>
 
     <TextView
         android:id="@+id/empty_view"

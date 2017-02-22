@@ -105,7 +105,7 @@
     <string name="custom_school">自定义学校</string>
     <string name="enter_captcha">请输入验证码</string>
     <string name="adv_custom_tip">如果基础自定义学校不成功, 可以尝试高级自定义\n你将会执行完整的定义过程(暂时只支持自定义课程表)</string>
-    <string name="abv_custom">高级自定义(测试)</string>
+    <string name="adv_custom">高级自定义(测试)</string>
     <string name="custom_your_class_fetch_way">自定义你的课程表获取方式</string>
     <string name="can_not_enter_tip">出现无法填写内容的情况一般是网页代码做出了限制, 这说明你的学校对于网络爬虫之类的限制十分到位, 你的个人信息十分安全, 你可以选择普通模式进行操作, 但是不会记录你的操作轨迹, 即你的用户名密码不会自动填写</string>
     <string name="load_aptcha_fail">获取验证码失败\n</string>

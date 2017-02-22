@@ -87,7 +87,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="14"
                 app:columnCount="7"
-                app:rowCount="12"/>
+                app:columnOrderPreserved="true"
+                app:rowCount="12"
+                app:rowOrderPreserved="true"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -69,7 +69,6 @@ public class WeeklyWidgetService extends RemoteViewsService {
         public RemoteViews getViewAt(int i) {
             int dailySeq = i / 7 + 1;
             int weekDay = i % 7 + 1;
-
             for (SingleClass singleClass : mWeeklyClasses) {
                 ClassTime time = singleClass.getClassTime();
                 if (time.inSameDay(weekDay) && time.getDailySeq() == dailySeq) {
@@ -79,7 +78,7 @@ public class WeeklyWidgetService extends RemoteViewsService {
                 }
             }
 
-            return null;
+            return new RemoteViews(mContext.getPackageName(), R.layout.item_empty_class_info);
         }
 
         @Override
