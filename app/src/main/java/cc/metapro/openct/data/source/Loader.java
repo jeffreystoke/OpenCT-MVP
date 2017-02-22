@@ -132,12 +132,10 @@ public class Loader {
             university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name, context.getResources().getStringArray(R.array.school_names)[0]));
         }
 
-        updateWeekSeq(context);
-
         return university;
     }
 
-    private static void updateWeekSeq(Context context) {
+    public static void updateWeekSeq(Context context) {
         try {
             Calendar cal = Calendar.getInstance(Locale.CHINA);
             cal.setFirstDayOfWeek(Calendar.MONDAY);

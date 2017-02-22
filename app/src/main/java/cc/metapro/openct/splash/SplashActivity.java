@@ -27,6 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
+import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.myclass.ClassActivity;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.PrefHelper;
@@ -53,6 +54,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Loader.updateWeekSeq(this);
         if (PrefHelper.getBoolean(this, R.string.pref_initialed)) {
             Intent intent = new Intent(this, ClassActivity.class);
             startActivity(intent);
