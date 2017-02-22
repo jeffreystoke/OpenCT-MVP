@@ -21,12 +21,12 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.data.university.item.classinfo.SingleClass;
 
 public class WeeklyWidgetService extends RemoteViewsService {
@@ -38,7 +38,7 @@ public class WeeklyWidgetService extends RemoteViewsService {
 
     private static class WeeklyWidgetFactory implements RemoteViewsFactory {
 
-        private static List<SingleClass> mWeeklyClasses;
+        private static List<SingleClass> mWeeklyClasses = new ArrayList<>();
         private Context mContext;
 
         WeeklyWidgetFactory(Context context, Intent intent) {
@@ -62,23 +62,16 @@ public class WeeklyWidgetService extends RemoteViewsService {
 
         @Override
         public int getCount() {
-            return Loader.getClassTime(mContext).size() * 7;
+            if (mWeeklyClasses == null) return 0;
+            return 0;
         }
 
         @Override
         public RemoteViews getViewAt(int i) {
-            int dailySeq = i / 7 + 1;
-            int weekDay = i % 7 + 1;
-            for (SingleClass singleClass : mWeeklyClasses) {
-                ClassTime time = singleClass.getClassTime();
-                if (time.inSameDay(weekDay) && time.getDailySeq() == dailySeq) {
-                    RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_class_info);
-                    views.setTextViewText(R.id.class_info, singleClass.getName() + "@" + singleClass.getPlace());
-                    return views;
-                }
-            }
-
-            return new RemoteViews(mContext.getPackageName(), R.layout.item_empty_class_info);
+//            SingleClass singleClass = mWeeklyClasses.get(i);
+//            RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_class_info);
+//            views.setTextViewText(R.id.class_info, singleClass.getName() + "@" + singleClass.getPlace());
+            return null;
         }
 
         @Override

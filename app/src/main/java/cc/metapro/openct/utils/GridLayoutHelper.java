@@ -17,9 +17,24 @@ package cc.metapro.openct.utils;
  */
 
 import android.support.v4.widget.Space;
-import android.widget.GridLayout;
+import android.support.v7.widget.GridLayout;
+import android.view.View;
 
 public class GridLayoutHelper {
+
+    public static void fillGrids(android.widget.GridLayout gridLayout) {
+        if (gridLayout == null) return;
+        for (int i = 0; i < gridLayout.getRowCount(); i++) {
+            for (int j = 0; j < gridLayout.getColumnCount(); j++) {
+                android.support.v7.widget.GridLayout.LayoutParams params = new android.support.v7.widget.GridLayout.LayoutParams();
+                params.width = Constants.CLASS_WIDTH;
+                params.height = Constants.CLASS_BASE_HEIGHT;
+                params.rowSpec = android.support.v7.widget.GridLayout.spec(i);
+                params.columnSpec = android.support.v7.widget.GridLayout.spec(j);
+                gridLayout.addView(new Space(gridLayout.getContext()), params);
+            }
+        }
+    }
 
     public static void fillGrids(GridLayout gridLayout) {
         if (gridLayout == null) return;
@@ -35,17 +50,53 @@ public class GridLayoutHelper {
         }
     }
 
-    public static void fillGrids(android.support.v7.widget.GridLayout gridLayout) {
-        if (gridLayout == null) return;
-        for (int i = 0; i < gridLayout.getRowCount(); i++) {
-            for (int j = 0; j < gridLayout.getColumnCount(); j++) {
-                android.support.v7.widget.GridLayout.LayoutParams params = new android.support.v7.widget.GridLayout.LayoutParams();
-                params.width = Constants.CLASS_WIDTH;
-                params.height = Constants.CLASS_BASE_HEIGHT;
-                params.rowSpec = android.support.v7.widget.GridLayout.spec(i);
-                params.columnSpec = android.support.v7.widget.GridLayout.spec(j);
-                gridLayout.addView(new Space(gridLayout.getContext()), params);
+    public static void addViewToGridlayout(GridLayout gridLayout, View view, GridLayout.LayoutParams params) {
+        if (gridLayout == null || view == null || params == null) return;
+        removeView(gridLayout, params);
+        gridLayout.addView(view, params);
+    }
+
+    private static void removeView(GridLayout gridLayout, GridLayout.LayoutParams params) {
+//        int count = gridLayout.getChildCount();
+//        View view = getViewAt(gridLayout, params);
+//        while (view != null) {
+//            gridLayout.removeView(view);
+//        }
+//        for (int i = 0; i < count; i++) {
+//            View tmp = gridLayout.getChildAt(i);
+//            GridLayout.LayoutParams layoutParams = (GridLayout.LayoutParams) tmp.getLayoutParams();
+//            if (params.equals(layoutParams)) {
+//                gridLayout.removeView(tmp);
+//                int toDel = params.height / layoutParams.height;
+//                for (int j = 0; j < toDel - 1; j++) {
+//                    removeMoreView(gridLayout, params, i);
+//                }
+//                break;
+//            }
+//        }
+    }
+
+    private static void removeMoreView(GridLayout gridLayout, GridLayout.LayoutParams params, int startPoint) {
+        int count = gridLayout.getChildCount();
+        for (int i = startPoint; i < count; i++) {
+            View tmp = gridLayout.getChildAt(i);
+            GridLayout.LayoutParams layoutParams = (GridLayout.LayoutParams) tmp.getLayoutParams();
+            if (params.columnSpec.equals(layoutParams.columnSpec)) {
+                gridLayout.removeView(tmp);
+                break;
             }
         }
     }
+
+//    private static View getViewAt(GridLayout gridLayout, GridLayout.LayoutParams params) {
+//        int count = gridLayout.getChildCount();
+//        for (int k = 0; k < count; k++) {
+//            View tmp = gridLayout.getChildAt(k);
+//            GridLayout.LayoutParams layoutParams = (GridLayout.LayoutParams) tmp.getLayoutParams();
+//            if (params.columnSpec.equals(layoutParams.columnSpec)) {
+//                return tmp;
+//            }
+//        }
+//        return null;
+//    }
 }

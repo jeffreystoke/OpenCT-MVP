@@ -22,15 +22,17 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.Keep;
 import android.widget.RemoteViews;
 
 import cc.metapro.openct.R;
 
 import static cc.metapro.openct.widget.DailyClassWidget.UPDATE_ITEMS;
 
+@Keep
 public class WeeklyClassWidget extends AppWidgetProvider {
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+    private static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         Intent intent = new Intent(context, WeeklyWidgetService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
@@ -54,7 +56,7 @@ public class WeeklyClassWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
-        ComponentName component = new ComponentName(context, DailyClassWidget.class);
+        ComponentName component = new ComponentName(context, WeeklyClassWidget.class);
         int[] ids = manager.getAppWidgetIds(component);
         switch (action) {
             case UPDATE_ITEMS:

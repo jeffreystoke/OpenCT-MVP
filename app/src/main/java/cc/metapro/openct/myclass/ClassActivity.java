@@ -57,6 +57,7 @@ import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.GridLayoutHelper;
+import cc.metapro.openct.utils.PrefHelper;
 
 @Keep
 public class ClassActivity extends AppCompatActivity
@@ -82,7 +83,6 @@ public class ClassActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initStatic();
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         mExitState = false;
@@ -112,7 +112,7 @@ public class ClassActivity extends AppCompatActivity
             index.removeAllViews();
             for (int i = 1; i <= Constants.DAILY_CLASSES; i++) {
                 TextView textView = new TextView(this);
-                textView.setText("第\n" + i + "\n节");
+                textView.setText(i + "");
                 textView.setGravity(Gravity.CENTER);
                 textView.setMinHeight(Constants.CLASS_BASE_HEIGHT * Constants.CLASS_LENGTH);
                 textView.setMaxHeight(Constants.CLASS_BASE_HEIGHT * Constants.CLASS_LENGTH);
@@ -191,27 +191,6 @@ public class ClassActivity extends AppCompatActivity
     }
 
     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            if (mExitState) {
-                finish();
-            } else {
-                Toast.makeText(this, "再按一次返回键退出", Toast.LENGTH_SHORT).show();
-                mExitState = true;
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mExitState = false;
-                    }
-                }, 2000);
-            }
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -258,7 +237,29 @@ public class ClassActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        initStatic();
         mPresenter.start();
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            if (mExitState) {
+                finish();
+            } else {
+                Toast.makeText(this, "再按一次返回键退出", Toast.LENGTH_SHORT).show();
+                mExitState = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mExitState = false;
+                    }
+                }, 2000);
+            }
+        }
     }
 
     private void initStatic() {
@@ -275,5 +276,6 @@ public class ClassActivity extends AppCompatActivity
         Constants.ACTION_KEY = getString(R.string.key_action);
         Constants.SEARCH_TYPE_KEY = getString(R.string.key_search_type);
         Constants.SEARCH_CONTENT_KEY = getString(R.string.key_search_content);
+        Constants.DAILY_CLASSES = Integer.parseInt(PrefHelper.getString(this, R.string.pref_daily_class_count, "12"));
     }
 }

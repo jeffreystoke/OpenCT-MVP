@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="start"
+            android:gravity="top|start"
             android:lines="1"
             android:textColor="@color/material_black"
             android:textSize="18sp"/>

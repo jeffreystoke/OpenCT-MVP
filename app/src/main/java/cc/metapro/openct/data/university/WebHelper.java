@@ -58,7 +58,7 @@ class WebHelper {
 
     UniversityService createSchoolService() {
         return new Retrofit.Builder()
-                .baseUrl(mBaseUrl)
+                .baseUrl(URLUtil.guessUrl(mBaseUrl.host()))
                 .client(new OkHttpClient.Builder()
                         .addNetworkInterceptor(mInterceptor)
                         .followRedirects(true)

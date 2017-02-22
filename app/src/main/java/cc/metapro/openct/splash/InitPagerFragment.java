@@ -37,7 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
-import cc.metapro.openct.myclass.schoolselection.SchoolSelectionActivity;
+import cc.metapro.openct.splash.schoolselection.SchoolSelectionActivity;
 import cc.metapro.openct.utils.PrefHelper;
 
 /**

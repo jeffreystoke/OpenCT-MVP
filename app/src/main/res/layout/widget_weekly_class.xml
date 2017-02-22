@@ -87,13 +87,50 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:columnCount="7"
-        android:rowCount="12"
-        android:scrollbars="vertical"/>
+        android:rowCount="1"
+        android:scrollbars="vertical">
+
+        <!--<ListView-->
+        <!--android:id="@+id/monday_classes"-->
+        <!--android:layout_column="0"-->
+        <!--android:layout_row="0"/>-->
+
+        <!--<ListView-->
+        <!--android:id="@+id/tuesday_classes"-->
+        <!--android:layout_column="1"-->
+        <!--android:layout_row="0"/>-->
+
+        <!--<ListView-->
+        <!--android:id="@+id/wednesday_classes"-->
+        <!--android:layout_column="2"-->
+        <!--android:layout_row="0"/>-->
+
+        <!--<ListView-->
+        <!--android:id="@+id/thursday_classes"-->
+        <!--android:layout_column="3"-->
+        <!--android:layout_row="0"/>-->
+
+        <!--<ListView-->
+        <!--android:id="@+id/friday_classes"-->
+        <!--android:layout_column="4"-->
+        <!--android:layout_row="0"/>-->
+
+        <!--<ListView-->
+        <!--android:id="@+id/saturday_classes"-->
+        <!--android:layout_column="5"-->
+        <!--android:layout_row="0"/>-->
+
+        <!--<ListView-->
+        <!--android:id="@+id/sunday_classes"-->
+        <!--android:layout_column="6"-->
+        <!--android:layout_row="0"/>-->
+    </GridLayout>
 
     <TextView
         android:id="@+id/empty_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="@string/no_class_weekly"
-        android:visibility="gone"/>
+        android:gravity="center"
+        android:textColor="@color/material_grey"/>
 </LinearLayout>

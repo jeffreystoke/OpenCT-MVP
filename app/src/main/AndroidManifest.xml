@@ -73,7 +73,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".myclass.schoolselection.SchoolSelectionActivity"
+            android:name=".splash.schoolselection.SchoolSelectionActivity"
             android:label="@string/select_school">
             <intent-filter>
                 <action android:name="cc.metapro.openct.schoolselection"/>
@@ -120,10 +120,12 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/weekly_class_widget_info"/>
         </receiver>
+
         <service
             android:name=".widget.WeeklyWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS">
         </service>
+
         <receiver
             android:name=".widget.DailyClassWidget"
             android:exported="true">

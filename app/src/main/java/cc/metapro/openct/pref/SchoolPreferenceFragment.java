@@ -39,7 +39,7 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.myclass.schoolselection.SchoolSelectionActivity;
+import cc.metapro.openct.splash.schoolselection.SchoolSelectionActivity;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.widget.DailyClassWidget;
@@ -71,7 +71,7 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         for (int i = 0; i < count; i++) {
             Preference preference = new Preference(getActivity());
             preference.setKey(Constants.TIME_PREFIX + i);
-            preference.setTitle("第 " + i + " 节");
+            preference.setTitle("第 " + (i + 1) + " 节");
             mPreferences.add(preference);
             preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override

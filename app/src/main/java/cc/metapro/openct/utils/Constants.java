@@ -20,6 +20,7 @@ import android.content.Context;
 import android.support.annotation.Keep;
 
 import cc.metapro.openct.data.source.DBManger;
+import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
 
 @Keep
@@ -41,8 +42,9 @@ public final class Constants {
     public static final String TITLE = "title";
     public static final String URL = "url";
 
-    public static final int DAILY_CLASSES = 12;
+    public static int DAILY_CLASSES = 12;
     public static final int CLASS_LENGTH = 1;
+
     // 正方系列
     public static final String ZFSOFT = "zfsoft";
     // 苏文

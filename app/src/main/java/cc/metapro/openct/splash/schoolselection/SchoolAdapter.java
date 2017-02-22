@@ -1,4 +1,4 @@
-package cc.metapro.openct.myclass.schoolselection;
+package cc.metapro.openct.splash.schoolselection;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table

@@ -102,7 +102,7 @@ public class SingleClass implements Comparable<SingleClass> {
             GridLayoutHelper.fillGrids(gridLayout);
         }
 
-        gridLayout.addView(card, params);
+        GridLayoutHelper.addViewToGridlayout(gridLayout, card, params);
     }
 
     @Override
