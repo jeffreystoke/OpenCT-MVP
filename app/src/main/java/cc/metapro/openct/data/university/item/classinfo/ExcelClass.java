@@ -45,6 +45,6 @@ public class ExcelClass {
 
     private ClassTime getTime() {
         int[] startEnd = REHelper.getStartEnd(this.time);
-        return new ClassTime(DateHelper.chineseToWeekDay(this.time), startEnd[0], startEnd[1] - startEnd[0] + 1, teacher, place, getDuring());
+        return new ClassTime(DateHelper.chineseToWeekDay(this.time), startEnd[0], startEnd[1], teacher, place, getDuring());
     }
 }

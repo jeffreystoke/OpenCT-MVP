@@ -37,17 +37,17 @@ public class GridLayoutHelper {
     }
 
     public static void fillGrids(GridLayout gridLayout) {
-        if (gridLayout == null) return;
-        for (int i = 0; i < gridLayout.getRowCount(); i++) {
-            for (int j = 0; j < gridLayout.getColumnCount(); j++) {
-                android.support.v7.widget.GridLayout.LayoutParams params = new android.support.v7.widget.GridLayout.LayoutParams();
-                params.width = Constants.CLASS_WIDTH;
-                params.height = Constants.CLASS_BASE_HEIGHT;
-                params.rowSpec = android.support.v7.widget.GridLayout.spec(i);
-                params.columnSpec = android.support.v7.widget.GridLayout.spec(j);
-                gridLayout.addView(new Space(gridLayout.getContext()), params);
-            }
-        }
+//        if (gridLayout == null) return;
+//        for (int i = 0; i < gridLayout.getRowCount(); i++) {
+//            for (int j = 0; j < gridLayout.getColumnCount(); j++) {
+//                android.support.v7.widget.GridLayout.LayoutParams params = new android.support.v7.widget.GridLayout.LayoutParams();
+//                params.width = Constants.CLASS_WIDTH;
+//                params.height = Constants.CLASS_BASE_HEIGHT;
+//                params.rowSpec = android.support.v7.widget.GridLayout.spec(i);
+//                params.columnSpec = android.support.v7.widget.GridLayout.spec(j);
+//                gridLayout.addView(new Space(gridLayout.getContext()), params);
+//            }
+//        }
     }
 
     public static void addViewToGridlayout(GridLayout gridLayout, View view, GridLayout.LayoutParams params) {
@@ -76,17 +76,17 @@ public class GridLayoutHelper {
 //        }
     }
 
-    private static void removeMoreView(GridLayout gridLayout, GridLayout.LayoutParams params, int startPoint) {
-        int count = gridLayout.getChildCount();
-        for (int i = startPoint; i < count; i++) {
-            View tmp = gridLayout.getChildAt(i);
-            GridLayout.LayoutParams layoutParams = (GridLayout.LayoutParams) tmp.getLayoutParams();
-            if (params.columnSpec.equals(layoutParams.columnSpec)) {
-                gridLayout.removeView(tmp);
-                break;
-            }
-        }
-    }
+//    private static void removeMoreView(GridLayout gridLayout, GridLayout.LayoutParams params, int startPoint) {
+//        int count = gridLayout.getChildCount();
+//        for (int i = startPoint; i < count; i++) {
+//            View tmp = gridLayout.getChildAt(i);
+//            GridLayout.LayoutParams layoutParams = (GridLayout.LayoutParams) tmp.getLayoutParams();
+//            if (params.columnSpec.equals(layoutParams.columnSpec)) {
+//                gridLayout.removeView(tmp);
+//                break;
+//            }
+//        }
+//    }
 
 //    private static View getViewAt(GridLayout gridLayout, GridLayout.LayoutParams params) {
 //        int count = gridLayout.getChildCount();

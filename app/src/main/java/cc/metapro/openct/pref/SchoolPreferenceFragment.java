@@ -31,6 +31,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.scottyab.aescrypt.AESCrypt;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,7 @@ import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.splash.schoolselection.SchoolSelectionActivity;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
+import cc.metapro.openct.utils.REHelper;
 import cc.metapro.openct.widget.DailyClassWidget;
 
 public class SchoolPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
@@ -67,22 +69,7 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         mPreferences = new ArrayList<>();
 
         PreferenceScreen screen = (PreferenceScreen) findPreference(getString(R.string.pref_class_settings));
-        int count = Integer.parseInt(PrefHelper.getString(getActivity(), R.string.pref_daily_class_count, "12"));
-        for (int i = 0; i < count; i++) {
-            Preference preference = new Preference(getActivity());
-            preference.setKey(Constants.TIME_PREFIX + i);
-            preference.setTitle("第 " + (i + 1) + " 节");
-            mPreferences.add(preference);
-            preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-
-                    return true;
-                }
-            });
-            screen.addPreference(preference);
-            mPreferences.add(preference);
-        }
+        addTimePreferences(screen);
 
         findPreference(getString(R.string.pref_custom_action_clear)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -160,6 +147,8 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         mPreferences.add(findPreference(getString(R.string.pref_class_teacher_re)));
         mPreferences.add(findPreference(getString(R.string.pref_class_place_re)));
         mPreferences.add(findPreference(getString(R.string.pref_daily_class_count)));
+        mPreferences.add(findPreference(getString(R.string.pref_every_class_time)));
+        mPreferences.add(findPreference(getString(R.string.pref_rest_time)));
         bindListener();
     }
 
@@ -168,6 +157,48 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
             preference.setOnPreferenceChangeListener(this);
             String value = preference.getSharedPreferences().getString(preference.getKey(), "");
             bindSummary(preference, value);
+        }
+    }
+
+    private void addTimePreferences(PreferenceScreen screen) {
+        int count = Integer.parseInt(PrefHelper.getString(getActivity(), R.string.pref_daily_class_count, "12"));
+        for (int i = 0; i < count; i++) {
+            Preference preference = new Preference(getActivity());
+            final String key = Constants.TIME_PREFIX + i;
+            String defaultValue = "0" + (8 + i) + ":0" + 0;
+            preference.setKey(key);
+            preference.setTitle("第 " + (i + 1) + " 节");
+            preference.setDefaultValue(defaultValue);
+            String value = PrefHelper.getString(getActivity(), key, defaultValue);
+            preference.setSummary(value);
+            final int[] parts = REHelper.getUserSetTime(value);
+
+            mPreferences.add(preference);
+            preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(final Preference preference) {
+                    TimePickerDialog dialog = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
+                            String value = "";
+                            if (hourOfDay < 10) {
+                                value += "0";
+                            }
+                            value += hourOfDay + ":";
+                            if (minute < 10) {
+                                value += "0";
+                            }
+                            value += minute;
+                            PrefHelper.putString(getActivity(), key, value);
+                            preference.setSummary(value);
+                        }
+                    }, parts[0], parts[1], 0, true);
+                    dialog.show(getFragmentManager(), "time_picker");
+                    return true;
+                }
+            });
+            screen.addPreference(preference);
+            mPreferences.add(preference);
         }
     }
 

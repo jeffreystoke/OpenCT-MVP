@@ -46,6 +46,7 @@ import cc.metapro.openct.data.university.item.classinfo.ExcelClass;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.ICalHelper;
 import cc.metapro.openct.utils.MyObserver;
+import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.widget.DailyClassWidget;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -84,6 +85,9 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
                 FileOutputStream fos = null;
                 try {
                     int week = Loader.getCurrentWeek(mContext);
+                    int everyClassTime = Integer.parseInt(PrefHelper.getString(mContext, R.string.pref_every_class_time, "45"));
+                    int restTime = Integer.parseInt(PrefHelper.getString(mContext, R.string.pref_rest_time, "10"));
+
                     Calendar calendar = new Calendar();
                     calendar.getProperties().add(new ProdId("-//OpenCT Jeff//iCal4j 2.0//EN"));
                     calendar.getProperties().add(Version.VERSION_2_0);
@@ -91,7 +95,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
                     SparseArray<java.util.Calendar> calendarSparseArray = Loader.getClassTime(mContext);
                     for (EnrichedClassInfo c : allClasses) {
                         try {
-                            List<VEvent> events = ICalHelper.getClassEvents(calendarSparseArray, week, c);
+                            List<VEvent> events = ICalHelper.getClassEvents(calendarSparseArray, week, everyClassTime, restTime,c);
                             calendar.getComponents().addAll(events);
                         } catch (Exception ignored) {
 

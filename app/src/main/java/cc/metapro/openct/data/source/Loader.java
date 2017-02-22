@@ -40,6 +40,7 @@ import cc.metapro.openct.data.university.LibraryFactory;
 import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
+import cc.metapro.openct.utils.REHelper;
 
 @Keep
 public class Loader {
@@ -166,15 +167,13 @@ public class Loader {
         int size = Integer.parseInt(PrefHelper.getString(context, R.string.pref_daily_class_count, "12"));
         SparseArray<Calendar> result = new SparseArray<>(size);
         for (int i = 0; i < size; i++) {
-            DateFormat format = DateFormat.getDateInstance();
-            try {
-                Date date = format.parse(PrefHelper.getString(context, Constants.TIME_PREFIX + i, ""));
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                result.put(i, calendar);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            String time = PrefHelper.getString(context, Constants.TIME_PREFIX + i, "08:00:00");
+            Calendar calendar = Calendar.getInstance();
+            int[] parts = REHelper.getUserSetTime(time);
+            calendar.set(Calendar.HOUR_OF_DAY, parts[0]);
+            calendar.set(Calendar.MINUTE, parts[1]);
+            calendar.set(Calendar.SECOND, 0);
+            result.put(i + 1, calendar);
         }
         return result;
     }

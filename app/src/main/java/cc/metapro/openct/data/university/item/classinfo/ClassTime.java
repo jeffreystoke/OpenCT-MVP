@@ -29,7 +29,7 @@ public class ClassTime implements Comparable<ClassTime> {
 
     private int weekDay = 1;
     private int dailySeq = 1;
-    private int length = 1;
+    private int dailyEnd = 1;
 
     private String teacher = "";
     private String place = "";
@@ -45,10 +45,10 @@ public class ClassTime implements Comparable<ClassTime> {
 
     }
 
-    public ClassTime(int weekDay, int dailySeq, int length, String teacher, String place, boolean[] weeks) {
+    public ClassTime(int weekDay, int dailySeq, int dailyEnd, String teacher, String place, boolean[] weeks) {
         this.weekDay = weekDay;
         this.dailySeq = dailySeq;
-        this.length = length;
+        this.dailyEnd = dailyEnd;
         this.teacher = teacher;
         this.place = place;
         this.weeks = weeks;
@@ -67,7 +67,7 @@ public class ClassTime implements Comparable<ClassTime> {
     }
 
     private ClassTime(String time, int weekDay, int dailySeq) {
-        length = ClassInfoHelper.getLength(time);
+        int length = ClassInfoHelper.getLength(time);
         if (length <= 0 || length > 5) {
             length = 1;
         }
@@ -76,6 +76,7 @@ public class ClassTime implements Comparable<ClassTime> {
             this.dailySeq = 1;
         }
         this.weekDay = weekDay;
+        this.dailyEnd = dailySeq + length - 1;
     }
 
     public String getTeacher() {
@@ -117,19 +118,19 @@ public class ClassTime implements Comparable<ClassTime> {
         this.dailySeq = dailySeq;
     }
 
-    public int getLength() {
-        return length;
+    public int getDailyEnd() {
+        return dailyEnd;
     }
 
-    public void setLength(int length) {
-        this.length = length;
+    public void setDailyEnd(int dailyEnd) {
+        this.dailyEnd = dailyEnd;
     }
 
     public String getTime() {
-        if (length == 1) {
+        if (dailyEnd - dailySeq <= 0) {
             return "第 " + dailySeq + "";
         } else {
-            return dailySeq + " - " + (dailySeq + length - 1);
+            return dailySeq + " - " + dailyEnd;
         }
     }
 

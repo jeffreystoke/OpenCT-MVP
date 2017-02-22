@@ -38,7 +38,9 @@ import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
@@ -46,28 +48,50 @@ import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 public class ICalHelper {
 
     @NonNull
-    public static List<VEvent> getClassEvents(SparseArray<Calendar> classTimeMap, int week, EnrichedClassInfo info) throws URISyntaxException, SocketException {
+    public static List<VEvent> getClassEvents(SparseArray<Calendar> classTimeMap, int week, int everyClassTime, int restTime, EnrichedClassInfo info) throws URISyntaxException, SocketException {
         List<VEvent> result = new ArrayList<>();
         for (ClassTime time : info.getTimeSet()) {
             for (int i = 1; i <= 30; i++) {
-                int j = i;
-                while (time.hasClass(j++)) ;
-                j--;
-                VEvent event = getClassEvent(classTimeMap, info, time, i, j, week);
-                if (event != null) {
-                    result.add(event);
+                if (time.hasClass(i)) {
+                    int j = i;
+                    while (time.hasClass(++j)) ;
+                    j--;
+                    VEvent event = getClassEvent(classTimeMap, info, time, i, j, week, everyClassTime, restTime);
+                    if (event != null) {
+                        event.validate();
+                        result.add(event);
+                    }
+                    i += (j - i);
                 }
             }
         }
-
         return result;
     }
 
-    private static VEvent getClassEvent(SparseArray<Calendar> classTimeMap, EnrichedClassInfo info, ClassTime time, int startWeek, int endWeek, int currentWeek) throws URISyntaxException, SocketException {
-        Calendar now = Calendar.getInstance();
-
-        int dayAfter = (now.get(Calendar.WEEK_OF_YEAR) + endWeek - currentWeek - 1) * 7;
-        int dayBefore = Math.abs((now.get(Calendar.WEEK_OF_YEAR) + startWeek - currentWeek - 1) * 7);
+    /**
+     * @param classTimeMap contains daily class time info user had set
+     * @param info         to generate event
+     * @param time         a piece of time in info
+     * @param startWeek    which week the event happen
+     * @param endWeek      which week the event end
+     * @param currentWeek  current week of this semi
+     * @return a fully configured event
+     * @throws URISyntaxException
+     * @throws SocketException
+     */
+    private static VEvent getClassEvent(SparseArray<Calendar> classTimeMap,
+                                        EnrichedClassInfo info,
+                                        ClassTime time,
+                                        int startWeek,
+                                        int endWeek,
+                                        int currentWeek,
+                                        int everyClassTime,
+                                        int restTime
+    ) throws URISyntaxException, SocketException {
+        Calendar now = Calendar.getInstance(Locale.CHINA);
+        int weekOfYear = now.get(Calendar.WEEK_OF_YEAR);
+        int dayBefore = Math.abs((weekOfYear + startWeek - currentWeek - 1) * 7);
+        int dayAfter = Math.abs((weekOfYear + endWeek - currentWeek - 1) * 7);
 
         // repeat every week until endDate
         Recur recur = new Recur(Recur.WEEKLY, new DateTime(DateHelper.getDateAfter(now.getTime(), dayAfter)));
@@ -75,7 +99,13 @@ public class ICalHelper {
         RRule rule = new RRule(recur);
 
         Calendar startTime = classTimeMap.get(time.getDailySeq());
-        Calendar endTime = classTimeMap.get(time.getDailySeq() + time.getLength());
+        int length = time.getDailyEnd() - time.getDailySeq() + 1;
+        GregorianCalendar endTime = new GregorianCalendar(
+                startTime.get(Calendar.YEAR),
+                startTime.get(Calendar.MONTH),
+                startTime.get(Calendar.DAY_OF_MONTH),
+                startTime.get(Calendar.HOUR_OF_DAY),
+                startTime.get(Calendar.MINUTE) + length * everyClassTime + restTime * (length - 1));
 
         Calendar dailyStart = Calendar.getInstance();
         dailyStart.setTime(DateHelper.getDateBefore(now.getTime(), dayBefore));

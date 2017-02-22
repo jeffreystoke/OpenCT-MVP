@@ -72,7 +72,7 @@ public class SingleClass implements Comparable<SingleClass> {
     public void addViewTo(GridLayout gridLayout, LayoutInflater inflater) {
         final CardView card = (CardView) inflater.inflate(R.layout.item_class_info, gridLayout, false);
         TextView textView = (TextView) card.findViewById(R.id.class_name);
-        int length = time.getLength();
+        int length = time.getDailyEnd() - time.getDailySeq() + 1;
         if (length > 5 || length < 1) {
             length = 1;
             textView.setText(name);
@@ -102,7 +102,8 @@ public class SingleClass implements Comparable<SingleClass> {
             GridLayoutHelper.fillGrids(gridLayout);
         }
 
-        GridLayoutHelper.addViewToGridlayout(gridLayout, card, params);
+        gridLayout.addView(card, params);
+//        GridLayoutHelper.addViewToGridlayout(gridLayout, card, params);
     }
 
     @Override

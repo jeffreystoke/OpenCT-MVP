@@ -86,6 +86,16 @@
                 android:inputType="numberDecimal"
                 android:key="@string/pref_daily_class_count"
                 android:title="每日课程数"/>
+            <EditTextPreference
+                android:defaultValue="45"
+                android:inputType="numberDecimal"
+                android:key="@string/pref_every_class_time"
+                android:title="一节课时间(分钟)"/>
+            <EditTextPreference
+                android:defaultValue="10"
+                android:inputType="numberDecimal"
+                android:key="@string/pref_rest_time"
+                android:title="课间休息时间(分钟)"/>
         </PreferenceScreen>
         <!--表格设置-->
         <PreferenceScreen

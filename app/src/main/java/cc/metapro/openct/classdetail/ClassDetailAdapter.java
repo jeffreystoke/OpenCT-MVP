@@ -129,7 +129,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
             this.position = position;
             final ClassTime time = classTimes.get(position);
             mTimeStart.setText("" + time.getDailySeq());
-            mTimeEnd.setText("" + (time.getDailySeq() + time.getLength() - 1));
+            mTimeEnd.setText("" + time.getDailyEnd());
             mWeekDay.setSelection(time.getWeekDay() - 1, true);
             mTeacher.setText(time.getTeacher());
             mPlace.setText(time.getPlace());
@@ -178,13 +178,13 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
         ClassTime getInfo(ClassTime oldTime) {
             int weekDay = mWeekDay.getSelectedItemPosition() + 1;
             int dailySeq = Integer.parseInt(mTimeStart.getText().toString());
-            int length = Integer.parseInt(mTimeEnd.getText().toString()) - dailySeq + 1;
+            int dailyEnd = Integer.parseInt(mTimeEnd.getText().toString());
 
             oldTime.setPlace(mPlace.getText().toString());
             oldTime.setTeacher(mTeacher.getText().toString());
             oldTime.setDailySeq(dailySeq);
             oldTime.setWeekDay(weekDay);
-            oldTime.setLength(length);
+            oldTime.setDailyEnd(dailyEnd);
             return oldTime;
         }
     }
