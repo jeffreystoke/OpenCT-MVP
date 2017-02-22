@@ -18,7 +18,6 @@ package cc.metapro.openct.utils;
 
 import android.content.Context;
 import android.support.annotation.Keep;
-import android.widget.Spinner;
 
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
@@ -32,6 +31,8 @@ public final class Constants {
     public static final String TYPE_GRADE = "grade";
     public static final String TYPE_SEARCH = "search";
     public static final String TYPE_BORROW = "borrow";
+
+    public static final String TIME_PREFIX = "class_time_";
 
     // encryption seed
     public static final String seed =

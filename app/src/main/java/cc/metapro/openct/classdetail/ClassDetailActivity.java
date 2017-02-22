@@ -132,7 +132,7 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.all_classes, menu);
+        getMenuInflater().inflate(R.menu.class_detail, menu);
         return true;
     }
 

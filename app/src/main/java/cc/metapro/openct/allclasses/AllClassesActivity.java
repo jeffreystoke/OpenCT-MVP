@@ -24,7 +24,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -38,7 +37,9 @@ import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
+import cc.metapro.openct.classdetail.ClassDetailActivity;
 import cc.metapro.openct.custom.CustomActivity;
+import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.Constants;
@@ -85,7 +86,7 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        mPresenter.storeCLasses(allClasses);
+        mPresenter.storeClasses(allClasses);
         int id = item.getItemId();
         if (id == R.id.export_classes) {
             // export to iCal
@@ -108,6 +109,9 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
             mPresenter.loadFromExcel(getSupportFragmentManager());
         } else if (id == R.id.add_class) {
             // add a new class info
+            allClasses.add(new EnrichedClassInfo("新课程", "必修", new ClassTime()));
+            mAdapter.notifyDataSetChanged();
+            ClassDetailActivity.actionStart(this, 0);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -163,7 +167,7 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
 
     @Override
     public void onBackPressed() {
-        mPresenter.storeCLasses(allClasses);
+        mPresenter.storeClasses(allClasses);
         allClasses = null;
         super.onBackPressed();
     }

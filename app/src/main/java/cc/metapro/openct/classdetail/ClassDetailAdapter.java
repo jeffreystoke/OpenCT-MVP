@@ -90,6 +90,11 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
 
         private int position = 0;
 
+        ClassDetailViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+
         private void setEditable(boolean isEditable) {
             mWeekDay.setEnabled(isEditable);
             mTimeStart.setEnabled(isEditable);
@@ -117,11 +122,6 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                     }
                 });
             }
-        }
-
-        ClassDetailViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
         }
 
         // set info and react to during click

@@ -70,12 +70,14 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         int count = Integer.parseInt(PrefHelper.getString(getActivity(), R.string.pref_daily_class_count, "12"));
         for (int i = 0; i < count; i++) {
             Preference preference = new Preference(getActivity());
-            preference.setKey("class_time_" + i);
+            preference.setKey(Constants.TIME_PREFIX + i);
+            preference.setTitle("第 " + i + " 节");
+            mPreferences.add(preference);
             preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    // TODO: 17/2/20 add datePickerDialog here
-                    return false;
+
+                    return true;
                 }
             });
             screen.addPreference(preference);
@@ -157,6 +159,7 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         mPreferences.add(findPreference(getString(R.string.pref_class_during_re)));
         mPreferences.add(findPreference(getString(R.string.pref_class_teacher_re)));
         mPreferences.add(findPreference(getString(R.string.pref_class_place_re)));
+        mPreferences.add(findPreference(getString(R.string.pref_daily_class_count)));
         bindListener();
     }
 

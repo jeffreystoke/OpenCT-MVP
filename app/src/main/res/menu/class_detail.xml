@@ -19,6 +19,6 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/add"
-        android:title="@string/add_class_info"
+        android:title="添加信息"
         app:showAsAction="ifRoom"/>
 </menu>

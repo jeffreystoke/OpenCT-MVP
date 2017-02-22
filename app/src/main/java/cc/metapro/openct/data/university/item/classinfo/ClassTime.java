@@ -45,6 +45,15 @@ public class ClassTime implements Comparable<ClassTime> {
 
     }
 
+    public ClassTime(int weekDay, int dailySeq, int length, String teacher, String place, boolean[] weeks) {
+        this.weekDay = weekDay;
+        this.dailySeq = dailySeq;
+        this.length = length;
+        this.teacher = teacher;
+        this.place = place;
+        this.weeks = weeks;
+    }
+
     ClassTime(int weekDay, int dailySeq, String[] contents, CmsFactory.ClassTableInfo info) {
         this(ClassInfoHelper.infoParser(info.mTimeIndex, info.mTimeRE, contents), weekDay, dailySeq);
         teacher = ClassInfoHelper.infoParser(info.mTeacherIndex, info.mTeacherRE, contents);
@@ -81,18 +90,6 @@ public class ClassTime implements Comparable<ClassTime> {
         return place;
     }
 
-    public void setWeekDay(int weekDay) {
-        this.weekDay = weekDay;
-    }
-
-    public void setDailySeq(int dailySeq) {
-        this.dailySeq = dailySeq;
-    }
-
-    public void setLength(int length) {
-        this.length = length;
-    }
-
     public void setPlace(String place) {
         this.place = place;
     }
@@ -108,12 +105,24 @@ public class ClassTime implements Comparable<ClassTime> {
         return weekDay;
     }
 
+    public void setWeekDay(int weekDay) {
+        this.weekDay = weekDay;
+    }
+
     public int getDailySeq() {
         return dailySeq;
     }
 
+    public void setDailySeq(int dailySeq) {
+        this.dailySeq = dailySeq;
+    }
+
     public int getLength() {
         return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
     }
 
     public String getTime() {

@@ -36,6 +36,6 @@ interface AllClassesContract {
 
         void loadFromExcel(FragmentManager manager);
 
-        void storeCLasses(Classes classes);
+        void storeClasses(Classes classes);
     }
 }

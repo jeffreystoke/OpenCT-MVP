@@ -75,13 +75,13 @@ public class PrefHelper {
         return mPref.getString(prefKey, defaultValue);
     }
 
-    public static int getInt(Context context, int resId) {
-        return getInt(context, context.getString(resId));
+    public static int getInt(Context context, int resId, int defaultValue) {
+        return getInt(context, context.getString(resId), defaultValue);
     }
 
-    public static int getInt(Context context, String prefKey) {
+    public static int getInt(Context context, String prefKey, int defaultValue) {
         checkPref(context);
-        return mPref.getInt(prefKey, 0);
+        return mPref.getInt(prefKey, defaultValue);
     }
 
     private static void checkPref(Context context) {

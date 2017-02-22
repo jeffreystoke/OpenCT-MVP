@@ -21,18 +21,27 @@ import android.support.annotation.Keep;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 @Keep
 public final class DateHelper {
 
-    public static Date getDateBefore(Date d, int day) {
+    private static final String MONDAY = "[周星期]+?[一1]";
+    private static final String TUESDAY = "[周星期]+?[二2]";
+    private static final String WEDNESDAY = "[周星期]+?[三3]";
+    private static final String THURSDAY = "[周星期]+?[四4]";
+    private static final String FRIDAY = "[周星期]+?[五5]";
+    private static final String SATURDAY = "[周星期]+?[六6]";
+    private static final String SUNDAY = "[周星期]+?[日天7]";
+
+    static Date getDateBefore(Date d, int day) {
         Calendar now = Calendar.getInstance();
         now.setTime(d);
         now.set(Calendar.DATE, now.get(Calendar.DATE) - day);
         return now.getTime();
     }
 
-    public static Date getDateAfter(Date d, int day) {
+    static Date getDateAfter(Date d, int day) {
         Calendar now = Calendar.getInstance();
         now.setTime(d);
         now.set(Calendar.DATE, now.get(Calendar.DATE) + day);
@@ -80,5 +89,24 @@ public final class DateHelper {
             default:
                 return "";
         }
+    }
+
+    public static int chineseToWeekDay(String weekDay) {
+        if (Pattern.compile(MONDAY).matcher(weekDay).find()) {
+            return 1;
+        } else if (Pattern.compile(TUESDAY).matcher(weekDay).find()) {
+            return 2;
+        } else if (Pattern.compile(WEDNESDAY).matcher(weekDay).find()) {
+            return 3;
+        } else if (Pattern.compile(THURSDAY).matcher(weekDay).find()) {
+            return 4;
+        } else if (Pattern.compile(FRIDAY).matcher(weekDay).find()) {
+            return 5;
+        } else if (Pattern.compile(SATURDAY).matcher(weekDay).find()) {
+            return 6;
+        } else if (Pattern.compile(SUNDAY).matcher(weekDay).find()) {
+            return 7;
+        }
+        return 1;
     }
 }

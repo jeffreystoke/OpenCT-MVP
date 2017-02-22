@@ -36,6 +36,7 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.REHelper;
 
@@ -177,7 +178,8 @@ public class UniversityUtils {
         if (PrefHelper.getBoolean(context, R.string.pref_class_line_based)) {
             for (Element c : rawInfo) {
                 if (c.hasText()) {
-                    classes.add(new EnrichedClassInfo(c.text(), 1, 1, info));
+                    String text = c.text();
+                    classes.add(new EnrichedClassInfo(text, DateHelper.chineseToWeekDay(text), 1, info));
                 }
             }
         } else {

@@ -42,6 +42,14 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
 
     private int color = Color.parseColor("#968bc34a");
 
+    public EnrichedClassInfo(String name, String type, ClassTime time) {
+        this.name = name;
+        this.type = type;
+        if (time != null) {
+            mTimeSet.add(time);
+        }
+    }
+
     /**
      * only one class info content should be there
      *
@@ -149,14 +157,14 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
         mTimeSet = mixedTime;
     }
 
+    public Set<ClassTime> getTimeSet() {
+        return mTimeSet;
+    }
+
     public void setTimeSet(Set<ClassTime> timeSet) {
         if (timeSet != null && !timeSet.isEmpty()) {
             mTimeSet = timeSet;
         }
-    }
-
-    public Set<ClassTime> getTimeSet() {
-        return mTimeSet;
     }
 
     public boolean isEmpty() {

@@ -25,8 +25,6 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.widget.Toast;
 
-import com.google.gson.JsonParser;
-
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.VEvent;
@@ -44,7 +42,7 @@ import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
-import cc.metapro.openct.data.university.item.classinfo.SingleClass;
+import cc.metapro.openct.data.university.item.classinfo.ExcelClass;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.ICalHelper;
 import cc.metapro.openct.utils.MyObserver;
@@ -55,6 +53,8 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+
+import static cc.metapro.openct.allclasses.AllClassesActivity.allClasses;
 
 class AllClassesPresenter implements AllClassesContract.Presenter {
 
@@ -89,7 +89,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
                     calendar.getProperties().add(Version.VERSION_2_0);
                     calendar.getProperties().add(CalScale.GREGORIAN);
                     SparseArray<java.util.Calendar> calendarSparseArray = Loader.getClassTime(mContext);
-                    for (EnrichedClassInfo c : AllClassesActivity.allClasses) {
+                    for (EnrichedClassInfo c : allClasses) {
                         try {
                             List<VEvent> events = ICalHelper.getClassEvents(calendarSparseArray, week, c);
                             calendar.getComponents().addAll(events);
@@ -148,7 +148,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        storeCLasses(null);
+                        storeClasses(null);
                         loadLocalClasses();
                     }
                 })
@@ -161,14 +161,41 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
         ExcelDialog.newInstance(new ExcelDialog.ExcelCallback() {
             @Override
             public void onJsonResult(String json) {
-                List<SingleClass> singleClasses = StoreHelper.fromJsonList(json, SingleClass.class);
-
+                List<ExcelClass> excelClasses = StoreHelper.fromJsonList(json, ExcelClass.class);
+                final Classes addedClasses = new Classes();
+                final Classes oldAllClasses = allClasses;
+                allClasses = null;
+                for (ExcelClass excelClass : excelClasses) {
+                    addedClasses.add(excelClass.getEnrichedClassInfo());
+                }
+                new AlertDialog.Builder(mContext)
+                        .setTitle("选择操作")
+                        .setMessage("共有 " + addedClasses.size() + " 门课程信息, 您希望与当前课程合并还是完全使用新添加的课程?")
+                        .setPositiveButton("替换", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                storeClasses(addedClasses);
+                                loadLocalClasses();
+                                Toast.makeText(mContext, "课程信息已更新", Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .setNeutralButton("合并", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                for (EnrichedClassInfo info : addedClasses) {
+                                    oldAllClasses.add(info);
+                                }
+                                storeClasses(oldAllClasses);
+                                loadLocalClasses();
+                                Toast.makeText(mContext, "课程信息已合并", Toast.LENGTH_LONG).show();
+                            }
+                        }).show();
             }
         }).show(manager, "excel_dialog");
     }
 
     @Override
-    public void storeCLasses(Classes classes) {
+    public void storeClasses(Classes classes) {
         try {
             mDBManger.updateClasses(classes);
             DailyClassWidget.update(mContext);

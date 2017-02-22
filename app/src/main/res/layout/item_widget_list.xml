@@ -10,7 +10,12 @@
         android:id="@+id/widget_class_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="start"
+        android:lines="1"
+        android:paddingEnd="0dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="0dp"
+        android:paddingStart="10dp"
         android:paddingTop="5dp"
         android:textColor="@color/material_black"/>
 
@@ -18,7 +23,12 @@
         android:id="@+id/widget_class_place"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="start"
+        android:lines="1"
+        android:paddingEnd="0dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="0dp"
+        android:paddingStart="10dp"
         android:paddingTop="5dp"
         android:textColor="@color/colorAccent"/>
 </LinearLayout>

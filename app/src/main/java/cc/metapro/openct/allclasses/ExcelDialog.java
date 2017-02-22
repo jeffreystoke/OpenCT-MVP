@@ -36,10 +36,9 @@ import cc.metapro.openct.utils.ExcelHelper;
 
 public class ExcelDialog extends DialogFragment {
 
+    private static ExcelCallback mCallback;
     @BindView(R.id.excel_content)
     MaterialEditText mEditText;
-
-    private static ExcelCallback mCallback;
 
     public static ExcelDialog newInstance(@NonNull ExcelCallback callback) {
         mCallback = callback;

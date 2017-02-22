@@ -33,6 +33,7 @@ import cc.metapro.openct.classdetail.ClassDetailActivity;
 import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.DateHelper;
+import cc.metapro.openct.utils.REHelper;
 
 import static cc.metapro.openct.allclasses.AllClassesActivity.allClasses;
 
@@ -91,7 +92,10 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassView
                     time += tmp;
                 }
             }
-            time = time.substring(0, time.length() - 2);
+            if (!REHelper.isEmpty(time)) {
+                time = time.substring(0, time.length() - 2);
+            }
+
             mTime.setText(time);
             mColor.setOnClickListener(new View.OnClickListener() {
                 @Override

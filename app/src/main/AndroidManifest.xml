@@ -84,11 +84,7 @@
         <activity
             android:name=".classdetail.ClassDetailActivity"
             android:label="@string/class_detail"
-            android:parentActivityName=".myclass.ClassActivity"
             android:windowSoftInputMode="adjustPan|stateHidden">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="cc.metapro.openct.myclass.ClassActivity"/>
         </activity>
         <activity
             android:name=".splash.SplashActivity">
@@ -105,11 +101,7 @@
         <activity
             android:name=".allclasses.AllClassesActivity"
             android:label="@string/all_classes"
-            android:parentActivityName=".myclass.ClassActivity"
             android:windowSoftInputMode="adjustPan|stateHidden">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="cc.metapro.openct.myclass.ClassActivity"/>
         </activity>
 
         <receiver

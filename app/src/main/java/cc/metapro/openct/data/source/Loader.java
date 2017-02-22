@@ -138,10 +138,10 @@ public class Loader {
 
     private static void updateWeekSeq(Context context) {
         try {
-            int lastSetWeek = PrefHelper.getInt(context, R.string.pref_week_set_week);
             Calendar cal = Calendar.getInstance(Locale.CHINA);
             cal.setFirstDayOfWeek(Calendar.MONDAY);
             int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
+            int lastSetWeek = PrefHelper.getInt(context, R.string.pref_week_set_week, weekOfYearWhenSetCurrentWeek);
             int currentWeek = Integer.parseInt(PrefHelper.getString(context, R.string.pref_current_week, "1"));
             if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
                 if (lastSetWeek == 53) {
@@ -168,7 +168,7 @@ public class Loader {
         for (int i = 0; i < size; i++) {
             DateFormat format = DateFormat.getDateInstance();
             try {
-                Date date = format.parse(PrefHelper.getString(context, "class_time_" + i, ""));
+                Date date = format.parse(PrefHelper.getString(context, Constants.TIME_PREFIX + i, ""));
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(date);
                 result.put(i, calendar);
