@@ -89,9 +89,9 @@ public class ICalHelper {
                                         int restTime
     ) throws URISyntaxException, SocketException {
         Calendar now = Calendar.getInstance(Locale.CHINA);
-        int weekOfYear = now.get(Calendar.WEEK_OF_YEAR);
-        int dayBefore = Math.abs((weekOfYear + startWeek - currentWeek - 1) * 7);
-        int dayAfter = Math.abs((weekOfYear + endWeek - currentWeek - 1) * 7);
+//        int weekOfYear = now.get(Calendar.WEEK_OF_YEAR);
+        int dayBefore = (currentWeek - startWeek) * 7;
+        int dayAfter = (endWeek - currentWeek) * 7;
 
         // repeat every week until endDate
         Recur recur = new Recur(Recur.WEEKLY, new DateTime(DateHelper.getDateAfter(now.getTime(), dayAfter)));
