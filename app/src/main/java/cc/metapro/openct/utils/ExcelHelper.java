@@ -41,8 +41,8 @@ public class ExcelHelper {
         stringer.array();
         for (i = 1; i < tableContents.length; i++) {
             stringer.object();
-            for (int j = 0; j < tableContents[i].length; j++) {
-                stringer.key(headers[j]).value(tableContents[i][j]);
+            for (int j = 0; j < tableContents[i].length && j < headers.length; j++) {
+                stringer.key(headers[j].trim()).value(tableContents[i][j]);
             }
             stringer.endObject();
         }
