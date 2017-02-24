@@ -58,24 +58,18 @@ class ClassPresenter implements ClassContract.Presenter {
     private ClassContract.View mView;
     private Classes mEnrichedClasses;
     private Context mContext;
-    private DBManger mDBManger;
 
     ClassPresenter(@NonNull ClassContract.View view, Context context) {
         mView = view;
         mView.setPresenter(this);
         mContext = context;
-        mDBManger = DBManger.getInstance(mContext);
     }
 
     @Override
     public Disposable loadOnlineInfo(final FragmentManager manager) {
         ActivityUtils.getProgressDialog(mContext, R.string.preparing_school_sys_info).show();
-        Observable<Boolean> observable = Observable.create(new ObservableOnSubscribe<Boolean>() {
-            @Override
-            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                e.onNext(Loader.getCms(mContext).prepareOnlineInfo());
-            }
-        });
+
+        Observable<Boolean> observable = Loader.prepareOnlineInfo(Loader.ACTION_CMS, mContext);
 
         Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
             @Override
@@ -96,8 +90,7 @@ class ClassPresenter implements ClassContract.Presenter {
             }
         };
 
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
 
         return null;
@@ -106,14 +99,8 @@ class ClassPresenter implements ClassContract.Presenter {
     @Override
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
         ActivityUtils.getProgressDialog(mContext, R.string.login_to_system).show();
-        Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
-            @Override
-            public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
-                loginMap.put(mContext.getString(R.string.key_captcha), code);
-                e.onNext(Loader.getCms(mContext).login(loginMap));
-            }
-        });
+
+        Observable<Document> observable = Loader.login(Loader.ACTION_CMS, mContext, code);
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
@@ -146,7 +133,11 @@ class ClassPresenter implements ClassContract.Presenter {
                                         lastDom = factory.getPageDom(finalTarget.absUrl("href"));
                                     }
                                 }
-                                e.onNext(finalTarget.absUrl("href"));
+                                if (finalTarget != null) {
+                                    e.onNext(finalTarget.absUrl("href"));
+                                } else {
+                                    e.onError(new Exception("failed"));
+                                }
                             }
                         });
 
@@ -183,8 +174,7 @@ class ClassPresenter implements ClassContract.Presenter {
             }
         };
 
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
 
         return null;
@@ -272,12 +262,7 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public void loadLocalClasses() {
-        Observable<Classes> observable = Observable.create(new ObservableOnSubscribe<Classes>() {
-            @Override
-            public void subscribe(ObservableEmitter<Classes> e) throws Exception {
-                e.onNext(mDBManger.getClasses());
-            }
-        });
+        Observable<Classes> observable = Loader.getClasses(mContext);
 
         Observer<Classes> observer = new MyObserver<Classes>(TAG) {
             @Override
@@ -298,8 +283,7 @@ class ClassPresenter implements ClassContract.Presenter {
             }
         };
 
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
 

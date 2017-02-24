@@ -19,113 +19,104 @@ package cc.metapro.openct.search;
 import android.content.Context;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
-import android.util.Log;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.university.LibraryFactory;
 import cc.metapro.openct.data.university.item.BookInfo;
+import cc.metapro.openct.utils.MyObserver;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 @Keep
 class LibSearchPresenter implements LibSearchContract.Presenter {
 
-    private static final String TAG = "LIB_PRESENTER";
+    private static final String TAG = LibSearchPresenter.class.getName();
 
     private LibSearchContract.View mLibSearchView;
 
-    private Spinner mSpinner;
-
-    private EditText mEditText;
-
     private Context mContext;
 
-    LibSearchPresenter(@NonNull LibSearchContract.View libSearchView, Spinner spinner, EditText editText) {
+    private LibraryFactory mLibraryFactory;
+
+    LibSearchPresenter(@NonNull LibSearchContract.View libSearchView, Context context) {
         mLibSearchView = libSearchView;
-        mSpinner = spinner;
-        mEditText = editText;
-        mContext = mEditText.getContext();
+        mContext = context;
         mLibSearchView.setPresenter(this);
+        mLibraryFactory = Loader.getLibrary(mContext);
     }
 
     @Override
-    public Disposable search() {
+    public Disposable search(final String type, final String content) {
         mLibSearchView.showOnSearching();
-        return Observable
-                .create(new ObservableOnSubscribe<List<BookInfo>>() {
-                    @Override
-                    public void subscribe(ObservableEmitter<List<BookInfo>> e) throws Exception {
-                        Map<String, String> map = new HashMap<>(2);
-                        map.put(mContext.getString(R.string.key_search_type), mSpinner.getSelectedItem().toString());
-                        map.put(mContext.getString(R.string.key_search_content), mEditText.getText().toString());
-                        e.onNext(Loader.getLibrary(mContext).search(map));
-                        e.onComplete();
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
+        Observable<List<BookInfo>> observable = Observable.create(new ObservableOnSubscribe<List<BookInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<BookInfo>> e) throws Exception {
+                Map<String, String> map = new HashMap<>(2);
+                map.put(mContext.getString(R.string.key_search_type), type);
+                map.put(mContext.getString(R.string.key_search_content), content);
+                e.onNext(mLibraryFactory.search(map));
+            }
+        });
+
+        Observer<List<BookInfo>> observer = new MyObserver<List<BookInfo>>(TAG) {
+            @Override
+            public void onNext(List<BookInfo> books) {
+                mLibSearchView.onSearchResult(books);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<List<BookInfo>>() {
-                    @Override
-                    public void accept(List<BookInfo> infos) throws Exception {
-                        mLibSearchView.onSearchResult(infos);
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, List<BookInfo>>() {
-                    @Override
-                    public List<BookInfo> apply(Throwable throwable) throws Exception {
-                        Log.e(TAG, throwable.getMessage(), throwable);
-                        Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        mLibSearchView.onSearchResult(new ArrayList<BookInfo>(0));
-                        return new ArrayList<>();
-                    }
-                })
-                .subscribe();
+                .subscribe(observer);
+
+        return null;
     }
 
     @Override
     public Disposable nextPage() {
         mLibSearchView.showOnSearching();
-        return Observable
-                .create(new ObservableOnSubscribe<List<BookInfo>>() {
-                    @Override
-                    public void subscribe(ObservableEmitter<List<BookInfo>> e) throws Exception {
-                        List<BookInfo> books = Loader.getLibrary(mContext).getNextPage();
-                        e.onNext(books);
-                        e.onComplete();
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
+        Observable<List<BookInfo>> observable = Observable.create(new ObservableOnSubscribe<List<BookInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<BookInfo>> e) throws Exception {
+                e.onNext(mLibraryFactory.getNextPage());
+            }
+        });
+
+        Observer<List<BookInfo>> observer = new MyObserver<List<BookInfo>>(TAG) {
+            @Override
+            public void onNext(List<BookInfo> books) {
+                mLibSearchView.onNextPageResult(books);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<List<BookInfo>>() {
-                    @Override
-                    public void accept(List<BookInfo> infos) throws Exception {
-                        mLibSearchView.onNextPageResult(infos);
-                    }
-                })
-                .onErrorReturn(new Function<Throwable, List<BookInfo>>() {
-                    @Override
-                    public List<BookInfo> apply(Throwable throwable) throws Exception {
-                        Log.e(TAG, throwable.getMessage(), throwable);
-                        Toast.makeText(mEditText.getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        mLibSearchView.onNextPageResult(new ArrayList<BookInfo>());
-                        return new ArrayList<>();
-                    }
-                })
-                .subscribe();
+                .subscribe(observer);
+
+        return null;
     }
 
     @Override

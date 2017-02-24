@@ -129,7 +129,7 @@ public class DBManger {
         }
     }
 
-    public void delAdvancedCustomClassInfo() {
+    public void delAdvancedCustomInfo() {
         mDatabase.beginTransaction();
         try {
             mDatabase.delete(DBHelper.ADV_CUSTOM_TABLE, null, null);
@@ -263,7 +263,7 @@ public class DBManger {
     }
 
     @NonNull
-    public List<GradeInfo> getGrades() {
+    List<GradeInfo> getGrades() {
         Cursor cursor = null;
         try {
             cursor = mDatabase.query(DBHelper.GRADE_TABLE, null, null, null, null, null, null);
@@ -306,7 +306,7 @@ public class DBManger {
     }
 
     @NonNull
-    public List<BorrowInfo> getBorrows() {
+    List<BorrowInfo> getBorrows() {
         Cursor cursor = null;
         try {
             cursor = mDatabase.query(DBHelper.BORROW_TABLE, null, null, null, null, null, null);

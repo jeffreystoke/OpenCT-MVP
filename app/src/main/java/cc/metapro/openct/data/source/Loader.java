@@ -19,18 +19,17 @@ package cc.metapro.openct.data.source;
 import android.content.Context;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 
 import com.scottyab.aescrypt.AESCrypt;
 
-import java.text.DateFormat;
-import java.text.ParseException;
+import org.jsoup.nodes.Document;
+
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -38,13 +37,25 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.LibraryFactory;
 import cc.metapro.openct.data.university.UniversityInfo;
+import cc.metapro.openct.data.university.item.BorrowInfo;
+import cc.metapro.openct.data.university.item.GradeInfo;
+import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.REHelper;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.schedulers.Schedulers;
 
 @Keep
 public class Loader {
-    private static final String TAG = Loader.class.getSimpleName();
+
+    public static final int ACTION_CMS = 0;
+    public static final int ACTION_LIBRARY = 1;
+
+    private static final String TAG = Loader.class.getName();
+
     public static UniversityInfo university;
     private static boolean needUpdateUniversity;
 
@@ -67,10 +78,76 @@ public class Loader {
         return new CmsFactory(university.cmsSys, university.cmsURL);
     }
 
+    public static Observable<Document> login(final int actionType, final Context context, final String captcha) {
+        return Observable.create(new ObservableOnSubscribe<Document>() {
+            @Override
+            public void subscribe(ObservableEmitter<Document> e) throws Exception {
+                Map<String, String> loginMap;
+                if (actionType == ACTION_CMS) {
+                    loginMap = getCmsStuInfo(context);
+                } else if (actionType == ACTION_LIBRARY) {
+                    loginMap = getLibStuInfo(context);
+                } else {
+                    loginMap = new HashMap<>();
+                }
+                loginMap.put(Constants.CAPTCHA_KEY, captcha);
+                checkUniversity(context);
+                Document document = new CmsFactory(university.cmsSys, university.cmsURL).login(loginMap);
+                e.onNext(document);
+            }
+        }).subscribeOn(Schedulers.io());
+    }
+
+    public static Observable<Classes> getClasses(final Context context) {
+        return Observable.create(new ObservableOnSubscribe<Classes>() {
+            @Override
+            public void subscribe(ObservableEmitter<Classes> e) throws Exception {
+                DBManger manger = DBManger.getInstance(context);
+                Classes allClasses = manger.getClasses();
+                e.onNext(allClasses);
+            }
+        }).subscribeOn(Schedulers.io());
+    }
+
+    public static Observable<List<GradeInfo>> getGrades(final Context context) {
+        return Observable.create(new ObservableOnSubscribe<List<GradeInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
+                DBManger manger = DBManger.getInstance(context);
+                List<GradeInfo> grades = manger.getGrades();
+                e.onNext(grades);
+            }
+        }).subscribeOn(Schedulers.io());
+    }
+
+    public static Observable<List<BorrowInfo>> getBorrows(final Context context) {
+        return Observable.create(new ObservableOnSubscribe<List<BorrowInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<BorrowInfo>> e) throws Exception {
+                DBManger manger = DBManger.getInstance(context);
+                List<BorrowInfo> borrowInfoList = manger.getBorrows();
+                e.onNext(borrowInfoList);
+            }
+        }).subscribeOn(Schedulers.io());
+    }
+
+    public static Observable<Boolean> prepareOnlineInfo(final int actionType, final Context context) {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                if (actionType == ACTION_CMS) {
+                    checkUniversity(context);
+                    e.onNext(new CmsFactory(university.cmsSys, university.cmsURL).prepareOnlineInfo());
+                } else if (actionType == ACTION_LIBRARY) {
+                    e.onNext(new LibraryFactory(university.libSys, university.libURL).prepareOnlineInfo());
+                }
+            }
+        }).subscribeOn(Schedulers.io());
+    }
+
     private static void checkUniversity(Context context) {
         if (university == null || needUpdateUniversity) {
             university = loadUniversity(context);
-            assert university != null;
             needUpdateUniversity = false;
         }
     }
@@ -114,28 +191,34 @@ public class Loader {
     }
 
     public static int getCurrentWeek(Context context) {
+        updateWeekSeq(context);
         return Integer.parseInt(PrefHelper.getString(context, R.string.pref_current_week, "1"));
     }
 
-    @Nullable
+    @NonNull
     private static UniversityInfo loadUniversity(final Context context) {
         DBManger manger = DBManger.getInstance(context);
 
-        UniversityInfo university = null;
+        final String defaultSchoolName = context.getResources().getStringArray(R.array.school_names)[0];
+        UniversityInfo university;
         if (PrefHelper.getBoolean(context, R.string.pref_custom_enable)) {
             university = manger.getCustomUniversity();
         } else {
-            university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name, context.getResources().getStringArray(R.array.school_names)[0]));
+            university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name, defaultSchoolName));
         }
 
         if (university == null) {
-            university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name, context.getResources().getStringArray(R.array.school_names)[0]));
+            university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name, defaultSchoolName));
+        }
+
+        if (university == null) {
+            university = new UniversityInfo();
         }
 
         return university;
     }
 
-    public static void updateWeekSeq(Context context) {
+    private static void updateWeekSeq(Context context) {
         try {
             Calendar cal = Calendar.getInstance(Locale.CHINA);
             cal.setFirstDayOfWeek(Calendar.MONDAY);
@@ -165,7 +248,11 @@ public class Loader {
         int size = Integer.parseInt(PrefHelper.getString(context, R.string.pref_daily_class_count, "12"));
         SparseArray<Calendar> result = new SparseArray<>(size);
         for (int i = 0; i < size; i++) {
-            String time = PrefHelper.getString(context, Constants.TIME_PREFIX + i, "08:00:00");
+            String def = "";
+            if (i < 10) {
+                def += "0";
+            }
+            String time = PrefHelper.getString(context, Constants.TIME_PREFIX + i, def + i + ":00");
             Calendar calendar = Calendar.getInstance();
             int[] parts = REHelper.getUserSetTime(time);
             calendar.set(Calendar.HOUR_OF_DAY, parts[0]);

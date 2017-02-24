@@ -46,7 +46,7 @@ import cc.metapro.openct.utils.RecyclerViewHelper;
 
 import static cc.metapro.openct.allclasses.AllClassesActivity.allClasses;
 
-public class ClassDetailActivity extends AppCompatActivity implements ClassDetailContract.View {
+public class ClassDetailActivity extends AppCompatActivity {
 
     static int mIndex;
 
@@ -68,8 +68,6 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
 
     private ClassDetailAdapter mDetailAdapter;
 
-    private ClassDetailContract.Presenter mPresenter;
-
     public static void actionStart(Context context, int index) {
         mIndex = index;
         mInfoEditing = allClasses.get(mIndex);
@@ -90,8 +88,6 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
 
         setSupportActionBar(mToolbar);
         mToolbar.setTitle("");
-
-        new ClassDetailPresenter(this, this);
 
         mName.setText(mInfoEditing.getName());
         mType.setText(mInfoEditing.getType());
@@ -160,10 +156,5 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
         mInfoEditing.setTimeSet(timeSet);
         allClasses.add(mInfoEditing);
         super.onBackPressed();
-    }
-
-    @Override
-    public void setPresenter(ClassDetailContract.Presenter presenter) {
-        mPresenter = presenter;
     }
 }

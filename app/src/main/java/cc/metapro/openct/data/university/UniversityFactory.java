@@ -61,13 +61,6 @@ public abstract class UniversityFactory {
         BASE_URL = URLUtil.guessUrl(url);
     }
 
-    // 再次获取验证码
-    public static void getOneMoreCAPTCHA() throws IOException {
-        Response<ResponseBody> bodyResponse = mService.getCAPTCHA(webHelper.getCaptchaURL()).execute();
-        ResponseBody body = bodyResponse.body();
-        StoreHelper.storeBytes(Constants.CAPTCHA_FILE, body.byteStream());
-    }
-
     @NonNull
     public Document login(@NonNull final Map<String, String> loginMap) throws Exception {
         // 准备监听登录结果, 若成功会 302 跳转用户中心
@@ -213,6 +206,13 @@ public abstract class UniversityFactory {
             interceptor = webHelper.getInterceptor();
             mService = webHelper.createSchoolService();
         }
+    }
+
+    // 再次获取验证码
+    public static void getOneMoreCAPTCHA() throws IOException {
+        Response<ResponseBody> bodyResponse = mService.getCAPTCHA(webHelper.getCaptchaURL()).execute();
+        ResponseBody body = bodyResponse.body();
+        StoreHelper.storeBytes(Constants.CAPTCHA_FILE, body.byteStream());
     }
 
     private void destroyService() {

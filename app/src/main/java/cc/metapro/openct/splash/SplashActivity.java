@@ -54,7 +54,6 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Loader.updateWeekSeq(this);
         if (PrefHelper.getBoolean(this, R.string.pref_initialed)) {
             Intent intent = new Intent(this, ClassActivity.class);
             startActivity(intent);

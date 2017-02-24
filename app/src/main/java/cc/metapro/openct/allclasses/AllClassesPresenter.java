@@ -210,12 +210,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
     }
 
     private void loadLocalClasses() {
-        Observable<Classes> observable = Observable.create(new ObservableOnSubscribe<Classes>() {
-            @Override
-            public void subscribe(ObservableEmitter<Classes> e) throws Exception {
-                e.onNext(mDBManger.getClasses());
-            }
-        });
+        Observable<Classes> observable = Loader.getClasses(mContext);
 
         Observer<Classes> observer = new MyObserver<Classes>(TAG) {
             @Override
@@ -235,8 +230,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
             }
         };
 
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
 

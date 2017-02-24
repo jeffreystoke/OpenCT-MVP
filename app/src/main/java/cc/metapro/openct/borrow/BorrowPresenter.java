@@ -36,6 +36,7 @@ import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
 import cc.metapro.openct.data.university.CmsFactory;
+import cc.metapro.openct.data.university.LibraryFactory;
 import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.utils.ActivityUtils;
@@ -70,13 +71,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
     public Disposable loadOnlineInfo(final FragmentManager manager) {
         ActivityUtils.getProgressDialog(mContext, R.string.preparing_school_sys_info).show();
 
-        Observable<Boolean> observable = Observable.create(new ObservableOnSubscribe<Boolean>() {
-            @Override
-            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                e.onNext(Loader.getLibrary(mContext).prepareOnlineInfo());
-                e.onComplete();
-            }
-        });
+        Observable<Boolean> observable = Loader.prepareOnlineInfo(Loader.ACTION_LIBRARY, mContext);
 
         Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
             @Override
@@ -108,15 +103,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
         ActivityUtils.getProgressDialog(mContext, R.string.loading_borrows).show();
 
-        Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
-            @Override
-            public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                Map<String, String> loginMap = Loader.getLibStuInfo(mContext);
-                loginMap.put(mContext.getString(R.string.key_captcha), code);
-                Document userCenter = Loader.getLibrary(mContext).login(loginMap);
-                e.onNext(userCenter);
-            }
-        });
+        Observable<Document> observable = Loader.login(Loader.ACTION_LIBRARY, mContext, code);
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
@@ -132,11 +119,11 @@ class BorrowPresenter implements BorrowContract.Presenter {
                             loadTargetPage(manager, target.absUrl("href"));
                         }
                     } else if (urlPatterns.size() > 1) {
-                        // fetch more page to reach class info page, especially in QZ Data Soft CMS System
+                        // fetch more page to reach borrow info page
                         Observable<String> extraObservable = Observable.create(new ObservableOnSubscribe<String>() {
                             @Override
                             public void subscribe(ObservableEmitter<String> e) throws Exception {
-                                CmsFactory factory = Loader.getCms(mContext);
+                                LibraryFactory factory = Loader.getLibrary(mContext);
                                 Document lastDom = userCenterDom;
                                 Element finalTarget = null;
                                 for (String pattern : urlPatterns) {
@@ -144,7 +131,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
                                         finalTarget = HTMLUtils.getElementSimilar(lastDom, Jsoup.parse(pattern).body().children().first());
                                     }
                                     if (finalTarget != null) {
-                                        lastDom = factory.getPageDom(finalTarget.absUrl("href"));
+                                        lastDom = factory.getBorrowPageDom(finalTarget.absUrl("href"));
                                     }
                                 }
 
@@ -245,15 +232,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
 
     @Override
     public void loadLocalBorrows() {
-        Observable<List<BorrowInfo>> observable = Observable.create(new ObservableOnSubscribe<List<BorrowInfo>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<BorrowInfo>> e) throws Exception {
-                DBManger manger = DBManger.getInstance(mContext);
-                List<BorrowInfo> borrows = manger.getBorrows();
-                e.onNext(borrows);
-                e.onComplete();
-            }
-        });
+        Observable<List<BorrowInfo>> observable = Loader.getBorrows(mContext);
 
         Observer<List<BorrowInfo>> observer = new MyObserver<List<BorrowInfo>>(TAG) {
             @Override
@@ -271,8 +250,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
             }
         };
 
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
 

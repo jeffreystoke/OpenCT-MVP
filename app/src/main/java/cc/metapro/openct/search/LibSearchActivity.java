@@ -79,13 +79,13 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
 
     @OnClick(R.id.fab)
     public void fabSearch() {
-        mTask = mPresenter.search();
+        mTask = mPresenter.search(mSpinner.getSelectedItem().toString(), mEditText.getText().toString());
     }
 
     @OnEditorAction(R.id.lib_search_content_edittext)
     public boolean editorSearch(TextView textView, int i, KeyEvent keyEvent) {
         if (i == EditorInfo.IME_ACTION_SEARCH || (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-            mTask = mPresenter.search();
+            mTask = mPresenter.search(mSpinner.getSelectedItem().toString(), mEditText.getText().toString());
             return true;
         }
         return false;
@@ -109,7 +109,7 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.item_text_white, getResources().getStringArray(R.array.lib_search_type));
         mSpinner.setAdapter(adapter);
         mLinearLayoutManager = RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mAdapter);
-        new LibSearchPresenter(this, mSpinner, mEditText);
+        new LibSearchPresenter(this, this);
     }
 
     @Override

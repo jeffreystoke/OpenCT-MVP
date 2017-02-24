@@ -75,12 +75,7 @@ class GradePresenter implements GradeContract.Presenter {
     @Override
     public Disposable loadOnlineInfo(final FragmentManager manager) {
         ActivityUtils.getProgressDialog(mContext, R.string.preparing_school_sys_info).show();
-        Observable<Boolean> observable = Observable.create(new ObservableOnSubscribe<Boolean>() {
-            @Override
-            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                e.onNext(Loader.getCms(mContext).prepareOnlineInfo());
-            }
-        });
+        Observable<Boolean> observable = Loader.prepareOnlineInfo(Loader.ACTION_CMS, mContext);
 
         Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
             @Override
@@ -101,8 +96,7 @@ class GradePresenter implements GradeContract.Presenter {
             }
         };
 
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
 
         return null;
@@ -112,14 +106,7 @@ class GradePresenter implements GradeContract.Presenter {
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
         ActivityUtils.getProgressDialog(mContext, R.string.login_to_system).show();
 
-        Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
-            @Override
-            public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                Map<String, String> loginMap = Loader.getCmsStuInfo(mContext);
-                loginMap.put(mContext.getString(R.string.key_captcha), code);
-                e.onNext(Loader.getCms(mContext).login(loginMap));
-            }
-        });
+        Observable<Document> observable = Loader.login(Loader.ACTION_CMS, mContext, code);
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
@@ -180,8 +167,7 @@ class GradePresenter implements GradeContract.Presenter {
             }
         };
 
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
 
         return null;
@@ -269,12 +255,7 @@ class GradePresenter implements GradeContract.Presenter {
 
     @Override
     public void loadLocalGrades() {
-        Observable<List<GradeInfo>> observable = Observable.create(new ObservableOnSubscribe<List<GradeInfo>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<GradeInfo>> e) throws Exception {
-                e.onNext(mDBManger.getGrades());
-            }
-        });
+        Observable<List<GradeInfo>> observable = Loader.getGrades(mContext);
 
         Observer<List<GradeInfo>> observer = new MyObserver<List<GradeInfo>>(TAG) {
             @Override
@@ -292,8 +273,7 @@ class GradePresenter implements GradeContract.Presenter {
             }
         };
 
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
 

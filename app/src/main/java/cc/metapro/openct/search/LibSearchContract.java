@@ -32,15 +32,15 @@ interface LibSearchContract {
 
         void showOnSearching();
 
-        void onSearchResult(List<BookInfo> infos);
+        void onSearchResult(List<BookInfo> books);
 
-        void onNextPageResult(List<BookInfo> infos);
+        void onNextPageResult(List<BookInfo> books);
 
     }
 
     interface Presenter extends BasePresenter {
 
-        Disposable search();
+        Disposable search(final String type, final String content);
 
         Disposable nextPage();
 
