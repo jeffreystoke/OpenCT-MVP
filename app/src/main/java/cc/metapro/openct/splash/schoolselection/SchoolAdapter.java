@@ -32,6 +32,7 @@ import java.util.List;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.UniversityInfo;
+import cc.metapro.openct.utils.ActivityUtils;
 import io.reactivex.Observable;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
@@ -50,7 +51,6 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
 
         mAllSchools = new ArrayList<>();
         mSchools = new ArrayList<>();
-
         for (UniversityInfo info : universityList) {
             mAllSchools.add(info.name);
             mSchools.add(info.name);

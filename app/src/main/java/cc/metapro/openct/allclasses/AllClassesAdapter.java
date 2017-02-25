@@ -16,6 +16,7 @@ package cc.metapro.openct.allclasses;
  * limitations under the License.
  */
 
+import android.support.annotation.ColorInt;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,8 +24,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.xdty.preference.colorpicker.ColorPickerDialog;
-import org.xdty.preference.colorpicker.ColorPickerSwatch;
+import com.jrummyapps.android.colorpicker.ColorPickerDialog;
+import com.jrummyapps.android.colorpicker.ColorPickerDialogListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -86,7 +91,9 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassView
             mColor.setBackgroundColor(info.getColor());
             mName.setText(info.getName() + "   " + info.getType());
             String time = "";
-            for (ClassTime t : info.getTimeSet()) {
+            List<ClassTime> tmpTimeList = new ArrayList<>(info.getTimeSet());
+            Collections.sort(tmpTimeList);
+            for (ClassTime t : tmpTimeList) {
                 String tmp = DateHelper.weekDayToChinese(t.getWeekDay()) + " " + t.getTime() + " 节, ";
                 if (!time.contains(tmp)) {
                     time += tmp;
@@ -100,13 +107,17 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassView
             mColor.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ColorPickerDialog dialog = ColorPickerDialog
-                            .newInstance(R.string.choose_background, activity.getResources().getIntArray(R.array.class_background), info.getColor(), 4, 8);
-                    dialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
+                    ColorPickerDialog dialog = ColorPickerDialog.newBuilder().setColor(info.getColor()).create();
+                    dialog.setColorPickerDialogListener(new ColorPickerDialogListener() {
                         @Override
-                        public void onColorSelected(int color) {
+                        public void onColorSelected(int dialogId, @ColorInt int color) {
                             mColor.setBackgroundColor(color);
                             allClasses.get(position).setColor(color);
+                        }
+
+                        @Override
+                        public void onDialogDismissed(int dialogId) {
+
                         }
                     });
                     dialog.show(activity.getFragmentManager(), "color_picker");

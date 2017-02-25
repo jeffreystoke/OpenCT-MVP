@@ -143,7 +143,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                     textView.setGravity(Gravity.CENTER);
                     if (time.hasClass(week)) {
                         textView.setBackground(ContextCompat.getDrawable(context, R.drawable.text_view_card_style_blue));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.azure));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
                     } else {
                         textView.setBackground(ContextCompat.getDrawable(context, R.drawable.text_view_card_style_grey));
                         textView.setTextColor(ContextCompat.getColor(context, R.color.material_grey));
@@ -159,7 +159,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                                 time.disableWeek(week);
                             } else {
                                 textView.setBackground(ContextCompat.getDrawable(context, R.drawable.text_view_card_style_blue));
-                                textView.setTextColor(ContextCompat.getColor(context, R.color.azure));
+                                textView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
                                 time.enableWeek(week);
                             }
                             classTimes.add(position, time);

@@ -25,6 +25,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import cc.metapro.openct.R;
+import cc.metapro.openct.classdetail.ClassDetailActivity;
+import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.GridLayoutHelper;
 
@@ -70,7 +72,18 @@ public class SingleClass implements Comparable<SingleClass> {
         return teacher;
     }
 
-    public void addViewTo(ViewGroup gridLayout, LayoutInflater inflater) {
+    public void addViewTo(final ViewGroup gridLayout, LayoutInflater inflater) {
+        int x = (time.getWeekDay() - 1) * Constants.CLASS_WIDTH;
+        int y = (time.getDailySeq() - 1) * Constants.CLASS_BASE_HEIGHT;
+        int N = gridLayout.getChildCount();
+        for (int i = 0; i < N; i++) {
+            int childX = (int) gridLayout.getChildAt(i).getX();
+            int childY = (int) gridLayout.getChildAt(i).getY();
+            if (childX == x && childY == y) {
+                return;
+            }
+        }
+
         final CardView card = (CardView) inflater.inflate(R.layout.item_class_info, gridLayout, false);
         card.setCardBackgroundColor(color);
 
@@ -83,24 +96,17 @@ public class SingleClass implements Comparable<SingleClass> {
             textView.setText(name + "@" + time.getPlace());
         }
 
-//        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-
-        //设置所在列的宽度和高度
-//        int row = time.getDailySeq() - 1;
-//        int col = time.getWeekDay() - 1;
-        card.setX((time.getWeekDay() - 1) * Constants.CLASS_WIDTH);
-        card.setY((time.getDailySeq() - 1) * Constants.CLASS_BASE_HEIGHT);
+        card.setX(x);
+        card.setY(y);
         gridLayout.addView(card);
         card.getLayoutParams().height = length * Constants.CLASS_BASE_HEIGHT;
         card.getLayoutParams().width = Constants.CLASS_WIDTH;
-
-//        params.rowSpec = GridLayout.spec(row);
-//        params.columnSpec = GridLayout.spec(col);
-//        if (row > gridLayout.getRowCount()) {
-//            gridLayout.setRowCount(row + length + 1);
-//        }
-
-//        GridLayoutHelper.addViewToGridlayout(gridLayout, card, params);
+        card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClassDetailActivity.actionStart(gridLayout.getContext(), name);
+            }
+        });
     }
 
     @Override

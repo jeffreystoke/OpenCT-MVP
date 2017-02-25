@@ -31,12 +31,21 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.utils.ActivityUtils;
+import cc.metapro.openct.utils.MyObserver;
 import cc.metapro.openct.utils.PrefHelper;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 public class SchoolSelectionActivity
         extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
+    private static final String TAG = SchoolSelectionActivity.class.getName();
     public static final int REQUEST_SCHOOL_NAME = 1;
 
     public static final String SCHOOL_RESULT = "school_name";
@@ -65,11 +74,29 @@ public class SchoolSelectionActivity
     @Override
     protected void onResume() {
         super.onResume();
-        setViews();
+        ActivityUtils.getProgressDialog(this, R.string.loading_school_list).show();
+        Observable<SchoolAdapter> observable = Observable.create(new ObservableOnSubscribe<SchoolAdapter>() {
+            @Override
+            public void subscribe(ObservableEmitter<SchoolAdapter> e) throws Exception {
+                mAdapter = new SchoolAdapter(SchoolSelectionActivity.this);
+                e.onNext(mAdapter);
+            }
+        });
+
+        Observer<SchoolAdapter> observer = new MyObserver<SchoolAdapter>(TAG) {
+            @Override
+            public void onNext(SchoolAdapter schoolAdapter) {
+                ActivityUtils.dismissProgressDialog();
+                setViews();
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
 
     private void setViews() {
-        mAdapter = new SchoolAdapter(this);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

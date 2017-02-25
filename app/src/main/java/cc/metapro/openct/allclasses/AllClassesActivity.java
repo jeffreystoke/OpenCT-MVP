@@ -49,6 +49,7 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
 
     private static final int REQUEST_WRITE_STORAGE = 112;
     public static Classes allClasses;
+
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.recycler_view)
@@ -169,13 +170,12 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_WRITE_STORAGE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mPresenter.exportClasses();
-                } else {
-                    Toast.makeText(this, R.string.no_write_permission, Toast.LENGTH_LONG).show();
-                }
+        if (requestCode == REQUEST_WRITE_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mPresenter.exportClasses();
+            } else {
+                Toast.makeText(this, R.string.no_write_permission, Toast.LENGTH_LONG).show();
+            }
         }
     }
 }

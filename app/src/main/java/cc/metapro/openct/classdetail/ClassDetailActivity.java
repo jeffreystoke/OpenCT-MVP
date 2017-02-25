@@ -40,6 +40,7 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
+import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.DateHelper;
@@ -68,6 +69,19 @@ public class ClassDetailActivity extends AppCompatActivity {
     MaterialEditText mType;
 
     private ClassDetailAdapter mDetailAdapter;
+
+    public static void actionStart(Context context, String name) {
+        allClasses = DBManger.getInstance(context).getClasses();
+        int i = 0;
+        for (EnrichedClassInfo info : allClasses) {
+            if (info.getName().equals(name)) {
+                mInfoEditing = info;
+                actionStart(context, i);
+                break;
+            }
+            i++;
+        }
+    }
 
     public static void actionStart(Context context, int index) {
         mIndex = index;
@@ -158,6 +172,7 @@ public class ClassDetailActivity extends AppCompatActivity {
         timeSet.addAll(classTimes);
         mInfoEditing.setTimeSet(timeSet);
         allClasses.add(mInfoEditing);
+        DBManger.getInstance(this).updateClasses(allClasses);
         super.onBackPressed();
     }
 

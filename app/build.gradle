@@ -70,7 +70,7 @@ dependencies {
     compile 'com.github.clans:fab:1.6.4'
     compile 'com.scottyab:aescrypt:0.0.1'
     compile 'me.relex:circleindicator:1.2.2@aar'
-    compile 'org.xdty.preference:color-picker:0.0.4'
+    compile 'com.jrummyapps:colorpicker:2.1.5'
     compile 'com.yanzhenjie:recyclerview-swipe:1.0.2'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'jp.wasabeef:recyclerview-animators:2.2.4'

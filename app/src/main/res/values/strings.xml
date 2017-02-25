@@ -217,4 +217,5 @@
     <string name="jie">节</string>
     <string name="save">保存</string>
     <string name="loading_university_info_list">正在获取学校信息</string>
+    <string name="loading_school_list">正在加载学校列表</string>
 </resources>
