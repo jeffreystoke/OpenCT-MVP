@@ -16,6 +16,7 @@ package cc.metapro.openct.data.source;
  * limitations under the License.
  */
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -71,7 +72,7 @@ public class DBManger {
         if (PrefHelper.getBoolean(context, R.string.pref_custom_enable)) {
             name = PrefHelper.getString(context, R.string.pref_custom_school_name, "openct");
         } else {
-            name = PrefHelper.getString(context, R.string.pref_school_name, context.getResources().getStringArray(R.array.school_names)[0]);
+            name = PrefHelper.getString(context, R.string.pref_school_name, context.getString(R.string.default_school_name));
         }
         try {
             cursor = mDatabase.query(
@@ -314,6 +315,45 @@ public class DBManger {
             List<BorrowInfo> grades = new ArrayList<>();
             while (!cursor.isAfterLast()) {
                 grades.add(StoreHelper.fromJson(cursor.getString(1), BorrowInfo.class));
+                cursor.moveToNext();
+            }
+            return grades;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return new ArrayList<>(0);
+    }
+
+    public static void updateSchools(Context context, List<UniversityInfo> universityInfoList) {
+        DBManger.getInstance(context);
+        mDatabase.beginTransaction();
+        try {
+            mDatabase.delete(DBHelper.SCHOOL_TABLE, null, null);
+            for (UniversityInfo info : universityInfoList) {
+                ContentValues values = new ContentValues();
+                values.put(DBHelper.SCHOOL_NAME, info.name);
+                values.put(DBHelper.JSON, info.toString());
+                mDatabase.insert(DBHelper.SCHOOL_TABLE, null, values);
+            }
+            mDatabase.setTransactionSuccessful();
+        } finally {
+            mDatabase.endTransaction();
+        }
+    }
+
+    @NonNull
+    public List<UniversityInfo> getSchools() {
+        Cursor cursor = null;
+        try {
+            cursor = mDatabase.query(DBHelper.SCHOOL_TABLE, null, null, null, null, null, null);
+            cursor.moveToFirst();
+            List<UniversityInfo> grades = new ArrayList<>();
+            while (!cursor.isAfterLast()) {
+                grades.add(StoreHelper.fromJson(cursor.getString(1), UniversityInfo.class));
                 cursor.moveToNext();
             }
             return grades;

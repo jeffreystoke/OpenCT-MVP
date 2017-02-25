@@ -27,6 +27,23 @@
         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">false</item>
     </style>
 
+    <!--<style name="PreferenceStyle">-->
+        <!--<item name="preferenceCategoryStyle">@style/CustomPreferenceCategory</item>-->
+    <!--</style>-->
+
+    <!--<style name="CustomPreferenceCategory" parent="@style/Preference.Category">-->
+        <!--<item name="android:layout">@layout/custom_preference_category</item>-->
+    <!--</style>-->
+
+    <style name="CustomPreferenceCategoryText" parent="@android:style/Widget.TextView">
+        <!-- Style your PreferenceCategory here. -->
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
     <style name="AppTheme.Actionbar" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/material_white</item>
         <item name="colorPrimaryDark">@color/material_white_dark</item>

@@ -50,8 +50,6 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="7"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
                     android:hint="@string/search"
                     android:imeOptions="actionSearch"
                     android:inputType="text"
@@ -71,8 +69,10 @@
         style="@style/AppTheme.Fab"
         android:src="@drawable/ic_up_to_top"
         android:visibility="gone"
+        android:layout_gravity="bottom|start"
         app:layout_anchor="@id/recycler_view"
-        app:layout_anchorGravity="bottom|start"/>
+        app:layout_anchorGravity="bottom|start"
+        app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

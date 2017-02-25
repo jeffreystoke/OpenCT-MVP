@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~  Copyright 2016 - 2017 metapro.cc Jeffctor
+  ~  Copyright 2016 - 2017 OpenCT open source class table
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -101,9 +101,10 @@
         <PreferenceScreen
             android:summary="设置校园表格的相关信息, 用于解析课表"
             android:title="表格设置">
-            <CheckBoxPreference
+            <SwitchPreference
                 android:defaultValue="false"
                 android:key="@string/pref_class_line_based"
+                android:summary="若一个课程信息不是在一个单元格中, 需要勾选该选项"
                 android:title="按行课程表"/>
             <Preference
                 android:key="@string/pref_custom_action_clear"
@@ -154,7 +155,7 @@
                     android:positiveButtonText="@null"
                     android:title="@string/cms_sys"/>
                 <EditTextPreference
-                    android:defaultValue="http://"
+                    android:defaultValue=""
                     android:inputType="textUri"
                     android:key="@string/pref_custom_cms_url"
                     android:title="@string/address"/>
@@ -170,7 +171,7 @@
                     android:positiveButtonText="@null"
                     android:title="@string/lib_sys"/>
                 <EditTextPreference
-                    android:defaultValue="http://"
+                    android:defaultValue=""
                     android:inputType="textUri"
                     android:key="@string/pref_custom_lib_url"
                     android:title="@string/address"/>
@@ -181,7 +182,25 @@
     <!--个性化-->
     <PreferenceCategory
         android:title="@string/personalise">
+
+        <PreferenceScreen
+            android:summary="自定义主题色与背景图片 (不推荐使用图案或色彩复杂的图片)"
+            android:title="主题与背景">
+            <Preference
+                android:summary="设置主要的颜色"
+                android:title="主题色"/>
+            <Preference
+                android:title="课程顶部图片"/>
+            <Preference
+                android:title="成绩查询顶部图片"/>
+            <Preference
+                android:title="馆藏查询顶部图片"/>
+            <Preference
+                android:title="借阅信息顶部图片"/>
+        </PreferenceScreen>
+
         <ListPreference
+            android:defaultValue="0"
             android:entries="@array/pref_homepage_selection_keys"
             android:entryValues="@array/pref_homepage_selection_values"
             android:key="@string/pref_homepage_selection"
@@ -199,36 +218,38 @@
     <PreferenceCategory
         android:title="@string/security">
         <!--加密-->
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="@string/pref_need_encryption"
-            android:summary="@string/encryption_tip"
-            android:title="@string/enable_encryption"/>
-        <!--注意事项-->
         <Preference
-            android:summary="@string/security_tip"
-            android:title="@string/notice"/>
+            android:summary="你所填写的所有用户信息都存储在本地, 并使用 AES-128 进行加密, 但由于校园系统大多采用明文传输, 请确保网络环境安全"
+            android:title="信息加密"/>
     </PreferenceCategory>
+
+    <!--<PreferenceCategory-->
+        <!--android:title="学校信息相关">-->
+        <!--<Preference-->
+            <!--android:summary="将你自定义的学校信息发布到开源课程表的校园信息库, 当然, 提交后需要一些时间进行审核"-->
+            <!--android:title="提交学校"/>-->
+    <!--</PreferenceCategory>-->
 
     <!--关于-->
     <PreferenceCategory
         android:title="@string/about_openct">
+        <!--校园信息更新-->
         <Preference
-            android:summary="@string/pref_licience_info"
-            android:title="@string/open_source_license">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/apache_license2_url"/>
-        </Preference>
+            android:key="@string/pref_check_school_info_update"
+            android:title="检查校园信息库更新"/>
         <Preference
             android:summary="@string/project_url"
-            android:title="@string/project_addr">
+            android:title="@string/project_address">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="@string/project_url"/>
         </Preference>
         <Preference
-            android:summary="@string/mail_addr"
-            android:title="@string/contact_author"/>
+            android:summary="@string/pref_license_info"
+            android:title="@string/open_source_license">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/apache_license2_url"/>
+        </Preference>
     </PreferenceCategory>
 </PreferenceScreen>

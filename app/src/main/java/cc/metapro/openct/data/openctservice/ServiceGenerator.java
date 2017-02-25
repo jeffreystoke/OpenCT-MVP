@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import cc.metapro.openct.grades.cet.CETService;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 @Keep
@@ -42,5 +43,12 @@ public class ServiceGenerator {
                         .build())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build().create(CETService.class);
+    }
+
+    public static OpenCTService createOpenCTService() {
+        return new Retrofit.Builder()
+                .baseUrl("https://raw.githubusercontent.com/jeffreystoke/openct-school-info/master/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build().create(OpenCTService.class);
     }
 }

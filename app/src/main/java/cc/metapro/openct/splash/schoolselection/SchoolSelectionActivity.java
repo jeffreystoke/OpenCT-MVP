@@ -38,17 +38,18 @@ public class SchoolSelectionActivity
         extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     public static final int REQUEST_SCHOOL_NAME = 1;
+
     public static final String SCHOOL_RESULT = "school_name";
+
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.school_name)
     SearchView mSearchView;
     @BindView(R.id.school_list_view)
     StickyListHeadersListView mListView;
+
     private String result;
     private SchoolAdapter mAdapter;
-
-    private SharedPreferences mPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,10 +58,14 @@ public class SchoolSelectionActivity
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-        setViews();
 
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        result = mPreferences.getString(getString(R.string.pref_school_name), "");
+        result = PrefHelper.getString(this, R.string.pref_school_name, "");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setViews();
     }
 
     private void setViews() {

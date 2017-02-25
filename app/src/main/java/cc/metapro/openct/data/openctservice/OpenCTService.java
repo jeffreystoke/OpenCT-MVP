@@ -20,9 +20,11 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
+import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.data.university.item.RoomInfo;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface OpenCTService {
@@ -34,4 +36,6 @@ public interface OpenCTService {
     @GET("/emptyroom")
     Call<List<RoomInfo>> listRoomInfos(@NonNull @Query("school") String school);
 
+    @GET("schools.json")
+    Call<List<UniversityInfo>> getOnlineUniversityInfo();
 }

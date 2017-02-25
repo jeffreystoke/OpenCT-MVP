@@ -39,7 +39,7 @@ class DBHelper extends SQLiteOpenHelper {
     static final String BORROW_TABLE = "borrows";
     static final String CUSTOM_TABLE = "custom";
     static final String ADV_CUSTOM_TABLE = "adv_custom";
-    private static final String JSON = "json";
+    static final String JSON = "json";
     private static final String DB_NAME = "openct.db";
 
     private static final Map<String, String> TITLE_TABLE_MAP = new HashMap<String, String>() {{

@@ -197,7 +197,12 @@ public class ClassTime implements Comparable<ClassTime> {
             } else {
                 return 1;
             }
+        } else if (weekDay < o.weekDay){
+            return -1;
+        } else if (weekDay > o.weekDay){
+            return 1;
         }
+
         return 0;
     }
 }

@@ -61,9 +61,6 @@ public class LibraryFactory extends UniversityFactory {
         return Jsoup.parse(tablePage, url);
     }
 
-    /**
-     * 以下为图书馆搜索, 加载下一页功能, 页面即结果, 解析工作需要分系统操作
-     */
     @NonNull
     public List<BookInfo> search(@NonNull Map<String, String> searchMap) throws Exception {
         checkService();

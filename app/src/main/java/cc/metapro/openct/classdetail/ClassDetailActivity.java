@@ -33,6 +33,7 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -75,6 +76,8 @@ public class ClassDetailActivity extends AppCompatActivity {
         for (ClassTime time : mInfoEditing.getTimeSet()) {
             classTimes.add(time);
         }
+        Collections.sort(classTimes);
+
         Intent intent = new Intent(context, ClassDetailActivity.class);
         context.startActivity(intent);
     }
@@ -137,7 +140,7 @@ public class ClassDetailActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.add) {
             if (!classTimes.isEmpty()) {
-                classTimes.add(new ClassTime(classTimes.get(classTimes.size() - 1)));
+                classTimes.add(0, new ClassTime(classTimes.get(classTimes.size() - 1)));
             } else {
                 classTimes.add(0, new ClassTime());
             }
@@ -157,4 +160,5 @@ public class ClassDetailActivity extends AppCompatActivity {
         allClasses.add(mInfoEditing);
         super.onBackPressed();
     }
+
 }

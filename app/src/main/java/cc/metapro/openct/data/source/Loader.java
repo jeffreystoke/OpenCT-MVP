@@ -199,7 +199,7 @@ public class Loader {
     private static UniversityInfo loadUniversity(final Context context) {
         DBManger manger = DBManger.getInstance(context);
 
-        final String defaultSchoolName = context.getResources().getStringArray(R.array.school_names)[0];
+        final String defaultSchoolName = context.getString(R.string.default_school_name);
         UniversityInfo university;
         if (PrefHelper.getBoolean(context, R.string.pref_custom_enable)) {
             university = manger.getCustomUniversity();

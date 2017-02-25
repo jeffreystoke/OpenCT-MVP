@@ -26,9 +26,13 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import cc.metapro.openct.R;
+import cc.metapro.openct.data.source.DBManger;
+import cc.metapro.openct.data.university.UniversityInfo;
+import io.reactivex.Observable;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 @Keep
@@ -36,18 +40,26 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
 
     private List<String> mSchools;
     private LayoutInflater inflater;
-    private String[] allSchools;
+    private List<String> mAllSchools;
 
     SchoolAdapter(Context context) {
         inflater = LayoutInflater.from(context);
-        allSchools = context.getResources().getStringArray(R.array.school_names);
+        List<UniversityInfo> universityList = DBManger.getInstance(context).getSchools();
+
+        Collections.sort(universityList);
+
+        mAllSchools = new ArrayList<>();
         mSchools = new ArrayList<>();
-        mSchools.addAll(Arrays.asList(allSchools));
+
+        for (UniversityInfo info : universityList) {
+            mAllSchools.add(info.name);
+            mSchools.add(info.name);
+        }
     }
 
     void setTextFilter(String filter) {
         List<String> targetList = new ArrayList<>();
-        for (String s : allSchools) {
+        for (String s : mAllSchools) {
             if (s.contains(filter)) {
                 targetList.add(s);
             }
@@ -57,7 +69,7 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
 
     void clearTextFilter() {
         mSchools.clear();
-        mSchools.addAll(Arrays.asList(allSchools));
+        mSchools.addAll(mAllSchools);
     }
 
     @Override

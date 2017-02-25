@@ -17,16 +17,26 @@ package cc.metapro.openct.data.university;
  */
 
 import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 
 import cc.metapro.openct.data.source.StoreHelper;
+import cc.metapro.openct.utils.CharacterParser;
 
 @Keep
-public class UniversityInfo {
+public class UniversityInfo implements Comparable<UniversityInfo> {
 
     public String name, cmsSys, cmsURL, libSys, libURL;
 
     @Override
     public String toString() {
         return StoreHelper.toJson(this);
+    }
+
+    @Override
+    public int compareTo(@NonNull UniversityInfo o) {
+        CharacterParser parser = CharacterParser.getInstance();
+        String me = parser.getSelling(name);
+        String that = parser.getSelling(o.name);
+        return me.compareTo(that);
     }
 }

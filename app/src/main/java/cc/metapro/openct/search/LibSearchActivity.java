@@ -67,6 +67,7 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
 
     @BindView(R.id.fab_up)
     FloatingActionButton mFabUp;
+
     private LibSearchContract.Presenter mPresenter;
     private BooksAdapter mAdapter;
     private Disposable mTask;
@@ -109,6 +110,7 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.item_text_white, getResources().getStringArray(R.array.lib_search_type));
         mSpinner.setAdapter(adapter);
         mLinearLayoutManager = RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mAdapter);
+        mEditText.requestFocus();
         new LibSearchPresenter(this, this);
     }
 
@@ -146,9 +148,10 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
         mAdapter.notifyDataSetChanged();
         if (books.size() > 0) {
             Snackbar.make(mRecyclerView, "找到了 " + books.size() + " 条结果", BaseTransientBottomBar.LENGTH_LONG).show();
+            mFabUp.setVisibility(View.VISIBLE);
         } else {
             Snackbar.make(mRecyclerView, R.string.no_related_books, BaseTransientBottomBar.LENGTH_LONG).show();
-            mFabUp.setVisibility(View.VISIBLE);
+            mFabUp.setVisibility(View.GONE);
         }
     }
 

@@ -158,4 +158,6 @@
     <string name="pref_daily_class_count">daily_class_count</string>
     <string name="pref_every_class_time">every_class_length</string>
     <string name="pref_rest_time">rest_time</string>
+
+    <string name="pref_check_school_info_update">check_school_info_update</string>
 </resources>

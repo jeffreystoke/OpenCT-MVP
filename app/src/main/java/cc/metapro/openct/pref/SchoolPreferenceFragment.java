@@ -39,16 +39,27 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
+import cc.metapro.openct.data.openctservice.ServiceGenerator;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.splash.schoolselection.SchoolSelectionActivity;
+import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.MyObserver;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.REHelper;
 import cc.metapro.openct.widget.DailyClassWidget;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class SchoolPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
+    private static final String TAG = SchoolPreferenceFragment.class.getName();
     private Preference mSchoolPreference;
     private Preference mCurrentWeekPreference;
     private Preference mCmsPasswordPreference;
@@ -74,6 +85,72 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         mPreferences = new ArrayList<>();
         mTimePreferences = new ArrayList<>();
 
+        setUpdatePreference();
+        bindPreferences();
+        bindListener();
+    }
+
+    private void setUpdatePreference() {
+        Preference checkSchoolUpdate = findPreference(getString(R.string.pref_check_school_info_update));
+        checkSchoolUpdate.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("注意")
+                        .setMessage("即将从开源课程表的 GitHub仓库获取最新学校信息, 是否继续?")
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ActivityUtils.getProgressDialog(getActivity(), R.string.loading_university_info_list).show();
+                                Observable<List<UniversityInfo>> observable = Observable.create(new ObservableOnSubscribe<List<UniversityInfo>>() {
+                                    @Override
+                                    public void subscribe(ObservableEmitter<List<UniversityInfo>> e) throws Exception {
+                                        List<UniversityInfo> universityInfoList = ServiceGenerator
+                                                .createOpenCTService().getOnlineUniversityInfo().execute().body();
+                                        if (universityInfoList == null || universityInfoList.isEmpty()) {
+                                            e.onError(new Exception("获取仓库内校园信息失败, 请检查网络环境"));
+                                        } else {
+                                            e.onNext(universityInfoList);
+                                        }
+                                    }
+                                });
+                                Observer<List<UniversityInfo>> observer = new MyObserver<List<UniversityInfo>>(TAG) {
+                                    @Override
+                                    public void onNext(final List<UniversityInfo> universityList) {
+                                        ActivityUtils.dismissProgressDialog();
+                                        new AlertDialog.Builder(getActivity())
+                                                .setTitle("提示")
+                                                .setMessage("共有 " + universityList.size() + " 条学校信息, 是否替换当前所有学校信息")
+                                                .setNegativeButton(android.R.string.cancel, null)
+                                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        DBManger.updateSchools(getActivity(), universityList);
+                                                        Toast.makeText(getActivity(), "更新成功, 请到 设置 -> 学校 搜索并选择你想要的学校", Toast.LENGTH_LONG).show();
+                                                    }
+                                                }).show();
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        super.onError(e);
+                                        ActivityUtils.dismissProgressDialog();
+                                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                    }
+                                };
+
+                                observable.subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(observer);
+                            }
+                        })
+                        .setNegativeButton(android.R.string.cancel, null).show();
+                return true;
+            }
+        });
+    }
+
+    private void bindPreferences() {
         mDailyClassCountPreference = findPreference(getString(R.string.pref_daily_class_count));
         mPreferences.add(mDailyClassCountPreference);
 
@@ -157,7 +234,6 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         mPreferences.add(findPreference(getString(R.string.pref_class_place_re)));
         mPreferences.add(findPreference(getString(R.string.pref_every_class_time)));
         mPreferences.add(findPreference(getString(R.string.pref_rest_time)));
-        bindListener();
     }
 
     private void bindListener() {

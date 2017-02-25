@@ -48,7 +48,7 @@ public class AdvancedCustomInfo {
         if (PrefHelper.getBoolean(context, R.string.pref_custom_enable)) {
             mSchoolName = PrefHelper.getString(context, R.string.pref_custom_school_name, "openct");
         } else {
-            mSchoolName = PrefHelper.getString(context, R.string.pref_school_name, context.getResources().getStringArray(R.array.school_names)[0]);
+            mSchoolName = PrefHelper.getString(context, R.string.pref_school_name, context.getString(R.string.default_school_name));
         }
     }
 
