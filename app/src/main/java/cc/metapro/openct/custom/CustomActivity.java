@@ -56,8 +56,8 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
     TextView tipText;
     @BindView(R.id.web_layout)
     ViewGroup mViewGroup;
-    @BindView(R.id.fab_next)
-    FloatingActionButton mFabNext;
+//    @BindView(R.id.fab_next)
+//    FloatingActionButton mFabNext;
     private CustomContract.Presenter mPresenter;
     private WebConfiguration mConfiguration;
 
@@ -75,7 +75,7 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
 
         mPresenter.setWebView(mWebView, getSupportFragmentManager());
 
-        mFabNext.setVisibility(View.GONE);
+//        mFabNext.setVisibility(View.GONE);
         tipText.setVisibility(View.GONE);
         mWebView.setVisibility(View.VISIBLE);
 
@@ -112,10 +112,10 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
         ActivityUtils.showTableChooseDialog(getSupportFragmentManager(), TYPE, mWebView.getPageDom(), null);
     }
 
-    @OnClick(R.id.fab_next)
-    public void nextStep() {
-        mPresenter.nextStep(mWebView, getSupportFragmentManager());
-    }
+//    @OnClick(R.id.fab_next)
+//    public void nextStep() {
+//        mPresenter.nextStep(mWebView, getSupportFragmentManager());
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,14 +151,14 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
 
     @Override
     public void disableNextStep() {
-        mFabNext.setEnabled(false);
-        mFabNext.setClickable(false);
+//        mFabNext.setEnabled(false);
+//        mFabNext.setClickable(false);
     }
 
     @Override
     public void enableNextStep() {
-        mFabNext.setEnabled(true);
-        mFabNext.setClickable(true);
+//        mFabNext.setEnabled(true);
+//        mFabNext.setClickable(true);
     }
 
     @Override

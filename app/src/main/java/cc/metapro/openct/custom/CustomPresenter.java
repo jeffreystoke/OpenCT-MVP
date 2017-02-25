@@ -99,7 +99,7 @@ public class CustomPresenter implements CustomContract.Presenter {
         }
 
         if (mConfiguration == null) {
-//            Toast.makeText(mContext, "还没有进行过定制, 请按提示进行定制", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "还没有进行过定制, 请按提示进行定制", Toast.LENGTH_LONG).show();
             mConfiguration = new WebConfiguration();
         }
     }

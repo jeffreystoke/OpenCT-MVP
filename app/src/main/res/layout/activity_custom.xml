@@ -120,11 +120,11 @@
         <!--fab:fab_label="回放"/>-->
     </com.github.clans.fab.FloatingActionMenu>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_next"
-        style="@style/AppTheme.Fab"
-        android:layout_gravity="center_vertical|start"
-        android:src="@drawable/ic_next"
-        android:visibility="gone"
-        app:fab_label="下一步"/>
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fab_next"-->
+        <!--style="@style/AppTheme.Fab"-->
+        <!--android:layout_gravity="center_vertical|start"-->
+        <!--android:src="@drawable/ic_next"-->
+        <!--android:visibility="gone"-->
+        <!--app:fab_label="下一步"/>-->
 </android.support.design.widget.CoordinatorLayout>

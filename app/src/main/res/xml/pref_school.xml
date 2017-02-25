@@ -183,21 +183,21 @@
     <PreferenceCategory
         android:title="@string/personalise">
 
-        <PreferenceScreen
-            android:summary="自定义主题色与背景图片 (不推荐使用图案或色彩复杂的图片)"
-            android:title="主题与背景">
-            <Preference
-                android:summary="设置主要的颜色"
-                android:title="主题色"/>
-            <Preference
-                android:title="课程顶部图片"/>
-            <Preference
-                android:title="成绩查询顶部图片"/>
-            <Preference
-                android:title="馆藏查询顶部图片"/>
-            <Preference
-                android:title="借阅信息顶部图片"/>
-        </PreferenceScreen>
+        <!--<PreferenceScreen-->
+            <!--android:summary="自定义主题色与背景图片 (不推荐使用图案或色彩复杂的图片)"-->
+            <!--android:title="主题与背景">-->
+            <!--<Preference-->
+                <!--android:summary="设置主要的颜色"-->
+                <!--android:title="主题色"/>-->
+            <!--<Preference-->
+                <!--android:title="课程顶部图片"/>-->
+            <!--<Preference-->
+                <!--android:title="成绩查询顶部图片"/>-->
+            <!--<Preference-->
+                <!--android:title="馆藏查询顶部图片"/>-->
+            <!--<Preference-->
+                <!--android:title="借阅信息顶部图片"/>-->
+        <!--</PreferenceScreen>-->
 
         <ListPreference
             android:defaultValue="0"
