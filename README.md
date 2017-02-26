@@ -58,30 +58,28 @@ Caution! It is DIFFERENT form Import from Excel Document, you have to copy the c
 Actually, There is no need to use Excel, it will treat `\n` and `\t` as line and cell separation, and the Content copied from Excel Table has the same feature
 
 
-name - The ClassName (e.g. 大学语文)
-
-
-type - The ClassType (e.g. 必修)
-
-
-time - The Time you should attend class, use Chinese for weekday and leave only one time here per line (e.g. 周一5-6)
-
-
-during - The Duration of the class, support odd, even week (use Chinese Please) and multiple duration, use & to separate them (e.g. 1-5&6-10双&11-15单)
-
-
-teacher - The teacher name who lecture the class (e.g. 老王)
-
-
-place - The place to attend the class (e.g. 教102)
-
-
-Example Table Content
-
-    name    type    time    during  teacher place
-    大学语文    必修  周一 5-6节 1-5&6-10双&11-15单    老王  教102
-    大学语文    必修  周三 1-2节 1-5    老李  教103
-    Android开发   选修  周日 1-5节 1-18    自己  图书馆
-
-
 Download Excel Template Document - <a href="./template.xlsx?raw=true">template.xlsx</a>
+
+`name` - The ClassName (e.g. 大学语文)
+
+`type` - The ClassType (e.g. 必修)
+
+`time` - The Time you should attend class, use Chinese for weekday and leave only one time here per line (e.g. 周一5-6)
+
+`during` - The Duration of the class, support odd, even week (use Chinese Please) and multiple duration, use & to separate them (e.g. 1-5&6-10双&11-15单)
+
+
+`teacher` - The teacher name who lecture the class (e.g. 老王)
+
+
+`place` - The place to attend the class (e.g. 教102)
+
+
+### Example Table Content
+
+
+|name|type|time|during|teacher|place|
+|----|----|----|-----|----|----|
+|大学语文|必修|周一 5-6节|1-5&6-10双&11-15单|老王|教102|
+|大学语文|必修|周三 1-2节|1-5周|老李|教103|
+|Android开发|选修|周日 1-5节|1-18周|自己|图书馆|
