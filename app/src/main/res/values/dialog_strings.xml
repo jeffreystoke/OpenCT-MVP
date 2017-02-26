@@ -16,12 +16,12 @@
   -->
 
 <resources>
-    <string name="key_username">username</string>
-    <string name="key_password">password</string>
-    <string name="key_captcha">captcha</string>
-    <string name="key_action">action</string>
-    <string name="key_search_type">type</string>
-    <string name="key_search_content">content</string>
+    <string name="key_username" translatable="false">username</string>
+    <string name="key_password" translatable="false">password</string>
+    <string name="key_captcha" translatable="false">captcha</string>
+    <string name="key_action" translatable="false">action</string>
+    <string name="key_search_type" translatable="false">type</string>
+    <string name="key_search_content" translatable="false">content</string>
 
     <string name="ok">确定</string>
     <string name="cancel">取消</string>
@@ -37,10 +37,10 @@
     <string name="cet_result">CET 成绩</string>
 
     <!--CET 成绩结果key-->
-    <string name="key_full_name">full_name</string>
-    <string name="key_school">school</string>
-    <string name="key_ticket_num">ticket_num</string>
-    <string name="key_cet_time">cet_time</string>
-    <string name="key_cet_grade">cet_grade</string>
-    <string name="key_cet_type">cet_type</string>
+    <string name="key_full_name" translatable="false">full_name</string>
+    <string name="key_school" translatable="false">school</string>
+    <string name="key_ticket_num" translatable="false">ticket_num</string>
+    <string name="key_cet_time" translatable="false">cet_time</string>
+    <string name="key_cet_grade" translatable="false">cet_grade</string>
+    <string name="key_cet_type" translatable="false">cet_type</string>
 </resources>

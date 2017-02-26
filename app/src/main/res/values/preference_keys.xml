@@ -17,63 +17,63 @@
 
 <resources>
     <!--是否初始化-->
-    <string name="pref_initialed">initialed</string>
+    <string name="pref_initialed" translatable="false">initialed</string>
 
     <!--学校信息-->
-    <string name="pref_school_name">school_name</string>
+    <string name="pref_school_name" translatable="false">school_name</string>
 
     <!--当前周-->
-    <string name="pref_current_week">current_week</string>
+    <string name="pref_current_week" translatable="false">current_week</string>
 
     <!--首页显示 今日 | 本周 | 本学期 课表-->
-    <string name="pref_homepage_selection">homepage_selection</string>
+    <string name="pref_homepage_selection" translatable="false">homepage_selection</string>
 
     <!--无课时在 今日课表 显示的文字-->
-    <string name="pref_empty_class_motto">empty_class_motto</string>
+    <string name="pref_empty_class_motto" translatable="false">empty_class_motto</string>
 
     <!--设置当前周的年度周数, 用于判断是否更新周数-->
-    <string name="pref_week_set_week">week_set_week</string>
+    <string name="pref_week_set_week" translatable="false">week_set_week</string>
 
     <!--设置启用验证码自动识别-->
-    <string name="pref_auto_captcha">auto_captcha</string>
+    <string name="pref_auto_captcha" translatable="false">auto_captcha</string>
 
     <!--设置加密与否-->
-    <string name="pref_need_encryption">need_encryption</string>
+    <string name="pref_need_encryption" translatable="false">need_encryption</string>
 
     <!--CET 准考证号和姓名-->
-    <string name="pref_cet_ticket_num">cet_tick_num</string>
-    <string name="pref_cet_full_name">cet_full_name</string>
+    <string name="pref_cet_ticket_num" translatable="false">cet_tick_num</string>
+    <string name="pref_cet_full_name" translatable="false">cet_full_name</string>
 
     <!--教务网用户名密码-->
-    <string name="pref_cms_username">cms_username</string>
-    <string name="pref_cms_password">cms_password</string>
-    <string name="pref_cms_password_encrypted">cms_password_encrypted</string>
+    <string name="pref_cms_username" translatable="false">cms_username</string>
+    <string name="pref_cms_password" translatable="false">cms_password</string>
+    <string name="pref_cms_password_encrypted" translatable="false">cms_password_encrypted</string>
 
     <!--图书馆用户名密码-->
-    <string name="pref_lib_username">lib_username</string>
-    <string name="pref_lib_password">lib_password</string>
-    <string name="pref_lib_password_encrypted">lib_password_encrypted</string>
+    <string name="pref_lib_username" translatable="false">lib_username</string>
+    <string name="pref_lib_password" translatable="false">lib_password</string>
+    <string name="pref_lib_password_encrypted" translatable="false">lib_password_encrypted</string>
 
     <!--使用自定义学校-->
-    <string name="pref_custom_enable">custom_enable</string>
+    <string name="pref_custom_enable" translatable="false">custom_enable</string>
 
-    <string name="pref_custom_cms_sys">custom_cms_sys</string>
-    <string name="pref_custom_lib_sys">custom_lib_sys</string>
-    <string name="pref_custom_cms_url">custom_cms_url</string>
-    <string name="pref_custom_lib_url">custom_lib_url</string>
-    <string name="pref_custom_school_name">custom_school_name</string>
+    <string name="pref_custom_cms_sys" translatable="false">custom_cms_sys</string>
+    <string name="pref_custom_lib_sys" translatable="false">custom_lib_sys</string>
+    <string name="pref_custom_cms_url" translatable="false">custom_cms_url</string>
+    <string name="pref_custom_lib_url" translatable="false">custom_lib_url</string>
+    <string name="pref_custom_school_name" translatable="false">custom_school_name</string>
 
     <!--操作信息清除-->
-    <string name="pref_custom_action_clear">custom_action_clear</string>
+    <string name="pref_custom_action_clear" translatable="false">custom_action_clear</string>
 
     <!--课程表正则表达式-->
-    <string name="pref_class_line_based">class_line_based</string>
-    <string name="pref_class_name_re">class_name_re</string>
-    <string name="pref_class_time_re">class_time_re</string>
-    <string name="pref_class_during_re">class_during_re</string>
-    <string name="pref_class_type_re">class_type_re</string>
-    <string name="pref_class_teacher_re">class_teacher_re</string>
-    <string name="pref_class_place_re">class_place_re</string>
+    <string name="pref_class_line_based" translatable="false">class_line_based</string>
+    <string name="pref_class_name_re" translatable="false">class_name_re</string>
+    <string name="pref_class_time_re" translatable="false">class_time_re</string>
+    <string name="pref_class_during_re" translatable="false">class_during_re</string>
+    <string name="pref_class_type_re" translatable="false">class_type_re</string>
+    <string name="pref_class_teacher_re" translatable="false">class_teacher_re</string>
+    <string name="pref_class_place_re" translatable="false">class_place_re</string>
 
     <!--周数键值-->
     <string-array name="pref_week_seq_keys">
@@ -153,11 +153,11 @@
         <item>2</item>
     </string-array>
 
-    <string name="pref_class_settings">class_settings</string>
+    <string name="pref_class_settings" translatable="false">class_settings</string>
     <!--一天几节课-->
-    <string name="pref_daily_class_count">daily_class_count</string>
-    <string name="pref_every_class_time">every_class_length</string>
-    <string name="pref_rest_time">rest_time</string>
+    <string name="pref_daily_class_count" translatable="false">daily_class_count</string>
+    <string name="pref_every_class_time" translatable="false">every_class_length</string>
+    <string name="pref_rest_time" translatable="false">rest_time</string>
 
-    <string name="pref_check_school_info_update">check_school_info_update</string>
+    <string name="pref_check_school_info_update" translatable="false">check_school_info_update</string>
 </resources>
