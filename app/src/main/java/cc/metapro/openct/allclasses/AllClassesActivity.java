@@ -94,29 +94,26 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
         mPresenter.storeClasses(allClasses);
         int id = item.getItemId();
         if (id == R.id.export_classes) {
-            // export to iCal
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 int hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 if (hasPermission != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_STORAGE);
+                } else {
+                    mPresenter.exportClasses();
                 }
             } else {
                 mPresenter.exportClasses();
             }
         } else if (id == R.id.clear_classes) {
-            // clear all classes
             needUpdate = true;
             mPresenter.clearClasses();
         } else if (id == R.id.custom) {
-            // import from web
             CustomActivity.actionStart(this, Constants.TYPE_CLASS);
             needUpdate = true;
         } else if (id == R.id.import_from_excel) {
-            // import from excel
             mPresenter.loadFromExcel(getSupportFragmentManager());
             needUpdate = true;
         } else if (id == R.id.add_class) {
-            // add a new class info
             allClasses.add(new EnrichedClassInfo("新课程", "必修", new ClassTime()));
             mPresenter.storeClasses(allClasses);
             needUpdate = false;
@@ -172,7 +169,6 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_WRITE_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 mPresenter.exportClasses();
