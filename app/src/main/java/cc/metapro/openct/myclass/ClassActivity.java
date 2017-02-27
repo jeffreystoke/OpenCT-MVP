@@ -31,7 +31,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -56,7 +55,6 @@ import cc.metapro.openct.grades.GradeActivity;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.GridLayoutHelper;
 import cc.metapro.openct.utils.PrefHelper;
 
 @Keep
@@ -230,7 +228,7 @@ public class ClassActivity extends AppCompatActivity
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
         }
-//        mDrawerLayout.closeDrawer(GravityCompat.START);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 

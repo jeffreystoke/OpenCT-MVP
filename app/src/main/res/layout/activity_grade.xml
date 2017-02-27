@@ -3,10 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_grade"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="cc.metapro.openct.grades.GradeActivity">
 
     <android.support.v7.widget.RecyclerView
@@ -30,8 +28,7 @@
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                style="@style/AppTheme.Toolbar"
-                android:layout_marginTop="@dimen/toolbar_padding_top"/>
+                style="@style/AppTheme.Toolbar"/>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 

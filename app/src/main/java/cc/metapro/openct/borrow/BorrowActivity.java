@@ -54,7 +54,7 @@ import cc.metapro.openct.utils.RecyclerViewHelper;
 @Keep
 public class BorrowActivity extends AppCompatActivity implements BorrowContract.View {
 
-    private final String TAG = BorrowActivity.class.getSimpleName();
+    private final String TAG = BorrowActivity.class.getName();
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -84,12 +84,6 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_borrow);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
-
         ButterKnife.bind(this);
 
         // set toolbar

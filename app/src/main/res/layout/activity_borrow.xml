@@ -28,8 +28,7 @@
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                style="@style/AppTheme.Toolbar"
-                android:layout_marginTop="@dimen/toolbar_padding_top"/>
+                style="@style/AppTheme.Toolbar"/>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 

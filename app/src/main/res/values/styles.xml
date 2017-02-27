@@ -19,12 +19,9 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/material_white</item>
         <item name="colorPrimaryDark">@color/material_white_dark</item>
-        <item name="colorAccent">@color/material_red</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorPrimary">@color/material_black</item>
         <item name="android:textColorSecondary">@color/material_grey</item>
-        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
-        <item name="android:windowTranslucentNavigation" tools:targetApi="kitkat">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">false</item>
     </style>
 
     <!--<style name="PreferenceStyle">-->
@@ -47,7 +44,7 @@
     <style name="AppTheme.Actionbar" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/material_white</item>
         <item name="colorPrimaryDark">@color/material_white_dark</item>
-        <item name="colorAccent">@color/material_red</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorPrimary">@color/material_black</item>
         <item name="android:textColorSecondary">@color/material_grey</item>
     </style>
@@ -80,8 +77,8 @@
     <style name="AppTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
-        <item name="android:layout_marginTop">@dimen/toolbar_padding_top</item>
         <item name="layout_collapseMode">pin</item>
+        <item name="android:layout_marginTop">@dimen/toolbar_padding_top</item>
     </style>
 
     <!--toolbar expanded text appearance-->
