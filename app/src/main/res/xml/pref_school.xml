@@ -79,59 +79,59 @@
         <!--课程设置-->
         <PreferenceScreen
             android:key="@string/pref_class_settings"
-            android:summary="设定每日课程数以及每节课的时间, 显示课程信息以及导出到 iCal 文件时将会使用这些信息"
-            android:title="课程设置">
+            android:summary="@string/class_settings_tip"
+            android:title="@string/class_settings">
             <EditTextPreference
                 android:defaultValue="12"
                 android:inputType="numberDecimal"
                 android:key="@string/pref_daily_class_count"
-                android:title="每日课程数"/>
+                android:title="@string/daily_class_count"/>
             <EditTextPreference
                 android:defaultValue="45"
                 android:inputType="numberDecimal"
                 android:key="@string/pref_every_class_time"
-                android:title="一节课时间(分钟)"/>
+                android:title="@string/time_pre_class"/>
             <EditTextPreference
                 android:defaultValue="10"
                 android:inputType="numberDecimal"
                 android:key="@string/pref_rest_time"
-                android:title="课间休息时间(分钟)"/>
+                android:title="@string/rest_time"/>
         </PreferenceScreen>
         <!--表格设置-->
         <PreferenceScreen
-            android:summary="设置校园表格的相关信息, 用于解析课表"
-            android:title="表格设置">
+            android:summary="@string/table_settings_tip"
+            android:title="@string/table_settings">
             <SwitchPreference
                 android:defaultValue="false"
                 android:key="@string/pref_class_line_based"
-                android:summary="若一个课程信息不是在一个单元格中, 需要勾选该选项"
-                android:title="按行课程表"/>
+                android:summary="@string/in_line_classes_tip"
+                android:title="@string/in_line_classes"/>
             <Preference
                 android:key="@string/pref_custom_action_clear"
-                android:summary="这将清除你的操作记录, 同时重新获取教务网或图书馆信息时需要再次选择"
-                android:title="清空链接/表格选择"/>
+                android:summary="@string/clear_action_tip"
+                android:title="@string/clear_links_table_selection"/>
             <PreferenceCategory
-                android:title="课程表正则表达式">
+                android:title="@string/re_for_classes">
                 <EditTextPreference
                     android:key="@string/pref_class_name_re"
-                    android:title="课程名称"/>
+                    android:title="@string/class_name"/>
                 <EditTextPreference
                     android:key="@string/pref_class_type_re"
-                    android:title="课程类型"/>
+                    android:title="@string/class_type"/>
                 <EditTextPreference
                     android:defaultValue="@string/default_time_re"
                     android:key="@string/pref_class_time_re"
-                    android:title="课程时间"/>
+                    android:title="@string/class_time"/>
                 <EditTextPreference
                     android:defaultValue="@string/default_during_re"
                     android:key="@string/pref_class_during_re"
-                    android:title="课程周期"/>
+                    android:title="@string/class_during"/>
                 <EditTextPreference
                     android:key="@string/pref_class_teacher_re"
-                    android:title="授课教师"/>
+                    android:title="@string/class_teacher"/>
                 <EditTextPreference
                     android:key="@string/pref_class_place_re"
-                    android:title="上课地点"/>
+                    android:title="@string/class_place"/>
             </PreferenceCategory>
         </PreferenceScreen>
         <!--自定义-->
@@ -214,15 +214,6 @@
             android:title="@string/empty_class_motto"/>
     </PreferenceCategory>
 
-    <!--信息安全-->
-    <PreferenceCategory
-        android:title="@string/security">
-        <!--加密-->
-        <Preference
-            android:summary="你所填写的所有用户信息都存储在本地, 并使用 AES-128 进行加密, 但由于校园系统大多采用明文传输, 请确保网络环境安全"
-            android:title="信息加密"/>
-    </PreferenceCategory>
-
     <!--<PreferenceCategory-->
         <!--android:title="学校信息相关">-->
         <!--<Preference-->
@@ -236,7 +227,10 @@
         <!--校园信息更新-->
         <Preference
             android:key="@string/pref_check_school_info_update"
-            android:title="检查校园信息库更新"/>
+            android:title="@string/check_schools_update"/>
+        <Preference
+            android:summary="@string/encryption_tip"
+            android:title="@string/security"/>
         <Preference
             android:summary="@string/project_url"
             android:title="@string/project_address">

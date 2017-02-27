@@ -114,6 +114,7 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
             mPresenter.loadFromExcel(getSupportFragmentManager());
             needUpdate = true;
         } else if (id == R.id.add_class) {
+            // TODO: 17/2/27 translation
             allClasses.add(new EnrichedClassInfo("新课程", "必修", new ClassTime()));
             mPresenter.storeClasses(allClasses);
             needUpdate = false;

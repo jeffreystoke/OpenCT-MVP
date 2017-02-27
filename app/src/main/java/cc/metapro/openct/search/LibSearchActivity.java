@@ -147,6 +147,7 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
         mAdapter.setBooks(books);
         mAdapter.notifyDataSetChanged();
         if (books.size() > 0) {
+            // TODO: 17/2/27 translation
             Snackbar.make(mRecyclerView, "找到了 " + books.size() + " 条结果", BaseTransientBottomBar.LENGTH_LONG).show();
             mFabUp.setVisibility(View.VISIBLE);
         } else {
@@ -161,6 +162,7 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
         mAdapter.addBooks(books);
         mAdapter.notifyDataSetChanged();
         if (books.size() > 0) {
+            // TODO: 17/2/27 translation
             Snackbar.make(mRecyclerView, "加载了 " + books.size() + " 条结果", BaseTransientBottomBar.LENGTH_LONG).show();
         } else {
             Snackbar.make(mRecyclerView, R.string.no_more_results, BaseTransientBottomBar.LENGTH_LONG).show();

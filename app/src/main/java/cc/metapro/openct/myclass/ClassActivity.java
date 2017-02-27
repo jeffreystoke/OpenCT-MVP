@@ -171,7 +171,7 @@ public class ClassActivity extends AppCompatActivity
             mClassPagerAdapter.showRecyclerView();
             if (!showedPrompt) {
                 showedPrompt = true;
-                Snackbar.make(mViewPager, "今天有 " + mDailyClassAdapter.getItemCount() + " 节课", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(mViewPager, getString(R.string.today_has) + mDailyClassAdapter.getItemCount() + getString(R.string.class_count), Snackbar.LENGTH_SHORT).show();
             }
         } else {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -248,7 +248,7 @@ public class ClassActivity extends AppCompatActivity
             if (mExitState) {
                 finish();
             } else {
-                Toast.makeText(this, "再按一次返回键退出", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.one_more_press_to_exit, Toast.LENGTH_SHORT).show();
                 mExitState = true;
                 new Handler().postDelayed(new Runnable() {
                     @Override

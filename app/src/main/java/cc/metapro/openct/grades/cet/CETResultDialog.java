@@ -80,37 +80,37 @@ public class CETResultDialog extends DialogFragment {
         String fullName = result.get(getString(R.string.key_full_name));
         if (!TextUtils.isEmpty(fullName)) {
             mFullName.setVisibility(View.VISIBLE);
-            mFullName.setText("姓名: \t" + fullName);
+            mFullName.setText(getString(R.string.full_name) + ":\t" + fullName);
         }
 
         String school = result.get(getString(R.string.key_school));
         if (!TextUtils.isEmpty(school)) {
             mSchool.setVisibility(View.VISIBLE);
-            mSchool.setText("学校: \t" + school);
+            mSchool.setText(getString(R.string.school) + ":\t" + school);
         }
 
         String type = result.get(getString(R.string.key_cet_type));
         if (!TextUtils.isEmpty(type)) {
             mType.setVisibility(View.VISIBLE);
-            mType.setText("CET类型: \t" + type);
+            mType.setText(getString(R.string.cet_type) + ":\t" + type);
         }
 
         String ticketNum = result.get(getString(R.string.key_ticket_num));
         if (!TextUtils.isEmpty(ticketNum)) {
             mTicketNum.setVisibility(View.VISIBLE);
-            mTicketNum.setText("准考证号: \t" + ticketNum);
+            mTicketNum.setText(getString(R.string.ticket_number) + ":\t" + ticketNum);
         }
 
         String time = result.get(getString(R.string.key_cet_time));
         if (!TextUtils.isEmpty(time)) {
             mTime.setVisibility(View.VISIBLE);
-            mTime.setText("考试时间: \t" + time);
+            mTime.setText(getString(R.string.exam_time) + time);
         }
 
         String grade = result.get(getString(R.string.key_cet_grade));
         if (!TextUtils.isEmpty(grade)) {
             mGrade.setVisibility(View.VISIBLE);
-            mGrade.setText("成绩: \t" + grade);
+            mGrade.setText(getString(R.string.grades) + ":\t" + grade);
         }
     }
 }

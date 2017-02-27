@@ -81,14 +81,14 @@ public class FormDialog extends DialogFragment {
             view = FormUtils.getFormView(getContext(), null, mForm);
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getActivity(), "根据之前的设置未能获取到预期的页面\n\n请到设置 -> 表格设置 -> 点击 清空链接/表格选择", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), R.string.can_not_load_prev_target, Toast.LENGTH_LONG).show();
             dismiss();
             return new AlertDialog.Builder(getActivity()).create();
         }
         ButterKnife.bind(this, view);
         return new AlertDialog.Builder(getActivity())
                 .setView(view)
-                .setTitle("查询详情")
+                .setTitle(R.string.query_what)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

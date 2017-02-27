@@ -126,6 +126,7 @@ public class ClassDetailActivity extends AppCompatActivity {
                 final ClassTime toRemove = classTimes.get(position);
                 classTimes.remove(toRemove);
                 mDetailAdapter.notifyDataSetChanged();
+                // TODO: 17/2/27 translation
                 final String message = mInfoEditing.getName() + " " + DateHelper.weekDayToChinese(toRemove.getWeekDay()) + " " + toRemove.getTime() + " 节";
                 final Snackbar snackbar = Snackbar.make(mRecyclerView, message + " 已删除", BaseTransientBottomBar.LENGTH_INDEFINITE);
                 snackbar.setAction(android.R.string.cancel, new View.OnClickListener() {

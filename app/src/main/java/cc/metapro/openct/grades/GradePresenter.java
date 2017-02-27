@@ -137,7 +137,8 @@ class GradePresenter implements GradeContract.Presenter {
                                         lastDom = factory.getPageDom(finalTarget.absUrl("href"));
                                     }
                                 }
-                                e.onNext(finalTarget.absUrl("href"));
+                                String url = finalTarget.absUrl("href");
+                                e.onNext(url);
                             }
                         });
 

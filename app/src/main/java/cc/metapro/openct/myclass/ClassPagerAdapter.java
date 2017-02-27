@@ -34,16 +34,21 @@ import cc.metapro.openct.utils.RecyclerViewHelper;
 
 public class ClassPagerAdapter extends PagerAdapter {
 
-    private String[] mTitles = {"今日课表", "本周课表", "学期课表"};
+    private String[] mTitles = new String[3];
+
     private List<View> mViewList;
     private Context mContext;
     private DailyClassAdapter mDailyClassAdapter;
     private RecyclerView mRecyclerView;
     private TextView mEmptyView;
 
-    public ClassPagerAdapter(ViewPager viewPager) {
+    ClassPagerAdapter(ViewPager viewPager) {
         mViewList = new ArrayList<>(3);
         mContext = viewPager.getContext();
+        mTitles[0] = mContext.getString(R.string.daily_classes);
+        mTitles[1] = mContext.getString(R.string.weekly_class);
+        mTitles[2] = mContext.getString(R.string.sem_classes);
+
         initViews(viewPager);
         viewPager.setAdapter(this);
     }
@@ -116,6 +121,6 @@ public class ClassPagerAdapter extends PagerAdapter {
     }
 
     void setWeekTitle(int week) {
-        mTitles[1] = "本周课表(第" + week + "周)";
+        mTitles[1] = mContext.getString(R.string.weekly_class) + "(" + week + ")";
     }
 }

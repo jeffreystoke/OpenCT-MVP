@@ -24,14 +24,6 @@
         <item name="android:textColorSecondary">@color/material_grey</item>
     </style>
 
-    <!--<style name="PreferenceStyle">-->
-        <!--<item name="preferenceCategoryStyle">@style/CustomPreferenceCategory</item>-->
-    <!--</style>-->
-
-    <!--<style name="CustomPreferenceCategory" parent="@style/Preference.Category">-->
-        <!--<item name="android:layout">@layout/custom_preference_category</item>-->
-    <!--</style>-->
-
     <style name="CustomPreferenceCategoryText" parent="@android:style/Widget.TextView">
         <!-- Style your PreferenceCategory here. -->
         <item name="android:textColor">@color/colorAccent</item>

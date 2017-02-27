@@ -45,6 +45,7 @@ import cc.metapro.openct.R;
 @Keep
 public class TableSettingDialog extends DialogFragment {
 
+    // TODO: 17/2/27 translation
     public static final String NAME = "课程名称";
     public static final String TIME = "上课时间";
     public static final String TYPE = "课程类型";

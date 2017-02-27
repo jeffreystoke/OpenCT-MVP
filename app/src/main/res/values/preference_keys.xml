@@ -77,36 +77,36 @@
 
     <!--周数键值-->
     <string-array name="pref_week_seq_keys">
-        <item>第1周</item>
-        <item>第2周</item>
-        <item>第3周</item>
-        <item>第4周</item>
-        <item>第5周</item>
-        <item>第6周</item>
-        <item>第7周</item>
-        <item>第8周</item>
-        <item>第9周</item>
-        <item>第10周</item>
-        <item>第11周</item>
-        <item>第12周</item>
-        <item>第13周</item>
-        <item>第14周</item>
-        <item>第15周</item>
-        <item>第16周</item>
-        <item>第17周</item>
-        <item>第18周</item>
-        <item>第19周</item>
-        <item>第20周</item>
-        <item>第21周</item>
-        <item>第22周</item>
-        <item>第23周</item>
-        <item>第24周</item>
-        <item>第25周</item>
-        <item>第26周</item>
-        <item>第27周</item>
-        <item>第28周</item>
-        <item>第29周</item>
-        <item>第30周</item>
+        <item>@string/week_1</item>
+        <item>@string/week_2</item>
+        <item>@string/week_3</item>
+        <item>@string/week_4</item>
+        <item>@string/week_5</item>
+        <item>@string/week_6</item>
+        <item>@string/week_7</item>
+        <item>@string/week_8</item>
+        <item>@string/week_9</item>
+        <item>@string/week_10</item>
+        <item>@string/week_11</item>
+        <item>@string/week_12</item>
+        <item>@string/week_13</item>
+        <item>@string/week_14</item>
+        <item>@string/week_15</item>
+        <item>@string/week_16</item>
+        <item>@string/week_17</item>
+        <item>@string/week_18</item>
+        <item>@string/week_19</item>
+        <item>@string/week_20</item>
+        <item>@string/week_21</item>
+        <item>@string/week_22</item>
+        <item>@string/week_23</item>
+        <item>@string/week_24</item>
+        <item>@string/week_25</item>
+        <item>@string/week_26</item>
+        <item>@string/week_27</item>
+        <item>@string/week_28</item>
+        <item>@string/week_29</item>
+        <item>@string/week_30</item>
     </string-array>
     <string-array name="pref_week_seq_values">
         <item>1</item>
@@ -143,9 +143,9 @@
 
     <!--首页显示键值-->
     <string-array name="pref_homepage_selection_keys">
-        <item>今日课表</item>
-        <item>本周课表</item>
-        <item>学期课表</item>
+        <item>@string/daily_classes</item>
+        <item>@string/weekly_classes</item>
+        <item>@string/sem_classes</item>
     </string-array>
     <string-array name="pref_homepage_selection_values">
         <item>0</item>

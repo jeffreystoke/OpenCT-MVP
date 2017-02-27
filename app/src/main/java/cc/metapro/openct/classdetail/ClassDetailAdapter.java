@@ -139,6 +139,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                 for (int j = 0; j < 6; j++) {
                     final int week = i * 6 + j + 1;
                     final TextView textView = new TextView(context);
+                    // TODO: 17/2/27 translation
                     textView.setText("第" + week + "周");
                     textView.setGravity(Gravity.CENTER);
                     if (time.hasClass(week)) {

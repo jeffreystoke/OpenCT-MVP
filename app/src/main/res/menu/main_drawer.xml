@@ -16,12 +16,12 @@
                 android:title="@string/borrow_info"/>
         </menu>
     </item>
-    <item android:title="设置">
+    <item android:title="@string/settings">
         <menu>
             <item
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_settings"
-                android:title="设置"/>
+                android:title="@string/settings"/>
         </menu>
     </item>
 </menu>

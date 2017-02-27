@@ -134,6 +134,7 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
             mBorrowAdapter.setNewBorrows(borrows);
             mBorrowAdapter.notifyDataSetChanged();
             ActivityUtils.dismissProgressDialog();
+            // TODO: 17/2/27 translation
             Snackbar.make(mRecyclerView, "共有 " + borrows.size() + " 条借阅信息", BaseTransientBottomBar.LENGTH_LONG).show();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

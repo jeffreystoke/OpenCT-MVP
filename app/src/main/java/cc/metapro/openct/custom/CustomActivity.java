@@ -56,8 +56,7 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
     TextView tipText;
     @BindView(R.id.web_layout)
     ViewGroup mViewGroup;
-//    @BindView(R.id.fab_next)
-//    FloatingActionButton mFabNext;
+
     private CustomContract.Presenter mPresenter;
     private WebConfiguration mConfiguration;
 
@@ -75,24 +74,11 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
 
         mPresenter.setWebView(mWebView, getSupportFragmentManager());
 
-//        mFabNext.setVisibility(View.GONE);
         tipText.setVisibility(View.GONE);
         mWebView.setVisibility(View.VISIBLE);
 
         mWebView.loadUrl(getUrl());
     }
-
-//    @OnClick(R.id.fab_replay)
-//    public void replay() {
-//        mURL.setText(getUrl());
-//
-//        mWebView.removeUserClickCallback();
-//
-//        mFabNext.setVisibility(View.VISIBLE);
-//        tipText.setVisibility(View.GONE);
-//        mWebView.setVisibility(View.VISIBLE);
-//        mPresenter.execCommands(mWebView);
-//    }
 
     @OnClick(R.id.fab_target)
     public void showTableChooseDialog() {
@@ -111,11 +97,6 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
         }
         ActivityUtils.showTableChooseDialog(getSupportFragmentManager(), TYPE, mWebView.getPageDom(), null);
     }
-
-//    @OnClick(R.id.fab_next)
-//    public void nextStep() {
-//        mPresenter.nextStep(mWebView, getSupportFragmentManager());
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

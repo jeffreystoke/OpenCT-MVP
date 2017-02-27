@@ -135,6 +135,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+                // TODO: 17/2/27 translation
                 Toast.makeText(mContext, "创建日历信息时发生了异常\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
@@ -146,10 +147,11 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
 
     @Override
     public void clearClasses() {
+        // TODO: 17/2/27 translation
         new AlertDialog.Builder(mContext)
                 .setTitle("警告")
                 .setMessage("该操作将删除所有课程信息, 是否继续?")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         allClasses = null;
@@ -157,7 +159,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
                         loadLocalClasses();
                     }
                 })
-                .setNegativeButton("取消", null)
+                .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 
@@ -173,6 +175,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
                 for (ExcelClass excelClass : excelClasses) {
                     addedClasses.add(excelClass.getEnrichedClassInfo());
                 }
+                // TODO: 17/2/27 translation
                 new AlertDialog.Builder(mContext)
                         .setTitle("选择操作")
                         .setMessage("共有 " + addedClasses.size() + " 门课程信息, 您希望与当前课程合并还是完全使用新添加的课程?")

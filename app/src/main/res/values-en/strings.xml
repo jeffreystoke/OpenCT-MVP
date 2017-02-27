@@ -76,7 +76,7 @@
     <string name="loading_grade_page">Loading grade page</string>
     <string name="loading_grades">Loading grades</string>
 
-    <string name="loading_target_page">On the way of your target</string>
+    <string name="loading_target_page">Heading for your target</string>
     <string name="loading_user_center">Loading user center</string>
     <string name="loading_borrows">Loading your borrows</string>
     <string name="need_captcha">Please enter code first</string>
@@ -163,7 +163,7 @@
     <string name="edit_class_info">Edit</string>
     <string name="encrypted">Encrypted</string>
     <string name="unencrypted">Unencrypted</string>
-    <string name="empty_class_tip">No class today, Just enjoy it ~</string>
+    <string name="empty_class_tip">No classes today, Just enjoy it ~</string>
     <string name="searching_library">Searching library</string>
     <string name="class_detail">Class Detail</string>
     <string name="choose_background">Choose Background</string>
@@ -214,6 +214,67 @@
     <string name="save">Save</string>
     <string name="loading_university_info_list">Loading Schools</string>
     <string name="loading_school_list">Loading School List</string>
+    <string name="one_more_press_to_exit">One more press to exit</string>
+    <string name="today_has">Today has</string>
+    <string name="class_count"> classes</string>
+    <string name="di">The</string>
+    <string name="week">Week</string>
+    <string name="check_schools_update">Check Schools Update</string>
+    <string name="encryption_tip">All your personal info (username and password) will be stored locally, please ensure you are in reliable network when you use online service</string>
+    <string name="re_for_classes">RegularExp for classes</string>
+    <string name="clear_links_table_selection">Clear actions</string>
+    <string name="clear_action_tip">This will wipe all your action history, including your link selections and table selections</string>
+    <string name="in_line_classes">Classes In line</string>
+    <string name="in_line_classes_tip">Enable it if your classes is not presented in cells</string>
+    <string name="table_settings">Table Settings</string>
+    <string name="table_settings_tip">Table parse settings</string>
+    <string name="rest_time">Rest Time (Min)</string>
+    <string name="time_pre_class">Time per-class (Min)</string>
+    <string name="daily_class_count">Daily Classes</string>
+    <string name="class_settings">Class Settings</string>
+    <string name="class_settings_tip">Some settings for display and export iCal, including daily classes, per-class time, rest time</string>
+
+    <string name="week_1">1st</string>
+    <string name="week_2">2nd</string>
+    <string name="week_3">3rd</string>
+    <string name="week_4">4th</string>
+    <string name="week_5">5th</string>
+    <string name="week_6">6th</string>
+    <string name="week_7">7th</string>
+    <string name="week_8">8th</string>
+    <string name="week_9">9th</string>
+    <string name="week_10">10th</string>
+    <string name="week_11">11th</string>
+    <string name="week_12">12th</string>
+    <string name="week_13">13th</string>
+    <string name="week_14">14th</string>
+    <string name="week_15">15th</string>
+    <string name="week_16">16th</string>
+    <string name="week_17">17th</string>
+    <string name="week_18">18th</string>
+    <string name="week_19">19th</string>
+    <string name="week_20">20th</string>
+    <string name="week_21">21th</string>
+    <string name="week_22">22th</string>
+    <string name="week_23">23th</string>
+    <string name="week_24">24th</string>
+    <string name="week_25">25th</string>
+    <string name="week_26">26th</string>
+    <string name="week_27">27th</string>
+    <string name="week_28">28th</string>
+    <string name="week_29">29th</string>
+    <string name="week_30">30th</string>
+
+    <string name="cet_query">CET Grade</string>
+    <string name="full_name">Full Name</string>
+    <string name="cet_type">Type</string>
     <string name="ticket_number">Ticket Num</string>
     <string name="preserve">Preserve</string>
+    <string name="grades">Grade</string>
+    <string name="exam_time">Time</string>
+    <string name="query_what">Select Query</string>
+    <string name="can_not_load_prev_target">Can't fetch your target according to previous settings</string>
+    <string name="target_selection">Select where</string>
+    <string name="click_to_go">Click to go</string>
+
 </resources>

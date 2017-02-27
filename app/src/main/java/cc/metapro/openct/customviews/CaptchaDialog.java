@@ -86,6 +86,7 @@ public class CaptchaDialog extends DialogFragment {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+                // TODO: 17/2/27 translation
                 Toast.makeText(getContext(), "获取验证码失败\n" + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         };

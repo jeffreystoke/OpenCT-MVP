@@ -27,11 +27,6 @@
     <string name="cancel">取消</string>
 
     <!--成绩查询相关-->
-    <!--CET 成绩查询对话框-->
-    <string name="cet_query">CET 成绩查询</string>
-    <string name="full_name">姓名</string>
-    <string name="ticket_number">准考证号</string>
-    <string name="preserve">预存</string>
 
     <!--CET 成绩结果对话框-->
     <string name="cet_result">CET 成绩</string>

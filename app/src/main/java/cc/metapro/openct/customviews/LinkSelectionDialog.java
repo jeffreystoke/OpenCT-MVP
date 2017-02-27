@@ -80,7 +80,7 @@ public class LinkSelectionDialog extends DialogFragment {
         ButterKnife.bind(this, view);
         setView();
         AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                .setTitle("选择目标")
+                .setTitle(R.string.target_selection)
                 .setView(view)
                 .setPositiveButton(android.R.string.ok, null)
                 .setNeutralButton(R.string.not_in_range_above, null)
@@ -132,7 +132,7 @@ public class LinkSelectionDialog extends DialogFragment {
                         }
                         mLinks = DOCUMENT.select("a");
                         addRadioOptions();
-                        neutralButton.setText("点击跳转");
+                        neutralButton.setText(R.string.click_to_go);
                         neutralButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
