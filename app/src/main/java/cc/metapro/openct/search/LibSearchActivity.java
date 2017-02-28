@@ -17,7 +17,6 @@ package cc.metapro.openct.search;
  */
 
 import android.os.Bundle;
-import android.support.annotation.Keep;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -47,7 +46,6 @@ import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 import io.reactivex.disposables.Disposable;
 
-@Keep
 public class LibSearchActivity extends AppCompatActivity implements LibSearchContract.View {
 
     @BindView(R.id.toolbar)
@@ -147,8 +145,7 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
         mAdapter.setBooks(books);
         mAdapter.notifyDataSetChanged();
         if (books.size() > 0) {
-            // TODO: 17/2/27 translation
-            Snackbar.make(mRecyclerView, "找到了 " + books.size() + " 条结果", BaseTransientBottomBar.LENGTH_LONG).show();
+            Snackbar.make(mRecyclerView, getString(R.string.found) + " " + books.size() + " " + getString(R.string.book_entries), BaseTransientBottomBar.LENGTH_LONG).show();
             mFabUp.setVisibility(View.VISIBLE);
         } else {
             Snackbar.make(mRecyclerView, R.string.no_related_books, BaseTransientBottomBar.LENGTH_LONG).show();
@@ -162,8 +159,7 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
         mAdapter.addBooks(books);
         mAdapter.notifyDataSetChanged();
         if (books.size() > 0) {
-            // TODO: 17/2/27 translation
-            Snackbar.make(mRecyclerView, "加载了 " + books.size() + " 条结果", BaseTransientBottomBar.LENGTH_LONG).show();
+            Snackbar.make(mRecyclerView, getString(R.string.loaded) + books.size() + " " + getString(R.string.book_entries), BaseTransientBottomBar.LENGTH_LONG).show();
         } else {
             Snackbar.make(mRecyclerView, R.string.no_more_results, BaseTransientBottomBar.LENGTH_LONG).show();
         }

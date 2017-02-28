@@ -25,15 +25,12 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.UniversityInfo;
-import cc.metapro.openct.utils.ActivityUtils;
-import io.reactivex.Observable;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 @Keep

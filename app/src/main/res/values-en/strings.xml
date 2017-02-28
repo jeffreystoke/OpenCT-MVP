@@ -62,13 +62,13 @@
     <string name="show_exceeded">Exceeded</string>
     <string name="app_description">Open Source Class Schedule and Library Application</string>
     <string name="show_raw">Detailed Info</string>
-    <string name="password_notice">Username and Password will be kept locally</string>
+    <string name="password_notice">username and password will be kept locally</string>
     <string name="notice">Caution</string>
     <string name="password">Password</string>
     <string name="username">Username</string>
     <string name="library">Library</string>
-    <string name="pref_lib_summary">Username and Password for your Library</string>
-    <string name="pref_cms_summary">Username and Password for your Education System</string>
+    <string name="pref_lib_summary">username and password for your Library</string>
+    <string name="pref_cms_summary">username and password for your Education System</string>
 
     <string name="login_to_system">Login to school server</string>
     <string name="loading_class_page">Loading class page</string>
@@ -273,8 +273,31 @@
     <string name="grades">Grade</string>
     <string name="exam_time">Time</string>
     <string name="query_what">Select Query</string>
-    <string name="can_not_load_prev_target">Can't fetch your target according to previous settings</string>
+    <string name="can_not_load_prev_target">Can\'t fetch your target according to previous settings</string>
     <string name="target_selection">Select where</string>
     <string name="click_to_go">Click to go</string>
-
+    <string name="set_during">Set During</string>
+    <string name="fetch_captcha_fail">Fetch Captcha Failed\n</string>
+    <string name="new_class">New Class</string>
+    <string name="mandatory">Mandatory</string>
+    <string name="deleted">Deleted</string>
+    <string name="restored">Restored</string>
+    <string name="error_creating_calendar">Error Creating Calendar\n</string>
+    <string name="warning">Warning</string>
+    <string name="clear_classes_tip">This action will delete all your classes, confirm?</string>
+    <string name="select_action">Select one</string>
+    <string name="combine">Combine</string>
+    <string name="total_to">Total to</string>
+    <string name="excel_import_tip">classes, combine them or replace current ones?</string>
+    <string name="replace">Replace</string>
+    <string name="classes_updated">Classes updated</string>
+    <string name="classes_combined">Classes combined</string>
+    <string name="borrow_entries">borrow entries</string>
+    <string name="the">The</string>
+    <string name="reached_previous_end_point">Reached previous end point</string>
+    <string name="fetch_grades_successful">Fetch grades successful</string>
+    <string name="fetch_borrows_successful">Fetch borrows successful</string>
+    <string name="found">Found</string>
+    <string name="book_entries">entries</string>
+    <string name="loaded">Loaded</string>
 </resources>

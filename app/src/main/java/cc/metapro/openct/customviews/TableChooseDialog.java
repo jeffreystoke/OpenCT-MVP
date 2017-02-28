@@ -80,32 +80,32 @@ public class TableChooseDialog extends DialogFragment {
             baseInfo = new CmsFactory.ClassTableInfo();
         }
         try {
-            baseInfo.mNameIndex = indexMap.get(TableSettingDialog.NAME);
+            baseInfo.mNameIndex = indexMap.get(Constants.NAME);
         } catch (Exception e) {
             baseInfo.mNameIndex = 0;
         }
         try {
-            baseInfo.mTimeIndex = indexMap.get(TableSettingDialog.TIME);
+            baseInfo.mTimeIndex = indexMap.get(Constants.TIME);
         } catch (Exception e) {
             baseInfo.mTimeIndex = 0;
         }
         try {
-            baseInfo.mDuringIndex = indexMap.get(TableSettingDialog.DURING);
+            baseInfo.mDuringIndex = indexMap.get(Constants.DURING);
         } catch (Exception e) {
             baseInfo.mDuringIndex = 0;
         }
         try {
-            baseInfo.mPlaceIndex = indexMap.get(TableSettingDialog.PLACE);
+            baseInfo.mPlaceIndex = indexMap.get(Constants.PLACE);
         } catch (Exception e) {
             baseInfo.mPlaceIndex = 0;
         }
         try {
-            baseInfo.mTeacherIndex = indexMap.get(TableSettingDialog.TEACHER);
+            baseInfo.mTeacherIndex = indexMap.get(Constants.TEACHER);
         } catch (Exception e) {
             baseInfo.mTeacherIndex = 0;
         }
         try {
-            baseInfo.mTypeIndex = indexMap.get(TableSettingDialog.TYPE);
+            baseInfo.mTypeIndex = indexMap.get(Constants.TYPE);
         } catch (Exception e) {
             baseInfo.mTypeIndex = 0;
         }

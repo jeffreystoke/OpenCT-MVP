@@ -114,6 +114,23 @@ public class DBManger {
         }
     }
 
+    public static void updateSchools(Context context, List<UniversityInfo> universityInfoList) {
+        DBManger.getInstance(context);
+        mDatabase.beginTransaction();
+        try {
+            mDatabase.delete(DBHelper.SCHOOL_TABLE, null, null);
+            for (UniversityInfo info : universityInfoList) {
+                ContentValues values = new ContentValues();
+                values.put(DBHelper.SCHOOL_NAME, info.name);
+                values.put(DBHelper.JSON, info.toString());
+                mDatabase.insert(DBHelper.SCHOOL_TABLE, null, values);
+            }
+            mDatabase.setTransactionSuccessful();
+        } finally {
+            mDatabase.endTransaction();
+        }
+    }
+
     public void updateAdvancedCustomClassInfo(AdvancedCustomInfo info) {
         mDatabase.beginTransaction();
         try {
@@ -326,23 +343,6 @@ public class DBManger {
             }
         }
         return new ArrayList<>(0);
-    }
-
-    public static void updateSchools(Context context, List<UniversityInfo> universityInfoList) {
-        DBManger.getInstance(context);
-        mDatabase.beginTransaction();
-        try {
-            mDatabase.delete(DBHelper.SCHOOL_TABLE, null, null);
-            for (UniversityInfo info : universityInfoList) {
-                ContentValues values = new ContentValues();
-                values.put(DBHelper.SCHOOL_NAME, info.name);
-                values.put(DBHelper.JSON, info.toString());
-                mDatabase.insert(DBHelper.SCHOOL_TABLE, null, values);
-            }
-            mDatabase.setTransactionSuccessful();
-        } finally {
-            mDatabase.endTransaction();
-        }
     }
 
     @NonNull

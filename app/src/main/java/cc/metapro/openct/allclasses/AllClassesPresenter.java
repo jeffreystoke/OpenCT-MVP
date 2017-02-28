@@ -95,7 +95,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
                     SparseArray<java.util.Calendar> calendarSparseArray = Loader.getClassTime(mContext);
                     for (EnrichedClassInfo c : allClasses) {
                         try {
-                            List<VEvent> events = ICalHelper.getClassEvents(calendarSparseArray, week, everyClassTime, restTime,c);
+                            List<VEvent> events = ICalHelper.getClassEvents(calendarSparseArray, week, everyClassTime, restTime, c);
                             calendar.getComponents().addAll(events);
                         } catch (Exception ignored) {
 
@@ -135,8 +135,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
-                // TODO: 17/2/27 translation
-                Toast.makeText(mContext, "创建日历信息时发生了异常\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, mContext.getString(R.string.error_creating_calendar) + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -147,10 +146,9 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
 
     @Override
     public void clearClasses() {
-        // TODO: 17/2/27 translation
         new AlertDialog.Builder(mContext)
-                .setTitle("警告")
-                .setMessage("该操作将删除所有课程信息, 是否继续?")
+                .setTitle(R.string.warning)
+                .setMessage(R.string.clear_classes_tip)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -175,19 +173,18 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
                 for (ExcelClass excelClass : excelClasses) {
                     addedClasses.add(excelClass.getEnrichedClassInfo());
                 }
-                // TODO: 17/2/27 translation
                 new AlertDialog.Builder(mContext)
-                        .setTitle("选择操作")
-                        .setMessage("共有 " + addedClasses.size() + " 门课程信息, 您希望与当前课程合并还是完全使用新添加的课程?")
-                        .setPositiveButton("替换", new DialogInterface.OnClickListener() {
+                        .setTitle(R.string.select_action)
+                        .setMessage(mContext.getString(R.string.total_to) + " " + addedClasses.size() + " " + mContext.getString(R.string.excel_import_tip))
+                        .setPositiveButton(R.string.replace, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 storeClasses(addedClasses);
                                 loadLocalClasses();
-                                Toast.makeText(mContext, "课程信息已更新", Toast.LENGTH_LONG).show();
+                                Toast.makeText(mContext, R.string.classes_updated, Toast.LENGTH_LONG).show();
                             }
                         })
-                        .setNeutralButton("合并", new DialogInterface.OnClickListener() {
+                        .setNeutralButton(R.string.combine, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 for (EnrichedClassInfo info : addedClasses) {
@@ -195,7 +192,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
                                 }
                                 storeClasses(oldAllClasses);
                                 loadLocalClasses();
-                                Toast.makeText(mContext, "课程信息已合并", Toast.LENGTH_LONG).show();
+                                Toast.makeText(mContext, R.string.classes_combined, Toast.LENGTH_LONG).show();
                             }
                         }).show();
             }

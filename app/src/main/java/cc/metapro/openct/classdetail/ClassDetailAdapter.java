@@ -135,12 +135,12 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
             mPlace.setText(time.getPlace());
 
             final Context context = mDuringGrid.getContext();
+
             for (int i = 0; i < 5; i++) {
                 for (int j = 0; j < 6; j++) {
                     final int week = i * 6 + j + 1;
                     final TextView textView = new TextView(context);
-                    // TODO: 17/2/27 translation
-                    textView.setText("第" + week + "周");
+                    textView.setText(week + context.getString(R.string.week));
                     textView.setGravity(Gravity.CENTER);
                     if (time.hasClass(week)) {
                         textView.setBackground(ContextCompat.getDrawable(context, R.drawable.text_view_card_style_blue));

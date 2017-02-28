@@ -20,7 +20,6 @@ import android.content.Context;
 import android.support.annotation.Keep;
 
 import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
 
 @Keep
@@ -41,10 +40,7 @@ public final class Constants {
 
     public static final String TITLE = "title";
     public static final String URL = "url";
-
-    public static int DAILY_CLASSES = 12;
     public static final int CLASS_LENGTH = 1;
-
     // 正方系列
     public static final String ZFSOFT = "zfsoft";
     // 苏文
@@ -59,7 +55,7 @@ public final class Constants {
     public static final String URP = "urp";
     // 汇文
     public static final String NJHUIWEN = "njhuiwen";
-
+    public static int DAILY_CLASSES = 12;
     // map keys
     public static String ACTION_KEY;
     public static String USERNAME_KEY;
@@ -68,6 +64,14 @@ public final class Constants {
     public static String SEARCH_TYPE_KEY;
     public static String SEARCH_CONTENT_KEY;
     public static String CAPTCHA_FILE;
+
+    public static String NAME;
+    public static String TIME;
+    public static String TYPE;
+    public static String DURING;
+    public static String PLACE;
+    public static String TEACHER;
+
     public static int CLASS_WIDTH = 0;
     public static int CLASS_BASE_HEIGHT = 0;
 

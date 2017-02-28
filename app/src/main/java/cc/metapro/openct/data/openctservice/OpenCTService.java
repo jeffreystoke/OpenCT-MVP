@@ -24,7 +24,6 @@ import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.data.university.item.RoomInfo;
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface OpenCTService {

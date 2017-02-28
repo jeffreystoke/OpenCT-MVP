@@ -64,14 +64,14 @@ class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         createTables(db);
 
-        updateSchools(db);
+//        updateSchools(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         createTables(db);
 
-        updateSchools(db);
+//        updateSchools(db);
     }
 
     private void createTables(SQLiteDatabase db) {

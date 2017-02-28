@@ -18,7 +18,6 @@ package cc.metapro.openct.data.university.item.classinfo;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.GridLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +25,7 @@ import android.widget.TextView;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.classdetail.ClassDetailActivity;
-import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.GridLayoutHelper;
 
 public class SingleClass implements Comparable<SingleClass> {
 

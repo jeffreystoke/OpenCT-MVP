@@ -67,7 +67,7 @@ public final class REHelper {
 
     public static int[] getUserSetTime(String s) {
         String[] tmp = s.split(":");
-        int[] result = new int[]{0,0};
+        int[] result = new int[]{0, 0};
         for (int i = 0; i < result.length && i < tmp.length; i++) {
             result[i] = Integer.parseInt(tmp[i]);
         }

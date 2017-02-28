@@ -18,7 +18,6 @@ package cc.metapro.openct.grades;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Keep;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -46,7 +45,6 @@ import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
-@Keep
 public class GradeActivity extends AppCompatActivity implements GradeContract.View {
 
     @BindView(R.id.recycler_view)

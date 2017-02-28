@@ -79,6 +79,5 @@ dependencies {
     compile 'com.wdullaer:materialdatetimepicker:3.1.2'
 
     testCompile 'junit:junit:4.12'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.8'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }

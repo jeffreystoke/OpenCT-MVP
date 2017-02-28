@@ -241,8 +241,7 @@ public class CustomPresenter implements CustomContract.Presenter {
             if (CMD_INDEX < commands.size()) {
                 mObserver.onNext(commands.get(CMD_INDEX++));
             } else {
-                // TODO: 17/2/27 translation
-                Toast.makeText(mContext, "已经到达之前设置的终点了", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, R.string.reached_previous_end_point, Toast.LENGTH_SHORT).show();
                 mObserver.onComplete();
                 switch (TYPE) {
                     case Constants.TYPE_CLASS:
@@ -262,8 +261,7 @@ public class CustomPresenter implements CustomContract.Presenter {
                                     .getTablesFromTargetPage(mWebView.getPageDom())
                                     .get(Constants.advCustomInfo.GRADE_TABLE_ID), GradeInfo.class);
                             DBManger.getInstance(mContext).updateGrades(grades);
-                            // TODO: 17/2/27 translation
-                            Toast.makeText(mContext, "获取成绩信息成功, 请回到成绩信息界面查看", Toast.LENGTH_LONG).show();
+                            Toast.makeText(mContext, R.string.fetch_borrows_successful, Toast.LENGTH_LONG).show();
                         }
                         return;
                     case Constants.TYPE_SEARCH:
@@ -274,8 +272,7 @@ public class CustomPresenter implements CustomContract.Presenter {
                                     .getTablesFromTargetPage(mWebView.getPageDom())
                                     .get(Constants.advCustomInfo.BORROW_TABLE_ID), BorrowInfo.class);
                             DBManger.getInstance(mContext).updateBorrows(borrows);
-                            // TODO: 17/2/27 translation
-                            Toast.makeText(mContext, "获取借阅信息成功, 请回到借阅信息界面查看", Toast.LENGTH_LONG).show();
+                            Toast.makeText(mContext, R.string.fetch_borrows_successful, Toast.LENGTH_LONG).show();
                         }
                         return;
                 }

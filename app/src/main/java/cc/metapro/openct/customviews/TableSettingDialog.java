@@ -41,23 +41,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
+import cc.metapro.openct.utils.Constants;
 
 @Keep
 public class TableSettingDialog extends DialogFragment {
 
-    // TODO: 17/2/27 translation
-    public static final String NAME = "课程名称";
-    public static final String TIME = "上课时间";
-    public static final String TYPE = "课程类型";
-    public static final String DURING = "课程周期";
-    public static final String PLACE = "上课地点";
-    public static final String TEACHER = "授课教师";
-
-    public static final String[] titles = {NAME, TIME, DURING, TYPE, PLACE, TEACHER};
+    public static String[] titles;
     private static String[] mStrings;
     private static TableSettingCallBack mCallBack;
-    private final String TAG = TableSettingDialog.class.getSimpleName();
-
+    private final String TAG = TableSettingDialog.class.getName();
     @BindView(R.id.options_layout)
     ViewGroup mViewGroup;
     private List<CheckBox> mCheckBoxes;
@@ -66,6 +58,8 @@ public class TableSettingDialog extends DialogFragment {
     private Map<String, Integer> mResultIndexMap = new HashMap<>();
 
     public static TableSettingDialog newInstance(List<Element> rawInfoList, TableSettingCallBack callBack) throws Exception {
+
+        titles = new String[]{Constants.NAME, Constants.TIME, Constants.DURING, Constants.TYPE, Constants.PLACE, Constants.TEACHER};
         Element element = null;
         for (Element td : rawInfoList) {
             if (td.text().length() > 10) {

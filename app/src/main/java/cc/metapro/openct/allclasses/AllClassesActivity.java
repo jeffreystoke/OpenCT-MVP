@@ -34,8 +34,6 @@ import android.widget.Toast;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 
-import java.util.Collections;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
@@ -44,7 +42,6 @@ import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
-import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
@@ -114,8 +111,7 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
             mPresenter.loadFromExcel(getSupportFragmentManager());
             needUpdate = true;
         } else if (id == R.id.add_class) {
-            // TODO: 17/2/27 translation
-            allClasses.add(new EnrichedClassInfo("新课程", "必修", new ClassTime()));
+            allClasses.add(new EnrichedClassInfo(getString(R.string.new_class), getString(R.string.mandatory), new ClassTime()));
             mPresenter.storeClasses(allClasses);
             needUpdate = false;
             mAdapter.notifyDataSetChanged();
@@ -145,14 +141,14 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
                 final EnrichedClassInfo toRemove = allClasses.get(position);
                 allClasses.remove(position);
                 mAdapter.notifyDataSetChanged();
-                final Snackbar snackbar = Snackbar.make(mRecyclerView, toRemove.getName() + " 已删除", BaseTransientBottomBar.LENGTH_INDEFINITE);
+                final Snackbar snackbar = Snackbar.make(mRecyclerView, toRemove.getName() + " " + getString(R.string.deleted), BaseTransientBottomBar.LENGTH_INDEFINITE);
                 snackbar.setAction(android.R.string.cancel, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         allClasses.add(toRemove);
                         mAdapter.notifyDataSetChanged();
                         snackbar.dismiss();
-                        Snackbar.make(mRecyclerView, toRemove.getName() + " 已恢复", BaseTransientBottomBar.LENGTH_LONG).show();
+                        Snackbar.make(mRecyclerView, toRemove.getName() + " " + getString(R.string.restored), BaseTransientBottomBar.LENGTH_LONG).show();
                         mRecyclerView.smoothScrollToPosition(0);
                     }
                 });

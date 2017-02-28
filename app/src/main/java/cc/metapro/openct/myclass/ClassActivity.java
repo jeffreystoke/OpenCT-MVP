@@ -21,7 +21,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -57,7 +56,6 @@ import cc.metapro.openct.search.LibSearchActivity;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
 
-@Keep
 public class ClassActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ClassContract.View {
 
@@ -266,6 +264,13 @@ public class ClassActivity extends AppCompatActivity
             Constants.CLASS_WIDTH = (int) Math.round(metrics.widthPixels * (2.0 / 15.0));
             Constants.CLASS_BASE_HEIGHT = (int) Math.round(metrics.heightPixels * (1.0 / 15.0));
         }
+
+        Constants.NAME = getString(R.string.class_name);
+        Constants.TIME = getString(R.string.class_time);
+        Constants.TYPE = getString(R.string.class_type);
+        Constants.DURING = getString(R.string.class_during);
+        Constants.PLACE = getString(R.string.class_place);
+        Constants.TEACHER = getString(R.string.class_teacher);
 
         Constants.CAPTCHA_FILE = getCacheDir().getPath() + "/captcha";
         Constants.USERNAME_KEY = getString(R.string.key_username);

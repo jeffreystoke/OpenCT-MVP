@@ -108,23 +108,5 @@
             fab:fab_colorRipple="@color/colorAccent"
             fab:fab_label="到达"/>
 
-        <!--<com.github.clans.fab.FloatingActionButton-->
-        <!--android:id="@+id/fab_replay"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:src="@drawable/ic_replay"-->
-        <!--app:fab_size="mini"-->
-        <!--fab:fab_colorNormal="@color/colorAccent"-->
-        <!--fab:fab_colorPressed="@color/colorAccent"-->
-        <!--fab:fab_colorRipple="@color/colorAccent"-->
-        <!--fab:fab_label="回放"/>-->
     </com.github.clans.fab.FloatingActionMenu>
-
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/fab_next"-->
-        <!--style="@style/AppTheme.Fab"-->
-        <!--android:layout_gravity="center_vertical|start"-->
-        <!--android:src="@drawable/ic_next"-->
-        <!--android:visibility="gone"-->
-        <!--app:fab_label="下一步"/>-->
 </android.support.design.widget.CoordinatorLayout>

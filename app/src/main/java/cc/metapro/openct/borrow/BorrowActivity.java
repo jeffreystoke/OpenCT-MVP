@@ -17,9 +17,7 @@ package cc.metapro.openct.borrow;
  */
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
@@ -32,7 +30,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -51,17 +48,14 @@ import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
-@Keep
 public class BorrowActivity extends AppCompatActivity implements BorrowContract.View {
 
     private final String TAG = BorrowActivity.class.getName();
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-
     @BindView(R.id.fab)
     FloatingActionButton mFab;
-
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
@@ -134,8 +128,7 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
             mBorrowAdapter.setNewBorrows(borrows);
             mBorrowAdapter.notifyDataSetChanged();
             ActivityUtils.dismissProgressDialog();
-            // TODO: 17/2/27 translation
-            Snackbar.make(mRecyclerView, "共有 " + borrows.size() + " 条借阅信息", BaseTransientBottomBar.LENGTH_LONG).show();
+            Snackbar.make(mRecyclerView, getString(R.string.total_to) + " " + borrows.size() + " " + getString(R.string.borrow_entries), BaseTransientBottomBar.LENGTH_LONG).show();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }

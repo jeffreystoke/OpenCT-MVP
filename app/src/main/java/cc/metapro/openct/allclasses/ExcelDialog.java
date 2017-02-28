@@ -50,9 +50,8 @@ public class ExcelDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_excel, null);
         ButterKnife.bind(this, view);
-        // TODO: 17/2/27 translation
         return new AlertDialog.Builder(getActivity())
-                .setTitle("从 Excel 导入")
+                .setTitle(R.string.import_from_excel)
                 .setView(view)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override

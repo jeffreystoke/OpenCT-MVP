@@ -126,16 +126,15 @@ public class ClassDetailActivity extends AppCompatActivity {
                 final ClassTime toRemove = classTimes.get(position);
                 classTimes.remove(toRemove);
                 mDetailAdapter.notifyDataSetChanged();
-                // TODO: 17/2/27 translation
                 final String message = mInfoEditing.getName() + " " + DateHelper.weekDayToChinese(toRemove.getWeekDay()) + " " + toRemove.getTime() + " 节";
-                final Snackbar snackbar = Snackbar.make(mRecyclerView, message + " 已删除", BaseTransientBottomBar.LENGTH_INDEFINITE);
+                final Snackbar snackbar = Snackbar.make(mRecyclerView, message + " " + getString(R.string.deleted), BaseTransientBottomBar.LENGTH_INDEFINITE);
                 snackbar.setAction(android.R.string.cancel, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         classTimes.add(toRemove);
                         mDetailAdapter.notifyDataSetChanged();
                         snackbar.dismiss();
-                        Snackbar.make(mRecyclerView, message + " 已恢复", BaseTransientBottomBar.LENGTH_LONG).show();
+                        Snackbar.make(mRecyclerView, message + " " + getString(R.string.restored), BaseTransientBottomBar.LENGTH_LONG).show();
                         mRecyclerView.smoothScrollToPosition(classTimes.size() - 1);
                     }
                 });

@@ -17,9 +17,7 @@ package cc.metapro.openct.splash.schoolselection;
  */
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -45,11 +43,9 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 public class SchoolSelectionActivity
         extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
-    private static final String TAG = SchoolSelectionActivity.class.getName();
     public static final int REQUEST_SCHOOL_NAME = 1;
-
     public static final String SCHOOL_RESULT = "school_name";
-
+    private static final String TAG = SchoolSelectionActivity.class.getName();
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.school_name)

@@ -17,17 +17,12 @@ package cc.metapro.openct.customviews;
  */
 
 import android.content.Context;
-import android.os.Build;
 import android.support.annotation.Keep;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPropertyAnimatorListener;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Interpolator;
 
 @Keep
 public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
