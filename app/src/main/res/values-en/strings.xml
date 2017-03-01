@@ -167,13 +167,13 @@
     <string name="searching_library">Searching library</string>
     <string name="class_detail">Class Detail</string>
     <string name="choose_background">Choose Background</string>
-    <string name="class_name">Class Name</string>
-    <string name="class_type">Class Type</string>
-    <string name="class_time">Class Time</string>
+    <string name="class_name">Name</string>
+    <string name="class_type">Type</string>
+    <string name="class_time">Time</string>
     <string name="start">Start</string>
     <string name="to">To</string>
     <string name="end">End</string>
-    <string name="class_during">Class During</string>
+    <string name="class_during">During (week)</string>
     <string name="odd_week">Odd Week</string>
     <string name="even_week">Even Week</string>
     <string name="common">Common</string>
@@ -218,7 +218,7 @@
     <string name="today_has">Today has</string>
     <string name="class_count"> classes</string>
     <string name="di">The</string>
-    <string name="week">Week</string>
+    <string name="week">week</string>
     <string name="check_schools_update">Check Schools Update</string>
     <string name="encryption_tip">All your personal info (username and password) will be stored locally, please ensure you are in reliable network when you use online service</string>
     <string name="re_for_classes">RegularExp for classes</string>
@@ -300,4 +300,8 @@
     <string name="found">Found</string>
     <string name="book_entries">entries</string>
     <string name="loaded">Loaded</string>
+    <string name="load_fail">Load fail</string>
+    <string name="load_fail_tip">Load from web page?</string>
+    <string name="excel_fail_tip">Failed import from table</string>
+    <string name="paste_content_here">Paste your table here</string>
 </resources>

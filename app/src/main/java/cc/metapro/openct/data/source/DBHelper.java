@@ -16,18 +16,13 @@ package cc.metapro.openct.data.source;
  * limitations under the License.
  */
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Keep;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import cc.metapro.openct.data.university.UniversityInfo;
 
 @Keep
 class DBHelper extends SQLiteOpenHelper {
@@ -53,25 +48,19 @@ class DBHelper extends SQLiteOpenHelper {
 
     private static final int DB_VERSION = 81;
 
-    private Context mContext;
 
     DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
-        mContext = context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         createTables(db);
-
-//        updateSchools(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         createTables(db);
-
-//        updateSchools(db);
     }
 
     private void createTables(SQLiteDatabase db) {
@@ -79,28 +68,4 @@ class DBHelper extends SQLiteOpenHelper {
             db.execSQL("CREATE TABLE IF NOT EXISTS " + title + TITLE_TABLE_MAP.get(title));
         }
     }
-
-    private void updateSchools(SQLiteDatabase db) {
-        try {
-            String schools = StoreHelper.getAssetText(mContext, "school_info/schools.json");
-            List<UniversityInfo> schoolInfoList = StoreHelper.fromJsonList(schools, UniversityInfo.class);
-
-            db.beginTransaction();
-            try {
-                db.delete(DBHelper.SCHOOL_TABLE, null, null);
-                for (UniversityInfo info : schoolInfoList) {
-                    ContentValues values = new ContentValues();
-                    values.put(SCHOOL_NAME, info.name);
-                    values.put(JSON, info.toString());
-                    db.insert(SCHOOL_TABLE, null, values);
-                }
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

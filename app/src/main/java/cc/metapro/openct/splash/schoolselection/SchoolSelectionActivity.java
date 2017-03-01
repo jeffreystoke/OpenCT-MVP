@@ -16,6 +16,7 @@ package cc.metapro.openct.splash.schoolselection;
  * limitations under the License.
  */
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -70,7 +71,9 @@ public class SchoolSelectionActivity
     @Override
     protected void onResume() {
         super.onResume();
-        ActivityUtils.getProgressDialog(this, R.string.loading_school_list).show();
+        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(this, R.string.loading_school_list);
+        progressDialog.show();
+
         Observable<SchoolAdapter> observable = Observable.create(new ObservableOnSubscribe<SchoolAdapter>() {
             @Override
             public void subscribe(ObservableEmitter<SchoolAdapter> e) throws Exception {
@@ -82,8 +85,14 @@ public class SchoolSelectionActivity
         Observer<SchoolAdapter> observer = new MyObserver<SchoolAdapter>(TAG) {
             @Override
             public void onNext(SchoolAdapter schoolAdapter) {
-                ActivityUtils.dismissProgressDialog();
-                setViews();
+                progressDialog.dismiss();
+                setViews(schoolAdapter);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                progressDialog.dismiss();
             }
         };
 
@@ -92,7 +101,7 @@ public class SchoolSelectionActivity
                 .subscribe(observer);
     }
 
-    private void setViews() {
+    private void setViews(final SchoolAdapter mAdapter) {
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

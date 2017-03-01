@@ -39,22 +39,20 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.classdetail.ClassDetailActivity;
 import cc.metapro.openct.custom.CustomActivity;
-import cc.metapro.openct.data.university.item.classinfo.ClassTime;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
+import static cc.metapro.openct.allclasses.AllClassesPresenter.allClasses;
+
 public class AllClassesActivity extends AppCompatActivity implements AllClassesContract.View {
 
     private static final int REQUEST_WRITE_STORAGE = 112;
-    public static Classes allClasses;
-
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.recycler_view)
     SwipeMenuRecyclerView mRecyclerView;
-    private boolean needUpdate = true;
+
     private AllClassesAdapter mAdapter;
     private AllClassesContract.Presenter mPresenter;
 
@@ -88,7 +86,6 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        mPresenter.storeClasses(allClasses);
         int id = item.getItemId();
         if (id == R.id.export_classes) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -102,30 +99,19 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
                 mPresenter.exportClasses();
             }
         } else if (id == R.id.clear_classes) {
-            needUpdate = true;
             mPresenter.clearClasses();
         } else if (id == R.id.custom) {
             CustomActivity.actionStart(this, Constants.TYPE_CLASS);
-            needUpdate = true;
         } else if (id == R.id.import_from_excel) {
             mPresenter.loadFromExcel(getSupportFragmentManager());
-            needUpdate = true;
         } else if (id == R.id.add_class) {
-            allClasses.add(new EnrichedClassInfo(getString(R.string.new_class), getString(R.string.mandatory), new ClassTime()));
-            mPresenter.storeClasses(allClasses);
-            needUpdate = false;
-            mAdapter.notifyDataSetChanged();
-            ClassDetailActivity.actionStart(this, 0);
+            ClassDetailActivity.actionStart(this, getString(R.string.new_class));
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void updateClasses(Classes classes) {
-        if ((allClasses == null || allClasses.isEmpty()) && needUpdate) {
-            allClasses = classes;
-            needUpdate = false;
-        }
+    public void updateClasses() {
         mAdapter = new AllClassesAdapter(this);
         RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mAdapter);
         mRecyclerView.setItemViewSwipeEnabled(true);

@@ -24,6 +24,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.util.ArraySet;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,11 +47,9 @@ import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
-import static cc.metapro.openct.allclasses.AllClassesActivity.allClasses;
-
 public class ClassDetailActivity extends AppCompatActivity {
 
-    static int mIndex;
+    private static final String TAG = ClassDetailActivity.class.getName();
 
     static EnrichedClassInfo mInfoEditing;
 
@@ -71,25 +70,16 @@ public class ClassDetailActivity extends AppCompatActivity {
     private ClassDetailAdapter mDetailAdapter;
 
     public static void actionStart(Context context, String name) {
-        allClasses = DBManger.getInstance(context).getClasses();
-        int i = 0;
-        for (EnrichedClassInfo info : allClasses) {
-            if (info.getName().equals(name)) {
-                mInfoEditing = info;
-                actionStart(context, i);
-                break;
-            }
-            i++;
+        mInfoEditing = DBManger.getInstance(context).getSingleClass(name);
+        if (mInfoEditing == null) {
+            mInfoEditing = new EnrichedClassInfo(
+                    context.getString(R.string.new_class),
+                    context.getString(R.string.mandatory),
+                    new ClassTime()
+            );
         }
-    }
 
-    public static void actionStart(Context context, int index) {
-        mIndex = index;
-        mInfoEditing = allClasses.get(mIndex);
-        classTimes = new ArrayList<>();
-        for (ClassTime time : mInfoEditing.getTimeSet()) {
-            classTimes.add(time);
-        }
+        classTimes = new ArrayList<>(mInfoEditing.getTimeSet());
         Collections.sort(classTimes);
 
         Intent intent = new Intent(context, ClassDetailActivity.class);
@@ -165,14 +155,16 @@ public class ClassDetailActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        allClasses.remove(mInfoEditing);
-        mInfoEditing.setName(mName.getText().toString());
-        mInfoEditing.setType(mType.getText().toString());
         Set<ClassTime> timeSet = new ArraySet<>();
+        mInfoEditing.setType(mType.getText().toString());
         timeSet.addAll(classTimes);
-        mInfoEditing.setTimeSet(timeSet);
-        allClasses.add(mInfoEditing);
-        DBManger.getInstance(this).updateClasses(allClasses);
+        mInfoEditing.setTimes(timeSet);
+        try {
+            DBManger.getInstance(this).updateSingleClass(mInfoEditing.getName(), mName.getText().toString(), mInfoEditing);
+        } catch (Exception e) {
+            Log.d(TAG, e.getMessage(), e);
+            return;
+        }
         super.onBackPressed();
     }
 

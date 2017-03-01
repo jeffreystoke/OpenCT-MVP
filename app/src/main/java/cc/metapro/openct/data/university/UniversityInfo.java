@@ -27,6 +27,18 @@ public class UniversityInfo implements Comparable<UniversityInfo> {
 
     public String name, cmsSys, cmsURL, libSys, libURL;
 
+    public UniversityInfo() {
+
+    }
+
+    public UniversityInfo(String name, String cmsSys, String cmsURL, String libSys, String libURL) {
+        this.name = name;
+        this.cmsSys = cmsSys;
+        this.cmsURL = cmsURL;
+        this.libSys = libSys;
+        this.libURL = libURL;
+    }
+
     @Override
     public String toString() {
         return StoreHelper.toJson(this);
@@ -35,8 +47,8 @@ public class UniversityInfo implements Comparable<UniversityInfo> {
     @Override
     public int compareTo(@NonNull UniversityInfo o) {
         CharacterParser parser = CharacterParser.getInstance();
-        String me = parser.getSelling(name);
-        String that = parser.getSelling(o.name);
+        String me = parser.getSpelling(name);
+        String that = parser.getSpelling(o.name);
         return me.compareTo(that);
     }
 }

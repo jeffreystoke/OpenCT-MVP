@@ -16,6 +16,7 @@ package cc.metapro.openct.search;
  * limitations under the License.
  */
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
@@ -29,6 +30,7 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.LibraryFactory;
 import cc.metapro.openct.data.university.item.BookInfo;
+import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.MyObserver;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -59,6 +61,10 @@ class LibSearchPresenter implements LibSearchContract.Presenter {
     @Override
     public Disposable search(final String type, final String content) {
         mLibSearchView.showOnSearching();
+
+        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.searching_library);
+        progressDialog.show();
+
         Observable<List<BookInfo>> observable = Observable.create(new ObservableOnSubscribe<List<BookInfo>>() {
             @Override
             public void subscribe(ObservableEmitter<List<BookInfo>> e) throws Exception {
@@ -72,6 +78,7 @@ class LibSearchPresenter implements LibSearchContract.Presenter {
         Observer<List<BookInfo>> observer = new MyObserver<List<BookInfo>>(TAG) {
             @Override
             public void onNext(List<BookInfo> books) {
+                progressDialog.dismiss();
                 mLibSearchView.onSearchResult(books);
             }
 

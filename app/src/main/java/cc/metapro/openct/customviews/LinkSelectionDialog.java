@@ -43,7 +43,6 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.CmsFactory;
-import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.MyObserver;
 import io.reactivex.Observable;
@@ -104,7 +103,7 @@ public class LinkSelectionDialog extends DialogFragment {
                                 } else if (Constants.TYPE_BORROW.equals(TYPE)) {
                                     Constants.advCustomInfo.setFirstBorrowPattern(target.toString());
                                 }
-                                DBManger.getInstance(getActivity()).updateAdvancedCustomClassInfo(Constants.advCustomInfo);
+                                DBManger.getInstance(getActivity()).updateAdvCustomInfo(Constants.advCustomInfo);
                                 Constants.checkAdvCustomInfo(getActivity());
                                 mPresenter.loadTargetPage(getFragmentManager(), target.absUrl("href"));
                                 break;
@@ -153,7 +152,6 @@ public class LinkSelectionDialog extends DialogFragment {
                                     for (int i = 0; i < mRadioButtons.size(); i++) {
                                         if (mRadioButtons.get(i).isChecked()) {
                                             final Element target = mLinks.get(i);
-                                            ActivityUtils.getProgressDialog(getActivity(), R.string.loading_target_page);
                                             Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
                                                 @Override
                                                 public void subscribe(ObservableEmitter<Document> e) throws Exception {
@@ -167,7 +165,6 @@ public class LinkSelectionDialog extends DialogFragment {
                                                 public void onNext(Document document) {
                                                     mLinks = document.select("a");
                                                     addRadioOptions();
-                                                    ActivityUtils.dismissProgressDialog();
                                                 }
                                             };
 
@@ -194,7 +191,7 @@ public class LinkSelectionDialog extends DialogFragment {
                                         } else if (Constants.TYPE_BORROW.equals(TYPE)) {
                                             Constants.advCustomInfo.addBorrowPattern(target.toString());
                                         }
-                                        DBManger.getInstance(getActivity()).updateAdvancedCustomClassInfo(Constants.advCustomInfo);
+                                        DBManger.getInstance(getActivity()).updateAdvCustomInfo(Constants.advCustomInfo);
                                         Constants.checkAdvCustomInfo(getActivity());
                                         mPresenter.loadTargetPage(getFragmentManager(), target.absUrl("href"));
                                         break;

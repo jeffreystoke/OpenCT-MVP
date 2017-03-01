@@ -25,8 +25,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:layout_margin="10dp"
+        android:orientation="vertical">
 
         <Spinner
             android:id="@+id/week_day"
@@ -40,8 +40,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="5dp">
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/time_start"
@@ -79,28 +79,35 @@
                 android:textSize="18sp"/>
         </LinearLayout>
 
-        <android.support.v7.widget.GridLayout
-            android:id="@+id/during_grid"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@string/class_during"
+            android:textSize="18sp"/>
+
+        <LinearLayout
+            android:id="@+id/during_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:columnCount="6"
-            app:rowCount="5">
-        </android.support.v7.widget.GridLayout>
+            android:layout_margin="5dp"
+            android:orientation="vertical">
+        </LinearLayout>
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/class_teacher"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:hint="@string/class_teacher"
-            android:padding="5dp"
             app:met_floatingLabel="normal"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/class_place"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:hint="@string/class_place"
-            android:padding="5dp"
             app:met_floatingLabel="normal"/>
 
         <TextView

@@ -169,7 +169,7 @@
     <string name="start">开始</string>
     <string name="to">到</string>
     <string name="end">结束</string>
-    <string name="class_during">课程周期</string>
+    <string name="class_during">课程周期 (周)</string>
     <string name="odd_week">单周</string>
     <string name="even_week">双周</string>
     <string name="common">普通</string>
@@ -301,4 +301,8 @@
     <string name="found">找到了</string>
     <string name="book_entries">条结果</string>
     <string name="loaded">加载了</string>
+    <string name="load_fail">获取信息失败</string>
+    <string name="load_fail_tip">是否使用网页进行导入?</string>
+    <string name="excel_fail_tip">从Excel导入失败</string>
+    <string name="paste_content_here">将表格粘贴至此</string>
 </resources>

@@ -16,6 +16,7 @@ package cc.metapro.openct.borrow;
  * limitations under the License.
  */
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
@@ -68,14 +69,15 @@ class BorrowPresenter implements BorrowContract.Presenter {
 
     @Override
     public Disposable loadOnlineInfo(final FragmentManager manager) {
-        ActivityUtils.getProgressDialog(mContext, R.string.preparing_school_sys_info).show();
+        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.preparing_school_sys_info);
+        progressDialog.show();
 
         Observable<Boolean> observable = Loader.prepareOnlineInfo(Loader.ACTION_LIBRARY, mContext);
 
         Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
             @Override
             public void onNext(Boolean needCaptcha) {
-                ActivityUtils.dismissProgressDialog();
+                progressDialog.dismiss();
                 if (needCaptcha) {
                     ActivityUtils.showCaptchaDialog(manager, BorrowPresenter.this);
                 } else {
@@ -86,6 +88,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+                progressDialog.dismiss();
                 ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_BORROW);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -100,14 +103,15 @@ class BorrowPresenter implements BorrowContract.Presenter {
 
     @Override
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
-        ActivityUtils.getProgressDialog(mContext, R.string.loading_borrows).show();
+        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.loading_borrows);
+        progressDialog.show();
 
         Observable<Document> observable = Loader.login(Loader.ACTION_LIBRARY, mContext, code);
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(final Document userCenterDom) {
-                ActivityUtils.dismissProgressDialog();
+                progressDialog.dismiss();
                 Constants.checkAdvCustomInfo(mContext);
                 final List<String> urlPatterns = Constants.advCustomInfo.getBorrowUrlPatterns();
                 if (!urlPatterns.isEmpty()) {
@@ -161,6 +165,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+                progressDialog.dismiss();
                 ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_BORROW);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -175,7 +180,8 @@ class BorrowPresenter implements BorrowContract.Presenter {
 
     @Override
     public Disposable loadTargetPage(final FragmentManager manager, final String url) {
-        ActivityUtils.getProgressDialog(mContext, R.string.loading_target_page).show();
+        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.loading_target_page);
+        progressDialog.show();
 
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
@@ -188,7 +194,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(Document document) {
-                ActivityUtils.dismissProgressDialog();
+                progressDialog.dismiss();
                 AdvancedCustomInfo customInfo = DBManger.getAdvancedCustomInfo(mContext);
                 if (!TextUtils.isEmpty(customInfo.BORROW_TABLE_ID)) {
                     Map<String, Element> map = TableUtils.getTablesFromTargetPage(document);
@@ -212,6 +218,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+                progressDialog.dismiss();
                 ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_BORROW);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }

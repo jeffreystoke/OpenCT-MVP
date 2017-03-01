@@ -17,6 +17,7 @@ package cc.metapro.openct.data.university.item.classinfo;
  */
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import java.util.Calendar;
 
@@ -160,10 +161,6 @@ public class ClassTime implements Comparable<ClassTime> {
         }
     }
 
-    public boolean inSameDay(int weekDay) {
-        return this.weekDay == weekDay;
-    }
-
     void combineDuring(boolean[] during) {
         if (during == null) return;
         for (int i = 0; i < during.length; i++) {
@@ -184,7 +181,9 @@ public class ClassTime implements Comparable<ClassTime> {
         } else if (obj instanceof ClassTime) {
             ClassTime time = (ClassTime) obj;
             return time.weekDay == weekDay
-                    && time.dailySeq == dailySeq;
+                    && time.dailySeq == dailySeq
+                    && TextUtils.isEmpty(place) && place.equals(time.place)
+                    && TextUtils.isEmpty(teacher) && teacher.equals(time.teacher);
         }
         return false;
     }
@@ -205,4 +204,5 @@ public class ClassTime implements Comparable<ClassTime> {
 
         return 0;
     }
+
 }

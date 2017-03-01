@@ -25,7 +25,10 @@ import cc.metapro.openct.data.university.item.classinfo.Classes;
 interface AllClassesContract {
 
     interface View extends BaseView<Presenter> {
-        void updateClasses(Classes classes);
+        /**
+         * NOTICE! use presenter's static class to update
+         */
+        void updateClasses();
     }
 
     interface Presenter extends BasePresenter {

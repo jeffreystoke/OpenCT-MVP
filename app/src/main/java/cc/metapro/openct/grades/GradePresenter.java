@@ -16,6 +16,7 @@ package cc.metapro.openct.grades;
  * limitations under the License.
  */
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.annotation.Keep;
 import android.support.v4.app.FragmentManager;
@@ -74,13 +75,15 @@ class GradePresenter implements GradeContract.Presenter {
 
     @Override
     public Disposable loadOnlineInfo(final FragmentManager manager) {
-        ActivityUtils.getProgressDialog(mContext, R.string.preparing_school_sys_info).show();
+        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.preparing_school_sys_info);
+        progressDialog.show();
+
         Observable<Boolean> observable = Loader.prepareOnlineInfo(Loader.ACTION_CMS, mContext);
 
         Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
             @Override
             public void onNext(Boolean needCaptcha) {
-                ActivityUtils.dismissProgressDialog();
+                progressDialog.dismiss();
                 if (needCaptcha) {
                     ActivityUtils.showCaptchaDialog(manager, GradePresenter.this);
                 } else {
@@ -104,14 +107,15 @@ class GradePresenter implements GradeContract.Presenter {
 
     @Override
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
-        ActivityUtils.getProgressDialog(mContext, R.string.login_to_system).show();
+        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.login_to_system);
+        progressDialog.show();
 
         Observable<Document> observable = Loader.login(Loader.ACTION_CMS, mContext, code);
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(final Document userCenterDom) {
-                ActivityUtils.dismissProgressDialog();
+                progressDialog.dismiss();
                 Constants.checkAdvCustomInfo(mContext);
                 final List<String> urlPatterns = Constants.advCustomInfo.getGradeUrlPatterns();
                 if (!urlPatterns.isEmpty()) {
@@ -176,7 +180,9 @@ class GradePresenter implements GradeContract.Presenter {
 
     @Override
     public Disposable loadTargetPage(final FragmentManager manager, final String url) {
-        ActivityUtils.getProgressDialog(mContext, R.string.loading_grade_page).show();
+        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.loading_grade_page);
+        progressDialog.show();
+
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
             public void subscribe(ObservableEmitter<Document> e) throws Exception {
@@ -187,7 +193,7 @@ class GradePresenter implements GradeContract.Presenter {
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(Document document) {
-                ActivityUtils.dismissProgressDialog();
+                progressDialog.dismiss();
                 FormDialog.newInstance(document, GradePresenter.this).show(manager, "form_dialog");
             }
 
@@ -207,7 +213,8 @@ class GradePresenter implements GradeContract.Presenter {
 
     @Override
     public Disposable loadQuery(final FragmentManager manager, final String actionURL, final Map<String, String> queryMap, final boolean needNewPage) {
-        ActivityUtils.getProgressDialog(mContext, R.string.loading_grades).show();
+        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.loading_grades);
+        progressDialog.show();
 
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
@@ -219,7 +226,7 @@ class GradePresenter implements GradeContract.Presenter {
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(Document document) {
-                ActivityUtils.dismissProgressDialog();
+                progressDialog.dismiss();
                 Constants.checkAdvCustomInfo(mContext);
 
                 if (TextUtils.isEmpty(Constants.advCustomInfo.GRADE_TABLE_ID)) {

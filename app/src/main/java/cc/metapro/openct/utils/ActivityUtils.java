@@ -19,7 +19,6 @@ package cc.metapro.openct.utils;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.Keep;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 
@@ -36,31 +35,12 @@ import cc.metapro.openct.customviews.CaptchaDialog;
 import cc.metapro.openct.customviews.LinkSelectionDialog;
 import cc.metapro.openct.customviews.TableChooseDialog;
 
-@Keep
 public final class ActivityUtils {
 
-//    private static final String TAG = ActivityUtils.class.getSimpleName();
-
-    private static ProgressDialog pd;
-
-//    public static void addFragmentToActivity(@NonNull FragmentManager fragmentManager,
-//                                             @NonNull Fragment fragment, int frameId) {
-//        FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        transaction.add(frameId, fragment);
-//        transaction.commit();
-//    }
-
     public static ProgressDialog getProgressDialog(Context context, int messageId) {
-        pd = new ProgressDialog(context);
+        ProgressDialog pd = new ProgressDialog(context);
         pd.setMessage(context.getString(messageId));
         return pd;
-    }
-
-    public static void dismissProgressDialog() {
-        if (pd == null) return;
-        if (pd.isShowing()) {
-            pd.dismiss();
-        }
     }
 
     public static void encryptionCheck(final Context context) {
@@ -131,8 +111,8 @@ public final class ActivityUtils {
 
     public static void showAdvCustomTip(final Context context, final String type) {
         new AlertDialog.Builder(context)
-                .setTitle("获取信息失败")
-                .setMessage("是否使用网页进行导入?")
+                .setTitle(R.string.load_fail)
+                .setMessage(R.string.load_fail_tip)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

@@ -17,6 +17,7 @@ package cc.metapro.openct.utils;
  */
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.SparseArray;
 
 import net.fortuna.ical4j.model.DateTime;
@@ -79,6 +80,7 @@ public class ICalHelper {
      * @throws URISyntaxException
      * @throws SocketException
      */
+    @Nullable
     private static VEvent getClassEvent(SparseArray<Calendar> classTimeMap,
                                         EnrichedClassInfo info,
                                         ClassTime time,
@@ -135,7 +137,7 @@ public class ICalHelper {
         event.getProperties().add(new Uid(new UidGenerator("OPENCT").generateUid().getValue()));
         event.getProperties().add(new Location(time.getPlace()));
 
-        event.getProperties().add(new Description(time.getTime() + " 节"));
+        event.getProperties().add(new Description(time.getTime() + " " + time.getTeacher()));
         event.getProperties().add(rdate);
         event.getProperties().add(rule);
         return event;

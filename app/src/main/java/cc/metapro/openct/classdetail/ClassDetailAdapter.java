@@ -18,12 +18,12 @@ package cc.metapro.openct.classdetail;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.GridLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -33,6 +33,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.classinfo.ClassTime;
+import cc.metapro.openct.utils.Constants;
 
 import static cc.metapro.openct.classdetail.ClassDetailActivity.classTimes;
 
@@ -73,9 +74,9 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
         MaterialEditText mTimeEnd;
 
         // 周期
-        @BindView(R.id.during_grid)
-        GridLayout mDuringGrid;
-        TextView[][] selections = new TextView[5][6];
+        @BindView(R.id.during_container)
+        LinearLayout mDuringContainer;
+        TextView[] selections = new TextView[Constants.WEEKS];
 
         // 教师
         @BindView(R.id.class_teacher)
@@ -134,13 +135,23 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
             mTeacher.setText(time.getTeacher());
             mPlace.setText(time.getPlace());
 
-            final Context context = mDuringGrid.getContext();
+            final Context context = mDuringContainer.getContext();
 
-            for (int i = 0; i < 5; i++) {
+            mDuringContainer.removeAllViews();
+            for (int i = 0; i < Constants.WEEKS / 6; i++) {
+                LinearLayout linearLayout = new LinearLayout(mDuringContainer.getContext());
+                linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+                mDuringContainer.addView(linearLayout);
+                ViewGroup.LayoutParams params = linearLayout.getLayoutParams();
+                params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                linearLayout.setLayoutParams(params);
+
                 for (int j = 0; j < 6; j++) {
                     final int week = i * 6 + j + 1;
                     final TextView textView = new TextView(context);
-                    textView.setText(week + context.getString(R.string.week));
+                    textView.setText(week + "");
                     textView.setGravity(Gravity.CENTER);
                     if (time.hasClass(week)) {
                         textView.setBackground(ContextCompat.getDrawable(context, R.drawable.text_view_card_style_blue));
@@ -166,11 +177,9 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                             classTimes.add(position, time);
                         }
                     });
-                    GridLayout.Spec row = GridLayout.spec(i, 1, 1);
-                    GridLayout.Spec col = GridLayout.spec(j, 1, 1);
-                    GridLayout.LayoutParams params = new GridLayout.LayoutParams(row, col);
-                    mDuringGrid.addView(textView, params);
-                    selections[i][j] = textView;
+                    textView.setLines(1);
+                    linearLayout.addView(textView, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1));
+                    selections[week - 1] = textView;
                 }
             }
             setEditable(false);

@@ -131,7 +131,7 @@ public class TableChooseDialog extends DialogFragment {
                                 Classes classes = UniversityUtils.generateClasses(context, rawInfoList, info);
                                 Constants.advCustomInfo.setClassTableInfo(info);
 
-                                manger.updateAdvancedCustomClassInfo(Constants.advCustomInfo);
+                                manger.updateAdvCustomInfo(Constants.advCustomInfo);
                                 manger.updateClasses(classes);
                                 if (mPresenter != null && mPresenter instanceof ClassContract.Presenter) {
                                     ((ClassContract.Presenter) mPresenter).loadLocalClasses();
@@ -146,7 +146,7 @@ public class TableChooseDialog extends DialogFragment {
                     break;
                 case Constants.TYPE_GRADE:
                     Constants.advCustomInfo.GRADE_TABLE_ID = tableId;
-                    manger.updateAdvancedCustomClassInfo(Constants.advCustomInfo);
+                    manger.updateAdvCustomInfo(Constants.advCustomInfo);
                     manger.updateGrades(UniversityUtils.generateInfo(targetTable, GradeInfo.class));
                     if (mPresenter != null && mPresenter instanceof GradeContract.Presenter) {
                         ((GradeContract.Presenter) mPresenter).loadLocalGrades();
@@ -157,7 +157,7 @@ public class TableChooseDialog extends DialogFragment {
                     break;
                 case Constants.TYPE_BORROW:
                     Constants.advCustomInfo.BORROW_TABLE_ID = tableId;
-                    manger.updateAdvancedCustomClassInfo(Constants.advCustomInfo);
+                    manger.updateAdvCustomInfo(Constants.advCustomInfo);
                     manger.updateBorrows(UniversityUtils.generateInfo(targetTable, BorrowInfo.class));
                     if (mPresenter != null && mPresenter instanceof BorrowContract.Presenter) {
                         ((BorrowContract.Presenter) mPresenter).loadLocalBorrows();

@@ -42,7 +42,6 @@ import butterknife.OnEditorAction;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.EndlessRecyclerOnScrollListener;
 import cc.metapro.openct.data.university.item.BookInfo;
-import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 import io.reactivex.disposables.Disposable;
 
@@ -122,7 +121,6 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
 
     @Override
     public void showOnSearching() {
-        ActivityUtils.getProgressDialog(this, R.string.searching_library).show();
         mRecyclerView.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -141,7 +139,6 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
 
     @Override
     public void onSearchResult(List<BookInfo> books) {
-        ActivityUtils.dismissProgressDialog();
         mAdapter.setBooks(books);
         mAdapter.notifyDataSetChanged();
         if (books.size() > 0) {
@@ -155,7 +152,6 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
 
     @Override
     public void onNextPageResult(List<BookInfo> books) {
-        ActivityUtils.dismissProgressDialog();
         mAdapter.addBooks(books);
         mAdapter.notifyDataSetChanged();
         if (books.size() > 0) {

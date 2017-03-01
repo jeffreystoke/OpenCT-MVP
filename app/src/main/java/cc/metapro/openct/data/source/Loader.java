@@ -207,14 +207,6 @@ public class Loader {
             university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name, defaultSchoolName));
         }
 
-        if (university == null) {
-            university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name, defaultSchoolName));
-        }
-
-        if (university == null) {
-            university = new UniversityInfo();
-        }
-
         return university;
     }
 

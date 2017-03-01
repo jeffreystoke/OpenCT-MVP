@@ -45,7 +45,6 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.pref.SettingsActivity;
-import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
 public class BorrowActivity extends AppCompatActivity implements BorrowContract.View {
@@ -127,7 +126,6 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
         try {
             mBorrowAdapter.setNewBorrows(borrows);
             mBorrowAdapter.notifyDataSetChanged();
-            ActivityUtils.dismissProgressDialog();
             Snackbar.make(mRecyclerView, getString(R.string.total_to) + " " + borrows.size() + " " + getString(R.string.borrow_entries), BaseTransientBottomBar.LENGTH_LONG).show();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -151,10 +149,5 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.borrow_menu, menu);
         return true;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 }

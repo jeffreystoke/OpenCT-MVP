@@ -40,7 +40,6 @@ public abstract class MyObserver<T> implements Observer<T> {
 
     @Override
     public void onError(Throwable e) {
-        ActivityUtils.dismissProgressDialog();
         Log.e(TAG, e.getMessage(), e);
     }
 

@@ -66,9 +66,9 @@
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_up"
         style="@style/AppTheme.Fab"
+        android:layout_gravity="bottom|start"
         android:src="@drawable/ic_up_to_top"
         android:visibility="gone"
-        android:layout_gravity="bottom|start"
         app:layout_anchor="@id/recycler_view"
         app:layout_anchorGravity="bottom|start"
         app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"/>

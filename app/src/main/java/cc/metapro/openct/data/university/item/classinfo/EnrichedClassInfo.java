@@ -27,6 +27,7 @@ import java.util.Set;
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.data.university.CmsFactory;
+import cc.metapro.openct.utils.CharacterParser;
 import cc.metapro.openct.utils.ClassInfoHelper;
 
 /**
@@ -157,11 +158,14 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
         mTimeSet = mixedTime;
     }
 
+    /**
+     * get a set of class time, which includes daily time, during, place and teacher
+     */
     public Set<ClassTime> getTimeSet() {
         return mTimeSet;
     }
 
-    public void setTimeSet(Set<ClassTime> timeSet) {
+    public void setTimes(Set<ClassTime> timeSet) {
         if (timeSet != null && !timeSet.isEmpty()) {
             mTimeSet = timeSet;
         }
@@ -189,14 +193,10 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
 
     @Override
     public int compareTo(@NonNull EnrichedClassInfo o) {
-        for (ClassTime time : mTimeSet) {
-            for (ClassTime time1 : o.mTimeSet) {
-                if (time.inSameDay(time1)) {
-                    return time.compareTo(time1);
-                }
-            }
-        }
-        return 1;
+        CharacterParser parser = CharacterParser.getInstance();
+        String me = parser.getSpelling(name);
+        String that = parser.getSpelling(o.name);
+        return me.compareTo(that);
     }
 
 }

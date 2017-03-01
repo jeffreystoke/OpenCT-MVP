@@ -41,7 +41,6 @@ import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.grades.cet.CETQueryDialog;
 import cc.metapro.openct.grades.cet.CETResultDialog;
 import cc.metapro.openct.pref.SettingsActivity;
-import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
@@ -98,7 +97,6 @@ public class GradeActivity extends AppCompatActivity implements GradeContract.Vi
     public void onLoadGrades(List<GradeInfo> grades) {
         mGradeAdapter.updateGrades(grades);
         mGradeAdapter.notifyDataSetChanged();
-        ActivityUtils.dismissProgressDialog();
     }
 
     @Override
@@ -109,7 +107,6 @@ public class GradeActivity extends AppCompatActivity implements GradeContract.Vi
 
     @Override
     public void onLoadCETGrade(Map<String, String> resultMap) {
-        ActivityUtils.dismissProgressDialog();
         CETResultDialog.newInstance(resultMap)
                 .show(getSupportFragmentManager(), "cet_result");
     }

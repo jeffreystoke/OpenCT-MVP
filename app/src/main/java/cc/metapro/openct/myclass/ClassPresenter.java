@@ -16,6 +16,7 @@ package cc.metapro.openct.myclass;
  * limitations under the License.
  */
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
@@ -67,14 +68,15 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public Disposable loadOnlineInfo(final FragmentManager manager) {
-        ActivityUtils.getProgressDialog(mContext, R.string.preparing_school_sys_info).show();
+        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.preparing_school_sys_info);
+        progressDialog.show();
 
         Observable<Boolean> observable = Loader.prepareOnlineInfo(Loader.ACTION_CMS, mContext);
 
         Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
             @Override
             public void onNext(Boolean needCaptcha) {
-                ActivityUtils.dismissProgressDialog();
+                progressDialog.dismiss();
                 if (needCaptcha) {
                     ActivityUtils.showCaptchaDialog(manager, ClassPresenter.this);
                 } else {
@@ -85,6 +87,7 @@ class ClassPresenter implements ClassContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+                progressDialog.dismiss();
                 ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -98,14 +101,15 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
-        ActivityUtils.getProgressDialog(mContext, R.string.login_to_system).show();
+        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.login_to_system);
+        progressDialog.show();
 
         Observable<Document> observable = Loader.login(Loader.ACTION_CMS, mContext, code);
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(final Document userCenterDom) {
-                ActivityUtils.dismissProgressDialog();
+                progressDialog.dismiss();
                 Constants.checkAdvCustomInfo(mContext);
                 final List<String> urlPatterns = Constants.advCustomInfo.getClassUrlPatterns();
                 if (!urlPatterns.isEmpty()) {
@@ -150,6 +154,7 @@ class ClassPresenter implements ClassContract.Presenter {
                             @Override
                             public void onError(Throwable e) {
                                 super.onError(e);
+                                // TODO: 17/3/1 translation
                                 Toast.makeText(mContext, "根据之前的设置未能获取到预期的页面\n\n需要重新执行", Toast.LENGTH_LONG).show();
                                 ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, userCenterDom, ClassPresenter.this);
                             }
@@ -169,6 +174,7 @@ class ClassPresenter implements ClassContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+                progressDialog.dismiss();
                 ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -182,7 +188,8 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public Disposable loadTargetPage(final FragmentManager manager, final String url) {
-        ActivityUtils.getProgressDialog(mContext, R.string.loading_class_page).show();
+        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.loading_class_page);
+        progressDialog.show();
 
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
@@ -194,13 +201,14 @@ class ClassPresenter implements ClassContract.Presenter {
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(Document document) {
-                ActivityUtils.dismissProgressDialog();
+                progressDialog.dismiss();
                 FormDialog.newInstance(document, ClassPresenter.this).show(manager, "form_dialog");
             }
 
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+                progressDialog.dismiss();
                 ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -215,7 +223,9 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public Disposable loadQuery(final FragmentManager manager, final String actionURL, final Map<String, String> queryMap, final boolean needNewPage) {
-        ActivityUtils.getProgressDialog(mContext, R.string.loading_classes).show();
+        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.loading_classes);
+        progressDialog.show();
+
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
             public void subscribe(ObservableEmitter<Document> e) throws Exception {
@@ -226,7 +236,7 @@ class ClassPresenter implements ClassContract.Presenter {
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(Document document) {
-                ActivityUtils.dismissProgressDialog();
+                progressDialog.dismiss();
                 Constants.checkAdvCustomInfo(mContext);
                 String tableId = Constants.advCustomInfo.mClassTableInfo.mClassTableID;
                 if (TextUtils.isEmpty(tableId)) {
@@ -248,6 +258,7 @@ class ClassPresenter implements ClassContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+                progressDialog.dismiss();
                 ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }

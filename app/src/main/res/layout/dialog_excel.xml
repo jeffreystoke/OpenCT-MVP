@@ -25,6 +25,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:hint="将表格粘贴至此"
+        android:hint="@string/paste_content_here"
         android:lines="4"/>
 </LinearLayout>

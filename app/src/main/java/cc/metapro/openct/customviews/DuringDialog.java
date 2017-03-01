@@ -39,7 +39,7 @@ import cc.metapro.openct.utils.Constants;
 public class DuringDialog extends DialogFragment {
 
     private static boolean[] DURING;
-    @BindView(R.id.during_grid)
+    @BindView(R.id.during_container)
     GridLayout mGridLayout;
     private TextView[][] selections;
 

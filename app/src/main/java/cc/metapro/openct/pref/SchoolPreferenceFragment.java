@@ -16,6 +16,7 @@ package cc.metapro.openct.pref;
  * limitations under the License.
  */
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -101,7 +102,9 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ActivityUtils.getProgressDialog(getActivity(), R.string.loading_university_info_list).show();
+                                final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(getActivity(), R.string.loading_university_info_list);
+                                progressDialog.show();
+
                                 Observable<List<UniversityInfo>> observable = Observable.create(new ObservableOnSubscribe<List<UniversityInfo>>() {
                                     @Override
                                     public void subscribe(ObservableEmitter<List<UniversityInfo>> e) throws Exception {
@@ -117,7 +120,7 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
                                 Observer<List<UniversityInfo>> observer = new MyObserver<List<UniversityInfo>>(TAG) {
                                     @Override
                                     public void onNext(final List<UniversityInfo> universityList) {
-                                        ActivityUtils.dismissProgressDialog();
+                                        progressDialog.dismiss();
                                         new AlertDialog.Builder(getActivity())
                                                 .setTitle("提示")
                                                 .setMessage("共有 " + universityList.size() + " 条学校信息, 是否替换当前所有学校信息")
@@ -134,7 +137,7 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
                                     @Override
                                     public void onError(Throwable e) {
                                         super.onError(e);
-                                        ActivityUtils.dismissProgressDialog();
+                                        progressDialog.dismiss();
                                         Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
                                     }
                                 };

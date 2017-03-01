@@ -16,6 +16,7 @@ package cc.metapro.openct.allclasses;
  * limitations under the License.
  */
 
+import android.app.FragmentManager;
 import android.support.annotation.ColorInt;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -40,17 +41,17 @@ import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.REHelper;
 
-import static cc.metapro.openct.allclasses.AllClassesActivity.allClasses;
+import static cc.metapro.openct.allclasses.AllClassesPresenter.allClasses;
 
 
 class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassViewHolder> {
 
     private LayoutInflater mInflater;
-    private AppCompatActivity mActivity;
+    private FragmentManager mFragmentManager;
 
     AllClassesAdapter(AppCompatActivity activity) {
         mInflater = LayoutInflater.from(activity);
-        mActivity = activity;
+        mFragmentManager = activity.getFragmentManager();
     }
 
     @Override
@@ -60,7 +61,7 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassView
 
     @Override
     public void onBindViewHolder(ClassViewHolder holder, int position) {
-        holder.setInfo(allClasses.get(position), mActivity, position);
+        holder.setInfo(allClasses.get(position), mFragmentManager, position);
     }
 
     @Override
@@ -87,7 +88,7 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassView
             ButterKnife.bind(this, itemView);
         }
 
-        void setInfo(final EnrichedClassInfo info, final AppCompatActivity activity, final int position) {
+        void setInfo(final EnrichedClassInfo info, final FragmentManager manager, final int position) {
             mColor.setBackgroundColor(info.getColor());
             mName.setText(info.getName() + "   " + info.getType());
             String time = "";
@@ -120,13 +121,13 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassView
 
                         }
                     });
-                    dialog.show(activity.getFragmentManager(), "color_picker");
+                    dialog.show(manager, "color_picker");
                 }
             });
             mEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ClassDetailActivity.actionStart(mName.getContext(), position);
+                    ClassDetailActivity.actionStart(mName.getContext(), info.getName());
                 }
             });
         }

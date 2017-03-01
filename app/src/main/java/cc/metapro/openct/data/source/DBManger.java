@@ -131,7 +131,7 @@ public class DBManger {
         }
     }
 
-    public void updateAdvancedCustomClassInfo(AdvancedCustomInfo info) {
+    public void updateAdvCustomInfo(AdvancedCustomInfo info) {
         mDatabase.beginTransaction();
         try {
             String json = info.toString();
@@ -173,17 +173,25 @@ public class DBManger {
         }
     }
 
-    @Nullable
+    @NonNull
     UniversityInfo getCustomUniversity() {
         Cursor cursor = null;
         try {
             cursor = mDatabase.query(
                     DBHelper.CUSTOM_TABLE, null, null, null, null, null, null);
             cursor.moveToFirst();
-            return StoreHelper.fromJson(cursor.getString(1), UniversityInfo.class);
+            UniversityInfo universityInfo = null;
+            if (!cursor.isAfterLast()) {
+                universityInfo = StoreHelper.fromJson(cursor.getString(1), UniversityInfo.class);
+            }
+            if (universityInfo == null) {
+                universityInfo = new UniversityInfo("OpenCT", "custom", "example.com", "custom", "example.com");
+            }
+            cursor.close();
+            return universityInfo;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
-            return null;
+            return new UniversityInfo("OpenCT", "custom", "example.com", "custom", "example.com");
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -191,7 +199,7 @@ public class DBManger {
         }
     }
 
-    @Nullable
+    @NonNull
     UniversityInfo getUniversity(String name) {
         Cursor cursor = null;
         try {
@@ -203,6 +211,41 @@ public class DBManger {
             UniversityInfo info = null;
             if (!cursor.isAfterLast()) {
                 info = StoreHelper.fromJson(cursor.getString(1), UniversityInfo.class);
+            }
+            if (info == null) {
+                info = new UniversityInfo("OpenCT", "custom", "example.com", "custom", "example");
+            }
+            cursor.close();
+            return info;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+            return new UniversityInfo("OpenCT", "custom", "example.com", "custom", "example");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    /**
+     * return a class info according to the given name, if not exists, return null
+     *
+     * @param name class name
+     */
+    @Nullable
+    public EnrichedClassInfo getSingleClass(String name) {
+        Cursor cursor = null;
+        try {
+            if (TextUtils.isEmpty(name)) {
+                throw new Exception("school class name must not be empty");
+            }
+            cursor = mDatabase.query(DBHelper.CLASS_TABLE, null,
+                    "id=? COLLATE NOCASE", new String[]{name},
+                    null, null, null);
+            cursor.moveToFirst();
+            EnrichedClassInfo info = null;
+            if (!cursor.isAfterLast()) {
+                info = StoreHelper.fromJson(cursor.getString(1), EnrichedClassInfo.class);
             }
             cursor.close();
             return info;
@@ -216,6 +259,50 @@ public class DBManger {
         }
     }
 
+    /**
+     * update the class info you have edited, no duplicated name please
+     *
+     * @param oldName old name of edited class info, null if it's a new one
+     * @param newName new name of edited class info, should not be empty
+     * @param info    edited class info
+     * @throws Exception if the edited class info with a empty name
+     */
+    public void updateSingleClass(@Nullable String oldName, @NonNull String newName, EnrichedClassInfo info) throws Exception {
+        mDatabase.beginTransaction();
+        Cursor cursor = null;
+        try {
+            if (!TextUtils.isEmpty(oldName)) {
+                mDatabase.delete(DBHelper.CLASS_TABLE, "id=? COLLATE NOCASE", new String[]{oldName});
+            }
+
+            // check if the new name exists
+            cursor = mDatabase.query(
+                    DBHelper.CLASS_TABLE, null,
+                    "id=? COLLATE NOCASE", new String[]{newName},
+                    null, null, null);
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast()) {
+                throw new Exception("Duplicate class name, won't be accepted!");
+            } else {
+                ContentValues values = new ContentValues();
+                values.put("id", newName);
+                values.put(DBHelper.JSON, info.toString());
+                mDatabase.insert(DBHelper.CLASS_TABLE, null, values);
+            }
+            mDatabase.setTransactionSuccessful();
+        } finally {
+            mDatabase.endTransaction();
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    /**
+     * update all class you have got
+     *
+     * @param classes all classes you have got
+     */
     public void updateClasses(@Nullable Classes classes) {
         mDatabase.beginTransaction();
         try {
@@ -224,10 +311,10 @@ public class DBManger {
                 for (EnrichedClassInfo c : classes) {
                     String target = c.toString();
                     if (!TextUtils.isEmpty(target)) {
-                        mDatabase.execSQL(
-                                "INSERT INTO " + DBHelper.CLASS_TABLE + " VALUES(?, ?)",
-                                new Object[]{c.getName(), target}
-                        );
+                        ContentValues contentValues = new ContentValues(2);
+                        contentValues.put("id", c.getName());
+                        contentValues.put(DBHelper.JSON, target);
+                        mDatabase.insert(DBHelper.CLASS_TABLE, null, contentValues);
                     }
                 }
             }
@@ -237,6 +324,9 @@ public class DBManger {
         }
     }
 
+    /**
+     * get all classes you have stored
+     */
     @NonNull
     public Classes getClasses() {
         Cursor cursor = null;
@@ -248,6 +338,7 @@ public class DBManger {
                 classes.add(StoreHelper.fromJson(cursor.getString(1), EnrichedClassInfo.class));
                 cursor.moveToNext();
             }
+            cursor.close();
             return classes;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -291,6 +382,7 @@ public class DBManger {
                 grades.add(StoreHelper.fromJson(cursor.getString(1), GradeInfo.class));
                 cursor.moveToNext();
             }
+            cursor.close();
             return grades;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -334,6 +426,7 @@ public class DBManger {
                 grades.add(StoreHelper.fromJson(cursor.getString(1), BorrowInfo.class));
                 cursor.moveToNext();
             }
+            cursor.close();
             return grades;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);

@@ -27,7 +27,7 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.classdetail.ClassDetailActivity;
 import cc.metapro.openct.utils.Constants;
 
-public class SingleClass implements Comparable<SingleClass> {
+public class SingleClass implements Comparable<SingleClass>, View.OnClickListener {
 
     private String name;
     private String type;
@@ -98,16 +98,16 @@ public class SingleClass implements Comparable<SingleClass> {
         gridLayout.addView(card);
         card.getLayoutParams().height = length * Constants.CLASS_BASE_HEIGHT;
         card.getLayoutParams().width = Constants.CLASS_WIDTH;
-        card.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ClassDetailActivity.actionStart(gridLayout.getContext(), name);
-            }
-        });
+        card.setOnClickListener(this);
     }
 
     @Override
     public int compareTo(@NonNull SingleClass o) {
         return time.compareTo(o.time);
+    }
+
+    @Override
+    public void onClick(View v) {
+        ClassDetailActivity.actionStart(v.getContext(), name);
     }
 }
