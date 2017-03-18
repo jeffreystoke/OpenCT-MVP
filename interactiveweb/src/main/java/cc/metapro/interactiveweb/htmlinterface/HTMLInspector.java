@@ -16,38 +16,27 @@ package cc.metapro.interactiveweb.htmlinterface;
  * limitations under the License.
  */
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.webkit.ValueCallback;
-
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public interface HTMLInspector {
 
-    @NonNull
     String getPageSource();
 
     /**
      * @return 所有 DOM 对象, 包括 iFrame 中的网页 DOM
      */
-    @Nullable
     Document getPageDom();
 
-    @Nullable
     Element getElementById(String id);
 
-    @Nullable
     Elements getElementsByName(String name);
 
-    @Nullable
     Elements getElementsByTag(String tag);
 
-    @Nullable
     Elements getElementsByClass(String c);
 
-    @Nullable
-    Elements getElementsByAttr(String attr, @Nullable String value);
+    Elements getElementsByAttr(String attr, String value);
 
 }

@@ -16,8 +16,6 @@ package cc.metapro.interactiveweb.utils;
  * limitations under the License.
  */
 
-import android.support.annotation.Nullable;
-
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -59,7 +57,6 @@ public class HTMLUtils {
         return element.toString();
     }
 
-    @Nullable
     public static Element getElementSimilar(Document document, Element element) {
         if (element == null) return null;
         Elements elements = document.select(element.tagName());

@@ -16,7 +16,6 @@ package cc.metapro.interactiveweb.utils;
  * limitations under the License.
  */
 
-import android.support.annotation.NonNull;
 import android.webkit.WebView;
 
 import cc.metapro.interactiveweb.JsInteraction;
@@ -32,7 +31,7 @@ public final class JSUtils {
                     "targ.click();" +
                     "window." + JsInteraction.INTERFACE_NAME + ".onClicked(targ.outerHTML);}\"";
 
-    public static void injectClickListener(@NonNull final WebView webView) {
+    public static void injectClickListener(final WebView webView) {
         webView.post(new Runnable() {
             @Override
             public void run() {
@@ -48,7 +47,7 @@ public final class JSUtils {
         });
     }
 
-    public static void loadPageSource(@NonNull final WebView webView) {
+    public static void loadPageSource(final WebView webView) {
         webView.post(new Runnable() {
             @Override
             public void run() {
@@ -63,7 +62,7 @@ public final class JSUtils {
         });
     }
 
-    public static void clickById(@NonNull final WebView webView, final String id) {
+    public static void clickById(final WebView webView, final String id) {
         webView.post(new Runnable() {
             @Override
             public void run() {
@@ -72,7 +71,7 @@ public final class JSUtils {
         });
     }
 
-    public static void clickByName(@NonNull final WebView webView, final String name) {
+    public static void clickByName(final WebView webView, final String name) {
         webView.post(new Runnable() {
             @Override
             public void run() {
@@ -85,7 +84,7 @@ public final class JSUtils {
         });
     }
 
-    public static void clickByTag(@NonNull final WebView webView, final String tag) {
+    public static void clickByTag(final WebView webView, final String tag) {
         webView.post(new Runnable() {
             @Override
             public void run() {
@@ -98,7 +97,7 @@ public final class JSUtils {
         });
     }
 
-    public static void clickByPattern(@NonNull final WebView webView, final String pattern) {
+    public static void clickByPattern(final WebView webView, final String pattern) {
         webView.post(new Runnable() {
             @Override
             public void run() {
@@ -114,7 +113,7 @@ public final class JSUtils {
         });
     }
 
-    public static void setById(@NonNull final WebView webView, final String id, final String key, final String value) {
+    public static void setById(final WebView webView, final String id, final String key, final String value) {
         webView.post(new Runnable() {
             @Override
             public void run() {
@@ -125,7 +124,7 @@ public final class JSUtils {
 
     }
 
-    public static void setByTag(@NonNull final WebView webView, final String tag, final String key, final String value) {
+    public static void setByTag(final WebView webView, final String tag, final String key, final String value) {
         webView.post(new Runnable() {
             @Override
             public void run() {
@@ -138,7 +137,7 @@ public final class JSUtils {
         });
     }
 
-    public static void setByName(@NonNull final WebView webView, final String name, final String key, final String value) {
+    public static void setByName(final WebView webView, final String name, final String key, final String value) {
         webView.post(new Runnable() {
             @Override
             public void run() {
@@ -152,7 +151,7 @@ public final class JSUtils {
         });
     }
 
-    public static void setByPattern(@NonNull final WebView webView, final String pattern, final String key, final String value) {
+    public static void setByPattern(final WebView webView, final String pattern, final String key, final String value) {
         webView.post(new Runnable() {
             @Override
             public void run() {
@@ -169,7 +168,7 @@ public final class JSUtils {
         });
     }
 
-    public static void focusById(@NonNull final WebView webView, final String id) {
+    public static void focusById(final WebView webView, final String id) {
         webView.post(new Runnable() {
             @Override
             public void run() {
@@ -178,7 +177,7 @@ public final class JSUtils {
         });
     }
 
-    public static void focusByName(@NonNull final WebView webView, final String name) {
+    public static void focusByName(final WebView webView, final String name) {
         webView.post(new Runnable() {
             @Override
             public void run() {

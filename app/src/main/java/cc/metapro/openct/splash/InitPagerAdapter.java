@@ -16,53 +16,36 @@ package cc.metapro.openct.splash;
  * limitations under the License.
  */
 
-import android.content.Context;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import java.util.ArrayList;
-import java.util.List;
+import cc.metapro.openct.splash.views.CmsFragment;
+import cc.metapro.openct.splash.views.LibraryFragment;
+import cc.metapro.openct.splash.views.SchoolFragment;
 
 
 class InitPagerAdapter extends FragmentStatePagerAdapter {
 
-    private Context mContext;
-    private List<InitPagerFragment> mFragments;
-    private int[] TYPES = {InitPagerFragment.TYPE_SCHOOL_INFO, InitPagerFragment.TYPE_CMS_INFO, InitPagerFragment.TYPE_LIB_INFO};
-
-    InitPagerAdapter(Context context, FragmentManager fm) {
+    InitPagerAdapter(FragmentManager fm) {
         super(fm);
-        mContext = context;
-        mFragments = new ArrayList<>();
-        setFragments();
-    }
-
-    private void setFragments() {
-        for (int TYPE : TYPES) {
-            Bundle bundle = new Bundle();
-            bundle.putInt(InitPagerFragment.TYPE_KEY, TYPE);
-            InitPagerFragment fragment = new InitPagerFragment();
-            fragment.setArguments(bundle);
-            fragment.setContext(mContext);
-            mFragments.add(fragment);
-        }
-    }
-
-    void storeSettings() {
-        for (InitPagerFragment fragment : mFragments) {
-            fragment.storeInfo();
-        }
     }
 
     @Override
     public Fragment getItem(int position) {
-        return mFragments.get(position);
+        switch (position) {
+            case 0:
+                return SchoolFragment.getInstance();
+            case 1:
+                return CmsFragment.getInstance();
+            case 2:
+                return LibraryFragment.getInstance();
+        }
+        throw new IndexOutOfBoundsException("three fragments at most!");
     }
 
     @Override
     public int getCount() {
-        return mFragments.size();
+        return 3;
     }
 }

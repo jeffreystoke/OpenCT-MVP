@@ -23,6 +23,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -62,10 +64,26 @@ public class SchoolSelectionActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_school_selection);
         ButterKnife.bind(this);
-
         setSupportActionBar(mToolbar);
-
         result = PrefHelper.getString(this, R.string.pref_school_name, "");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.schools, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.update:
+                break;
+            case R.id.report:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

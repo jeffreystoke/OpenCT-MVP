@@ -304,4 +304,13 @@
     <string name="load_fail_tip">Load from web page?</string>
     <string name="excel_fail_tip">Failed import from table</string>
     <string name="paste_content_here">Paste your table here</string>
+    <string name="add_info">Add Info</string>
+    <string name="finish">Finish</string>
+    <string name="can_not_fetch_target_page">Can\'t fetch target page according to previous settings</string>
+    <string name="fetch_remote_school_list_tip">You\'re going to update school list from github repo, continue?</string>
+    <string name="fetch_school_list_fail">Fetch school list fail, please check your network</string>
+    <string name="updated_schools"><![CDATA[更新成功, 请到 设置 -> 学校 搜索并选择你想要的学校]]></string>
+    <string name="sift_contents">Sift Content Display</string>
+    <string name="borrows_cannot_filter_tip">No borrows here, no filter available</string>
+    <string name="report_school">Report School</string>
 </resources>

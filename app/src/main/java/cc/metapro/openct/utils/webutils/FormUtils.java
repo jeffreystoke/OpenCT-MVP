@@ -188,8 +188,8 @@ public class FormUtils {
     }
 
     public static View getFormView(Context context, ViewGroup container, Form form) throws Exception {
-        View view = LayoutInflater.from(context).inflate(R.layout.dialog_form, container, false);
-        LinearLayout baseLinearLayout = (LinearLayout) view.findViewById(R.id.form_content_layout);
+        View view = LayoutInflater.from(context).inflate(R.layout.dialog_empty_vertical_linearlayout, container, false);
+        LinearLayout baseLinearLayout = (LinearLayout) view.findViewById(R.id.content);
         LinkedHashMap<String, Elements> formItems = form.getFormItems();
         for (Elements elements : formItems.values()) {
             Element e = elements.first();

@@ -7,4 +7,9 @@
 
     <dimen name="widget_margin">8dp</dimen>
     <dimen name="toolbar_padding_top">0dp</dimen>
+
+    <dimen name="small_text">12sp</dimen>
+    <dimen name="medium_text">14sp</dimen>
+    <dimen name="large_text">16sp</dimen>
+    <dimen name="ex_large_text">18sp</dimen>
 </resources>

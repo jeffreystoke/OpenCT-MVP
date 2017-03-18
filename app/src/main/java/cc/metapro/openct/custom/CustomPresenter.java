@@ -167,38 +167,6 @@ public class CustomPresenter implements CustomContract.Presenter {
 
         mObserver = new MyObserver<Map<Element, String>>(TAG) {
             @Override
-            public void onSubscribe(Disposable d) {
-                super.onSubscribe(d);
-                mWebView.setPageFinishCallback(new InteractiveWebViewClient.FinishCallBack() {
-                    @Override
-                    public void onPageFinish() {
-                        if (CMD_INDEX < commands.size()) {
-                            onNext(commands.get(CMD_INDEX++));
-                            mWebView.setPageFinishCallback(new InteractiveWebViewClient.FinishCallBack() {
-                                @Override
-                                public void onPageFinish() {
-                                    mView.enableNextStep();
-                                }
-                            });
-                            mWebView.setOnStartCallBack(new InteractiveWebViewClient.StartCallBack() {
-                                @Override
-                                public void onPageStart() {
-                                    mView.disableNextStep();
-                                }
-                            });
-                        }
-                    }
-                });
-
-                mWebView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mWebView.loadUrl(mView.getUrl());
-                    }
-                });
-            }
-
-            @Override
             public void onNext(Map<Element, String> map) {
                 for (Element e : map.keySet()) {
                     String command = map.get(e);

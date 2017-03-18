@@ -82,18 +82,12 @@
             android:summary="@string/class_settings_tip"
             android:title="@string/class_settings">
             <EditTextPreference
-                android:defaultValue="12"
-                android:inputType="numberDecimal"
                 android:key="@string/pref_daily_class_count"
                 android:title="@string/daily_class_count"/>
             <EditTextPreference
-                android:defaultValue="45"
-                android:inputType="numberDecimal"
                 android:key="@string/pref_every_class_time"
                 android:title="@string/time_pre_class"/>
             <EditTextPreference
-                android:defaultValue="10"
-                android:inputType="numberDecimal"
                 android:key="@string/pref_rest_time"
                 android:title="@string/rest_time"/>
         </PreferenceScreen>
@@ -155,7 +149,6 @@
                     android:positiveButtonText="@null"
                     android:title="@string/cms_sys"/>
                 <EditTextPreference
-                    android:defaultValue=""
                     android:inputType="textUri"
                     android:key="@string/pref_custom_cms_url"
                     android:title="@string/address"/>
@@ -171,7 +164,6 @@
                     android:positiveButtonText="@null"
                     android:title="@string/lib_sys"/>
                 <EditTextPreference
-                    android:defaultValue=""
                     android:inputType="textUri"
                     android:key="@string/pref_custom_lib_url"
                     android:title="@string/address"/>
@@ -182,25 +174,7 @@
     <!--个性化-->
     <PreferenceCategory
         android:title="@string/personalise">
-
-        <!--<PreferenceScreen-->
-            <!--android:summary="自定义主题色与背景图片 (不推荐使用图案或色彩复杂的图片)"-->
-            <!--android:title="主题与背景">-->
-            <!--<Preference-->
-                <!--android:summary="设置主要的颜色"-->
-                <!--android:title="主题色"/>-->
-            <!--<Preference-->
-                <!--android:title="课程顶部图片"/>-->
-            <!--<Preference-->
-                <!--android:title="成绩查询顶部图片"/>-->
-            <!--<Preference-->
-                <!--android:title="馆藏查询顶部图片"/>-->
-            <!--<Preference-->
-                <!--android:title="借阅信息顶部图片"/>-->
-        <!--</PreferenceScreen>-->
-
         <ListPreference
-            android:defaultValue="0"
             android:entries="@array/pref_homepage_selection_keys"
             android:entryValues="@array/pref_homepage_selection_values"
             android:key="@string/pref_homepage_selection"
@@ -214,23 +188,9 @@
             android:title="@string/empty_class_motto"/>
     </PreferenceCategory>
 
-    <!--<PreferenceCategory-->
-        <!--android:title="学校信息相关">-->
-        <!--<Preference-->
-            <!--android:summary="将你自定义的学校信息发布到开源课程表的校园信息库, 当然, 提交后需要一些时间进行审核"-->
-            <!--android:title="提交学校"/>-->
-    <!--</PreferenceCategory>-->
-
     <!--关于-->
     <PreferenceCategory
         android:title="@string/about_openct">
-        <!--校园信息更新-->
-        <Preference
-            android:key="@string/pref_check_school_info_update"
-            android:title="@string/check_schools_update"/>
-        <Preference
-            android:summary="@string/encryption_tip"
-            android:title="@string/security"/>
         <Preference
             android:summary="@string/project_url"
             android:title="@string/project_address">
@@ -246,4 +206,5 @@
                 android:data="@string/apache_license2_url"/>
         </Preference>
     </PreferenceCategory>
+
 </PreferenceScreen>

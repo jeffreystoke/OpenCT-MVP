@@ -20,19 +20,15 @@ import android.util.Log;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.ResourceObserver;
 
 
-public abstract class MyObserver<T> implements Observer<T> {
+public abstract class MyObserver<T> extends ResourceObserver<T> {
 
     private String TAG;
 
     public MyObserver(String tag) {
         TAG = tag;
-    }
-
-    @Override
-    public void onSubscribe(Disposable d) {
-
     }
 
     @Override

@@ -49,8 +49,6 @@ import cc.metapro.openct.utils.RecyclerViewHelper;
 
 public class BorrowActivity extends AppCompatActivity implements BorrowContract.View {
 
-    private final String TAG = BorrowActivity.class.getName();
-
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.fab)
@@ -105,30 +103,13 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
     }
 
     @Override
-    public void showDue(@NonNull List<BorrowInfo> borrows) {
-        try {
-            List<BorrowInfo> dueInfo = new ArrayList<>(borrows.size());
-            Date toDay = Calendar.getInstance().getTime();
-            for (BorrowInfo b : borrows) {
-                if (b.isExceeded(toDay)) {
-                    dueInfo.add(b);
-                }
-            }
-            mBorrowAdapter.setNewBorrows(dueInfo);
-            mBorrowAdapter.notifyDataSetChanged();
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
-
-    @Override
-    public void showAll(List<BorrowInfo> borrows) {
-        try {
+    public void updateBorrows(List<BorrowInfo> borrows) {
+        if (borrows == null) {
+            // TODO: 17/3/2 notice empty borrows
+        } else {
             mBorrowAdapter.setNewBorrows(borrows);
             mBorrowAdapter.notifyDataSetChanged();
             Snackbar.make(mRecyclerView, getString(R.string.total_to) + " " + borrows.size() + " " + getString(R.string.borrow_entries), BaseTransientBottomBar.LENGTH_LONG).show();
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -136,11 +117,14 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.show_all:
-                showAll(mPresenter.getBorrows());
+                mPresenter.showAll();
                 break;
             case R.id.show_due:
-                showDue(mPresenter.getBorrows());
+                mPresenter.showDue();
                 break;
+//            case R.id.filter:
+//                mPresenter.startFilter(getSupportFragmentManager());
+//                break;
         }
         return super.onOptionsItemSelected(item);
     }

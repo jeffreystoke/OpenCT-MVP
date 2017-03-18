@@ -17,8 +17,6 @@ package cc.metapro.interactiveweb;
  */
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.webkit.WebSettings;
@@ -224,50 +222,43 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
         return false;
     }
 
-    @NonNull
     @Override
     public String getPageSource() {
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
         return document == null ? "" : document.html();
     }
 
-    @Nullable
     @Override
     public Document getPageDom() {
         return mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
     }
 
-    @Nullable
     @Override
     public Element getElementById(String id) {
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
         return document == null || TextUtils.isEmpty(id) ? null : document.getElementById(id);
     }
 
-    @Nullable
     @Override
     public Elements getElementsByName(String name) {
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
         return document == null || TextUtils.isEmpty(name) ? null : document.getElementsByAttributeValue("name", name);
     }
 
-    @Nullable
     @Override
     public Elements getElementsByTag(String tag) {
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
         return document == null || TextUtils.isEmpty(tag) ? null : document.getElementsByTag(tag);
     }
 
-    @Nullable
     @Override
     public Elements getElementsByClass(String c) {
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
         return document == null || TextUtils.isEmpty(c) ? null : document.getElementsByClass(c);
     }
 
-    @Nullable
     @Override
-    public Elements getElementsByAttr(String attr, @Nullable String value) {
+    public Elements getElementsByAttr(String attr, String value) {
         Document document = mVisitedPageDomMap.get(mWebViewClient.getCurrentPageURL());
         return document == null || TextUtils.isEmpty(attr) ? null : document.getElementsByAttributeValue(attr, value == null ? "" : value);
     }
@@ -293,6 +284,6 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
     }
 
     public interface ClickCallback {
-        void onClick(@NonNull Element element);
+        void onClick(Element element);
     }
 }

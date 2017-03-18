@@ -227,7 +227,6 @@ public class LinkSelectionDialog extends DialogFragment {
                 mLinks = DOCUMENT.select("a:matches(借阅)");
                 break;
         }
-
         addRadioOptions();
     }
 

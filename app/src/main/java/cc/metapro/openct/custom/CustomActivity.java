@@ -38,7 +38,6 @@ import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 
-@Keep
 public class CustomActivity extends AppCompatActivity implements CustomContract.View {
 
     public static final String TAG = CustomActivity.class.getSimpleName();

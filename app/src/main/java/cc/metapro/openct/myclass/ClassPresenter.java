@@ -154,8 +154,7 @@ class ClassPresenter implements ClassContract.Presenter {
                             @Override
                             public void onError(Throwable e) {
                                 super.onError(e);
-                                // TODO: 17/3/1 translation
-                                Toast.makeText(mContext, "根据之前的设置未能获取到预期的页面\n\n需要重新执行", Toast.LENGTH_LONG).show();
+                                Toast.makeText(mContext, R.string.can_not_fetch_target_page, Toast.LENGTH_LONG).show();
                                 ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, userCenterDom, ClassPresenter.this);
                             }
                         };

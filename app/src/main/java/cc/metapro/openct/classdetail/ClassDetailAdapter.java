@@ -63,29 +63,19 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
 
     static class ClassDetailViewHolder extends RecyclerView.ViewHolder {
 
-        // 星期
         @BindView(R.id.week_day)
         Spinner mWeekDay;
-
-        // 时间
         @BindView(R.id.time_start)
         MaterialEditText mTimeStart;
         @BindView(R.id.time_end)
         MaterialEditText mTimeEnd;
-
-        // 周期
         @BindView(R.id.during_container)
         LinearLayout mDuringContainer;
         TextView[] selections = new TextView[Constants.WEEKS];
-
-        // 教师
         @BindView(R.id.class_teacher)
         MaterialEditText mTeacher;
-
-        // 地点
         @BindView(R.id.class_place)
         MaterialEditText mPlace;
-
         @BindView(R.id.edit)
         TextView mEdit;
 
@@ -102,6 +92,11 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
             mTimeEnd.setEnabled(isEditable);
             mTeacher.setEnabled(isEditable);
             mPlace.setEnabled(isEditable);
+            if (selections != null) {
+                for (TextView textView : selections) {
+                    textView.setEnabled(isEditable);
+                }
+            }
             if (isEditable) {
                 mEdit.setText(R.string.save);
                 mEdit.setOnClickListener(new View.OnClickListener() {

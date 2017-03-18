@@ -47,12 +47,10 @@
     <!--教务网用户名密码-->
     <string name="pref_cms_username" translatable="false">cms_username</string>
     <string name="pref_cms_password" translatable="false">cms_password</string>
-    <string name="pref_cms_password_encrypted" translatable="false">cms_password_encrypted</string>
 
     <!--图书馆用户名密码-->
     <string name="pref_lib_username" translatable="false">lib_username</string>
     <string name="pref_lib_password" translatable="false">lib_password</string>
-    <string name="pref_lib_password_encrypted" translatable="false">lib_password_encrypted</string>
 
     <!--使用自定义学校-->
     <string name="pref_custom_enable" translatable="false">custom_enable</string>

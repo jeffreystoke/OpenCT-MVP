@@ -77,8 +77,9 @@ class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowViewHolder>
 
         public void setInfo(@Nullable BorrowInfo info) {
             if (info != null) {
-                mTitle.setText(info.toFullString());
+                mTitle.setText(info.getFilteredContent(BorrowPresenter.list));
             }
         }
     }
+
 }

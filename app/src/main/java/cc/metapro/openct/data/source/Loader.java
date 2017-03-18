@@ -155,12 +155,9 @@ public class Loader {
     @NonNull
     public static Map<String, String> getLibStuInfo(Context context) {
         Map<String, String> map = new HashMap<>(2);
-        boolean needEncrypt = PrefHelper.getBoolean(context, R.string.pref_need_encryption);
         try {
             String password = PrefHelper.getString(context, R.string.pref_lib_password, "");
-            if (needEncrypt) {
-                password = AESCrypt.decrypt(Constants.seed, password);
-            }
+            password = AESCrypt.decrypt(Constants.seed, password);
             if (!TextUtils.isEmpty(password)) {
                 map.put(context.getString(R.string.key_username), PrefHelper.getString(context, R.string.pref_lib_username, ""));
                 map.put(context.getString(R.string.key_password), password);
@@ -174,12 +171,9 @@ public class Loader {
     @NonNull
     public static Map<String, String> getCmsStuInfo(Context context) {
         Map<String, String> map = new HashMap<>(2);
-        boolean needEncrypt = PrefHelper.getBoolean(context, R.string.pref_need_encryption);
         try {
             String password = PrefHelper.getString(context, R.string.pref_cms_password, "");
-            if (needEncrypt) {
-                password = AESCrypt.decrypt(Constants.seed, password);
-            }
+            password = AESCrypt.decrypt(Constants.seed, password);
             if (!TextUtils.isEmpty(password)) {
                 map.put(context.getString(R.string.key_username), PrefHelper.getString(context, R.string.pref_cms_username, ""));
                 map.put(context.getString(R.string.key_password), password);

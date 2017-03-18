@@ -52,7 +52,7 @@ public class FormDialog extends DialogFragment {
 
     private static Document document;
     private static LoginPresenter mPresenter;
-    @BindView(R.id.form_content_layout)
+    @BindView(R.id.content)
     LinearLayout mBaseLinearLayout;
     private Form mForm;
     private boolean selectionChanged;

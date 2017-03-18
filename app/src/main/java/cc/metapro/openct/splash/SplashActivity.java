@@ -18,14 +18,11 @@ package cc.metapro.openct.splash;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.myclass.ClassActivity;
 import cc.metapro.openct.utils.ActivityUtils;
@@ -40,69 +37,53 @@ public class SplashActivity extends AppCompatActivity {
     @BindView(R.id.indicator)
     CircleIndicator mIndicator;
 
-    @BindView(R.id.fab)
-    FloatingActionButton mFab;
-    private int currentPageIndex = 0;
-    private InitPagerAdapter mPagerAdapter;
-
-    @OnClick(R.id.fab)
-    public void nextPage() {
-        mViewPager.setCurrentItem(currentPageIndex + 1);
-    }
+    private boolean misScrolled = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (PrefHelper.getBoolean(this, R.string.pref_initialed)) {
-            Intent intent = new Intent(this, ClassActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, ClassActivity.class));
             finish();
         }
         PrefHelper.putBoolean(this, R.string.pref_initialed, true);
-
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
         setViewPager();
     }
 
     private void setViewPager() {
-        mPagerAdapter = new InitPagerAdapter(this, getSupportFragmentManager());
-        mViewPager.setAdapter(mPagerAdapter);
-        mPagerAdapter.notifyDataSetChanged();
+        final InitPagerAdapter pagerAdapter = new InitPagerAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(pagerAdapter);
         mIndicator.setViewPager(mViewPager);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
             public void onPageSelected(int position) {
-                currentPageIndex = position;
-                if (position == 2) {
-                    mFab.setImageResource(R.drawable.ic_ok);
-                    mFab.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mPagerAdapter.storeSettings();
-                            Intent intent = new Intent(SplashActivity.this, ClassActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    });
-                }
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                switch (state) {
+                    case ViewPager.SCROLL_STATE_IDLE:
+                        if (mViewPager.getCurrentItem() == pagerAdapter.getCount() - 1 && !misScrolled) {
+                            pagerAdapter.getItem(pagerAdapter.getCount() - 1).setUserVisibleHint(false);
+                            startActivity(new Intent(SplashActivity.this, ClassActivity.class));
+                            finish();
+                        }
+                        misScrolled = false;
+                        break;
+                    case ViewPager.SCROLL_STATE_DRAGGING:
+                        misScrolled = false;
+                        break;
+                    case ViewPager.SCROLL_STATE_SETTLING:
+                        misScrolled = true;
+                        break;
+                }
             }
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        ActivityUtils.encryptionCheck(this);
-        super.onDestroy();
     }
 }

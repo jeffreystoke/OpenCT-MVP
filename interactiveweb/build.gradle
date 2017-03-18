@@ -24,7 +24,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
-        versionName "0.0.1"
+        versionName "0.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 }
@@ -36,5 +36,4 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'org.jsoup:jsoup:1.10.2'
-    compile 'com.android.support:appcompat-v7:25.2.0'
 }

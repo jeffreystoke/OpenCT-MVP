@@ -39,10 +39,4 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"/>
     </FrameLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        style="@style/AppTheme.Fab"
-        android:layout_gravity="bottom|end"
-        android:src="@drawable/ic_next"/>
 </android.support.design.widget.CoordinatorLayout>

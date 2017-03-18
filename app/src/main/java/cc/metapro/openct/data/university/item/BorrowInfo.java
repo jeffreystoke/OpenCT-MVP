@@ -17,13 +17,17 @@ package cc.metapro.openct.data.university.item;
  */
 
 import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -33,10 +37,10 @@ import cc.metapro.openct.utils.REHelper;
 @Keep
 public class BorrowInfo {
 
-    private Map<String, String> mTitleValueMap;
+    @NonNull private Map<String, String> mTitleValueMap = new LinkedHashMap<>();
 
     public BorrowInfo(Element th, Element tr) {
-        mTitleValueMap = new HashMap<>();
+        mTitleValueMap = new LinkedHashMap<>();
         Elements titles = th.select("td");
         Elements values = tr.select("td");
         int i = 0;
@@ -59,11 +63,22 @@ public class BorrowInfo {
         return false;
     }
 
-    public String toFullString() {
+    public String getFilteredContent(List<String> filter) {
+        if (filter != null) {
+            Collections.sort(filter);
+        }
+
         StringBuilder sb = new StringBuilder();
-        if (mTitleValueMap != null && !mTitleValueMap.isEmpty()) {
+        if (!mTitleValueMap.isEmpty()) {
             for (String key : mTitleValueMap.keySet()) {
-                sb.append(key).append(": ").append(mTitleValueMap.get(key)).append("\n\n");
+                if (filter != null) {
+                    int i = Collections.binarySearch(filter, key);
+                    if (i >= 0) {
+                        sb.append(key).append(": ").append(mTitleValueMap.get(key)).append("\n\n");
+                    }
+                } else {
+                    sb.append(key).append(": ").append(mTitleValueMap.get(key)).append("\n\n");
+                }
             }
 
             if (sb.charAt(sb.length() - 1) == '\n') {
@@ -71,6 +86,10 @@ public class BorrowInfo {
             }
         }
         return sb.toString();
+    }
+
+    public Collection<String> getTitles() {
+        return mTitleValueMap.keySet();
     }
 
     @Override

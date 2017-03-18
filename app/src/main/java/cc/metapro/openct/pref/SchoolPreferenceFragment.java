@@ -16,7 +16,6 @@ package cc.metapro.openct.pref;
  * limitations under the License.
  */
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,6 +29,7 @@ import android.preference.SwitchPreference;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.scottyab.aescrypt.AESCrypt;
@@ -40,23 +40,13 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.openctservice.ServiceGenerator;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.splash.schoolselection.SchoolSelectionActivity;
-import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.MyObserver;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.REHelper;
 import cc.metapro.openct.widget.DailyClassWidget;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class SchoolPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
@@ -86,71 +76,8 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         mPreferences = new ArrayList<>();
         mTimePreferences = new ArrayList<>();
 
-        setUpdatePreference();
         bindPreferences();
         bindListener();
-    }
-
-    private void setUpdatePreference() {
-        Preference checkSchoolUpdate = findPreference(getString(R.string.pref_check_school_info_update));
-        checkSchoolUpdate.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("注意")
-                        .setMessage("即将从开源课程表的 GitHub仓库获取最新学校信息, 是否继续?")
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(getActivity(), R.string.loading_university_info_list);
-                                progressDialog.show();
-
-                                Observable<List<UniversityInfo>> observable = Observable.create(new ObservableOnSubscribe<List<UniversityInfo>>() {
-                                    @Override
-                                    public void subscribe(ObservableEmitter<List<UniversityInfo>> e) throws Exception {
-                                        List<UniversityInfo> universityInfoList = ServiceGenerator
-                                                .createOpenCTService().getOnlineUniversityInfo().execute().body();
-                                        if (universityInfoList == null || universityInfoList.isEmpty()) {
-                                            e.onError(new Exception("获取仓库内校园信息失败, 请检查网络环境"));
-                                        } else {
-                                            e.onNext(universityInfoList);
-                                        }
-                                    }
-                                });
-                                Observer<List<UniversityInfo>> observer = new MyObserver<List<UniversityInfo>>(TAG) {
-                                    @Override
-                                    public void onNext(final List<UniversityInfo> universityList) {
-                                        progressDialog.dismiss();
-                                        new AlertDialog.Builder(getActivity())
-                                                .setTitle("提示")
-                                                .setMessage("共有 " + universityList.size() + " 条学校信息, 是否替换当前所有学校信息")
-                                                .setNegativeButton(android.R.string.cancel, null)
-                                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        DBManger.updateSchools(getActivity(), universityList);
-                                                        Toast.makeText(getActivity(), "更新成功, 请到 设置 -> 学校 搜索并选择你想要的学校", Toast.LENGTH_LONG).show();
-                                                    }
-                                                }).show();
-                                    }
-
-                                    @Override
-                                    public void onError(Throwable e) {
-                                        super.onError(e);
-                                        progressDialog.dismiss();
-                                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                                    }
-                                };
-
-                                observable.subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(observer);
-                            }
-                        })
-                        .setNegativeButton(android.R.string.cancel, null).show();
-                return true;
-            }
-        });
     }
 
     private void bindPreferences() {
@@ -163,6 +90,7 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         findPreference(getString(R.string.pref_custom_action_clear)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
+                // TODO: 17/3/2 better translation
                 new AlertDialog.Builder(getActivity())
                         .setTitle("提示")
                         .setMessage("这将清空你的操作记录, 是否继续?")
@@ -185,6 +113,7 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (mCustomEnablePreference.isChecked()) {
+                    // TODO: 17/3/2 better translation
                     Toast.makeText(getActivity(), "如需选择默认支持的学校请先停用基础自定义", Toast.LENGTH_LONG).show();
                 } else {
                     startActivityForResult(new Intent(getActivity(), SchoolSelectionActivity.class),
@@ -262,6 +191,7 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
             if (8 + i < 10) prefix += "0";
             int t = (8 + i) > 23 ? 23 : (8 + i);
             final String defaultValue = prefix + t + ":00";
+            // TODO: 17/3/2 better translation
             preference.setKey(key);
             preference.setTitle("第 " + (i + 1) + " 节");
             preference.setDefaultValue(defaultValue);
@@ -312,9 +242,9 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
                 bindSummary(mSchoolPreference, value);
             }
         } else if (preference.equals(mCmsPasswordPreference)) {
-            return encryption(preference, value, R.string.pref_cms_password, R.string.pref_cms_password_encrypted);
+            return encryption(preference, value, R.string.pref_cms_password);
         } else if (preference.equals(mLibPasswordPreference)) {
-            return encryption(preference, value, R.string.pref_lib_password, R.string.pref_lib_password_encrypted);
+            return encryption(preference, value, R.string.pref_lib_password);
         } else if (preference.equals(mDailyClassCountPreference)) {
             PrefHelper.putString(getActivity(), R.string.pref_daily_class_count, value);
             addTimePreferences();
@@ -323,29 +253,17 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         return true;
     }
 
-    private boolean encryption(Preference preference, String password, int passwordId, int encryptedId) {
-        SharedPreferences pref = preference.getSharedPreferences();
-        boolean needEncrypt = pref.getBoolean(getString(R.string.pref_need_encryption), true);
-        SharedPreferences.Editor editor = pref.edit();
-        if (needEncrypt) {
-            if (!TextUtils.isEmpty(password)) {
-                try {
-                    password = AESCrypt.encrypt(Constants.seed, password);
-                    editor.putString(getString(passwordId), password);
-                    editor.putBoolean(getString(encryptedId), true);
-                    preference.setSummary(R.string.encrypted);
-                    return false;
-                } catch (Exception e) {
-                    preference.setSummary(R.string.encrypt_fail);
-                    e.printStackTrace();
-                } finally {
-                    editor.apply();
-                }
+    private boolean encryption(Preference preference, String password, int passwordId) {
+        if (!TextUtils.isEmpty(password)) {
+            try {
+                password = AESCrypt.encrypt(Constants.seed, password);
+                PrefHelper.putString(getActivity(), getString(passwordId), password);
+                preference.setSummary(R.string.encrypted);
+                return false;
+            } catch (Exception e) {
+                preference.setSummary(R.string.encrypt_fail);
+                Log.e("ENCRYPTION FAIL", e.getMessage());
             }
-        } else {
-            editor.putBoolean(getString(encryptedId), false);
-            preference.setSummary(R.string.unencrypted);
-            return true;
         }
         return true;
     }

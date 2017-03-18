@@ -95,7 +95,7 @@
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_colorPressed="@color/colorAccent"
             fab:fab_colorRipple="@color/colorAccent"
-            fab:fab_label="开始"/>
+            fab:fab_label="@string/start"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_target"
@@ -106,7 +106,7 @@
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_colorPressed="@color/colorAccent"
             fab:fab_colorRipple="@color/colorAccent"
-            fab:fab_label="到达"/>
+            fab:fab_label="@string/finish"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 </android.support.design.widget.CoordinatorLayout>

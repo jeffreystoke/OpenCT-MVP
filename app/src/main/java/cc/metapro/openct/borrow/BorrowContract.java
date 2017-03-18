@@ -17,6 +17,7 @@ package cc.metapro.openct.borrow;
  */
 
 import android.support.annotation.Keep;
+import android.support.v4.app.FragmentManager;
 
 import java.util.List;
 
@@ -29,19 +30,21 @@ public interface BorrowContract {
 
     interface View extends BaseView<Presenter> {
 
-        void showDue(List<BorrowInfo> borrows);
-
-        void showAll(List<BorrowInfo> borrows);
+        void updateBorrows(List<BorrowInfo> borrows);
 
     }
 
     interface Presenter extends LoginPresenter {
 
+        void showDue();
+
+        void showAll();
+
         void loadLocalBorrows();
 
         void storeBorrows();
 
-        List<BorrowInfo> getBorrows();
+        void startFilter(FragmentManager manager);
 
     }
 }

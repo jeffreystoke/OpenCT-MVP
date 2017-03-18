@@ -123,7 +123,7 @@
     <string name="action_settings">设置</string>
     <string name="school">学校</string>
     <string name="pref_title_current_week">本周</string>
-    <string name="default_motto">时不我待</string>
+    <string name="default_motto">不欺</string>
 
     <string name="school_info">我的校园信息</string>
     <string name="school_name">学校名称</string>
@@ -305,4 +305,13 @@
     <string name="load_fail_tip">是否使用网页进行导入?</string>
     <string name="excel_fail_tip">从Excel导入失败</string>
     <string name="paste_content_here">将表格粘贴至此</string>
+    <string name="add_info">添加信息</string>
+    <string name="finish">到达</string>
+    <string name="can_not_fetch_target_page">根据之前的设置未能获取到预期的页面</string>
+    <string name="fetch_remote_school_list_tip">即将从开源课程表的 GitHub仓库 获取最新学校信息, 是否继续?</string>
+    <string name="fetch_school_list_fail">获取仓库内校园信息失败, 请检查网络环境</string>
+    <string name="updated_schools"><![CDATA[更新成功, 请到 设置 -> 学校 搜索并选择你想要的学校]]></string>
+    <string name="sift_contents">筛选内容</string>
+    <string name="borrows_cannot_filter_tip">没有借阅信息, 无法进行筛选</string>
+    <string name="report_school">增加学校</string>
 </resources>

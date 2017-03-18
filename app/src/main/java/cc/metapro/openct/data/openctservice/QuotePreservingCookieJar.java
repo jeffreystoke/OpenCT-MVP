@@ -29,11 +29,11 @@ import java.util.Map;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
-import okhttp3.internal.Platform;
+import okhttp3.internal.platform.Platform;
 
-import static okhttp3.internal.Platform.WARN;
 import static okhttp3.internal.Util.delimiterOffset;
 import static okhttp3.internal.Util.trimSubstring;
+import static okhttp3.internal.platform.Platform.WARN;
 
 
 /**
@@ -76,7 +76,7 @@ public final class QuotePreservingCookieJar implements CookieJar {
         try {
             cookieHeaders = cookieHandler.get(url.uri(), headers);
         } catch (IOException e) {
-            Platform.get().log(WARN, "Loading cookies failed for " + url.resolve("/..."), e);
+//            Platform.get().log(WARN, "Loading cookies failed for " + url.resolve("/..."), e);
             return Collections.emptyList();
         }
 

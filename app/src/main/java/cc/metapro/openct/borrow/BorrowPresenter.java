@@ -28,6 +28,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -55,10 +58,12 @@ import io.reactivex.schedulers.Schedulers;
 class BorrowPresenter implements BorrowContract.Presenter {
 
     private final String TAG = BorrowPresenter.class.getSimpleName();
+    @NonNull
+    private List<BorrowInfo> mBorrows = new ArrayList<>();
     private BorrowContract.View mLibBorrowView;
-    private List<BorrowInfo> mBorrows;
     private DBManger mDBManger;
     private Context mContext;
+    static List<String> list;
 
     BorrowPresenter(@NonNull BorrowContract.View libBorrowView, Context context) {
         mLibBorrowView = libBorrowView;
@@ -237,6 +242,23 @@ class BorrowPresenter implements BorrowContract.Presenter {
     }
 
     @Override
+    public void showDue() {
+        List<BorrowInfo> dueInfo = new ArrayList<>(mBorrows.size());
+        Date toDay = Calendar.getInstance().getTime();
+        for (BorrowInfo b : mBorrows) {
+            if (b.isExceeded(toDay)) {
+                dueInfo.add(b);
+            }
+        }
+        mLibBorrowView.updateBorrows(dueInfo);
+    }
+
+    @Override
+    public void showAll() {
+        mLibBorrowView.updateBorrows(mBorrows);
+    }
+
+    @Override
     public void loadLocalBorrows() {
         Observable<List<BorrowInfo>> observable = Loader.getBorrows(mContext);
 
@@ -245,7 +267,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
             public void onNext(List<BorrowInfo> borrows) {
                 if (borrows.size() != 0) {
                     mBorrows = borrows;
-                    mLibBorrowView.showAll(mBorrows);
+                    mLibBorrowView.updateBorrows(mBorrows);
                 }
             }
 
@@ -261,8 +283,15 @@ class BorrowPresenter implements BorrowContract.Presenter {
     }
 
     @Override
-    public List<BorrowInfo> getBorrows() {
-        return mBorrows;
+    public void startFilter(FragmentManager manager) {
+        if (!mBorrows.isEmpty()) {
+            for (String s : mBorrows.get(0).getTitles()) {
+                list.add(s);
+            }
+            // TODO: 17/3/18 add filter
+        } else {
+            Toast.makeText(mContext, mContext.getString(R.string.borrows_cannot_filter_tip), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

@@ -48,7 +48,7 @@ public class ExcelDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_excel, null);
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_excel, null, false);
         ButterKnife.bind(this, view);
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.import_from_excel)

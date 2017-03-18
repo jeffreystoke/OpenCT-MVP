@@ -77,8 +77,6 @@ public class ICalHelper {
      * @param endWeek      which week the event end
      * @param currentWeek  current week of this semi
      * @return a fully configured event
-     * @throws URISyntaxException
-     * @throws SocketException
      */
     @Nullable
     private static VEvent getClassEvent(SparseArray<Calendar> classTimeMap,
@@ -135,7 +133,7 @@ public class ICalHelper {
 
         // set event
         event.getProperties().add(new Uid(new UidGenerator("OPENCT").generateUid().getValue()));
-        event.getProperties().add(new Location(time.getPlace()));
+        event.getProperties().add(new Location(time.getPlace() + " " + time.getTeacher()));
 
         event.getProperties().add(new Description(time.getTime() + " " + time.getTeacher()));
         event.getProperties().add(rdate);

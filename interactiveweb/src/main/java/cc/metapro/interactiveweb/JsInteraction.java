@@ -16,7 +16,6 @@ package cc.metapro.interactiveweb;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
 import android.webkit.JavascriptInterface;
 
 import java.util.ArrayList;
@@ -33,17 +32,16 @@ public class JsInteraction {
         mCallBackList.add(callBack);
     }
 
-    void addCallBack(CallBack callBack) {
-        if (callBack != null) {
-            mCallBackList.add(callBack);
-        }
-    }
+//    void addCallBack(CallBack callBack) {
+//        if (callBack != null) {
+//            mCallBackList.add(callBack);
+//        }
+//    }
+//
+//    void removeCallBack(CallBack callBack) {
+//        mCallBackList.remove(callBack);
+//    }
 
-    void removeCallBack(CallBack callBack) {
-        mCallBackList.remove(callBack);
-    }
-
-    @Keep
     @JavascriptInterface
     public void getPageSource(String html) {
         int N = mCallBackList.size();
@@ -52,7 +50,6 @@ public class JsInteraction {
         }
     }
 
-    @Keep
     @JavascriptInterface
     public void onClicked(String element) {
         int N = mCallBackList.size();
