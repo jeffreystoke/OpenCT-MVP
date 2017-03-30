@@ -19,10 +19,18 @@ package cc.metapro.openct;
 import android.app.Application;
 import android.support.annotation.Keep;
 
+import com.squareup.leakcanary.LeakCanary;
+
 @Keep
 public class OpenCT extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
     }
 }

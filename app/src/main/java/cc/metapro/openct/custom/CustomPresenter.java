@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import cc.metapro.interactiveweb.InteractiveWebView;
-import cc.metapro.interactiveweb.InteractiveWebViewClient;
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
@@ -42,13 +41,12 @@ import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.MyObserver;
+import cc.metapro.openct.utils.base.MyObserver;
 import cc.metapro.openct.utils.webutils.TableUtils;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static cc.metapro.interactiveweb.InteractiveWebView.CLICK_FLAG;

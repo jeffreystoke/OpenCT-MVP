@@ -17,110 +17,57 @@ package cc.metapro.openct.myclass;
  */
 
 import android.content.Context;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import cc.metapro.openct.R;
-import cc.metapro.openct.utils.RecyclerViewHelper;
+import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.myclass.classviews.DailyFragment;
+import cc.metapro.openct.myclass.classviews.TableFragment;
+
+import static cc.metapro.openct.myclass.classviews.TableFragment.TYPE_SEM;
+import static cc.metapro.openct.myclass.classviews.TableFragment.TYPE_WEEK;
 
 
-public class ClassPagerAdapter extends PagerAdapter {
+class ClassPagerAdapter extends FragmentStatePagerAdapter {
 
-    private String[] mTitles = new String[3];
-
-    private List<View> mViewList;
     private Context mContext;
-    private DailyClassAdapter mDailyClassAdapter;
-    private RecyclerView mRecyclerView;
-    private TextView mEmptyView;
 
-    ClassPagerAdapter(ViewPager viewPager) {
-        mViewList = new ArrayList<>(3);
-        mContext = viewPager.getContext();
-        mTitles[0] = mContext.getString(R.string.daily_classes);
-        mTitles[1] = mContext.getString(R.string.weekly_class);
-        mTitles[2] = mContext.getString(R.string.sem_classes);
-
-        initViews(viewPager);
-        viewPager.setAdapter(this);
+    ClassPagerAdapter(FragmentManager manager, Context context) {
+        super(manager);
+        mContext = context;
     }
 
-    private void initViews(ViewGroup parent) {
-        LayoutInflater layoutInflater = LayoutInflater.from(mContext);
-
-        View td = layoutInflater.inflate(R.layout.viewpager_class_today, parent, false);
-        mRecyclerView = (RecyclerView) td.findViewById(R.id.class_today_recycler_view);
-        mEmptyView = (TextView) td.findViewById(R.id.empty_view);
-        mDailyClassAdapter = new DailyClassAdapter(mContext);
-
-        RecyclerViewHelper.setRecyclerView(mContext, mRecyclerView, mDailyClassAdapter);
-        mViewList.add(td);
-
-        View tw = layoutInflater.inflate(R.layout.viewpager_class_large, parent, false);
-        mViewList.add(tw);
-
-        View ts = layoutInflater.inflate(R.layout.viewpager_class_large, parent, false);
-        mViewList.add(ts);
-    }
-
-    void dismissRecyclerView(String text) {
-        mRecyclerView.setVisibility(View.GONE);
-        mEmptyView.setVisibility(View.VISIBLE);
-        mEmptyView.setText(text);
-    }
-
-    void showRecyclerView() {
-        mRecyclerView.setVisibility(View.VISIBLE);
-        mEmptyView.setVisibility(View.GONE);
-    }
-
-    DailyClassAdapter getDailyClassAdapter() {
-        return mDailyClassAdapter;
-    }
-
-    View getWeekClassView() {
-        return mViewList.get(1);
-    }
-
-    View getSemClassView() {
-        return mViewList.get(2);
+    @Override
+    public Fragment getItem(int position) {
+        switch (position) {
+            case 0:
+                return DailyFragment.newInstance();
+            case 1:
+                return TableFragment.newInstance(TYPE_WEEK);
+            case 2:
+                return TableFragment.newInstance(TYPE_SEM);
+        }
+        return null;
     }
 
     @Override
     public int getCount() {
-        return mViewList.size();
-    }
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView(mViewList.get(position));
-    }
-
-    @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-        container.addView(mViewList.get(position));
-        return mViewList.get(position);
-    }
-
-    @Override
-    public boolean isViewFromObject(View view, Object object) {
-        return view == object;
+        return 3;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mTitles[position];
+        switch (position) {
+            case 0:
+                return mContext.getString(R.string.text_daily_classes);
+            case 1:
+                return mContext.getString(R.string.text_current_week, Loader.getCurrentWeek(mContext));
+            case 2:
+                return mContext.getString(R.string.text_sem_classes);
+        }
+        return "";
     }
 
-    void setWeekTitle(int week) {
-        mTitles[1] = mContext.getString(R.string.weekly_class) + "(" + week + ")";
-    }
 }

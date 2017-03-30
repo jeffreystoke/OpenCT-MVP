@@ -73,7 +73,7 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassView
 
         @BindView(R.id.color)
         TextView mColor;
-        @BindView(R.id.name)
+        @BindView(R.id.content)
         TextView mName;
         @BindView(R.id.time)
         TextView mTime;

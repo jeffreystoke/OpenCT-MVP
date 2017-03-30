@@ -1,4 +1,4 @@
-package cc.metapro.openct.myclass;
+package cc.metapro.openct.myclass.classviews;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -18,6 +18,7 @@ package cc.metapro.openct.myclass;
 
 import android.content.Context;
 import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -35,9 +36,9 @@ import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.SingleClass;
 
 @Keep
-class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassViewHolder> {
+public class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassViewHolder> {
 
-    private List<SingleClass> mTodayClasses = new ArrayList<>(0);
+    @NonNull private List<SingleClass> mTodayClasses = new ArrayList<>(0);
 
     private LayoutInflater mInflater;
 
@@ -66,10 +67,10 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
     }
 
     boolean hasClassToday() {
-        return mTodayClasses != null && mTodayClasses.size() > 0;
+        return mTodayClasses.size() > 0;
     }
 
-    static class ClassViewHolder extends RecyclerView.ViewHolder {
+    public static class ClassViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.class_name)
         TextView mClassName;
@@ -82,19 +83,19 @@ class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassView
             ButterKnife.bind(this, itemView);
         }
 
-        void setInfo(SingleClass info) {
+        public void setInfo(SingleClass info) {
             mClassName.setText(info.getName());
             String content = "";
 
             if (!TextUtils.isEmpty(info.getTimeString())) {
-                content += "今天 " + info.getTimeString() + " 节";
+                content += mClassName.getContext().getString(R.string.text_today_seq, info.getTimeString());
             }
 
             if (!TextUtils.isEmpty(info.getPlace())) {
                 if (!TextUtils.isEmpty(content)) {
                     content += ", ";
                 }
-                content += "在 " + info.getPlace();
+                content += mClassName.getContext().getString(R.string.text_place_at, info.getPlace());
             }
 
             mTimePlace.setText(content);

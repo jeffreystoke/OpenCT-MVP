@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context="cc.metapro.openct.search.LibSearchActivity">
 
     <android.support.v7.widget.RecyclerView
@@ -22,8 +23,8 @@
             style="@style/AppTheme.CollapsingToolbarLayout">
 
             <ImageView
-                style="@style/AppTheme.AppBarImage"
-                android:src="@drawable/search_header"/>
+                android:id="@+id/image"
+                style="@style/AppTheme.AppBarImage"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -36,20 +37,15 @@
                     android:id="@+id/type_spinner"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="3"
+                    android:layout_weight="4"
                     android:entries="@array/lib_search_type"
                     android:textAlignment="center"/>
-
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
 
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/lib_search_content_edittext"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="7"
+                    android:layout_weight="6"
                     android:hint="@string/search"
                     android:imeOptions="actionSearch"
                     android:inputType="text"
@@ -69,9 +65,8 @@
         android:layout_gravity="bottom|start"
         android:src="@drawable/ic_up_to_top"
         android:visibility="gone"
-        app:layout_anchor="@id/recycler_view"
-        app:layout_anchorGravity="bottom|start"
-        app:layout_behavior="cc.metapro.openct.customviews.ScrollAwareFABBehavior"/>
+        app:layout_anchor="@+id/recycler_view"
+        app:layout_anchorGravity="bottom|start"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

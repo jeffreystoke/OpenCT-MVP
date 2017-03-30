@@ -89,6 +89,7 @@ public class Classes extends ArrayList<EnrichedClassInfo> {
         return weekClasses;
     }
 
+    @NonNull
     public List<SingleClass> getAllClasses() {
         List<SingleClass> todayClasses = new ArrayList<>();
         for (EnrichedClassInfo info : this) {

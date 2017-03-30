@@ -23,9 +23,6 @@
     <string name="key_search_type" translatable="false">type</string>
     <string name="key_search_content" translatable="false">content</string>
 
-    <string name="ok">确定</string>
-    <string name="cancel">取消</string>
-
     <!--成绩查询相关-->
 
     <!--CET 成绩结果对话框-->

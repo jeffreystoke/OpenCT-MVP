@@ -41,7 +41,7 @@ import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.MyObserver;
+import cc.metapro.openct.utils.base.MyObserver;
 import cc.metapro.openct.utils.webutils.TableUtils;
 import cc.metapro.openct.widget.DailyClassWidget;
 import io.reactivex.Observable;

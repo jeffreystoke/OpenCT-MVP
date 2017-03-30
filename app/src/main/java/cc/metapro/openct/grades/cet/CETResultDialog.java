@@ -16,7 +16,10 @@ package cc.metapro.openct.grades.cet;
  * limitations under the License.
  */
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
@@ -54,20 +57,16 @@ public class CETResultDialog extends DialogFragment {
         return new CETResultDialog();
     }
 
-    @OnClick(R.id.ok)
-    public void confirm() {
-        dismiss();
-    }
-
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_cet_result, container);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_cet_result, null);
         ButterKnife.bind(this, view);
-
         setInfo();
-
-        return view;
+        return new AlertDialog.Builder(getActivity())
+                .setView(view)
+                .setPositiveButton(android.R.string.ok, null)
+                .create();
     }
 
     @Override

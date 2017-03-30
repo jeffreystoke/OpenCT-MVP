@@ -209,7 +209,8 @@ public class Loader {
             Calendar cal = Calendar.getInstance(Locale.CHINA);
             cal.setFirstDayOfWeek(Calendar.MONDAY);
             int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
-            int lastSetWeek = PrefHelper.getInt(context, R.string.pref_week_set_week, weekOfYearWhenSetCurrentWeek);
+
+            int lastSetWeek = Integer.parseInt(PrefHelper.getString(context, R.string.pref_week_set_week, weekOfYearWhenSetCurrentWeek +""));
             int currentWeek = Integer.parseInt(PrefHelper.getString(context, R.string.pref_current_week, "1"));
             if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
                 if (lastSetWeek == 53) {
@@ -224,7 +225,7 @@ public class Loader {
                 currentWeek = 1;
             }
             PrefHelper.putString(context, R.string.pref_current_week, currentWeek + "");
-            PrefHelper.putInt(context, R.string.pref_week_set_week, weekOfYearWhenSetCurrentWeek);
+            PrefHelper.putString(context, R.string.pref_week_set_week, weekOfYearWhenSetCurrentWeek + "");
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }

@@ -97,9 +97,9 @@
     <string name="no_local_grades_avail">No grades available</string>
     <string name="no_local_borrows_avail">No borrows available</string>
     <string name="something_wrong">Something Wrong</string>
-    <string name="daily_classes">Daily</string>
-    <string name="weekly_classes">Weekly</string>
-    <string name="sem_classes">Semester</string>
+    <string name="text_daily_classes">Daily</string>
+    <string name="text_weekly_classes">Weekly</string>
+    <string name="text_sem_classes">Semester</string>
     <string name="no_daily_classes">No class today\nJust enjoy it~</string>
     <string name="creating_class_ical">Creating iCal, please wait</string>
     <string name="export_to_ical">Export iCal</string>
@@ -297,9 +297,8 @@
     <string name="reached_previous_end_point">Reached previous end point</string>
     <string name="fetch_grades_successful">Fetch grades successful</string>
     <string name="fetch_borrows_successful">Fetch borrows successful</string>
-    <string name="found">Found</string>
-    <string name="book_entries">entries</string>
-    <string name="loaded">Loaded</string>
+    <string name="founded_entries">Showing %1$d entries, maybe more</string>
+    <string name="loaded_entries">Loaded %1$d entries</string>
     <string name="load_fail">Load fail</string>
     <string name="load_fail_tip">Load from web page?</string>
     <string name="excel_fail_tip">Failed import from table</string>
@@ -313,4 +312,9 @@
     <string name="sift_contents">Sift Content Display</string>
     <string name="borrows_cannot_filter_tip">No borrows here, no filter available</string>
     <string name="report_school">Report School</string>
+    <string name="cet_result">CET Grades</string>
+
+    <string name="text_current_week">WEEK - %1$d</string>
+    <string name="text_today_seq">Today %1$s</string>
+    <string name="text_place_at">At %1$s</string>
 </resources>

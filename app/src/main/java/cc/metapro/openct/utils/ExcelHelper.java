@@ -29,6 +29,7 @@ public class ExcelHelper {
             String[] cols = row.split("\\t");
             tableContents[i++] = cols;
         }
+
         String[] headers = null;
         if (tableContents.length > 0) {
             headers = tableContents[0];

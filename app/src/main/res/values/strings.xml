@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">开源课程表</string>
+    <string name="app_name">开源课表</string>
     <string name="navigation_drawer_open">Open drawer</string>
     <string name="navigation_drawer_close">Close drawer</string>
 
@@ -43,7 +43,7 @@
     <string name="update_classes">更新课表</string>
     <string name="show_all_borrows">所有借阅</string>
     <string name="show_exceeded">已超期</string>
-    <string name="app_description">开源课程表与图书馆应用</string>
+    <string name="app_description">开源高校应用</string>
     <string name="show_raw">查看馆藏详情</string>
     <string name="password_notice">用户名密码都将保存在本地</string>
     <string name="notice">注意事项</string>
@@ -80,9 +80,6 @@
     <string name="no_local_grades_avail">这里还没有成绩哦\n(点击右下角获取教务网最新成绩)</string>
     <string name="no_local_borrows_avail">这里还没有借阅信息哦\n(点击右下角获取图书馆借阅信息)</string>
     <string name="something_wrong">出现了点问题~\n</string>
-    <string name="daily_classes">今日课表</string>
-    <string name="weekly_classes">本周课表</string>
-    <string name="sem_classes">学期课表</string>
     <string name="no_daily_classes">今天没有课\n好好休息一下吧~</string>
     <string name="creating_class_ical">正在创建课程日历文件</string>
     <string name="export_to_ical">导出到iCal</string>
@@ -298,9 +295,8 @@
     <string name="reached_previous_end_point">已经到达之前设置的终点了</string>
     <string name="fetch_grades_successful">获取成绩信息成功, 请回到成绩信息界面查看</string>
     <string name="fetch_borrows_successful">获取借阅信息成功, 请回到借阅信息界面查看</string>
-    <string name="found">找到了</string>
-    <string name="book_entries">条结果</string>
-    <string name="loaded">加载了</string>
+    <string name="founded_entries">找到了 %1$d 条结果, 下拉显示更多</string>
+    <string name="loaded_entries">加载了 %1$d 条结果</string>
     <string name="load_fail">获取信息失败</string>
     <string name="load_fail_tip">是否使用网页进行导入?</string>
     <string name="excel_fail_tip">从Excel导入失败</string>
@@ -314,4 +310,10 @@
     <string name="sift_contents">筛选内容</string>
     <string name="borrows_cannot_filter_tip">没有借阅信息, 无法进行筛选</string>
     <string name="report_school">增加学校</string>
+
+    <string name="text_daily_classes">今日课表</string>
+    <string name="text_current_week">本周 - 第%1$d周</string>
+    <string name="text_sem_classes">学期课表</string>
+    <string name="text_today_seq">今天 %1$s 节</string>
+    <string name="text_place_at">在 %1$s</string>
 </resources>

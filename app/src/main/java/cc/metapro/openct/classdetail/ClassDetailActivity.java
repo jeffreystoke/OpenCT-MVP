@@ -61,7 +61,7 @@ public class ClassDetailActivity extends AppCompatActivity {
     @BindView(R.id.recycler_view)
     SwipeMenuRecyclerView mRecyclerView;
 
-    @BindView(R.id.name)
+    @BindView(R.id.content)
     MaterialEditText mName;
 
     @BindView(R.id.type)

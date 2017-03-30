@@ -31,7 +31,7 @@ import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.LibraryFactory;
 import cc.metapro.openct.data.university.item.BookInfo;
 import cc.metapro.openct.utils.ActivityUtils;
-import cc.metapro.openct.utils.MyObserver;
+import cc.metapro.openct.utils.base.MyObserver;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;

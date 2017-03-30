@@ -16,6 +16,7 @@
                 android:title="@string/borrow_info"/>
         </menu>
     </item>
+
     <item android:title="@string/settings">
         <menu>
             <item

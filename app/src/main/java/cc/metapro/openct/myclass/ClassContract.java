@@ -18,12 +18,16 @@ package cc.metapro.openct.myclass;
 
 import android.support.annotation.Keep;
 
+import java.util.List;
+
 import cc.metapro.openct.BaseView;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.university.item.classinfo.SingleClass;
 
 @Keep
 public interface ClassContract {
+
     interface View extends BaseView<Presenter> {
 
         void updateClasses(Classes classes);

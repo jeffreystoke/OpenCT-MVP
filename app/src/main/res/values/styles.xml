@@ -22,6 +22,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorPrimary">@color/material_black</item>
         <item name="android:textColorSecondary">@color/material_grey</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:clipToPadding">false</item>
     </style>
 
     <style name="CustomPreferenceCategoryText" parent="@android:style/Widget.TextView">
@@ -70,13 +72,13 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="layout_collapseMode">pin</item>
-        <item name="android:layout_marginTop">@dimen/toolbar_padding_top</item>
+        <!--<item name="android:layout_marginTop">@dimen/toolbar_padding_top</item>-->
     </style>
 
     <!--toolbar expanded text appearance-->
     <style name="AppTheme.CollExpanded" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
-        <item name="android:textColor">@color/material_white</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/material_black</item>
+        <item name="android:textSize">@dimen/large_text</item>
     </style>
 
     <!--对话框输入组件默认样式-->
@@ -94,7 +96,7 @@
     <style name="DialogTitleText" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/colorAccent</item>
         <item name="android:padding">10dp</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/medium_text</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:textAlignment" tools:targetApi="jelly_bean_mr1">center</item>
         <item name="android:layout_width">wrap_content</item>

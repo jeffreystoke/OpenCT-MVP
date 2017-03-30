@@ -44,7 +44,7 @@ import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.MyObserver;
+import cc.metapro.openct.utils.base.MyObserver;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;

@@ -16,11 +16,15 @@ package cc.metapro.openct.grades.cet;
  * limitations under the License.
  */
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,38 +55,39 @@ public class CETQueryDialog extends DialogFragment {
         return new CETQueryDialog();
     }
 
-    @OnClick(R.id.ok)
-    public void queryCet() {
-        Map<String, String> queryMap = new HashMap<>(2);
-        queryMap.put(getString(R.string.key_ticket_num), mNum.getText().toString());
-        queryMap.put(getString(R.string.key_full_name), mName.getText().toString());
-        mPresenter.loadCETGrade(queryMap);
-        dismiss();
-    }
-
-    @OnClick(R.id.preserve)
-    public void save() {
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putString(getString(R.string.pref_cet_ticket_num), mNum.getText().toString());
-        editor.putString(getString(R.string.pref_cet_full_name), mName.getText().toString());
-        editor.apply();
-        Toast.makeText(getContext(), R.string.saved, Toast.LENGTH_SHORT).show();
-    }
-
-    @OnClick(R.id.cancel)
-    public void cancel() {
-        dismiss();
-    }
-
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_cet_query, container);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_cet_query, null);
         ButterKnife.bind(this, view);
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.cet_query)
+                .setView(view)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Map<String, String> queryMap = new HashMap<>(2);
+                        queryMap.put(getString(R.string.key_ticket_num), mNum.getText().toString());
+                        queryMap.put(getString(R.string.key_full_name), mName.getText().toString());
+                        mPresenter.loadCETGrade(queryMap);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .setNeutralButton(R.string.preserve, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences.Editor editor = mPreferences.edit();
+                        editor.putString(getString(R.string.pref_cet_ticket_num), mNum.getText().toString());
+                        editor.putString(getString(R.string.pref_cet_full_name), mName.getText().toString());
+                        editor.apply();
+                        Toast.makeText(getContext(), R.string.saved, Toast.LENGTH_SHORT).show();
+                    }
+                }).create();
+
         mPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mNum.setText(mPreferences.getString(getString(R.string.pref_cet_ticket_num), ""));
         mName.setText(mPreferences.getString(getString(R.string.pref_cet_full_name), ""));
-        return view;
+        return alertDialog;
     }
 
     @Override

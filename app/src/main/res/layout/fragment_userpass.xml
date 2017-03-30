@@ -63,6 +63,7 @@
         android:layout_marginRight="64dp"
         android:layout_marginStart="64dp"
         android:hint="@string/password"
+        android:inputType="textPassword"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

@@ -141,9 +141,9 @@
 
     <!--首页显示键值-->
     <string-array name="pref_homepage_selection_keys">
-        <item>@string/daily_classes</item>
-        <item>@string/weekly_classes</item>
-        <item>@string/sem_classes</item>
+        <item>@string/text_daily_classes</item>
+        <item>@string/text_weekly_classes</item>
+        <item>@string/text_sem_classes</item>
     </string-array>
     <string-array name="pref_homepage_selection_values">
         <item>0</item>

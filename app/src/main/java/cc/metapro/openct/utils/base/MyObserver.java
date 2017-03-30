@@ -1,4 +1,4 @@
-package cc.metapro.openct.utils;
+package cc.metapro.openct.utils.base;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table

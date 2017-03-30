@@ -44,7 +44,7 @@ import cc.metapro.openct.data.university.UniversityUtils;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.MyObserver;
+import cc.metapro.openct.utils.base.MyObserver;
 import cc.metapro.openct.utils.webutils.TableUtils;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;

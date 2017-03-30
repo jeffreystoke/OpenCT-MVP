@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context="cc.metapro.openct.grades.GradeActivity">
 
     <android.support.v7.widget.RecyclerView
@@ -23,8 +24,7 @@
             style="@style/AppTheme.CollapsingToolbarLayout">
 
             <ImageView
-                style="@style/AppTheme.AppBarImage"
-                android:src="@drawable/grade_header"/>
+                style="@style/AppTheme.AppBarImage"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"

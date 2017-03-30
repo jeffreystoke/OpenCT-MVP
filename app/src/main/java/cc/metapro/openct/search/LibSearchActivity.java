@@ -104,7 +104,7 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
         }
 
         mAdapter = new BooksAdapter(this);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.item_text_white, getResources().getStringArray(R.array.lib_search_type));
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.lib_search_type));
         mSpinner.setAdapter(adapter);
         mLinearLayoutManager = RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mAdapter);
         mEditText.requestFocus();
@@ -142,7 +142,7 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
         mAdapter.setBooks(books);
         mAdapter.notifyDataSetChanged();
         if (books.size() > 0) {
-            Snackbar.make(mRecyclerView, getString(R.string.found) + " " + books.size() + " " + getString(R.string.book_entries), BaseTransientBottomBar.LENGTH_LONG).show();
+            Snackbar.make(mRecyclerView, getString(R.string.founded_entries, books.size()), BaseTransientBottomBar.LENGTH_LONG).show();
             mFabUp.setVisibility(View.VISIBLE);
         } else {
             Snackbar.make(mRecyclerView, R.string.no_related_books, BaseTransientBottomBar.LENGTH_LONG).show();
@@ -155,7 +155,7 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
         mAdapter.addBooks(books);
         mAdapter.notifyDataSetChanged();
         if (books.size() > 0) {
-            Snackbar.make(mRecyclerView, getString(R.string.loaded) + books.size() + " " + getString(R.string.book_entries), BaseTransientBottomBar.LENGTH_LONG).show();
+            Snackbar.make(mRecyclerView, getString(R.string.loaded_entries, books.size()), BaseTransientBottomBar.LENGTH_LONG).show();
         } else {
             Snackbar.make(mRecyclerView, R.string.no_more_results, BaseTransientBottomBar.LENGTH_LONG).show();
         }

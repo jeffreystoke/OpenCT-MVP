@@ -47,7 +47,7 @@ import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.data.university.item.classinfo.ExcelClass;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.ICalHelper;
-import cc.metapro.openct.utils.MyObserver;
+import cc.metapro.openct.utils.base.MyObserver;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.widget.DailyClassWidget;
 import io.reactivex.Observable;

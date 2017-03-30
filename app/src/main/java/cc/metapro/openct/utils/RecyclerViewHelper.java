@@ -29,7 +29,9 @@ import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 @Keep
 public final class RecyclerViewHelper {
 
-    public static LinearLayoutManager setRecyclerView(Context context, @NonNull RecyclerView recyclerView, RecyclerView.Adapter adapter) {
+    public static LinearLayoutManager setRecyclerView(Context context,
+                                                      @NonNull RecyclerView recyclerView,
+                                                      RecyclerView.Adapter adapter) {
         LinearLayoutManager manager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
 

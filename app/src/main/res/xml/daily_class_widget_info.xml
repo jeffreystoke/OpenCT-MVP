@@ -20,7 +20,6 @@
     android:initialLayout="@layout/widget_daily_class"
     android:minHeight="110dp"
     android:minWidth="250dp"
-    android:previewImage="@drawable/screen_preview"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="86400000">
 </appwidget-provider>

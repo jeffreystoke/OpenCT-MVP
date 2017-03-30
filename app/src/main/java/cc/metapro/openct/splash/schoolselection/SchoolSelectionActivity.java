@@ -33,7 +33,7 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
-import cc.metapro.openct.utils.MyObserver;
+import cc.metapro.openct.utils.base.MyObserver;
 import cc.metapro.openct.utils.PrefHelper;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;

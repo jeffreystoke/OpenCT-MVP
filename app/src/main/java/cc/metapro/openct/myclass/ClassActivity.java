@@ -55,11 +55,11 @@ import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
+import cc.metapro.openct.utils.base.BaseActivity;
 
-public class ClassActivity extends AppCompatActivity
+public class ClassActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, ClassContract.View {
 
-    private static boolean showedPrompt;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.drawer_layout)
@@ -70,15 +70,14 @@ public class ClassActivity extends AppCompatActivity
     TabLayout mTabLayout;
     @BindView(R.id.view_pager)
     ViewPager mViewPager;
+
     ClassContract.Presenter mPresenter;
     private boolean mExitState;
-    private DailyClassAdapter mDailyClassAdapter;
     private ClassPagerAdapter mClassPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         mExitState = false;
@@ -87,98 +86,26 @@ public class ClassActivity extends AppCompatActivity
                 ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         toggle.syncState();
         mNavigationView.setNavigationItemSelectedListener(this);
-        new ClassPresenter(this, this);
-        initViewPager();
-    }
 
-    private void initViewPager() {
         mTabLayout.setupWithViewPager(mViewPager);
 
-        mClassPagerAdapter = new ClassPagerAdapter(mViewPager);
-        mDailyClassAdapter = mClassPagerAdapter.getDailyClassAdapter();
+        mClassPagerAdapter = new ClassPagerAdapter(getSupportFragmentManager(), this);
+        mViewPager.setAdapter(mClassPagerAdapter);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String homeIndex = preferences.getString(getString(R.string.pref_homepage_selection), "0");
-        int index = Integer.parseInt(homeIndex);
+        int index = Integer.parseInt(PrefHelper.getString(this, R.string.pref_homepage_selection, "0"));
         mViewPager.setCurrentItem(index);
+
+        new ClassPresenter(this, this);
     }
 
-    private void addSeqViews(ViewGroup index) {
-        if (index != null) {
-            index.removeAllViews();
-            for (int i = 1; i <= Constants.DAILY_CLASSES; i++) {
-                TextView textView = new TextView(this);
-                textView.setText(i + "");
-                textView.setGravity(Gravity.CENTER);
-                textView.setMinHeight(Constants.CLASS_BASE_HEIGHT * Constants.CLASS_LENGTH);
-                textView.setMaxHeight(Constants.CLASS_BASE_HEIGHT * Constants.CLASS_LENGTH);
-                textView.setTextSize(10);
-                index.addView(textView);
-            }
-        }
-    }
-
-    private void addContentView(ViewGroup content, Classes classes, int thisWeek) {
-        if (content == null) return;
-        content.removeAllViews();
-        if (thisWeek < 0) {
-            for (SingleClass singleClass : classes.getAllClasses()) {
-                singleClass.addViewTo(content, getLayoutInflater());
-            }
-        } else {
-            for (SingleClass singleClass : classes.getWeekClasses(thisWeek)) {
-                singleClass.addViewTo(content, getLayoutInflater());
-            }
-        }
-//        GridLayoutHelper.fillGrids(content);
+    @Override
+    protected int getLayoutRes() {
+        return R.layout.activity_main;
     }
 
     @Override
     public void updateClasses(@NonNull Classes classes) {
-        int week = Loader.getCurrentWeek(this);
-        // 更新学期课表视图
-        View view = mClassPagerAdapter.getSemClassView();
-        ViewGroup seq = (ViewGroup) view.findViewById(R.id.seq);
-        ViewGroup con = (ViewGroup) view.findViewById(R.id.name);
-        if (!classes.isEmpty()) {
-            addSeqViews(seq);
-            addContentView(con, classes, -1);
-        } else {
-            seq.removeAllViews();
-            con.removeAllViews();
-        }
-
-        // 更新周课表视图
-        mClassPagerAdapter.setWeekTitle(week);
-        mClassPagerAdapter.notifyDataSetChanged();
-        view = mClassPagerAdapter.getWeekClassView();
-        seq = (ViewGroup) view.findViewById(R.id.seq);
-        con = (ViewGroup) view.findViewById(R.id.name);
-        if (!classes.isEmpty()) {
-            addSeqViews(seq);
-            addContentView(con, classes, week);
-        } else {
-            seq.removeAllViews();
-            con.removeAllViews();
-        }
-
-        // 更新当日课表视图
-        mDailyClassAdapter.updateTodayClasses(classes, week);
-        mDailyClassAdapter.notifyDataSetChanged();
-        if (mDailyClassAdapter.hasClassToday()) {
-            mClassPagerAdapter.showRecyclerView();
-            if (!showedPrompt) {
-                showedPrompt = true;
-                Snackbar.make(mViewPager, getString(R.string.today_has) + mDailyClassAdapter.getItemCount() + getString(R.string.class_count), Snackbar.LENGTH_SHORT).show();
-            }
-        } else {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            mClassPagerAdapter.dismissRecyclerView(preferences.getString(getString(R.string.pref_empty_class_motto), getString(R.string.default_motto)));
-            if (!showedPrompt) {
-                showedPrompt = true;
-                Snackbar.make(mViewPager, R.string.empty_class_tip, Snackbar.LENGTH_SHORT).show();
-            }
-        }
+        mClassPagerAdapter.startUpdate(mViewPager);
     }
 
     @Override
@@ -235,6 +162,7 @@ public class ClassActivity extends AppCompatActivity
         super.onResume();
         initStatic();
         mPresenter.start();
+        mClassPagerAdapter.notifyDataSetChanged();
     }
 
     @Override
