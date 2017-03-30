@@ -16,14 +16,12 @@ package cc.metapro.openct;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
 import android.support.v4.app.FragmentManager;
 
 import java.util.Map;
 
 import io.reactivex.disposables.Disposable;
 
-@Keep
 public interface LoginPresenter extends BasePresenter {
 
     /**

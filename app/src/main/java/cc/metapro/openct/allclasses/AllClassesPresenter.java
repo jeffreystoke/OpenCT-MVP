@@ -183,7 +183,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
                     }
                     new AlertDialog.Builder(mContext)
                             .setTitle(R.string.select_action)
-                            .setMessage(mContext.getString(R.string.total_to) + " " + addedClasses.size() + " " + mContext.getString(R.string.excel_import_tip))
+                            .setMessage(mContext.getString(R.string.excel_import_tip, excelClasses.size()))
                             .setPositiveButton(R.string.replace, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {

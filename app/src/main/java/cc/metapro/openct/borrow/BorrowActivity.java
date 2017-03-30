@@ -104,7 +104,7 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
         } else {
             mBorrowAdapter.setNewBorrows(borrows);
             mBorrowAdapter.notifyDataSetChanged();
-            Snackbar.make(mRecyclerView, getString(R.string.total_to) + " " + borrows.size() + " " + getString(R.string.borrow_entries), BaseTransientBottomBar.LENGTH_LONG).show();
+            Snackbar.make(mRecyclerView, getString(R.string.borrow_entries, borrows.size()), BaseTransientBottomBar.LENGTH_LONG).show();
         }
     }
 

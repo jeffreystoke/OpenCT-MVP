@@ -31,7 +31,7 @@
         android:paddingLeft="10dp"
         android:paddingRight="0dp"
         android:paddingStart="10dp"
-        android:text="@string/weekly_class"
+        android:text="@string/text_weekly_classes"
         android:textColor="@color/material_white"/>
     <!--周x-->
     <LinearLayout
@@ -89,41 +89,6 @@
         android:columnCount="7"
         android:rowCount="1"
         android:scrollbars="vertical">
-
-        <!--<ListView-->
-        <!--android:id="@+id/monday_classes"-->
-        <!--android:layout_column="0"-->
-        <!--android:layout_row="0"/>-->
-
-        <!--<ListView-->
-        <!--android:id="@+id/tuesday_classes"-->
-        <!--android:layout_column="1"-->
-        <!--android:layout_row="0"/>-->
-
-        <!--<ListView-->
-        <!--android:id="@+id/wednesday_classes"-->
-        <!--android:layout_column="2"-->
-        <!--android:layout_row="0"/>-->
-
-        <!--<ListView-->
-        <!--android:id="@+id/thursday_classes"-->
-        <!--android:layout_column="3"-->
-        <!--android:layout_row="0"/>-->
-
-        <!--<ListView-->
-        <!--android:id="@+id/friday_classes"-->
-        <!--android:layout_column="4"-->
-        <!--android:layout_row="0"/>-->
-
-        <!--<ListView-->
-        <!--android:id="@+id/saturday_classes"-->
-        <!--android:layout_column="5"-->
-        <!--android:layout_row="0"/>-->
-
-        <!--<ListView-->
-        <!--android:id="@+id/sunday_classes"-->
-        <!--android:layout_column="6"-->
-        <!--android:layout_row="0"/>-->
     </GridLayout>
 
     <TextView

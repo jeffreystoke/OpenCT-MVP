@@ -17,28 +17,36 @@ package cc.metapro.openct.allclasses;
  */
 
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.view.View;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONException;
 
+import java.io.File;
+import java.net.URISyntaxException;
+
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.ExcelHelper;
+import cc.metapro.openct.utils.FileUtils;
 
 
 public class ExcelDialog extends DialogFragment {
 
+    private static final int FILE_SELECT_CODE = 101;
+
     private static ExcelCallback mCallback;
-    @BindView(R.id.excel_content)
-    MaterialEditText mEditText;
 
     public static ExcelDialog newInstance(@NonNull ExcelCallback callback) {
         mCallback = callback;
@@ -48,25 +56,69 @@ public class ExcelDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_excel, null, false);
-        ButterKnife.bind(this, view);
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.import_from_excel)
-                .setView(view)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setMessage(R.string.select_file_tip)
+                .setPositiveButton(R.string.select_file, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog1, int which) {
-                        String text = mEditText.getText().toString();
-                        try {
-                            String json = ExcelHelper.tableToJson(text);
-                            mCallback.onJsonResult(json);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        showFilerChooser();
+//                        String text = mEditText.getText().toString();
+//                        try {
+//                            String json = ExcelHelper.tableToJson(text);
+//                            mCallback.onJsonResult(json);
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mCallback = null;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == FILE_SELECT_CODE && resultCode == AppCompatActivity.RESULT_OK) {
+            Uri uri = data.getData();
+            // Get the path
+            String path;
+            try {
+                path = FileUtils.getPath(getActivity(), uri);
+                if (path != null) {
+                    File file = new File(path);
+                    Log.d("FileChooser", file.getAbsolutePath());
+                    String s = "";
+                    try {
+                        String table = ExcelHelper.xlsxToTable(path);
+                        s = ExcelHelper.tableToJson(table);
+                        mCallback.onJsonResult(s);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void showFilerChooser() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            startActivityForResult(Intent.createChooser(intent, "Select a File to Upload"), FILE_SELECT_CODE);
+        } catch (ActivityNotFoundException ex) {
+            Toast.makeText(getActivity(), R.string.fail_file_chooser, Toast.LENGTH_LONG).show();
+        }
     }
 
     interface ExcelCallback {

@@ -86,8 +86,6 @@
     <string name="classes">课程表</string>
     <string name="optional">可选项</string>
     <string name="compulsory">重要</string>
-    <string name="compulsory_num">重要(数字)</string>
-    <string name="optional_re">可选(正则式)</string>
     <string name="select_school">选择学校</string>
     <string name="custom_tip">Tips:\n\n
         \t1)在上方输入或修改地址\n\n
@@ -100,10 +98,7 @@
     <string name="tip_not_exist">如果你的学校不在列表中, 可以使用自定义功能进行添加</string>
     <string name="custom_school">自定义学校</string>
     <string name="enter_captcha">请输入验证码</string>
-    <string name="adv_custom_tip">如果基础自定义学校不成功, 可以尝试高级自定义\n你将会执行完整的定义过程(暂时只支持自定义课程表)</string>
-    <string name="adv_custom">高级自定义(测试)</string>
     <string name="custom_your_class_fetch_way">自定义你的课程表获取方式</string>
-    <string name="can_not_enter_tip">出现无法填写内容的情况一般是网页代码做出了限制, 这说明你的学校对于网络爬虫之类的限制十分到位, 你的个人信息十分安全, 你可以选择普通模式进行操作, 但是不会记录你的操作轨迹, 即你的用户名密码不会自动填写</string>
     <string name="load_aptcha_fail">获取验证码失败\n</string>
 
     <!--URLs-->
@@ -127,7 +122,6 @@
     <string name="address">地址</string>
     <string name="captcha">验证码</string>
     <string name="encryption_tip">你所填写的所有用户信息都存储在本地, 并使用 AES-128 进行加密, 但由于校园系统大多采用明文传输, 请确保网络环境安全</string>
-    <string name="enable_encryption">启用加密</string>
     <string name="custom">自定义</string>
 
     <string name="homepage_showing">首页显示</string>
@@ -137,13 +131,11 @@
     <string name="cms_config">教务网配置</string>
     <string name="cms">教务网</string>
     <string name="cms_sys">教务系统</string>
-    <string name="captcha_required">登录需要验证码时勾选</string>
     <string name="lib_config">图书馆配置</string>
     <string name="lib_sys">图书管理系统</string>
     <string name="security">安全</string>
     <string name="personalise">个性化</string>
     <string name="project_address">项目地址 (点击前往)</string>
-    <string name="contact_author">联系作者</string>
     <string name="open_source_license">开源许可 (点击查看)</string>
     <string name="about_openct">关于 OpenCT</string>
     <string name="saved">已保存</string>
@@ -153,7 +145,6 @@
     <string name="no_more_results">没有更多结果了</string>
     <string name="edit_class_info">编辑课程</string>
 
-    <string name="encrypt_fail">加密失败, 请关闭加密选项</string>
     <string name="encrypted">已加密</string>
     <string name="unencrypted">未加密</string>
     <string name="empty_class_tip">今天没有课, 好好休息一下吧~</string>
@@ -177,17 +168,12 @@
     <string name="no_write_permission">没有写出到外部存储权限, 无法导出</string>
     <string name="custom_finish_tip">课表解析完成, 请回到主界面查看课表\n部分信息可能需要修改\n\nTips: 尝试修改正则表达式进行匹配能得到更加准确的信息</string>
     <string name="sorry_for_unable_to_get_class_info">很遗憾, 没能在该页面解析到课程信息</string>
-    <string name="no_adv_custom_config">还没有自定义过, 请点击开始自定义</string>
     <string name="swipe_choose_table">左右滑动选择目标信息</string>
     <string name="what_is_that">上面显示的是 ?</string>
     <string name="click_to_choose_your_school">点击选择你的学校</string>
-    <string name="unable_to_enter_values">无法填写内容</string>
     <string name="not_in_range_above">不在以上选项内</string>
     <string name="what_did_you_clicked">刚刚点击的输入框是?</string>
     <string name="username_input">用户名输入框</string>
-    <string name="password_input">密码输入框</string>
-    <string name="captcha_input">验证码输入框</string>
-    <string name="enter_value_accordingly">填写对应的值</string>
     <string name="common_input">普通输入框</string>
     <string name="select_target_link">选择目标连接</string>
     <string name="question">提问</string>
@@ -197,7 +183,6 @@
     <string name="borrows_empty">借阅信息为空</string>
     <string name="grades_empty">成绩信息为空</string>
     <string name="classes_empty">课程信息为空</string>
-    <string name="add_during">添加周期</string>
     <string name="delete">删除</string>
     <string name="weekly_class_empty">本周课表为空</string>
     <string name="clear_classes">清空课程</string>
@@ -285,12 +270,11 @@
     <string name="clear_classes_tip">该操作将删除所有课程信息, 是否继续?</string>
     <string name="select_action">选择操作</string>
     <string name="combine">合并</string>
-    <string name="total_to">共有</string>
-    <string name="excel_import_tip">门课程信息, 您希望与当前课程合并还是完全使用新添加的课程?</string>
+    <string name="excel_import_tip">共有 %1$d 门课程信息, 您希望与当前课程合并还是完全使用新添加的课程?</string>
     <string name="replace">替换</string>
     <string name="classes_updated">课程信息已更新</string>
     <string name="classes_combined">课程信息已合并</string>
-    <string name="borrow_entries">条借阅信息</string>
+    <string name="borrow_entries">共有 %1$d 条借阅信息</string>
     <string name="the">第</string>
     <string name="reached_previous_end_point">已经到达之前设置的终点了</string>
     <string name="fetch_grades_successful">获取成绩信息成功, 请回到成绩信息界面查看</string>
@@ -314,6 +298,23 @@
     <string name="text_daily_classes">今日课表</string>
     <string name="text_current_week">本周 - 第%1$d周</string>
     <string name="text_sem_classes">学期课表</string>
-    <string name="text_today_seq">今天 %1$s 节</string>
-    <string name="text_place_at">在 %1$s</string>
+    <string name="text_today_seq">今天 %1$d 节</string>
+    <string name="text_place_at">在 %1$d</string>
+    <string name="fail_file_chooser">无法打开文件管理器</string>
+    <string name="select_file">选择文件</string>
+    <string name="select_file_tip">选择 Excel 文件 (xlsx 文件)</string>
+
+
+    <string name="cms_zfsoft">正方</string>
+    <string name="cms_suwen">苏文</string>
+    <string name="cms_qz">强智(部分适配)</string>
+    <string name="cms_common">普通适配 (测试)</string>
+    <string name="lib_njhuiwen">汇文</string>
+
+    <string name="title">书名</string>
+    <string name="author">作者</string>
+    <string name="isbn" translatable="false">ISBN</string>
+    <string name="press">出版社</string>
+
+    <string name="text_weekly_classes">本周课表</string>
 </resources>

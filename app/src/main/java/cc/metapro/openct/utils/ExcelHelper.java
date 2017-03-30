@@ -16,12 +16,19 @@ package cc.metapro.openct.utils;
  * limitations under the License.
  */
 
+import android.support.annotation.NonNull;
+
 import org.json.JSONException;
 import org.json.JSONStringer;
 
 public class ExcelHelper {
 
-    public static String tableToJson(String table) throws JSONException {
+    public static String xlsxToTable(@NonNull String path) {
+        // TODO: 17/3/30 process excel file
+        return "";
+    }
+
+    public static String tableToJson(@NonNull String table) throws JSONException {
         String[] rows = table.split("\\n");
         String[][] tableContents = new String[rows.length][];
         int i = 0;

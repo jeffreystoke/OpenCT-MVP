@@ -2,21 +2,20 @@
 <resources>
 
     <string-array name="lib_search_type">
-        <item>书名</item>
-        <item>作者</item>
-        <item>ISBN</item>
-        <item>出版社</item>
-        <item>丛书名</item>
+        <item>@string/title</item>
+        <item>@string/author</item>
+        <item>@string/isbn</item>
+        <item>@string/press</item>
     </string-array>
 
     <string name="default_during_re">\\d+-\\d+</string>
     <string name="default_time_re">(\\d+,)+\\d+</string>
 
     <string-array name="school_cms">
-        <item>正方</item>
-        <item>苏文</item>
-        <item>强智(部分适配)</item>
-        <item>普通适配 (测试)</item>
+        <item>@string/cms_zfsoft</item>
+        <item>@string/cms_suwen</item>
+        <item>@string/cms_qz</item>
+        <item>@string/cms_common</item>
     </string-array>
 
     <string-array name="school_cms_values">
@@ -27,7 +26,7 @@
     </string-array>
 
     <string-array name="school_lib">
-        <item>汇文</item>
+        <item>@string/lib_njhuiwen</item>
     </string-array>
 
     <string-array name="school_lib_values">

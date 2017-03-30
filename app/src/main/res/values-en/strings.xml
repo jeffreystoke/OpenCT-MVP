@@ -56,7 +56,7 @@
     <string name="press_to_get_captcha">Click to load Captcha</string>
     <string name="enter_code">Enter Code</string>
     <string name="clear">Clear</string>
-    <string name="school_app">In Campus</string>
+    <string name="school_app">Campus Life</string>
     <string name="update_classes">Update Classes</string>
     <string name="show_all_borrows">All Borrows</string>
     <string name="show_exceeded">Exceeded</string>
@@ -98,7 +98,6 @@
     <string name="no_local_borrows_avail">No borrows available</string>
     <string name="something_wrong">Something Wrong</string>
     <string name="text_daily_classes">Daily</string>
-    <string name="text_weekly_classes">Weekly</string>
     <string name="text_sem_classes">Semester</string>
     <string name="no_daily_classes">No class today\nJust enjoy it~</string>
     <string name="creating_class_ical">Creating iCal, please wait</string>
@@ -106,7 +105,6 @@
     <string name="classes">Classes</string>
     <string name="optional">Optional</string>
     <string name="compulsory">Important</string>
-    <string name="yes">yep</string>
     <string name="select_school">Select School</string>
     <string name="custom_tip">Tips:\n\n
         \t1)Enter or modify the address\n\n
@@ -200,7 +198,6 @@
     <string name="grades_empty">Grades Empty</string>
     <string name="classes_empty">Classes Empty</string>
     <string name="delete">Delete</string>
-    <string name="weekly_class">Weekly</string>
     <string name="weekly_class_empty">No classes weekly</string>
     <string name="clear_classes">Clear Classes</string>
     <string name="advanced_custom">Web Import</string>
@@ -287,12 +284,11 @@
     <string name="clear_classes_tip">This action will delete all your classes, confirm?</string>
     <string name="select_action">Select one</string>
     <string name="combine">Combine</string>
-    <string name="total_to">Total to</string>
-    <string name="excel_import_tip">classes, combine them or replace current ones?</string>
+    <string name="excel_import_tip">%1$d classes in total, combine them or replace current ones?</string>
     <string name="replace">Replace</string>
     <string name="classes_updated">Classes updated</string>
     <string name="classes_combined">Classes combined</string>
-    <string name="borrow_entries">borrow entries</string>
+    <string name="borrow_entries">%1$d borrow entries in total</string>
     <string name="the">The</string>
     <string name="reached_previous_end_point">Reached previous end point</string>
     <string name="fetch_grades_successful">Fetch grades successful</string>
@@ -317,4 +313,19 @@
     <string name="text_current_week">WEEK - %1$d</string>
     <string name="text_today_seq">Today %1$s</string>
     <string name="text_place_at">At %1$s</string>
+    <string name="fail_file_chooser">Fail to start file chooser</string>
+    <string name="select_file">Select File</string>
+    <string name="select_file_tip">Select Excel file (with .xlsx suffix)</string>
+
+    <string name="cms_zfsoft">ZF Soft</string>
+    <string name="cms_suwen">Su Wen</string>
+    <string name="cms_qz">QZ Data Soft</string>
+    <string name="cms_common">Common</string>
+
+    <string name="title">Title</string>
+    <string name="author">Author</string>
+    <string name="press">Press</string>
+
+    <string name="lib_njhuiwen">Hui Wen</string>
+    <string name="text_weekly_classes">Weekly</string>
 </resources>

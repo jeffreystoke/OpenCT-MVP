@@ -17,13 +17,10 @@ package cc.metapro.openct.utils;
  */
 
 
-import android.support.annotation.Keep;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-@Keep
 public final class DateHelper {
 
     private static final String MONDAY = "[周星期]+?[一1]";

@@ -1,4 +1,4 @@
-package cc.metapro.openct;
+package cc.metapro.openct.utils;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,7 +16,22 @@ package cc.metapro.openct;
  * limitations under the License.
  */
 
-public interface BaseView<T> {
+import android.util.Log;
 
-    void setPresenter(T presenter);
+import java.io.Closeable;
+
+public class CloseUtils {
+
+    public static void close(Closeable... closeables) {
+        if (closeables == null) return;
+        for (Closeable c : closeables) {
+            if (c == null) continue;
+
+            try {
+                c.close();
+            } catch (Exception e) {
+                Log.d("Closing", e.getMessage(), e);
+            }
+        }
+    }
 }
