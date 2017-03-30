@@ -57,13 +57,13 @@ import io.reactivex.schedulers.Schedulers;
 @Keep
 class BorrowPresenter implements BorrowContract.Presenter {
 
+    static List<String> list;
     private final String TAG = BorrowPresenter.class.getSimpleName();
     @NonNull
     private List<BorrowInfo> mBorrows = new ArrayList<>();
     private BorrowContract.View mLibBorrowView;
     private DBManger mDBManger;
     private Context mContext;
-    static List<String> list;
 
     BorrowPresenter(@NonNull BorrowContract.View libBorrowView, Context context) {
         mLibBorrowView = libBorrowView;

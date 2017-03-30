@@ -210,7 +210,7 @@ public class Loader {
             cal.setFirstDayOfWeek(Calendar.MONDAY);
             int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
 
-            int lastSetWeek = Integer.parseInt(PrefHelper.getString(context, R.string.pref_week_set_week, weekOfYearWhenSetCurrentWeek +""));
+            int lastSetWeek = Integer.parseInt(PrefHelper.getString(context, R.string.pref_week_set_week, weekOfYearWhenSetCurrentWeek + ""));
             int currentWeek = Integer.parseInt(PrefHelper.getString(context, R.string.pref_current_week, "1"));
             if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
                 if (lastSetWeek == 53) {

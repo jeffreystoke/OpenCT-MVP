@@ -17,13 +17,10 @@ package cc.metapro.openct.myclass;
  */
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -32,12 +29,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Map;
@@ -49,15 +42,13 @@ import cc.metapro.openct.allclasses.AllClassesActivity;
 import cc.metapro.openct.borrow.BorrowActivity;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
-import cc.metapro.openct.data.university.item.classinfo.SingleClass;
 import cc.metapro.openct.grades.GradeActivity;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
-import cc.metapro.openct.utils.base.BaseActivity;
 
-public class ClassActivity extends BaseActivity
+public class ClassActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ClassContract.View {
 
     @BindView(R.id.toolbar)
@@ -78,6 +69,7 @@ public class ClassActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         mExitState = false;
@@ -96,11 +88,6 @@ public class ClassActivity extends BaseActivity
         mViewPager.setCurrentItem(index);
 
         new ClassPresenter(this, this);
-    }
-
-    @Override
-    protected int getLayoutRes() {
-        return R.layout.activity_main;
     }
 
     @Override

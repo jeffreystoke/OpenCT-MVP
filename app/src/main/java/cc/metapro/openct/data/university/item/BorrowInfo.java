@@ -37,7 +37,8 @@ import cc.metapro.openct.utils.REHelper;
 @Keep
 public class BorrowInfo {
 
-    @NonNull private Map<String, String> mTitleValueMap = new LinkedHashMap<>();
+    @NonNull
+    private Map<String, String> mTitleValueMap = new LinkedHashMap<>();
 
     public BorrowInfo(Element th, Element tr) {
         mTitleValueMap = new LinkedHashMap<>();

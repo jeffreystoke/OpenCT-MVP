@@ -40,16 +40,14 @@ import cc.metapro.openct.utils.Constants;
 
 public class TableFragment extends Fragment {
 
-    private static final String KEY_TYPE = "table_view_type";
     public static final int TYPE_WEEK = 1, TYPE_SEM = 2;
-    private boolean infoAdded;
-
-    private int mType = TYPE_SEM;
-
+    private static final String KEY_TYPE = "table_view_type";
     @BindView(R.id.seq)
     LinearLayout mSeq;
     @BindView(R.id.content)
     RelativeLayout mContent;
+    private boolean infoAdded;
+    private int mType = TYPE_SEM;
     private List<SingleClass> mClasses;
 
     public static TableFragment newInstance(int type) {

@@ -24,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.scottyab.aescrypt.AESCrypt;
 
@@ -45,6 +44,7 @@ public class CmsFragment extends Fragment {
     EditText mPassword;
 
     private boolean showed = false;
+
     public static CmsFragment getInstance() {
         return new CmsFragment();
     }

@@ -25,7 +25,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.myclass.ClassActivity;
-import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.PrefHelper;
 import me.relex.circleindicator.CircleIndicator;
 

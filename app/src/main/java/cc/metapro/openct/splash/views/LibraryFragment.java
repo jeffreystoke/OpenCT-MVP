@@ -48,6 +48,7 @@ public class LibraryFragment extends Fragment {
     EditText mPassword;
 
     private boolean showed = false;
+
     public static LibraryFragment getInstance() {
         return new LibraryFragment();
     }

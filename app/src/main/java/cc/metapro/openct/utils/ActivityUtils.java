@@ -22,11 +22,7 @@ import android.content.DialogInterface;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 
-import com.scottyab.aescrypt.AESCrypt;
-
 import org.jsoup.nodes.Document;
-
-import java.security.GeneralSecurityException;
 
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;

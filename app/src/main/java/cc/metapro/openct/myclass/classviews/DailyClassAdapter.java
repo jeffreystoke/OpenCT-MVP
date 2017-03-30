@@ -38,7 +38,8 @@ import cc.metapro.openct.data.university.item.classinfo.SingleClass;
 @Keep
 public class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassViewHolder> {
 
-    @NonNull private List<SingleClass> mTodayClasses = new ArrayList<>(0);
+    @NonNull
+    private List<SingleClass> mTodayClasses = new ArrayList<>(0);
 
     private LayoutInflater mInflater;
 

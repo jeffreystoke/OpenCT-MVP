@@ -43,55 +43,55 @@
         android:id="@+id/school_selection"
         android:layout_width="0dp"
         android:layout_height="50dp"
+        android:layout_marginEnd="32dp"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
         android:orientation="horizontal"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp">
+        app:layout_constraintTop_toBottomOf="@+id/imageView2">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:textSize="@dimen/ex_large_text"
-            android:text="@string/school"/>
+            android:text="@string/school"
+            android:textSize="@dimen/ex_large_text"/>
 
         <TextView
             android:id="@+id/selection"
             android:layout_width="0dp"
-            android:gravity="center"
             android:layout_height="match_parent"
-            android:textSize="@dimen/ex_large_text"
+            android:layout_weight="2"
+            android:gravity="center"
             android:text="@string/select_school"
-            android:layout_weight="2"/>
+            android:textSize="@dimen/ex_large_text"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="50dp"
+        android:layout_marginEnd="32dp"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
         android:orientation="horizontal"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/school_selection"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp">
+        app:layout_constraintTop_toBottomOf="@+id/school_selection">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:textSize="@dimen/ex_large_text"
-            android:text="@string/pref_title_current_week"/>
+            android:text="@string/pref_title_current_week"
+            android:textSize="@dimen/ex_large_text"/>
 
         <Spinner
             android:id="@+id/week"

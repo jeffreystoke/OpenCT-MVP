@@ -18,8 +18,6 @@ package cc.metapro.openct.utils.base;
 
 import android.util.Log;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.ResourceObserver;
 
 

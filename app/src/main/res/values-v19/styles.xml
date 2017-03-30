@@ -17,13 +17,13 @@
 
 <resources>
 
-        <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-                <item name="colorPrimary">@color/material_white</item>
-                <item name="colorPrimaryDark">@color/material_white_dark</item>
-                <item name="colorAccent">@color/colorAccent</item>
-                <item name="android:textColorPrimary">@color/material_black</item>
-                <item name="android:textColorSecondary">@color/material_grey</item>
-                <item name="android:windowTranslucentStatus">true</item>
-                <item name="android:windowTranslucentNavigation">false</item>
-        </style>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/material_white</item>
+        <item name="colorPrimaryDark">@color/material_white_dark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/material_black</item>
+        <item name="android:textColorSecondary">@color/material_grey</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+    </style>
 </resources>

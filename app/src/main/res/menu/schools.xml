@@ -17,8 +17,10 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/update"
-          android:title="@string/updated_schools"/>
-    <item android:id="@+id/report"
-          android:title="@string/report_school"/>
+    <item
+        android:id="@+id/update"
+        android:title="@string/updated_schools"/>
+    <item
+        android:id="@+id/report"
+        android:title="@string/report_school"/>
 </menu>
