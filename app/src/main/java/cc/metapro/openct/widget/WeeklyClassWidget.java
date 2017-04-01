@@ -22,14 +22,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.Keep;
 import android.widget.RemoteViews;
 
 import cc.metapro.openct.R;
 
 import static cc.metapro.openct.widget.DailyClassWidget.UPDATE_ITEMS;
 
-@Keep
 public class WeeklyClassWidget extends AppWidgetProvider {
 
     private static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {

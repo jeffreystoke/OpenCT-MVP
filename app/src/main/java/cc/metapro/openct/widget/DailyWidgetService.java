@@ -18,7 +18,6 @@ package cc.metapro.openct.widget;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.Keep;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -30,7 +29,6 @@ import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.classinfo.SingleClass;
 
-@Keep
 public class DailyWidgetService extends RemoteViewsService {
 
     @Override

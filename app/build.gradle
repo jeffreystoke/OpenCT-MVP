@@ -51,7 +51,7 @@ dependencies {
     compile('org.mnode.ical4j:ical4j:2.0.0') {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
     }
-//    compile 'org.apache.poi:poi:3.16-beta2'
+    //    compile 'org.apache.poi:poi:3.16-beta2'
     compile 'org.jsoup:jsoup:1.10.2'
     compile 'com.android.support:palette-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
@@ -82,4 +82,5 @@ dependencies {
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    compile project(':excelreader')
 }

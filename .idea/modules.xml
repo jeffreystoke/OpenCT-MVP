@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/OpenCT.iml" filepath="$PROJECT_DIR$/OpenCT.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/excelreader/excelreader.iml" filepath="$PROJECT_DIR$/excelreader/excelreader.iml" />
       <module fileurl="file://$PROJECT_DIR$/interactiveweb/interactiveweb.iml" filepath="$PROJECT_DIR$/interactiveweb/interactiveweb.iml" />
     </modules>
   </component>

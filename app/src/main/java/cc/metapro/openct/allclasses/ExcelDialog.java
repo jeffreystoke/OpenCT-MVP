@@ -27,16 +27,14 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
-
-import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONException;
 
 import java.io.File;
-import java.net.URISyntaxException;
 
-import butterknife.BindView;
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.ExcelHelper;
 import cc.metapro.openct.utils.FileUtils;
@@ -56,24 +54,32 @@ public class ExcelDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new AlertDialog.Builder(getActivity())
+        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.import_from_excel)
                 .setMessage(R.string.select_file_tip)
                 .setPositiveButton(R.string.select_file, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog1, int which) {
                         showFilerChooser();
-//                        String text = mEditText.getText().toString();
-//                        try {
-//                            String json = ExcelHelper.tableToJson(text);
-//                            mCallback.onJsonResult(json);
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button positiveButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showFilerChooser();
+                    }
+                });
+            }
+        });
+
+        return dialog;
     }
 
     @Override
@@ -87,24 +93,20 @@ public class ExcelDialog extends DialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == FILE_SELECT_CODE && resultCode == AppCompatActivity.RESULT_OK) {
             Uri uri = data.getData();
-            // Get the path
-            String path;
-            try {
-                path = FileUtils.getPath(getActivity(), uri);
-                if (path != null) {
-                    File file = new File(path);
-                    Log.d("FileChooser", file.getAbsolutePath());
-                    String s = "";
-                    try {
-                        String table = ExcelHelper.xlsxToTable(path);
-                        s = ExcelHelper.tableToJson(table);
-                        mCallback.onJsonResult(s);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+            String path = null;
+            path = FileUtils.getPath(getActivity(), uri);
+            if (path != null) {
+                File file = new File(path);
+                Log.d("FileChooser", file.getAbsolutePath());
+                String s = "";
+                try {
+                    String table = ExcelHelper.xlsxToTable(path);
+                    s = ExcelHelper.tableToJson(table);
+                    mCallback.onJsonResult(s);
+                    dismiss();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
             }
         }
     }

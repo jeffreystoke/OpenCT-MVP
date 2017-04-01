@@ -18,13 +18,25 @@ package cc.metapro.openct.utils;
 
 import android.support.annotation.NonNull;
 
+import net.lingala.zip4j.exception.ZipException;
+
 import org.json.JSONException;
 import org.json.JSONStringer;
+
+import java.io.IOException;
+
+import cc.metapro.openct.XLSXReader;
 
 public class ExcelHelper {
 
     public static String xlsxToTable(@NonNull String path) {
-        // TODO: 17/3/30 process excel file
+        try {
+            XLSXReader reader = new XLSXReader(path);
+            return reader.getSheets()[0];
+        } catch (ZipException | IOException e) {
+            e.printStackTrace();
+        }
+
         return "";
     }
 

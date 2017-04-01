@@ -213,7 +213,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
     @Override
     public void storeClasses(Classes classes) {
         try {
-            mDBManger.updateClasses(allClasses);
+            mDBManger.updateClasses(classes);
             DailyClassWidget.update(mContext);
         } catch (Exception e) {
             Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();

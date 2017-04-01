@@ -9,14 +9,14 @@ This is an Open Source Project, which aims to be the start point for your develo
 
 ## ScreenShots
 
-<img src="./screenshots/features.jpg?raw=true" width="200">
-<img src="./screenshots/class_table_day.jpg?raw=true" width="200">
-<img src="./screenshots/class_table_week.jpg?raw=true" width="200">
-<img src="./screenshots/borrow_info.jpg?raw=true" width="200">
-<img src="./screenshots/search_result.jpg?raw=true" width="200">
-<img src="./screenshots/all_classes.jpg?raw=true" width="200">
-<img src="./screenshots/class_edit.jpg?raw=true" width="200">
-<img src="./screenshots/view_in_icalendar.png?raw=true" width="200">
+<img src="./screenshots/features.jpg?raw=true" width="100">
+<img src="./screenshots/class_table_day.jpg?raw=true" width="100">
+<img src="./screenshots/class_table_week.jpg?raw=true" width="100">
+<img src="./screenshots/borrow_info.jpg?raw=true" width="100">
+<img src="./screenshots/search_result.jpg?raw=true" width="100">
+<img src="./screenshots/all_classes.jpg?raw=true" width="100">
+<img src="./screenshots/class_edit.jpg?raw=true" width="100">
+<img src="./screenshots/view_in_icalendar.png?raw=true" width="100">
 
 ## Dependency
 
@@ -51,28 +51,18 @@ This is an Open Source Project, which aims to be the start point for your develo
 8. Query your CET grade
 
 
-## Import from Table Content
-
-Caution! It is DIFFERENT form Import from Excel Document, you have to copy the content in your Excel Document and paste it in the EditText in Dialog
-
-Actually, There is no need to use Excel, it will treat `\n` and `\t` as line and cell separation, and the Content copied from Excel Table has the same feature
-
+## Import from XLSX (Excel 2007+)
 
 Download Excel Template Document - <a href="./template.xlsx?raw=true">template.xlsx</a>
 
-`name` - The ClassName (e.g. 大学语文)
-
-`type` - The ClassType (e.g. 必修)
-
-`time` - The Time you should attend class, use Chinese for weekday and leave only one time here per line (e.g. 周一5-6)
-
-`during` - The Duration of the class, support odd, even week (use Chinese Please) and multiple duration, use & to separate them (e.g. 1-5&6-10双&11-15单)
-
-
-`teacher` - The teacher name who lecture the class (e.g. 老王)
-
-
-`place` - The place to attend the class (e.g. 教102)
+|key|description|
+|----|----|
+|name|The ClassName (e.g. 大学语文)|
+|type|The ClassType (e.g. 必修)|
+|time|The Time you should attend class, use Chinese for weekday and leave only one time here per line (e.g. 周一5-6)|
+|during|The Duration of the class, support odd, even week (use Chinese Please) and multiple duration, use & to separate them (e.g. 1-5&6-10双&11-15单)|
+|teacher|The teacher name who lecture the class (e.g. 老王)|
+|place|The place to attend the class (e.g. 教102)|
 
 
 ### Example Table Content

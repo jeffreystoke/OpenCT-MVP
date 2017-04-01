@@ -1,1 +1,1 @@
-include ':app', ':interactiveweb'
+include ':app', ':interactiveweb', ':excelreader'
