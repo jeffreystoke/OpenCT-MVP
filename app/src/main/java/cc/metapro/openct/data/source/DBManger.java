@@ -114,16 +114,18 @@ public class DBManger {
         }
     }
 
-    public static void updateSchools(Context context, List<UniversityInfo> universityInfoList) {
+    public static void updateSchools(Context context,@Nullable List<UniversityInfo> universityInfoList) {
         DBManger.getInstance(context);
         mDatabase.beginTransaction();
         try {
             mDatabase.delete(DBHelper.SCHOOL_TABLE, null, null);
-            for (UniversityInfo info : universityInfoList) {
-                ContentValues values = new ContentValues();
-                values.put(DBHelper.SCHOOL_NAME, info.name);
-                values.put(DBHelper.JSON, info.toString());
-                mDatabase.insert(DBHelper.SCHOOL_TABLE, null, values);
+            if (universityInfoList != null) {
+                for (UniversityInfo info : universityInfoList) {
+                    ContentValues values = new ContentValues();
+                    values.put(DBHelper.SCHOOL_NAME, info.name);
+                    values.put(DBHelper.JSON, info.toString());
+                    mDatabase.insert(DBHelper.SCHOOL_TABLE, null, values);
+                }
             }
             mDatabase.setTransactionSuccessful();
         } finally {

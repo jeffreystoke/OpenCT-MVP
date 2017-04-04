@@ -26,15 +26,11 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.myclass.ClassActivity;
 import cc.metapro.openct.utils.PrefHelper;
-import me.relex.circleindicator.CircleIndicator;
 
 public class SplashActivity extends AppCompatActivity {
 
     @BindView(R.id.view_pager)
     ViewPager mViewPager;
-
-    @BindView(R.id.indicator)
-    CircleIndicator mIndicator;
 
     private boolean misScrolled = false;
 
@@ -52,9 +48,8 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void setViewPager() {
-        final InitPagerAdapter pagerAdapter = new InitPagerAdapter(getSupportFragmentManager());
+        final InitPagerAdapter pagerAdapter = new InitPagerAdapter(getSupportFragmentManager(), this);
         mViewPager.setAdapter(pagerAdapter);
-        mIndicator.setViewPager(mViewPager);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

@@ -19,6 +19,8 @@ package cc.metapro.openct.splash.schoolselection;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -31,6 +33,7 @@ import android.widget.AdapterView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
+import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.PrefHelper;
@@ -49,6 +52,7 @@ public class SchoolSelectionActivity
     public static final int REQUEST_SCHOOL_NAME = 1;
     public static final String SCHOOL_RESULT = "school_name";
     private static final String TAG = SchoolSelectionActivity.class.getName();
+
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.school_name)
@@ -79,6 +83,7 @@ public class SchoolSelectionActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.update:
+                updateSchools(true);
                 break;
             case R.id.report:
                 break;
@@ -89,12 +94,20 @@ public class SchoolSelectionActivity
     @Override
     protected void onResume() {
         super.onResume();
+        updateSchools(false);
+    }
+
+    private void updateSchools(final boolean online) {
         final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(this, R.string.loading_school_list);
         progressDialog.show();
 
         Observable<SchoolAdapter> observable = Observable.create(new ObservableOnSubscribe<SchoolAdapter>() {
             @Override
             public void subscribe(ObservableEmitter<SchoolAdapter> e) throws Exception {
+                if (online) {
+                    DBManger.updateSchools(SchoolSelectionActivity.this, null);
+                }
+
                 mAdapter = new SchoolAdapter(SchoolSelectionActivity.this);
                 e.onNext(mAdapter);
             }
@@ -104,6 +117,9 @@ public class SchoolSelectionActivity
             @Override
             public void onNext(SchoolAdapter schoolAdapter) {
                 progressDialog.dismiss();
+                if (online) {
+                    Snackbar.make(mListView, R.string.schools_updated, BaseTransientBottomBar.LENGTH_LONG).show();
+                }
                 setViews(schoolAdapter);
             }
 
@@ -125,12 +141,20 @@ public class SchoolSelectionActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 result = mAdapter.getItem(position).toString();
-                Intent intent = new Intent();
-                intent.putExtra(SCHOOL_RESULT, result);
-                setResult(RESULT_OK, intent);
-                finish();
+                Snackbar.make(mListView, getString(R.string.selected_school, result), BaseTransientBottomBar.LENGTH_INDEFINITE)
+                        .setAction(android.R.string.ok, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent();
+                                intent.putExtra(SCHOOL_RESULT, result);
+                                setResult(RESULT_OK, intent);
+                                finish();
+                            }
+                        }).show();
             }
         });
+        mListView.requestFocus();
+//        mAdapter.notifyDataSetChanged();
 
         mSearchView.onActionViewExpanded();
         mSearchView.setSubmitButtonEnabled(true);

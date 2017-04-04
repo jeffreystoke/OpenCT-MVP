@@ -161,4 +161,10 @@ public class CaptchaDialog extends DialogFragment {
         mEditText.setText("");
         StoreHelper.delFile(Constants.CAPTCHA_FILE);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mLoginPresenter = null;
+    }
 }

@@ -117,9 +117,6 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
             case R.id.show_due:
                 mPresenter.showDue();
                 break;
-//            case R.id.filter:
-//                mPresenter.startFilter(getSupportFragmentManager());
-//                break;
         }
         return super.onOptionsItemSelected(item);
     }

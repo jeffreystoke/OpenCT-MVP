@@ -17,24 +17,26 @@ package cc.metapro.openct.customviews;
  */
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
-import android.view.Gravity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.internal.MDButton;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,13 +59,12 @@ public class LinkSelectionDialog extends DialogFragment {
 
     private static final String TAG = LinkSelectionDialog.class.getSimpleName();
     private static String TYPE;
-    private static Elements mLinks;
+    private static Elements sLinks;
     private static Document DOCUMENT;
     private static LoginPresenter mPresenter;
-    @BindView(R.id.radio_group)
-    RadioGroup mRadioGroup;
+    private Element mTarget;
 
-    private List<RadioButton> mRadioButtons;
+    private MaterialDialog mDialog;
 
     public static LinkSelectionDialog newInstance(String type, Document document, LoginPresenter presenter) {
         TYPE = type;
@@ -75,40 +76,40 @@ public class LinkSelectionDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_link_selection, null);
-        ButterKnife.bind(this, view);
-        setView();
-        AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.target_selection)
-                .setView(view)
-                .setPositiveButton(android.R.string.ok, null)
-                .setNeutralButton(R.string.not_in_range_above, null)
-                .create();
+        mDialog = new MaterialDialog.Builder(getActivity())
+                .title(R.string.target_selection)
+                .positiveText(android.R.string.ok)
+                .neutralText(R.string.not_in_range_above)
+                .adapter(new LinkAdapter(getActivity()), new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false))
+                .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                        mTarget = sLinks.get(i);
+                        return true;
+                    }
+                })
+                .build();
 
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        setView();
+
+        mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                final Button positiveButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
-                final Button neutralButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEUTRAL);
+                final MDButton positiveButton = mDialog.getActionButton(DialogAction.POSITIVE);
+                final MDButton neutralButton = mDialog.getActionButton(DialogAction.NEUTRAL);
                 positiveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        for (int i = 0; i < mRadioButtons.size(); i++) {
-                            if (mRadioButtons.get(i).isChecked()) {
-                                Element target = mLinks.get(i);
-                                if (Constants.TYPE_CLASS.equals(TYPE)) {
-                                    Constants.advCustomInfo.setFirstClassUrlPattern(target.toString());
-                                } else if (Constants.TYPE_GRADE.equals(TYPE)) {
-                                    Constants.advCustomInfo.setFirstGradeUrlPattern(target.toString());
-                                } else if (Constants.TYPE_BORROW.equals(TYPE)) {
-                                    Constants.advCustomInfo.setFirstBorrowPattern(target.toString());
-                                }
-                                DBManger.getInstance(getActivity()).updateAdvCustomInfo(Constants.advCustomInfo);
-                                Constants.checkAdvCustomInfo(getActivity());
-                                mPresenter.loadTargetPage(getFragmentManager(), target.absUrl("href"));
-                                break;
-                            }
+                        if (Constants.TYPE_CLASS.equals(TYPE)) {
+                            Constants.advCustomInfo.setFirstClassUrlPattern(mTarget.toString());
+                        } else if (Constants.TYPE_GRADE.equals(TYPE)) {
+                            Constants.advCustomInfo.setFirstGradeUrlPattern(mTarget.toString());
+                        } else if (Constants.TYPE_BORROW.equals(TYPE)) {
+                            Constants.advCustomInfo.setFirstBorrowPattern(mTarget.toString());
                         }
+                        DBManger.getInstance(getActivity()).updateAdvCustomInfo(Constants.advCustomInfo);
+                        Constants.checkAdvCustomInfo(getActivity());
+                        mPresenter.loadTargetPage(getFragmentManager(), mTarget.absUrl("href"));
                         dismiss();
                     }
                 });
@@ -116,63 +117,48 @@ public class LinkSelectionDialog extends DialogFragment {
                 neutralButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        for (int i = 0; i < mRadioButtons.size(); i++) {
-                            if (mRadioButtons.get(i).isChecked()) {
-                                Element target = mLinks.get(i);
-                                if (Constants.TYPE_CLASS.equals(TYPE)) {
-                                    Constants.advCustomInfo.setFirstClassUrlPattern(target.toString());
-                                } else if (Constants.TYPE_GRADE.equals(TYPE)) {
-                                    Constants.advCustomInfo.setFirstGradeUrlPattern(target.toString());
-                                } else if (Constants.TYPE_BORROW.equals(TYPE)) {
-                                    Constants.advCustomInfo.setFirstBorrowPattern(target.toString());
-                                }
-                                break;
-                            }
+                        if (Constants.TYPE_CLASS.equals(TYPE)) {
+                            Constants.advCustomInfo.setFirstClassUrlPattern(mTarget.toString());
+                        } else if (Constants.TYPE_GRADE.equals(TYPE)) {
+                            Constants.advCustomInfo.setFirstGradeUrlPattern(mTarget.toString());
+                        } else if (Constants.TYPE_BORROW.equals(TYPE)) {
+                            Constants.advCustomInfo.setFirstBorrowPattern(mTarget.toString());
                         }
-                        mLinks = DOCUMENT.select("a");
-                        addRadioOptions();
+
+                        sLinks = DOCUMENT.select("a");
+                        mDialog.notifyItemsChanged();
                         neutralButton.setText(R.string.click_to_go);
                         neutralButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                for (int i = 0; i < mRadioButtons.size(); i++) {
-                                    if (mRadioButtons.get(i).isChecked()) {
-                                        Element target = mLinks.get(i);
-                                        if (Constants.TYPE_CLASS.equals(TYPE)) {
-                                            Constants.advCustomInfo.addClassUrlPattern(target.toString());
-                                        } else if (Constants.TYPE_GRADE.equals(TYPE)) {
-                                            Constants.advCustomInfo.addGradeUrlPattern(target.toString());
-                                        } else if (Constants.TYPE_BORROW.equals(TYPE)) {
-                                            Constants.advCustomInfo.addBorrowPattern(target.toString());
-                                        }
-                                        break;
-                                    }
+                                if (Constants.TYPE_CLASS.equals(TYPE)) {
+                                    Constants.advCustomInfo.addClassUrlPattern(mTarget.toString());
+                                } else if (Constants.TYPE_GRADE.equals(TYPE)) {
+                                    Constants.advCustomInfo.addGradeUrlPattern(mTarget.toString());
+                                } else if (Constants.TYPE_BORROW.equals(TYPE)) {
+                                    Constants.advCustomInfo.addBorrowPattern(mTarget.toString());
                                 }
+
                                 if (Constants.TYPE_GRADE.equalsIgnoreCase(TYPE) || Constants.TYPE_CLASS.equalsIgnoreCase(TYPE)) {
-                                    for (int i = 0; i < mRadioButtons.size(); i++) {
-                                        if (mRadioButtons.get(i).isChecked()) {
-                                            final Element target = mLinks.get(i);
-                                            Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
-                                                @Override
-                                                public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                                                    CmsFactory factory = Loader.getCms(getActivity());
-                                                    e.onNext(factory.getPageDom(target.absUrl("href")));
-                                                }
-                                            });
-
-                                            Observer<Document> observer = new MyObserver<Document>(TAG) {
-                                                @Override
-                                                public void onNext(Document document) {
-                                                    mLinks = document.select("a");
-                                                    addRadioOptions();
-                                                }
-                                            };
-
-                                            observable.subscribeOn(Schedulers.io())
-                                                    .observeOn(AndroidSchedulers.mainThread())
-                                                    .subscribe(observer);
+                                    Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
+                                        @Override
+                                        public void subscribe(ObservableEmitter<Document> e) throws Exception {
+                                            CmsFactory factory = Loader.getCms(getActivity());
+                                            e.onNext(factory.getPageDom(mTarget.absUrl("href")));
                                         }
-                                    }
+                                    });
+
+                                    Observer<Document> observer = new MyObserver<Document>(TAG) {
+                                        @Override
+                                        public void onNext(Document document) {
+                                            sLinks = document.select("a");
+                                            mDialog.notifyItemsChanged();
+                                        }
+                                    };
+
+                                    observable.subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(observer);
                                 } else if (Constants.TYPE_BORROW.equalsIgnoreCase(TYPE)) {
 //                                    LibraryFactory factory = Loader.getLibrary(getActivity());
                                 }
@@ -181,22 +167,16 @@ public class LinkSelectionDialog extends DialogFragment {
                         positiveButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                for (int i = 0; i < mRadioButtons.size(); i++) {
-                                    if (mRadioButtons.get(i).isChecked()) {
-                                        Element target = mLinks.get(i);
-                                        if (Constants.TYPE_CLASS.equals(TYPE)) {
-                                            Constants.advCustomInfo.addClassUrlPattern(target.toString());
-                                        } else if (Constants.TYPE_GRADE.equals(TYPE)) {
-                                            Constants.advCustomInfo.addGradeUrlPattern(target.toString());
-                                        } else if (Constants.TYPE_BORROW.equals(TYPE)) {
-                                            Constants.advCustomInfo.addBorrowPattern(target.toString());
-                                        }
-                                        DBManger.getInstance(getActivity()).updateAdvCustomInfo(Constants.advCustomInfo);
-                                        Constants.checkAdvCustomInfo(getActivity());
-                                        mPresenter.loadTargetPage(getFragmentManager(), target.absUrl("href"));
-                                        break;
-                                    }
+                                if (Constants.TYPE_CLASS.equals(TYPE)) {
+                                    Constants.advCustomInfo.addClassUrlPattern(mTarget.toString());
+                                } else if (Constants.TYPE_GRADE.equals(TYPE)) {
+                                    Constants.advCustomInfo.addGradeUrlPattern(mTarget.toString());
+                                } else if (Constants.TYPE_BORROW.equals(TYPE)) {
+                                    Constants.advCustomInfo.addBorrowPattern(mTarget.toString());
                                 }
+                                DBManger.getInstance(getActivity()).updateAdvCustomInfo(Constants.advCustomInfo);
+                                Constants.checkAdvCustomInfo(getActivity());
+                                mPresenter.loadTargetPage(getFragmentManager(), mTarget.absUrl("href"));
                                 dismiss();
                             }
                         });
@@ -204,7 +184,8 @@ public class LinkSelectionDialog extends DialogFragment {
                 });
             }
         });
-        return dialog;
+
+        return mDialog;
     }
 
     @Override
@@ -216,31 +197,66 @@ public class LinkSelectionDialog extends DialogFragment {
     private void setView() {
         switch (TYPE) {
             case Constants.TYPE_CLASS:
-                mLinks = DOCUMENT.select("a:matches(课表|课程)");
+                sLinks = DOCUMENT.select("a:matches(课表|课程)");
                 break;
             case Constants.TYPE_GRADE:
-                mLinks = DOCUMENT.select("a:matches(成绩)");
+                sLinks = DOCUMENT.select("a:matches(成绩)");
                 break;
             case Constants.TYPE_SEARCH:
                 break;
             case Constants.TYPE_BORROW:
-                mLinks = DOCUMENT.select("a:matches(借阅)");
+                sLinks = DOCUMENT.select("a:matches(借阅)");
                 break;
         }
-        addRadioOptions();
+        mDialog.notifyItemsChanged();
     }
 
-    private void addRadioOptions() {
-        mRadioButtons = new ArrayList<>(mLinks.size());
-        mRadioGroup.removeAllViews();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        TYPE = null;
+        mPresenter = null;
+        sLinks = null;
+        DOCUMENT = null;
+    }
 
-        for (Element link : mLinks) {
-            RadioButton button = new RadioButton(getActivity());
-            button.setText(link.text());
-            button.setGravity(Gravity.CENTER);
-            mRadioGroup.addView(button);
-            mRadioButtons.add(button);
+    static class LinkAdapter extends RecyclerView.Adapter<LinkAdapter.LinkHolder> {
+
+        private LayoutInflater mInflater;
+
+        LinkAdapter(Context context) {
+            mInflater = LayoutInflater.from(context);
+        }
+
+        @Override
+        public LinkHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = mInflater.inflate(R.layout.item_header, parent, false);
+            return new LinkHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(LinkHolder holder, int position) {
+            holder.setText(sLinks.get(position).text());
+        }
+
+        @Override
+        public int getItemCount() {
+            return sLinks.size();
+        }
+
+        static class LinkHolder extends RecyclerView.ViewHolder {
+
+            @BindView(R.id.header_text)
+            TextView mHeaderText;
+
+            LinkHolder(View itemView) {
+                super(itemView);
+                ButterKnife.bind(this, itemView);
+            }
+
+            void setText(String text) {
+                mHeaderText.setText(text);
+            }
         }
     }
-
 }

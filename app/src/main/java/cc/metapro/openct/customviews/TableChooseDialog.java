@@ -24,15 +24,22 @@ import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -65,7 +72,6 @@ public class TableChooseDialog extends DialogFragment {
     private static List<String> tableIds;
     private static LoginPresenter mPresenter;
 
-    @BindView(R.id.view_pager)
     ViewPager mViewPager;
 
     public static TableChooseDialog newInstance(String type, Document source, @Nullable LoginPresenter presenter) {
@@ -171,71 +177,43 @@ public class TableChooseDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_table_choose, null);
-        ButterKnife.bind(this, view);
+        tableIds = new ArrayList<>(tableMap.size());
+        for (String s : tableMap.keySet()) {
+            tableIds.add(s);
+        }
 
-        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.swipe_choose_table)
-                .setPositiveButton(android.R.string.ok, null)
-                .setView(view)
-                .create();
-
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        mViewPager = new ViewPager(getActivity());
+        mViewPager.setId(R.id.view_pager);
+        mViewPager.setAdapter(new FragmentStatePagerAdapter(getFragmentManager()) {
             @Override
-            public void onShow(DialogInterface dialog) {
-                final Button positiveButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
-                positiveButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        select();
-                    }
-                });
+            public Fragment getItem(int position) {
+                return HtmlTableFragment.newInstance(tableMap.get(tableIds.get(position)).html());
+            }
+
+            @Override
+            public int getCount() {
+                return tableMap.size();
             }
         });
 
         Constants.checkAdvCustomInfo(getActivity());
-        initView();
-        return dialog;
+        return new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.swipe_choose_table)
+                .setView(mViewPager)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        select();
+                    }
+                })
+                .create();
     }
-
-    private void initView() {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        final List<View> views = new ArrayList<>(tableMap.size());
-        tableIds = new ArrayList<>(tableMap.size());
-        for (String s : tableMap.keySet()) {
-            View contentView = inflater.inflate(R.layout.item_class_table, mViewPager, false);
-            TextView webView = (TextView) contentView.findViewById(R.id.table_content);
-            webView.setText(tableMap.get(s).text() + "\n\n");
-            views.add(contentView);
-            tableIds.add(s);
-        }
-        mViewPager.setAdapter(new PagerAdapter() {
-            @Override
-            public int getCount() {
-                return tableIds.size();
-            }
-
-            @Override
-            public void destroyItem(ViewGroup container, int position, Object object) {
-                container.removeView(views.get(position));
-            }
-
-            @Override
-            public Object instantiateItem(ViewGroup container, int position) {
-                container.addView(views.get(position));
-                return views.get(position);
-            }
-
-            @Override
-            public boolean isViewFromObject(View view, Object object) {
-                return view == object;
-            }
-
-            @Override
-            public CharSequence getPageTitle(int position) {
-                return "";
-            }
-        });
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter = null;
+        TYPE = null;
+        tableMap = null;
+        tableIds = null;
     }
-
 }

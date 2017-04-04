@@ -27,22 +27,20 @@ import android.view.ViewGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.util.Calendar;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.splash.schoolselection.SchoolSelectionActivity;
-import cc.metapro.openct.utils.PrefHelper;
 
-public class SchoolFragment extends Fragment {
+public class SchoolFragment extends Fragment implements SplashContract.SchoolView {
 
     @BindView(R.id.selection)
     TextView mSelection;
-
     @BindView(R.id.week)
     Spinner mWeek;
+
+    private SplashContract.Presenter mPresenter;
 
     private boolean initialed = false;
 
@@ -61,16 +59,16 @@ public class SchoolFragment extends Fragment {
 
     @OnClick(R.id.selection)
     public void onClick() {
-        startActivity(new Intent(getContext(), SchoolSelectionActivity.class));
+        startActivityForResult(
+                new Intent(getContext(), SchoolSelectionActivity.class),
+                SchoolSelectionActivity.REQUEST_SCHOOL_NAME);
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         if (!isVisibleToUser && initialed) {
             int week = mWeek.getSelectedItemPosition() + 1;
-            int currentWeekOfYear = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
-            PrefHelper.putString(getContext(), R.string.pref_current_week, week + "");
-            PrefHelper.putString(getContext(), R.string.pref_week_set_week, currentWeekOfYear + "");
+            mPresenter.setSelectedWeek(week);
         }
         super.setUserVisibleHint(isVisibleToUser);
     }
@@ -79,11 +77,19 @@ public class SchoolFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
             if (data != null) {
-                String result = data.getStringExtra(SchoolSelectionActivity.SCHOOL_RESULT);
-                PrefHelper.putString(getContext(), R.string.pref_school_name, result);
-                mSelection.setText(result);
+                mPresenter.setSelectedSchool(data.getStringExtra(SchoolSelectionActivity.SCHOOL_RESULT));
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void setPresenter(SplashContract.Presenter presenter) {
+        mPresenter = presenter;
+    }
+
+    @Override
+    public void showSelectedSchool(String name) {
+        mSelection.setText(name);
     }
 }

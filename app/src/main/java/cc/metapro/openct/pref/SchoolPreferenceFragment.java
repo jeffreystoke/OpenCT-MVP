@@ -50,7 +50,6 @@ import cc.metapro.openct.widget.DailyClassWidget;
 
 public class SchoolPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
-    private static final String TAG = SchoolPreferenceFragment.class.getName();
     private Preference mSchoolPreference;
     private Preference mCurrentWeekPreference;
     private Preference mCmsPasswordPreference;

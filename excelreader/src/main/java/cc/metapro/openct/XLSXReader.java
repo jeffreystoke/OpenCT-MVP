@@ -60,8 +60,6 @@ public class XLSXReader {
         zipFile.extractAll(tmp.getAbsolutePath());
 
         File worksheets = new File(tmp, "xl/worksheets");
-        assert worksheets.exists() && worksheets.isDirectory();
-
         File sharedStrings = new File(tmp, "xl/sharedStrings.xml");
         Map<String, String> valueMap = null;
         try {
@@ -69,8 +67,6 @@ public class XLSXReader {
         } catch (ParserConfigurationException | SAXException e) {
             e.printStackTrace();
         }
-
-        assert sharedStrings.exists() && valueMap != null;
 
         List<String> sheetsString = new ArrayList<>(1);
         File[] sheets = worksheets.listFiles();

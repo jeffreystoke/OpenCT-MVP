@@ -15,13 +15,8 @@
   ~ limitations under the License.
   -->
 
-<ScrollView
+<TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/table_content"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <TextView
-        android:id="@+id/table_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-</ScrollView>
+    android:layout_height="wrap_content"/>

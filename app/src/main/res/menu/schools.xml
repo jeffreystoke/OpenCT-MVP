@@ -19,7 +19,7 @@
 
     <item
         android:id="@+id/update"
-        android:title="@string/updated_schools"/>
+        android:title="@string/update_schools"/>
     <item
         android:id="@+id/report"
         android:title="@string/report_school"/>

@@ -16,6 +16,7 @@ package cc.metapro.openct.splash;
  * limitations under the License.
  */
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -23,23 +24,32 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import cc.metapro.openct.splash.views.CmsFragment;
 import cc.metapro.openct.splash.views.LibraryFragment;
 import cc.metapro.openct.splash.views.SchoolFragment;
+import cc.metapro.openct.splash.views.SplashContract;
 
 
 class InitPagerAdapter extends FragmentStatePagerAdapter {
 
-    InitPagerAdapter(FragmentManager fm) {
+    private CmsFragment mCmsFragment;
+    private SchoolFragment mSchoolFragment;
+    private LibraryFragment mLibraryFragment;
+
+    InitPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
+        mCmsFragment = CmsFragment.getInstance();
+        mSchoolFragment = SchoolFragment.getInstance();
+        mLibraryFragment = LibraryFragment.getInstance();
+        new SplashPresenter(context, mSchoolFragment, mCmsFragment, mLibraryFragment);
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return SchoolFragment.getInstance();
+                return mSchoolFragment;
             case 1:
-                return CmsFragment.getInstance();
+                return mCmsFragment;
             case 2:
-                return LibraryFragment.getInstance();
+                return mLibraryFragment;
         }
         throw new IndexOutOfBoundsException("three fragments at most!");
     }

@@ -328,4 +328,7 @@
 
     <string name="lib_njhuiwen">Hui Wen</string>
     <string name="text_weekly_classes">Weekly</string>
+    <string name="update_schools">Update Schools</string>
+    <string name="selected_school">Selected %1$s</string>
+    <string name="schools_updated">Schools updated</string>
 </resources>

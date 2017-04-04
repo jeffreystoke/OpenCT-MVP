@@ -33,17 +33,25 @@ public class TableUtils {
         if (html == null) return new HashMap<>();
         Map<String, Element> result = new HashMap<>();
         Elements tables = html.select("table");
+        int i = 0;
         for (Element table : tables) {
             String id = table.id();
             if (TextUtils.isEmpty(id)) {
                 id = table.attr("name");
-                if (TextUtils.isEmpty(id)) {
-                    id = table.attr("class");
-                }
             }
+
+            if (TextUtils.isEmpty(id)) {
+                id = table.attr("class");
+            }
+
+            if (TextUtils.isEmpty(id)) {
+                id = i + "";
+            }
+
             if (result.get(id) == null) {
                 result.put(id, table);
             }
+            i++;
         }
         return result;
     }

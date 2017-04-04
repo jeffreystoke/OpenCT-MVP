@@ -19,30 +19,23 @@ package cc.metapro.openct.splash.views;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.scottyab.aescrypt.AESCrypt;
-
-import java.security.GeneralSecurityException;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.PrefHelper;
 
-public class CmsFragment extends Fragment {
+public class CmsFragment extends Fragment implements SplashContract.CMSView {
 
     @BindView(R.id.username)
     EditText mUsername;
-
     @BindView(R.id.password)
     EditText mPassword;
 
+    private SplashContract.Presenter mPresenter;
     private boolean showed = false;
 
     public static CmsFragment getInstance() {
@@ -62,18 +55,13 @@ public class CmsFragment extends Fragment {
         if (isVisibleToUser) {
             showed = true;
         } else if (showed) {
-            String username = "";
-            String password = "";
-            try {
-                username = mUsername.getText().toString();
-                password = AESCrypt.encrypt(Constants.seed, mPassword.getText().toString());
-            } catch (GeneralSecurityException e) {
-                Log.e("FATAL:ENCRYPTION FAIL", e.getMessage());
-            } finally {
-                PrefHelper.putString(getContext(), R.string.pref_cms_username, username);
-                PrefHelper.putString(getContext(), R.string.pref_cms_password, password);
-            }
+            mPresenter.storeCMSUserPass(mUsername.getText().toString(), mPassword.getText().toString());
         }
         super.setUserVisibleHint(isVisibleToUser);
+    }
+
+    @Override
+    public void setPresenter(SplashContract.Presenter presenter) {
+        mPresenter = presenter;
     }
 }

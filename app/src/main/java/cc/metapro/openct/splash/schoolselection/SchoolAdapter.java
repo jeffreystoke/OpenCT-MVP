@@ -18,8 +18,6 @@ package cc.metapro.openct.splash.schoolselection;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +40,7 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.schedulers.Schedulers;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
@@ -57,7 +56,7 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
         mAllSchools = new ArrayList<>();
         mSchools = new ArrayList<>();
         if (universityList.isEmpty()) {
-            showGitNotice(context);
+            getRemoteSchoolList(context);
         } else {
             setSchools(universityList);
         }
@@ -73,54 +72,45 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
         }
     }
 
-    private void showGitNotice(final Context context) {
-        Observable.create(new ObservableOnSubscribe<List<UniversityInfo>>() {
+    private void getRemoteSchoolList(final Context context) {
+        Observable.create(new ObservableOnSubscribe() {
             @Override
-            public void subscribe(ObservableEmitter<List<UniversityInfo>> e) throws Exception {
-                new AlertDialog.Builder(context)
-                        .setTitle(R.string.notice)
-                        .setMessage(R.string.fetch_remote_school_list_tip)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(context, R.string.loading_university_info_list);
-                                progressDialog.show();
+            public void subscribe(@NonNull ObservableEmitter observableEmitter) throws Exception {
+                final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(context, R.string.loading_university_info_list);
+                progressDialog.show();
 
-                                Observable<List<UniversityInfo>> observable = Observable.create(new ObservableOnSubscribe<List<UniversityInfo>>() {
-                                    @Override
-                                    public void subscribe(ObservableEmitter<List<UniversityInfo>> e) throws Exception {
-                                        List<UniversityInfo> universityInfoList = ServiceGenerator
-                                                .createOpenCTService().getOnlineUniversityInfo().execute().body();
-                                        if (universityInfoList == null || universityInfoList.isEmpty()) {
-                                            e.onError(new Exception(context.getString(R.string.fetch_school_list_fail)));
-                                        } else {
-                                            e.onNext(universityInfoList);
-                                        }
-                                    }
-                                });
-                                Observer<List<UniversityInfo>> observer = new MyObserver<List<UniversityInfo>>("OpenCT GIT FETCH") {
-                                    @Override
-                                    public void onNext(final List<UniversityInfo> universityList) {
-                                        progressDialog.dismiss();
-                                        DBManger.updateSchools(context, universityList);
-                                        setSchools(universityList);
-                                        Toast.makeText(context, R.string.updated_schools, Toast.LENGTH_LONG).show();
-                                    }
+                Observable<List<UniversityInfo>> observable = Observable.create(new ObservableOnSubscribe<List<UniversityInfo>>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<List<UniversityInfo>> e) throws Exception {
+                        List<UniversityInfo> universityInfoList = ServiceGenerator
+                                .createOpenCTService().getOnlineUniversityInfo().execute().body();
+                        if (universityInfoList == null || universityInfoList.isEmpty()) {
+                            e.onError(new Exception(context.getString(R.string.fetch_school_list_fail)));
+                        } else {
+                            e.onNext(universityInfoList);
+                        }
+                    }
+                });
 
-                                    @Override
-                                    public void onError(Throwable e) {
-                                        super.onError(e);
-                                        progressDialog.dismiss();
-                                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
-                                    }
-                                };
+                Observer<List<UniversityInfo>> observer = new MyObserver<List<UniversityInfo>>("OpenCT_School_Fetch") {
+                    @Override
+                    public void onNext(final List<UniversityInfo> universityList) {
+                        progressDialog.dismiss();
+                        DBManger.updateSchools(context, universityList);
+                        setSchools(universityList);
+                    }
 
-                                observable.subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(observer);
-                            }
-                        })
-                        .setNegativeButton(android.R.string.cancel, null).show();
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        progressDialog.dismiss();
+                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                };
+
+                observable.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(observer);
             }
         }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
     }
@@ -183,7 +173,7 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
 
         if (convertView == null) {
             holder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.item_school, parent, false);
+            convertView = inflater.inflate(R.layout.item_floating_header, parent, false);
             holder.schoolText = (TextView) convertView.findViewById(R.id.school_name_text);
             convertView.setTag(holder);
         } else {
