@@ -25,18 +25,10 @@
     android:fitsSystemWindows="true"
     tools:context="cc.metapro.openct.classdetail.ClassDetailActivity">
 
-    <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
-        android:id="@+id/recycler_view"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
+        android:orientation="vertical">
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             style="@style/AppTheme.Toolbar"
@@ -45,32 +37,37 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/content"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="2"
+                    android:layout_gravity="bottom|start"
                     android:hint="@string/class_name"
-                    android:lines="1"
                     app:met_floatingLabel="normal"/>
 
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/type"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
+                    android:layout_gravity="bottom|start"
                     android:hint="@string/class_type"
-                    android:lines="1"
                     app:met_floatingLabel="normal"/>
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
+
+        <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/bg"
+        style="@style/AppTheme.Fab"
+        app:layout_anchorGravity="bottom|end"
+        app:layout_anchor="@id/toolbar"/>
 </android.support.design.widget.CoordinatorLayout>

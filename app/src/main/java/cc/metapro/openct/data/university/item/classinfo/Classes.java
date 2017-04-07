@@ -16,6 +16,7 @@ package cc.metapro.openct.data.university.item.classinfo;
  * limitations under the License.
  */
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -75,22 +76,60 @@ public class Classes extends ArrayList<EnrichedClassInfo> {
 
     @NonNull
     public List<SingleClass> getWeekClasses(int week) {
+        if (week < 0 || week > 30) return getAllClasses();
+
         List<SingleClass> weekClasses = new ArrayList<>();
+        List<SingleClass> notWeekClasses = new ArrayList<>();
         for (EnrichedClassInfo info : this) {
-            Set<ClassTime> timeList = info.hasClassThisWeek(week);
-            if (!timeList.isEmpty()) {
-                for (ClassTime time : timeList) {
+            Set<ClassTime> weekTimeSet = info.hasClassThisWeek(week);
+            if (!weekTimeSet.isEmpty()) {
+                for (ClassTime time : weekTimeSet) {
                     String place = time.getPlace();
                     String teacher = time.getTeacher();
                     weekClasses.add(new SingleClass(info.getName(), info.getType(), time, place, teacher, info.getColor()));
                 }
+
+                // 添加本周有安排但是没有完全安排的课
+                Set<ClassTime> allTimeSet = info.getTimeSet();
+                if (weekTimeSet.size() < allTimeSet.size()) {
+                    for (ClassTime time : allTimeSet) {
+                        if (!weekTimeSet.contains(time)) {
+                            String place = time.getPlace();
+                            String teacher = time.getTeacher();
+                            notWeekClasses.add(new SingleClass(info.getName(), info.getType(), time, place, teacher, Color.LTGRAY));
+                        }
+                    }
+                }
+            } else {
+                // 添加本周没有安排的课
+                for (ClassTime time : info.getTimeSet()) {
+                    String place = time.getPlace();
+                    String teacher = time.getTeacher();
+                    notWeekClasses.add(new SingleClass(info.getName(), info.getType(), time, place, teacher, Color.LTGRAY));
+                }
             }
         }
-        return weekClasses;
+
+        // ensure unique class
+        List<SingleClass> result = new ArrayList<>(weekClasses);
+        for (SingleClass a : notWeekClasses) {
+            boolean found = false;
+            for (SingleClass b : weekClasses) {
+                if (a.getClassTime().equals(b.getClassTime())) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                result.add(a);
+            }
+        }
+        return result;
     }
 
     @NonNull
-    public List<SingleClass> getAllClasses() {
+    private List<SingleClass> getAllClasses() {
         List<SingleClass> todayClasses = new ArrayList<>();
         for (EnrichedClassInfo info : this) {
             Set<ClassTime> timeList = info.getTimeSet();

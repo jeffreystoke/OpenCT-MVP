@@ -43,8 +43,6 @@ import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
-import static cc.metapro.openct.allclasses.AllClassesPresenter.allClasses;
-
 public class AllClassesActivity extends AppCompatActivity implements AllClassesContract.View {
 
     private static final int REQUEST_WRITE_STORAGE = 112;
@@ -124,14 +122,14 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
 
             @Override
             public void onItemDismiss(final int position) {
-                final EnrichedClassInfo toRemove = allClasses.get(position);
-                allClasses.remove(position);
+                final EnrichedClassInfo toRemove = Constants.sClasses.get(position);
+                Constants.sClasses.remove(position);
                 mAdapter.notifyDataSetChanged();
-                final Snackbar snackbar = Snackbar.make(mRecyclerView, toRemove.getName() + " " + getString(R.string.deleted), BaseTransientBottomBar.LENGTH_INDEFINITE);
+                final Snackbar snackbar = Snackbar.make(mRecyclerView, toRemove.getName() + " " + getString(R.string.time_deleted), BaseTransientBottomBar.LENGTH_INDEFINITE);
                 snackbar.setAction(android.R.string.cancel, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        allClasses.add(toRemove);
+                        Constants.sClasses.add(toRemove);
                         mAdapter.notifyDataSetChanged();
                         snackbar.dismiss();
                         Snackbar.make(mRecyclerView, toRemove.getName() + " " + getString(R.string.restored), BaseTransientBottomBar.LENGTH_LONG).show();
@@ -145,8 +143,7 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
 
     @Override
     public void onBackPressed() {
-        mPresenter.storeClasses(allClasses);
-        allClasses = null;
+        mPresenter.storeClasses(Constants.sClasses);
         super.onBackPressed();
     }
 

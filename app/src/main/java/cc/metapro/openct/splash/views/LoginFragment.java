@@ -23,23 +23,36 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 
-public class CmsFragment extends Fragment implements SplashContract.CMSView {
+public class LoginFragment extends Fragment implements SplashContract.LoginView {
 
+    public static final int TYPE_LIB = 0;
+    public static final int TYPE_CMS = 1;
+    private static final String KEY_TYPE = "type";
+
+    @BindView(R.id.img)
+    ImageView mImageView;
     @BindView(R.id.username)
     EditText mUsername;
     @BindView(R.id.password)
     EditText mPassword;
 
     private SplashContract.Presenter mPresenter;
+    private int mType = TYPE_CMS;
     private boolean showed = false;
 
-    public static CmsFragment getInstance() {
-        return new CmsFragment();
+    public static LoginFragment getInstance(int type) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(KEY_TYPE, type);
+
+        LoginFragment fragment = new LoginFragment();
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
@@ -47,6 +60,12 @@ public class CmsFragment extends Fragment implements SplashContract.CMSView {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_userpass, container, false);
         ButterKnife.bind(this, view);
+        mType = getArguments().getInt(KEY_TYPE);
+        if (mType == TYPE_LIB) {
+            mImageView.setImageResource(R.drawable.ic_lib_header);
+        } else {
+            mImageView.setImageResource(R.drawable.ic_cms_header);
+        }
         return view;
     }
 
@@ -55,7 +74,13 @@ public class CmsFragment extends Fragment implements SplashContract.CMSView {
         if (isVisibleToUser) {
             showed = true;
         } else if (showed) {
-            mPresenter.storeCMSUserPass(mUsername.getText().toString(), mPassword.getText().toString());
+            String username = mUsername.getText().toString();
+            String password = mPassword.getText().toString();
+            if (mType == TYPE_CMS) {
+                mPresenter.storeCMSUserPass(username, password);
+            } else if (mType == TYPE_LIB) {
+                mPresenter.storeLibUserPass(username, password);
+            }
         }
         super.setUserVisibleHint(isVisibleToUser);
     }

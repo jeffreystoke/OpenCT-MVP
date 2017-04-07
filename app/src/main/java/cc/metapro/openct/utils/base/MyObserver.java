@@ -18,6 +18,7 @@ package cc.metapro.openct.utils.base;
 
 import android.util.Log;
 
+import cc.metapro.openct.utils.ActivityUtils;
 import io.reactivex.observers.ResourceObserver;
 
 
@@ -30,10 +31,13 @@ public abstract class MyObserver<T> extends ResourceObserver<T> {
     }
 
     @Override
-    public abstract void onNext(T t);
+    public void onNext(T t) {
+        ActivityUtils.dismissProgressDialog();
+    }
 
     @Override
     public void onError(Throwable e) {
+        ActivityUtils.dismissProgressDialog();
         Log.e(TAG, e.getMessage(), e);
     }
 

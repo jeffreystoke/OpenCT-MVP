@@ -277,8 +277,8 @@
     <string name="fetch_captcha_fail">Fetch Captcha Failed\n</string>
     <string name="new_class">New Class</string>
     <string name="mandatory">Mandatory</string>
-    <string name="deleted">Deleted</string>
-    <string name="restored">Restored</string>
+    <string name="time_deleted">%1$s %2$s %3$s Deleted</string>
+    <string name="restored">%1$s %2$s %3$ Restored</string>
     <string name="error_creating_calendar">Error Creating Calendar\n</string>
     <string name="warning">Warning</string>
     <string name="clear_classes_tip">This action will delete all your classes, confirm?</string>
@@ -310,7 +310,7 @@
     <string name="report_school">Report School</string>
     <string name="cet_result">CET Grades</string>
 
-    <string name="text_current_week">WEEK - %1$d</string>
+    <string name="text_current_week">WEEK %1$d</string>
     <string name="text_today_seq">Today %1$s</string>
     <string name="text_place_at">At %1$s</string>
     <string name="fail_file_chooser">Fail to start file chooser</string>
@@ -331,4 +331,5 @@
     <string name="update_schools">Update Schools</string>
     <string name="selected_school">Selected %1$s</string>
     <string name="schools_updated">Schools updated</string>
+    <string name="select_week">Select week</string>
 </resources>

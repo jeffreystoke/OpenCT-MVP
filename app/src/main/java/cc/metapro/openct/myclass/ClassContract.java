@@ -27,7 +27,7 @@ public interface ClassContract {
 
     interface View extends BaseView<Presenter> {
 
-        void updateClasses(Classes classes);
+        void showClasses(Classes classes, int week);
 
     }
 

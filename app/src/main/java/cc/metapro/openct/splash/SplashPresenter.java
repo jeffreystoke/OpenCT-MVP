@@ -35,10 +35,11 @@ class SplashPresenter implements SplashContract.Presenter {
     private Context mContext;
 
     private SplashContract.SchoolView mSchoolView;
+
     SplashPresenter(Context context,
                     SplashContract.SchoolView schoolView,
-                    SplashContract.CMSView cmsView,
-                    SplashContract.LibView libView) {
+                    SplashContract.LoginView cmsView,
+                    SplashContract.LoginView libView) {
         mContext = context;
         mSchoolView = schoolView;
         schoolView.setPresenter(this);

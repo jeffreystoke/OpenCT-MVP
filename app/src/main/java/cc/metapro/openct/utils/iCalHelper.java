@@ -110,14 +110,14 @@ public class ICalHelper {
         dailyStart.setTime(DateHelper.getDateBefore(now.getTime(), dayBefore));
         dailyStart.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
         dailyStart.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-        dailyStart.set(Calendar.DAY_OF_WEEK, DateHelper.weekDayTrans(time.getWeekDay()));
+        dailyStart.set(Calendar.DAY_OF_WEEK, DateHelper.weekDayConvert(time.getWeekDay()));
         DateTime start = new DateTime(dailyStart.getTime());
 
         Calendar dailyEnd = Calendar.getInstance();
         dailyEnd.setTime(DateHelper.getDateBefore(now.getTime(), dayBefore));
         dailyEnd.set(Calendar.HOUR_OF_DAY, endTime.get(Calendar.HOUR_OF_DAY));
         dailyEnd.set(Calendar.MINUTE, endTime.get(Calendar.MINUTE));
-        dailyEnd.set(Calendar.DAY_OF_WEEK, DateHelper.weekDayTrans(time.getWeekDay()));
+        dailyEnd.set(Calendar.DAY_OF_WEEK, DateHelper.weekDayConvert(time.getWeekDay()));
         DateTime end = new DateTime(dailyEnd.getTime());
 
         ParameterList paraList = new ParameterList();

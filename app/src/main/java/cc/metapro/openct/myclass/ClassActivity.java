@@ -28,7 +28,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -40,6 +39,7 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.allclasses.AllClassesActivity;
 import cc.metapro.openct.borrow.BorrowActivity;
+import cc.metapro.openct.customviews.WeekSelectionDialog;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.grades.GradeActivity;
@@ -79,20 +79,53 @@ public class ClassActivity extends AppCompatActivity
         toggle.syncState();
         mNavigationView.setNavigationItemSelectedListener(this);
 
+        initViewPager();
+        new ClassPresenter(this, this);
+    }
+
+    private void initViewPager() {
         mTabLayout.setupWithViewPager(mViewPager);
 
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(final TabLayout.Tab tab) {
+                if (tab == mTabLayout.getTabAt(1)) {
+                    WeekSelectionDialog.newInstance(new WeekSelectionDialog.SelectionCallback() {
+                        @Override
+                        public void onSelection(int index) {
+                            showClasses(Constants.sClasses, index);
+                            TabLayout.Tab tab1 = mTabLayout.getTabAt(1);
+                            if (tab1 != null) {
+                                tab1.setText(getString(R.string.text_current_week, index));
+                            }
+                        }
+                    }).show(getSupportFragmentManager(), "week_selection");
+                }
+            }
+        });
         mClassPagerAdapter = new ClassPagerAdapter(getSupportFragmentManager(), this);
         mViewPager.setAdapter(mClassPagerAdapter);
 
         int index = Integer.parseInt(PrefHelper.getString(this, R.string.pref_homepage_selection, "0"));
+        if (index > 1) {
+            index = 0;
+            PrefHelper.putString(this, R.string.pref_homepage_selection, "0");
+        }
         mViewPager.setCurrentItem(index);
-
-        new ClassPresenter(this, this);
     }
 
     @Override
-    public void updateClasses(@NonNull Classes classes) {
-        mClassPagerAdapter.startUpdate(mViewPager);
+    public void showClasses(@NonNull Classes classes, int week) {
+        mClassPagerAdapter.updateClasses(classes, week);
+        mClassPagerAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -147,7 +180,6 @@ public class ClassActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        initStatic();
         mPresenter.start();
         mClassPagerAdapter.notifyDataSetChanged();
     }
@@ -159,6 +191,7 @@ public class ClassActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             if (mExitState) {
+                Constants.sClasses = null;
                 finish();
             } else {
                 Toast.makeText(this, R.string.one_more_press_to_exit, Toast.LENGTH_SHORT).show();
@@ -172,29 +205,4 @@ public class ClassActivity extends AppCompatActivity
             }
         }
     }
-
-    private void initStatic() {
-        if (Constants.CLASS_BASE_HEIGHT == 0) {
-            DisplayMetrics metrics = getResources().getDisplayMetrics();
-            Constants.CLASS_WIDTH = (int) Math.round(metrics.widthPixels * (2.0 / 15.0));
-            Constants.CLASS_BASE_HEIGHT = (int) Math.round(metrics.heightPixels * (1.0 / 15.0));
-        }
-
-        Constants.NAME = getString(R.string.class_name);
-        Constants.TIME = getString(R.string.class_time);
-        Constants.TYPE = getString(R.string.class_type);
-        Constants.DURING = getString(R.string.class_during);
-        Constants.PLACE = getString(R.string.class_place);
-        Constants.TEACHER = getString(R.string.class_teacher);
-
-        Constants.CAPTCHA_FILE = getCacheDir().getPath() + "/captcha";
-        Constants.USERNAME_KEY = getString(R.string.key_username);
-        Constants.PASSWORD_KEY = getString(R.string.key_password);
-        Constants.CAPTCHA_KEY = getString(R.string.key_captcha);
-        Constants.ACTION_KEY = getString(R.string.key_action);
-        Constants.SEARCH_TYPE_KEY = getString(R.string.key_search_type);
-        Constants.SEARCH_CONTENT_KEY = getString(R.string.key_search_content);
-        Constants.DAILY_CLASSES = Integer.parseInt(PrefHelper.getString(this, R.string.pref_daily_class_count, "12"));
-    }
-
 }

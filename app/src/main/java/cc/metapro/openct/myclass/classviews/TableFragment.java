@@ -32,28 +32,22 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.SingleClass;
+import cc.metapro.openct.myclass.ClassContract;
 import cc.metapro.openct.utils.Constants;
 
-public class TableFragment extends Fragment {
+public class TableFragment extends Fragment implements ClassContract.View {
 
-    public static final int TYPE_WEEK = 1, TYPE_SEM = 2;
-    private static final String KEY_TYPE = "table_view_type";
     @BindView(R.id.seq)
     LinearLayout mSeq;
     @BindView(R.id.content)
     RelativeLayout mContent;
-    private boolean infoAdded;
-    private int mType = TYPE_SEM;
+
     private List<SingleClass> mClasses;
 
-    public static TableFragment newInstance(int type) {
+    public static TableFragment newInstance() {
         Bundle args = new Bundle();
-        args.putInt(KEY_TYPE, type);
-
         TableFragment fragment = new TableFragment();
         fragment.setArguments(args);
         return fragment;
@@ -70,35 +64,9 @@ public class TableFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mType = getArguments().getInt(KEY_TYPE);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!infoAdded) {
-            showClasses();
-        }
-    }
-
-    private void showClasses() {
-        Classes classes = DBManger.getInstance(getContext()).getClasses();
-        if (mType == TYPE_WEEK) {
-            mClasses = classes.getWeekClasses(Loader.getCurrentWeek(getContext()));
-        } else {
-            mClasses = classes.getAllClasses();
-        }
-
-        if (!mClasses.isEmpty()) {
-            addSeqViews();
-            addContentView();
-            infoAdded = true;
-        }
     }
 
     private void addSeqViews() {
-        mSeq.removeAllViews();
-
         for (int i = 1; i <= Constants.DAILY_CLASSES; i++) {
             TextView textView = new TextView(getContext());
             textView.setText(i + "");
@@ -111,10 +79,25 @@ public class TableFragment extends Fragment {
     }
 
     private void addContentView() {
-        mContent.removeAllViews();
-
         for (SingleClass singleClass : mClasses) {
             singleClass.addViewTo(mContent, LayoutInflater.from(getContext()));
         }
+    }
+
+    @Override
+    public void showClasses(Classes classes, int week) {
+        mClasses = classes.getWeekClasses(week);
+        mContent.removeAllViews();
+        mSeq.removeAllViews();
+
+        if (!mClasses.isEmpty()) {
+            addSeqViews();
+            addContentView();
+        }
+    }
+
+    @Override
+    public void setPresenter(ClassContract.Presenter presenter) {
+        throw new UnsupportedOperationException("Presenter not used here");
     }
 }

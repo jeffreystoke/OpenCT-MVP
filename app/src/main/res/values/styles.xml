@@ -92,43 +92,20 @@
         <item name="android:layout_width">match_parent</item>
     </style>
 
-    <!--标题文字样式-->
-    <style name="DialogTitleText" parent="TextAppearance.AppCompat">
-        <item name="android:textColor">@color/colorAccent</item>
-        <item name="android:padding">10dp</item>
-        <item name="android:textSize">@dimen/medium_text</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:textAlignment" tools:targetApi="jelly_bean_mr1">center</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
-    <!--对话框的按钮文字样式-->
-    <style name="DialogButtonText" parent="TextAppearance.AppCompat">
-        <item name="android:textColor">@color/colorAccent</item>
-        <item name="android:padding">20dp</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:textAlignment" tools:targetApi="jelly_bean_mr1">center</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
-
-    <!--RecyclerView Item 标题文字样式-->
+    <!--RecyclerView Item Title-->
     <style name="ItemTitleText" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">@dimen/ex_large_text</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/material_black</item>
         <item name="android:paddingBottom">20dp</item>
     </style>
 
-    <!--RecyclerView Item 详细文字样式-->
+    <!--RecyclerView Item Content-->
     <style name="ItemContentText" parent="TextAppearance.AppCompat">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/medium_text</item>
         <item name="android:textColor">@color/material_grey</item>
     </style>
 

@@ -19,16 +19,21 @@ package cc.metapro.openct.classdetail;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.util.ArraySet;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.TextView;
 
+import com.jrummyapps.android.colorpicker.ColorPickerDialog;
+import com.jrummyapps.android.colorpicker.ColorPickerDialogListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
@@ -36,10 +41,10 @@ import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.item.classinfo.ClassTime;
@@ -49,32 +54,66 @@ import cc.metapro.openct.utils.RecyclerViewHelper;
 
 public class ClassDetailActivity extends AppCompatActivity {
 
+    private static final String KEY_CLASS_NAME = "class_name";
     private static final String TAG = ClassDetailActivity.class.getName();
-
-    static EnrichedClassInfo mInfoEditing;
-
-    static List<ClassTime> classTimes;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-
     @BindView(R.id.recycler_view)
     SwipeMenuRecyclerView mRecyclerView;
-
     @BindView(R.id.content)
     MaterialEditText mName;
-
     @BindView(R.id.type)
     MaterialEditText mType;
+    @BindView(R.id.bg)
+    FloatingActionButton mBackground;
 
     private ClassDetailAdapter mDetailAdapter;
+    private EnrichedClassInfo mInfoEditing;
+    private List<ClassTime> classTimes;
+
+    @OnClick(R.id.bg)
+    void showColorPicker() {
+        ColorPickerDialog dialog = ColorPickerDialog.newBuilder().setColor(mInfoEditing.getColor()).create();
+        dialog.setColorPickerDialogListener(new ColorPickerDialogListener() {
+            @Override
+            public void onColorSelected(int dialogId, @ColorInt int color) {
+                mInfoEditing.setColor(color);
+                mBackground.setBackgroundColor(color);
+            }
+
+            @Override
+            public void onDialogDismissed(int dialogId) {
+
+            }
+        });
+        dialog.show(getFragmentManager(), "color_picker");
+    }
 
     public static void actionStart(Context context, String name) {
-        mInfoEditing = DBManger.getInstance(context).getSingleClass(name);
+        Intent intent = new Intent(context, ClassDetailActivity.class);
+        intent.putExtra(KEY_CLASS_NAME, name);
+        context.startActivity(intent);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_class_detail);
+        ButterKnife.bind(this);
+        setSupportActionBar(mToolbar);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String name = getIntent().getStringExtra(KEY_CLASS_NAME);
+        mInfoEditing = DBManger.getInstance(this).getSingleClass(name);
         if (mInfoEditing == null) {
             mInfoEditing = new EnrichedClassInfo(
-                    context.getString(R.string.new_class),
-                    context.getString(R.string.mandatory),
+                    getString(R.string.new_class),
+                    getString(R.string.mandatory),
                     new ClassTime()
             );
         }
@@ -82,27 +121,14 @@ public class ClassDetailActivity extends AppCompatActivity {
         classTimes = new ArrayList<>(mInfoEditing.getTimeSet());
         Collections.sort(classTimes);
 
-        Intent intent = new Intent(context, ClassDetailActivity.class);
-        context.startActivity(intent);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_class_detail);
-
-        ButterKnife.bind(this);
-
-        setSupportActionBar(mToolbar);
-        mToolbar.setTitle("");
-
         mName.setText(mInfoEditing.getName());
         mType.setText(mInfoEditing.getType());
+        mBackground.setBackgroundColor(mInfoEditing.getColor());
         setRecyclerView();
     }
 
     private void setRecyclerView() {
-        mDetailAdapter = new ClassDetailAdapter(this);
+        mDetailAdapter = new ClassDetailAdapter(this, mInfoEditing.getTimeSet());
         RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mDetailAdapter);
         mRecyclerView.setItemViewSwipeEnabled(true);
         mRecyclerView.setOnItemMoveListener(new OnItemMoveListener() {
@@ -116,15 +142,24 @@ public class ClassDetailActivity extends AppCompatActivity {
                 final ClassTime toRemove = classTimes.get(position);
                 classTimes.remove(toRemove);
                 mDetailAdapter.notifyDataSetChanged();
-                final String message = mInfoEditing.getName() + " " + DateHelper.weekDayToChinese(toRemove.getWeekDay()) + " " + toRemove.getTime() + " 节";
-                final Snackbar snackbar = Snackbar.make(mRecyclerView, message + " " + getString(R.string.deleted), BaseTransientBottomBar.LENGTH_INDEFINITE);
+                String msg = getString(R.string.time_deleted,
+                        mName.getText().toString(),
+                        DateHelper.weekDayTrans(ClassDetailActivity.this, toRemove.getWeekDay()),
+                        toRemove.getTime());
+
+                final Snackbar snackbar = Snackbar.make(mRecyclerView, msg, BaseTransientBottomBar.LENGTH_INDEFINITE);
                 snackbar.setAction(android.R.string.cancel, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         classTimes.add(toRemove);
                         mDetailAdapter.notifyDataSetChanged();
                         snackbar.dismiss();
-                        Snackbar.make(mRecyclerView, message + " " + getString(R.string.restored), BaseTransientBottomBar.LENGTH_LONG).show();
+                        String msg = getString(R.string.restored,
+                                mName.getText().toString(),
+                                DateHelper.weekDayTrans(ClassDetailActivity.this, toRemove.getWeekDay()),
+                                toRemove.getTime());
+
+                        Snackbar.make(mRecyclerView, msg, BaseTransientBottomBar.LENGTH_LONG).show();
                         mRecyclerView.smoothScrollToPosition(classTimes.size() - 1);
                     }
                 });
@@ -155,12 +190,15 @@ public class ClassDetailActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Set<ClassTime> timeSet = new ArraySet<>();
         mInfoEditing.setType(mType.getText().toString());
-        timeSet.addAll(classTimes);
-        mInfoEditing.setTimes(timeSet);
+        mInfoEditing.setTimes(mDetailAdapter.getResultTime());
         try {
-            DBManger.getInstance(this).updateSingleClass(mInfoEditing.getName(), mName.getText().toString(), mInfoEditing);
+            DBManger.getInstance(this)
+                    .updateSingleClass(
+                            mInfoEditing.getName(),
+                            mName.getText().toString(),
+                            mInfoEditing
+                    );
         } catch (Exception e) {
             Log.d(TAG, e.getMessage(), e);
             return;

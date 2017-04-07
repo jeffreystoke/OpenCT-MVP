@@ -16,7 +16,6 @@ package cc.metapro.openct.allclasses;
  * limitations under the License.
  */
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Environment;
@@ -46,6 +45,7 @@ import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.data.university.item.classinfo.ExcelClass;
 import cc.metapro.openct.utils.ActivityUtils;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.ICalHelper;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.base.MyObserver;
@@ -60,7 +60,6 @@ import io.reactivex.schedulers.Schedulers;
 class AllClassesPresenter implements AllClassesContract.Presenter {
 
     private static final String TAG = AllClassesPresenter.class.getSimpleName();
-    public static Classes allClasses;
     private Context mContext;
     private AllClassesContract.View mView;
     private DBManger mDBManger;
@@ -78,12 +77,11 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
     }
 
     /**
-     * Export classes to iCal format, for calendar
+     * Export classes to iCal format, for calendar sync
      */
     @Override
     public void exportClasses() {
-        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.creating_class_ical);
-        progressDialog.show();
+        ActivityUtils.showProgressDialog(mContext, R.string.creating_class_ical);
 
         Observable<Calendar> observable = Observable.create(new ObservableOnSubscribe<Calendar>() {
             @Override
@@ -99,7 +97,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
                     calendar.getProperties().add(Version.VERSION_2_0);
                     calendar.getProperties().add(CalScale.GREGORIAN);
                     SparseArray<java.util.Calendar> calendarSparseArray = Loader.getClassTime(mContext);
-                    for (EnrichedClassInfo c : allClasses) {
+                    for (EnrichedClassInfo c : Constants.sClasses) {
                         try {
                             List<VEvent> events = ICalHelper.getClassEvents(calendarSparseArray, week, everyClassTime, restTime, c);
                             calendar.getComponents().addAll(events);
@@ -134,14 +132,14 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
         Observer<Calendar> observer = new MyObserver<Calendar>(TAG) {
             @Override
             public void onNext(Calendar calendar) {
-                progressDialog.dismiss();
+                ActivityUtils.dismissProgressDialog();
                 Toast.makeText(mContext, R.string.ical_create_success, Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
-                progressDialog.dismiss();
+                ActivityUtils.dismissProgressDialog();
                 Toast.makeText(mContext, mContext.getString(R.string.error_creating_calendar) + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
@@ -159,7 +157,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        allClasses.clear();
+                        Constants.sClasses.clear();
                         storeClasses(null);
                         loadLocalClasses();
                     }
@@ -176,8 +174,8 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
                 try {
                     List<ExcelClass> excelClasses = StoreHelper.fromJsonList(json, ExcelClass.class);
                     final Classes addedClasses = new Classes();
-                    final Classes oldAllClasses = allClasses;
-                    allClasses = null;
+                    final Classes oldAllClasses = Constants.sClasses;
+                    Constants.sClasses = null;
                     for (ExcelClass excelClass : excelClasses) {
                         addedClasses.add(excelClass.getEnrichedClassInfo());
                     }
@@ -226,8 +224,8 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
         Observer<Classes> observer = new MyObserver<Classes>(TAG) {
             @Override
             public void onNext(Classes enrichedClasses) {
-                allClasses = enrichedClasses;
-                Collections.sort(allClasses);
+                Constants.sClasses = enrichedClasses;
+                Collections.sort(Constants.sClasses);
                 mView.updateClasses();
             }
 

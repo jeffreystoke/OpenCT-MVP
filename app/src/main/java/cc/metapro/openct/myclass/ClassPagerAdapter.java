@@ -23,38 +23,41 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.myclass.classviews.DailyFragment;
 import cc.metapro.openct.myclass.classviews.TableFragment;
-
-import static cc.metapro.openct.myclass.classviews.TableFragment.TYPE_SEM;
-import static cc.metapro.openct.myclass.classviews.TableFragment.TYPE_WEEK;
+import cc.metapro.openct.utils.Constants;
 
 
 class ClassPagerAdapter extends FragmentStatePagerAdapter {
 
     private Context mContext;
+    private String titleWeek;
+    private DailyFragment mDailyFragment;
+    private TableFragment mTableFragment;
 
     ClassPagerAdapter(FragmentManager manager, Context context) {
         super(manager);
         mContext = context;
+        titleWeek = mContext.getString(R.string.text_current_week, Loader.getCurrentWeek(mContext));
+        mDailyFragment = DailyFragment.newInstance();
+        mTableFragment = TableFragment.newInstance();
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return DailyFragment.newInstance();
+                return mDailyFragment;
             case 1:
-                return TableFragment.newInstance(TYPE_WEEK);
-            case 2:
-                return TableFragment.newInstance(TYPE_SEM);
+                return mTableFragment;
         }
-        return null;
+        throw new IndexOutOfBoundsException("two fragments at most");
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
     }
 
     @Override
@@ -63,11 +66,19 @@ class ClassPagerAdapter extends FragmentStatePagerAdapter {
             case 0:
                 return mContext.getString(R.string.text_daily_classes);
             case 1:
-                return mContext.getString(R.string.text_current_week, Loader.getCurrentWeek(mContext));
-            case 2:
-                return mContext.getString(R.string.text_sem_classes);
+                return titleWeek;
         }
-        return "";
+        throw new IndexOutOfBoundsException("two fragments at most");
+    }
+
+    public void updateClasses(Classes classes, int week) {
+        mDailyFragment.showClasses(classes, week);
+        mTableFragment.showClasses(classes, week);
+    }
+
+    public void showTableDesignatedWeek(Classes classes, int week) {
+        mTableFragment.showClasses(classes, week);
+        notifyDataSetChanged();
     }
 
 }

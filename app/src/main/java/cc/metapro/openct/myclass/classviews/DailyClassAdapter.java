@@ -75,7 +75,6 @@ public class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.Cl
 
         @BindView(R.id.class_name)
         TextView mClassName;
-
         @BindView(R.id.class_place_time)
         TextView mTimePlace;
 

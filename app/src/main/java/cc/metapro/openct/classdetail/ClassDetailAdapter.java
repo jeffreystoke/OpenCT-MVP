@@ -18,6 +18,7 @@ package cc.metapro.openct.classdetail;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.ArraySet;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -29,20 +30,26 @@ import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.utils.Constants;
 
-import static cc.metapro.openct.classdetail.ClassDetailActivity.classTimes;
-
 class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDetailViewHolder> {
 
     private LayoutInflater mInflater;
+    private List<ClassTime> mClassTimes;
 
-    ClassDetailAdapter(Context context) {
+    ClassDetailAdapter(Context context, Set<ClassTime> classTimes) {
         mInflater = LayoutInflater.from(context);
+        mClassTimes = new ArrayList<>(classTimes);
+        Collections.sort(mClassTimes);
     }
 
     @Override
@@ -58,10 +65,14 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
 
     @Override
     public int getItemCount() {
-        return classTimes == null ? 0 : classTimes.size();
+        return mClassTimes == null ? 0 : mClassTimes.size();
     }
 
-    static class ClassDetailViewHolder extends RecyclerView.ViewHolder {
+    public Set<ClassTime> getResultTime() {
+        return new ArraySet<>(mClassTimes);
+    }
+
+    class ClassDetailViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.week_day)
         Spinner mWeekDay;
@@ -103,10 +114,10 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                     @Override
                     public void onClick(View v) {
                         setEditable(false);
-                        ClassTime time = classTimes.get(position);
-                        classTimes.remove(time);
+                        ClassTime time = mClassTimes.get(position);
+                        mClassTimes.remove(time);
                         time = getInfo(time);
-                        classTimes.add(position, time);
+                        mClassTimes.add(position, time);
                     }
                 });
             } else {
@@ -123,7 +134,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
         // set info and react to during click
         void setInfo(final int position) {
             this.position = position;
-            final ClassTime time = classTimes.get(position);
+            final ClassTime time = mClassTimes.get(position);
             mTimeStart.setText("" + time.getDailySeq());
             mTimeEnd.setText("" + time.getDailyEnd());
             mWeekDay.setSelection(time.getWeekDay() - 1, true);
@@ -159,7 +170,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                     textView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            classTimes.remove(time);
+                            mClassTimes.remove(time);
                             if (time.hasClass(week)) {
                                 textView.setBackground(ContextCompat.getDrawable(context, R.drawable.text_view_card_style_grey));
                                 textView.setTextColor(ContextCompat.getColor(context, R.color.material_grey));
@@ -169,7 +180,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                                 textView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
                                 time.enableWeek(week);
                             }
-                            classTimes.add(position, time);
+                            mClassTimes.add(position, time);
                         }
                     });
                     textView.setLines(1);

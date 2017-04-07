@@ -21,24 +21,23 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import cc.metapro.openct.splash.views.CmsFragment;
-import cc.metapro.openct.splash.views.LibraryFragment;
+import cc.metapro.openct.splash.views.LoginFragment;
 import cc.metapro.openct.splash.views.SchoolFragment;
-import cc.metapro.openct.splash.views.SplashContract;
+import cc.metapro.openct.utils.Constants;
 
 
 class InitPagerAdapter extends FragmentStatePagerAdapter {
 
-    private CmsFragment mCmsFragment;
     private SchoolFragment mSchoolFragment;
-    private LibraryFragment mLibraryFragment;
+    private LoginFragment mCmsFragment;
+    private LoginFragment mLibFragment;
 
     InitPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
-        mCmsFragment = CmsFragment.getInstance();
         mSchoolFragment = SchoolFragment.getInstance();
-        mLibraryFragment = LibraryFragment.getInstance();
-        new SplashPresenter(context, mSchoolFragment, mCmsFragment, mLibraryFragment);
+        mCmsFragment = LoginFragment.getInstance(Constants.TYPE_CMS);
+        mLibFragment = LoginFragment.getInstance(Constants.TYPE_LIB);
+        new SplashPresenter(context, mSchoolFragment, mCmsFragment, mLibFragment);
     }
 
     @Override
@@ -49,7 +48,7 @@ class InitPagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 return mCmsFragment;
             case 2:
-                return mLibraryFragment;
+                return mLibFragment;
         }
         throw new IndexOutOfBoundsException("three fragments at most!");
     }

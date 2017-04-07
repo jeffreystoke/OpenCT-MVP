@@ -114,7 +114,7 @@ public class DBManger {
         }
     }
 
-    public static void updateSchools(Context context,@Nullable List<UniversityInfo> universityInfoList) {
+    public static void updateSchools(Context context, @Nullable List<UniversityInfo> universityInfoList) {
         DBManger.getInstance(context);
         mDatabase.beginTransaction();
         try {

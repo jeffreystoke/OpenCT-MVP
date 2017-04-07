@@ -38,10 +38,9 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.classdetail.ClassDetailActivity;
 import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.REHelper;
-
-import static cc.metapro.openct.allclasses.AllClassesPresenter.allClasses;
 
 
 class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassViewHolder> {
@@ -61,12 +60,12 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassView
 
     @Override
     public void onBindViewHolder(ClassViewHolder holder, int position) {
-        holder.setInfo(allClasses.get(position), mFragmentManager, position);
+        holder.setInfo(Constants.sClasses.get(position), mFragmentManager, position);
     }
 
     @Override
     public int getItemCount() {
-        return allClasses == null ? 0 : allClasses.size();
+        return Constants.sClasses == null ? 0 : Constants.sClasses.size();
     }
 
     static class ClassViewHolder extends RecyclerView.ViewHolder {
@@ -92,7 +91,7 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassView
             List<ClassTime> tmpTimeList = new ArrayList<>(info.getTimeSet());
             Collections.sort(tmpTimeList);
             for (ClassTime t : tmpTimeList) {
-                String tmp = DateHelper.weekDayToChinese(t.getWeekDay()) + " " + t.getTime() + " 节, ";
+                String tmp = DateHelper.weekDayTrans(mName.getContext(), t.getWeekDay()) + " " + t.getTime() + " , ";
                 if (!time.contains(tmp)) {
                     time += tmp;
                 }
@@ -110,7 +109,7 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassView
                         @Override
                         public void onColorSelected(int dialogId, @ColorInt int color) {
                             mColor.setBackgroundColor(color);
-                            allClasses.get(position).setColor(color);
+                            Constants.sClasses.get(position).setColor(color);
                         }
 
                         @Override

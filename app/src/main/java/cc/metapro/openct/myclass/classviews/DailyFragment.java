@@ -28,14 +28,14 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.myclass.ClassContract;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
 
-public class DailyFragment extends Fragment {
+public class DailyFragment extends Fragment implements ClassContract.View {
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -59,26 +59,6 @@ public class DailyFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Classes classes = DBManger.getInstance(getContext()).getClasses();
-        mDailyClassAdapter.updateTodayClasses(classes, Loader.getCurrentWeek(getContext()));
-        mDailyClassAdapter.notifyDataSetChanged();
-
-        if (mDailyClassAdapter.hasClassToday()) {
-            showClasses();
-        } else {
-            mEmptyView.setText(PrefHelper.getString(getContext(), R.string.pref_empty_class_motto, getString(R.string.default_motto)));
-            showEmptyView();
-        }
-    }
-
     private void showClasses() {
         mEmptyView.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -87,5 +67,23 @@ public class DailyFragment extends Fragment {
     private void showEmptyView() {
         mEmptyView.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void setPresenter(ClassContract.Presenter presenter) {
+        throw new UnsupportedOperationException("Presenter not used here");
+    }
+
+    @Override
+    public void showClasses(Classes classes, int week) {
+        mDailyClassAdapter.updateTodayClasses(classes, week);
+        mDailyClassAdapter.notifyDataSetChanged();
+
+        if (mDailyClassAdapter.hasClassToday()) {
+            showClasses();
+        } else {
+            mEmptyView.setText(PrefHelper.getString(getContext(), R.string.pref_empty_class_motto, getString(R.string.default_motto)));
+            showEmptyView();
+        }
     }
 }

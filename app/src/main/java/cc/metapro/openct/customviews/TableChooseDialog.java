@@ -20,26 +20,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.text.Html;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -48,8 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.BorrowContract;
@@ -64,7 +50,6 @@ import cc.metapro.openct.myclass.ClassContract;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.webutils.TableUtils;
 
-@Keep
 public class TableChooseDialog extends DialogFragment {
 
     private static String TYPE;
@@ -208,6 +193,7 @@ public class TableChooseDialog extends DialogFragment {
                 })
                 .create();
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

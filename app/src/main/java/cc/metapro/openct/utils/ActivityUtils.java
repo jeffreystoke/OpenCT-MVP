@@ -19,6 +19,7 @@ package cc.metapro.openct.utils;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 
@@ -33,11 +34,7 @@ import cc.metapro.openct.customviews.TableChooseDialog;
 
 public final class ActivityUtils {
 
-    public static ProgressDialog getProgressDialog(Context context, int messageId) {
-        ProgressDialog pd = new ProgressDialog(context);
-        pd.setMessage(context.getString(messageId));
-        return pd;
-    }
+    private static ProgressDialog sProgressDialog;
 
     public static void showCaptchaDialog(FragmentManager manager, LoginPresenter presenter) {
         try {
@@ -72,5 +69,23 @@ public final class ActivityUtils {
                     }
                 })
                 .create().show();
+    }
+
+    public static void showProgressDialog(Context context, @StringRes int messageId, boolean cancelable) {
+        sProgressDialog = new ProgressDialog(context);
+        sProgressDialog.setMessage(context.getString(messageId));
+        sProgressDialog.setCancelable(cancelable);
+        sProgressDialog.show();
+    }
+
+    public static void showProgressDialog(Context context, @StringRes int messageId) {
+        showProgressDialog(context, messageId, true);
+    }
+
+    public static void dismissProgressDialog() {
+        if (sProgressDialog != null) {
+            sProgressDialog.dismiss();
+            sProgressDialog = null;
+        }
     }
 }

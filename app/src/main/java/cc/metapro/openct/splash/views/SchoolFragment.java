@@ -49,8 +49,7 @@ public class SchoolFragment extends Fragment implements SplashContract.SchoolVie
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_school, container, false);
         ButterKnife.bind(this, view);
         initialed = true;

@@ -16,7 +16,6 @@ package cc.metapro.openct.myclass;
  * limitations under the License.
  */
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
@@ -57,7 +56,6 @@ class ClassPresenter implements ClassContract.Presenter {
 
     private final String TAG = ClassPresenter.class.getSimpleName();
     private ClassContract.View mView;
-    private Classes mEnrichedClasses;
     private Context mContext;
 
     ClassPresenter(@NonNull ClassContract.View view, Context context) {
@@ -68,15 +66,14 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public Disposable loadOnlineInfo(final FragmentManager manager) {
-        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.preparing_school_sys_info);
-        progressDialog.show();
+        ActivityUtils.showProgressDialog(mContext, R.string.preparing_school_sys_info);
 
         Observable<Boolean> observable = Loader.prepareOnlineInfo(Loader.ACTION_CMS, mContext);
 
         Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
             @Override
             public void onNext(Boolean needCaptcha) {
-                progressDialog.dismiss();
+                ActivityUtils.dismissProgressDialog();
                 if (needCaptcha) {
                     ActivityUtils.showCaptchaDialog(manager, ClassPresenter.this);
                 } else {
@@ -87,7 +84,7 @@ class ClassPresenter implements ClassContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
-                progressDialog.dismiss();
+                ActivityUtils.dismissProgressDialog();
                 ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -101,15 +98,14 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
-        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.login_to_system);
-        progressDialog.show();
+        ActivityUtils.showProgressDialog(mContext, R.string.login_to_system);
 
         Observable<Document> observable = Loader.login(Loader.ACTION_CMS, mContext, code);
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(final Document userCenterDom) {
-                progressDialog.dismiss();
+                super.onNext(userCenterDom);
                 Constants.checkAdvCustomInfo(mContext);
                 final List<String> urlPatterns = Constants.advCustomInfo.getClassUrlPatterns();
                 if (!urlPatterns.isEmpty()) {
@@ -173,7 +169,6 @@ class ClassPresenter implements ClassContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
-                progressDialog.dismiss();
                 ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -187,8 +182,7 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public Disposable loadTargetPage(final FragmentManager manager, final String url) {
-        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.loading_class_page);
-        progressDialog.show();
+        ActivityUtils.showProgressDialog(mContext, R.string.loading_class_page);
 
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
@@ -200,14 +194,13 @@ class ClassPresenter implements ClassContract.Presenter {
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(Document document) {
-                progressDialog.dismiss();
+                super.onNext(document);
                 FormDialog.newInstance(document, ClassPresenter.this).show(manager, "form_dialog");
             }
 
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
-                progressDialog.dismiss();
                 ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -222,8 +215,7 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public Disposable loadQuery(final FragmentManager manager, final String actionURL, final Map<String, String> queryMap, final boolean needNewPage) {
-        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(mContext, R.string.loading_classes);
-        progressDialog.show();
+        ActivityUtils.showProgressDialog(mContext, R.string.loading_classes);
 
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
@@ -235,7 +227,7 @@ class ClassPresenter implements ClassContract.Presenter {
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(Document document) {
-                progressDialog.dismiss();
+                super.onNext(document);
                 Constants.checkAdvCustomInfo(mContext);
                 String tableId = Constants.advCustomInfo.mClassTableInfo.mClassTableID;
                 if (TextUtils.isEmpty(tableId)) {
@@ -243,8 +235,8 @@ class ClassPresenter implements ClassContract.Presenter {
                 } else {
                     Map<String, Element> map = TableUtils.getTablesFromTargetPage(document);
                     List<Element> rawClasses = UniversityUtils.getRawClasses(map.get(tableId), mContext);
-                    mEnrichedClasses = UniversityUtils.generateClasses(mContext, rawClasses, Constants.advCustomInfo.mClassTableInfo);
-                    if (mEnrichedClasses.size() == 0) {
+                    Constants.sClasses = UniversityUtils.generateClasses(mContext, rawClasses, Constants.advCustomInfo.mClassTableInfo);
+                    if (Constants.sClasses.size() == 0) {
                         Toast.makeText(mContext, R.string.classes_empty, Toast.LENGTH_LONG).show();
                     } else {
                         storeClasses();
@@ -257,7 +249,6 @@ class ClassPresenter implements ClassContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
-                progressDialog.dismiss();
                 ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS);
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -277,9 +268,9 @@ class ClassPresenter implements ClassContract.Presenter {
         Observer<Classes> observer = new MyObserver<Classes>(TAG) {
             @Override
             public void onNext(Classes enrichedClasses) {
-                mEnrichedClasses = enrichedClasses;
+                Constants.sClasses = enrichedClasses;
                 try {
-                    mView.updateClasses(mEnrichedClasses);
+                    mView.showClasses(Constants.sClasses, Loader.getCurrentWeek(mContext));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -300,7 +291,7 @@ class ClassPresenter implements ClassContract.Presenter {
     private void storeClasses() {
         try {
             DBManger manger = DBManger.getInstance(mContext);
-            manger.updateClasses(mEnrichedClasses);
+            manger.updateClasses(Constants.sClasses);
             DailyClassWidget.update(mContext);
         } catch (Exception e) {
             Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();

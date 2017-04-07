@@ -27,11 +27,7 @@ public interface SplashContract {
 
     }
 
-    interface CMSView extends BaseView<Presenter> {
-
-    }
-
-    interface LibView extends BaseView<Presenter> {
+    interface LoginView extends BaseView<Presenter> {
 
     }
 

@@ -17,9 +17,13 @@ package cc.metapro.openct.utils;
  */
 
 
+import android.content.Context;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
+
+import cc.metapro.openct.R;
 
 public final class DateHelper {
 
@@ -45,7 +49,7 @@ public final class DateHelper {
         return now.getTime();
     }
 
-    public static int weekDayTrans(int i) {
+    public static int weekDayConvert(int i) {
         if (i > 0 && i < 8) {
             switch (i) {
                 case 1:
@@ -67,25 +71,11 @@ public final class DateHelper {
         return -1;
     }
 
-    public static String weekDayToChinese(int i) {
-        switch (i) {
-            case 1:
-                return "周一";
-            case 2:
-                return "周二";
-            case 3:
-                return "周三";
-            case 4:
-                return "周四";
-            case 5:
-                return "周五";
-            case 6:
-                return "周六";
-            case 7:
-                return "周日";
-            default:
-                return "";
+    public static String weekDayTrans(Context context, int i) {
+        if (i > 0 && i <= 7) {
+            return context.getResources().getStringArray(R.array.weekdays)[i - 1];
         }
+        throw new IndexOutOfBoundsException("i (weekday) should >=1 && <= 7");
     }
 
     public static int chineseToWeekDay(String weekDay) {

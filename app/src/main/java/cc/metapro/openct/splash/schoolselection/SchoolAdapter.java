@@ -16,7 +16,6 @@ package cc.metapro.openct.splash.schoolselection;
  * limitations under the License.
  */
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,8 +75,7 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
         Observable.create(new ObservableOnSubscribe() {
             @Override
             public void subscribe(@NonNull ObservableEmitter observableEmitter) throws Exception {
-                final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(context, R.string.loading_university_info_list);
-                progressDialog.show();
+                ActivityUtils.showProgressDialog(context, R.string.loading_university_info_list);
 
                 Observable<List<UniversityInfo>> observable = Observable.create(new ObservableOnSubscribe<List<UniversityInfo>>() {
                     @Override
@@ -95,7 +93,7 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
                 Observer<List<UniversityInfo>> observer = new MyObserver<List<UniversityInfo>>("OpenCT_School_Fetch") {
                     @Override
                     public void onNext(final List<UniversityInfo> universityList) {
-                        progressDialog.dismiss();
+                        super.onNext(universityList);
                         DBManger.updateSchools(context, universityList);
                         setSchools(universityList);
                     }
@@ -103,7 +101,6 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
                     @Override
                     public void onError(Throwable e) {
                         super.onError(e);
-                        progressDialog.dismiss();
                         Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 };

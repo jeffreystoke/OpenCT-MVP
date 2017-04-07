@@ -140,7 +140,7 @@ public class ClassTime implements Comparable<ClassTime> {
     }
 
     boolean inSameDay(Calendar calendar) {
-        return DateHelper.weekDayTrans(weekDay) == calendar.get(Calendar.DAY_OF_WEEK);
+        return DateHelper.weekDayConvert(weekDay) == calendar.get(Calendar.DAY_OF_WEEK);
     }
 
     public void enableWeek(int week) {

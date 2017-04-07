@@ -18,14 +18,21 @@ package cc.metapro.openct.utils;
 
 import android.content.Context;
 import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
+import cc.metapro.openct.data.university.item.classinfo.Classes;
 
 @Keep
 public final class Constants {
 
     public static final int WEEKS = 30;
+
+    public static Classes sClasses = new Classes();
+
+    public static final int TYPE_CMS = 0;
+    public static final int TYPE_LIB = 1;
 
     public static final String TYPE_CLASS = "class";
     public static final String TYPE_GRADE = "grade";
@@ -41,6 +48,7 @@ public final class Constants {
     public static final String TITLE = "title";
     public static final String URL = "url";
     public static final int CLASS_LENGTH = 1;
+
     // 正方系列
     public static final String ZFSOFT = "zfsoft";
     // 苏文

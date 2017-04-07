@@ -18,10 +18,14 @@ package cc.metapro.openct;
 
 import android.app.Application;
 import android.support.annotation.Keep;
+import android.util.DisplayMetrics;
 
 import com.squareup.leakcanary.LeakCanary;
 
+import cc.metapro.openct.utils.ActivityUtils;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.CrashHandler;
+import cc.metapro.openct.utils.PrefHelper;
 
 @Keep
 public class OpenCT extends Application {
@@ -33,7 +37,35 @@ public class OpenCT extends Application {
             return;
         }
         LeakCanary.install(this);
-
+        initStatic();
         CrashHandler.initInstance(this);
+    }
+
+    private void initStatic() {
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        Constants.CLASS_WIDTH = (int) Math.round(metrics.widthPixels * (2.0 / 15.0));
+        Constants.CLASS_BASE_HEIGHT = (int) Math.round(metrics.heightPixels * (1.0 / 15.0));
+
+        Constants.NAME = getString(R.string.class_name);
+        Constants.TIME = getString(R.string.class_time);
+        Constants.TYPE = getString(R.string.class_type);
+        Constants.DURING = getString(R.string.class_during);
+        Constants.PLACE = getString(R.string.class_place);
+        Constants.TEACHER = getString(R.string.class_teacher);
+
+        Constants.CAPTCHA_FILE = getCacheDir().getPath() + "/captcha";
+        Constants.USERNAME_KEY = getString(R.string.key_username);
+        Constants.PASSWORD_KEY = getString(R.string.key_password);
+        Constants.CAPTCHA_KEY = getString(R.string.key_captcha);
+        Constants.ACTION_KEY = getString(R.string.key_action);
+        Constants.SEARCH_TYPE_KEY = getString(R.string.key_search_type);
+        Constants.SEARCH_CONTENT_KEY = getString(R.string.key_search_content);
+        Constants.DAILY_CLASSES = Integer.parseInt(PrefHelper.getString(this, R.string.pref_daily_class_count, "12"));
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        ActivityUtils.dismissProgressDialog();
     }
 }

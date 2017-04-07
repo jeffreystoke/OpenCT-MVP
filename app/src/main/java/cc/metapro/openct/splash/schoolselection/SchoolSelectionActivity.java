@@ -16,7 +16,6 @@ package cc.metapro.openct.splash.schoolselection;
  * limitations under the License.
  */
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BaseTransientBottomBar;
@@ -98,8 +97,7 @@ public class SchoolSelectionActivity
     }
 
     private void updateSchools(final boolean online) {
-        final ProgressDialog progressDialog = ActivityUtils.getProgressDialog(this, R.string.loading_school_list);
-        progressDialog.show();
+        ActivityUtils.showProgressDialog(this, R.string.loading_school_list);
 
         Observable<SchoolAdapter> observable = Observable.create(new ObservableOnSubscribe<SchoolAdapter>() {
             @Override
@@ -116,7 +114,7 @@ public class SchoolSelectionActivity
         Observer<SchoolAdapter> observer = new MyObserver<SchoolAdapter>(TAG) {
             @Override
             public void onNext(SchoolAdapter schoolAdapter) {
-                progressDialog.dismiss();
+                super.onNext(schoolAdapter);
                 if (online) {
                     Snackbar.make(mListView, R.string.schools_updated, BaseTransientBottomBar.LENGTH_LONG).show();
                 }
@@ -126,7 +124,6 @@ public class SchoolSelectionActivity
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
-                progressDialog.dismiss();
             }
         };
 
@@ -154,7 +151,6 @@ public class SchoolSelectionActivity
             }
         });
         mListView.requestFocus();
-//        mAdapter.notifyDataSetChanged();
 
         mSearchView.onActionViewExpanded();
         mSearchView.setSubmitButtonEnabled(true);

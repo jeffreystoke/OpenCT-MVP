@@ -53,6 +53,10 @@ public class SingleClass implements Comparable<SingleClass>, View.OnClickListene
         return type;
     }
 
+    /**
+     * Get Time in String, actually it is sequence of class daily
+     * for example 3 - 4 or 3
+     */
     public String getTimeString() {
         return time.getTime();
     }
