@@ -26,7 +26,6 @@ import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.myclass.classviews.DailyFragment;
 import cc.metapro.openct.myclass.classviews.TableFragment;
-import cc.metapro.openct.utils.Constants;
 
 
 class ClassPagerAdapter extends FragmentStatePagerAdapter {

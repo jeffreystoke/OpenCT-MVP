@@ -47,6 +47,7 @@ public class DailyWidgetService extends RemoteViewsService {
 
         @Override
         public void onCreate() {
+
         }
 
         @Override
@@ -75,7 +76,9 @@ public class DailyWidgetService extends RemoteViewsService {
 
             views.setTextViewText(R.id.widget_class_name, classInfo.getName());
             views.setTextViewText(R.id.widget_class_type, classInfo.getType());
-            views.setTextViewText(R.id.widget_class_place, classInfo.getTimeString() + " 节 在 " + classInfo.getPlace());
+            views.setTextViewText(R.id.widget_class_place,
+                    mContext.getString(R.string.text_today_seq, classInfo.getTimeString()) + ", " +
+                            mContext.getString(R.string.text_place_at, classInfo.getPlace()));
             return views;
         }
 

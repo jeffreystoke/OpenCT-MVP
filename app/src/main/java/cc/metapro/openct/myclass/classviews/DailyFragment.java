@@ -28,7 +28,6 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.myclass.ClassContract;
 import cc.metapro.openct.utils.PrefHelper;
@@ -54,8 +53,6 @@ public class DailyFragment extends Fragment implements ClassContract.View {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_class_today, container, false);
         ButterKnife.bind(this, view);
-        mDailyClassAdapter = new DailyClassAdapter(getContext());
-        RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, mDailyClassAdapter);
         return view;
     }
 
@@ -76,6 +73,9 @@ public class DailyFragment extends Fragment implements ClassContract.View {
 
     @Override
     public void showClasses(Classes classes, int week) {
+        mDailyClassAdapter = new DailyClassAdapter(getContext());
+        RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, mDailyClassAdapter);
+
         mDailyClassAdapter.updateTodayClasses(classes, week);
         mDailyClassAdapter.notifyDataSetChanged();
 

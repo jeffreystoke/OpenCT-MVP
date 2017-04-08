@@ -16,12 +16,12 @@ package cc.metapro.openct.utils;
  * limitations under the License.
  */
 
-import android.content.Context;
+import android.Manifest;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Process;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.io.BufferedWriter;
@@ -29,55 +29,44 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
 import java.util.Date;
-import java.util.Locale;
+
+import cc.metapro.openct.OpenCT;
 
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     private static final String TAG = "OpenCT";
-
-    private static final String FILE_NAME = "openct-crash";
-
-    private static final String FILE_NAME_SUFFIX = ".trace";
-
-    private static final String PATH = Environment.getExternalStorageDirectory().getPath() + "/OpenCT/";
-
-    private Thread.UncaughtExceptionHandler mDefaultCrashHandler;
-
-    private Context mContext;
+    private static final String FILE_NAME = "openct-crash.txt";
+    private Thread.UncaughtExceptionHandler mDefaultHandler;
+    private OpenCT mContext;
 
     private CrashHandler() {
     }
 
-    public static CrashHandler initInstance(Context context) {
+    public static CrashHandler initInstance(OpenCT context) {
         CrashHandler handler = new CrashHandler();
         handler.init(context);
         return handler;
     }
 
-    private void init(Context context) {
-        mDefaultCrashHandler = Thread.getDefaultUncaughtExceptionHandler();
+    private void init(OpenCT context) {
+        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
-        mContext = context.getApplicationContext();
+        mContext = context;
     }
 
     @Override
-    public void uncaughtException(Thread thread, Throwable ex) {
-        try {
-            dumpExceptionToSDCard(ex);
-            // TODO: 17/3/30 open issue in github repo
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void uncaughtException(Thread thread, final Throwable ex) {
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            try {
+                dumpExceptionToSDCard(ex);
+                if (mDefaultHandler != null) {
+                    mDefaultHandler.uncaughtException(thread, ex);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
-        ex.printStackTrace();
-        if (mDefaultCrashHandler != null) {
-            mDefaultCrashHandler.uncaughtException(thread, ex);
-        } else {
-            Process.killProcess(Process.myPid());
-        }
-
     }
 
     private void dumpExceptionToSDCard(Throwable ex) throws IOException {
@@ -85,17 +74,10 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             Log.w(TAG, "sdcard unmounted,skip dump exception");
         }
 
-        File dir = new File(PATH);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        long current = System.currentTimeMillis();
-        String time = DateFormat.getTimeInstance(DateFormat.FULL, Locale.CHINA).format(new Date(current));
-        File file = new File(PATH + FILE_NAME + time + FILE_NAME_SUFFIX);
+        File file = new File(Environment.getExternalStorageDirectory(), FILE_NAME);
         try {
             PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
-            pw.println(time);
+            pw.println(new Date().toString());
             dumpPhoneInfo(pw);
             pw.println();
             ex.printStackTrace(pw);
@@ -111,7 +93,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         PackageInfo pi = pm.getPackageInfo(mContext.getPackageName(), PackageManager.GET_ACTIVITIES);
         pw.print("OpenCT Version: ");
         pw.print(pi.versionName);
-        pw.print('_');
+        pw.print("_");
         pw.println(pi.versionCode);
 
         pw.print("OS Version: ");

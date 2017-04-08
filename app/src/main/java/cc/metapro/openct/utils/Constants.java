@@ -18,7 +18,6 @@ package cc.metapro.openct.utils;
 
 import android.content.Context;
 import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
 
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
@@ -28,27 +27,19 @@ import cc.metapro.openct.data.university.item.classinfo.Classes;
 public final class Constants {
 
     public static final int WEEKS = 30;
-
-    public static Classes sClasses = new Classes();
-
     public static final int TYPE_CMS = 0;
     public static final int TYPE_LIB = 1;
-
     public static final String TYPE_CLASS = "class";
     public static final String TYPE_GRADE = "grade";
     public static final String TYPE_SEARCH = "search";
     public static final String TYPE_BORROW = "borrow";
-
     public static final String TIME_PREFIX = "class_time_";
-
     // encryption seed
     public static final String seed =
             "MGICAQACEQDkTyaa2c4v50mkZfyNT0HFAgMBAAECEDrkM9gTwLzYFoimr5b74KECCQD1rE5MzS2H7QIJAO3neDhgDY5AghQ4kbxQEgyTQIIYe3qGoSYgzkCCQCwrArrXqKPw";
-
     public static final String TITLE = "title";
     public static final String URL = "url";
     public static final int CLASS_LENGTH = 1;
-
     // 正方系列
     public static final String ZFSOFT = "zfsoft";
     // 苏文
@@ -63,6 +54,7 @@ public final class Constants {
     public static final String URP = "urp";
     // 汇文
     public static final String NJHUIWEN = "njhuiwen";
+    public static Classes sClasses = new Classes();
     public static int DAILY_CLASSES = 12;
     // map keys
     public static String ACTION_KEY;

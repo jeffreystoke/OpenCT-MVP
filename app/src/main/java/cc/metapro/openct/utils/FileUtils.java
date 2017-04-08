@@ -65,6 +65,7 @@ public class FileUtils {
 
                 return getDataColumn(context, contentUri, null, null);
             }
+
             // MediaProvider
             else if (isMediaDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);

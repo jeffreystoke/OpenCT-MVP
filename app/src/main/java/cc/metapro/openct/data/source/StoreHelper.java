@@ -17,7 +17,6 @@ package cc.metapro.openct.data.source;
  */
 
 import android.content.Context;
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
@@ -36,7 +35,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-@Keep
+import cc.metapro.openct.utils.CloseUtils;
+
 public final class StoreHelper {
 
     private final static Gson gson = new Gson();
@@ -56,20 +56,7 @@ public final class StoreHelper {
             }
             return sb.toString();
         } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            CloseUtils.close(fis, br);
         }
     }
 
@@ -102,20 +89,7 @@ public final class StoreHelper {
                 out.write(buffer, 0, count);
             }
         } finally {
-            if (din != null) {
-                try {
-                    din.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            CloseUtils.close(din, out);
         }
     }
 

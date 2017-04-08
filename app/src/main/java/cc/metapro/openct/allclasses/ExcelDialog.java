@@ -98,11 +98,9 @@ public class ExcelDialog extends DialogFragment {
             if (path != null) {
                 File file = new File(path);
                 Log.d("FileChooser", file.getAbsolutePath());
-                String s = "";
                 try {
                     String table = ExcelHelper.xlsxToTable(path);
-                    s = ExcelHelper.tableToJson(table);
-                    mCallback.onJsonResult(s);
+                    mCallback.onJsonResult(ExcelHelper.tableToJson(table));
                     dismiss();
                 } catch (JSONException e) {
                     e.printStackTrace();

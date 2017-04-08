@@ -23,16 +23,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.internal.MDButton;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -64,7 +61,7 @@ public class LinkSelectionDialog extends DialogFragment {
     private static LoginPresenter mPresenter;
     private Element mTarget;
 
-    private MaterialDialog mDialog;
+    private AlertDialog mDialog;
 
     public static LinkSelectionDialog newInstance(String type, Document document, LoginPresenter presenter) {
         TYPE = type;
@@ -76,27 +73,19 @@ public class LinkSelectionDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mDialog = new MaterialDialog.Builder(getActivity())
-                .title(R.string.target_selection)
-                .positiveText(android.R.string.ok)
-                .neutralText(R.string.not_in_range_above)
-                .adapter(new LinkAdapter(getActivity()), new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false))
-                .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                        mTarget = sLinks.get(i);
-                        return true;
-                    }
-                })
-                .build();
+        mDialog = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.target_selection)
+                .setPositiveButton(android.R.string.ok, null)
+                .setNeutralButton(R.string.not_in_range_above, null)
+                .create();
 
         setView();
 
         mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                final MDButton positiveButton = mDialog.getActionButton(DialogAction.POSITIVE);
-                final MDButton neutralButton = mDialog.getActionButton(DialogAction.NEUTRAL);
+                final Button positiveButton = mDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                final Button neutralButton = mDialog.getButton(DialogInterface.BUTTON_NEUTRAL);
                 positiveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -126,7 +115,6 @@ public class LinkSelectionDialog extends DialogFragment {
                         }
 
                         sLinks = DOCUMENT.select("a");
-                        mDialog.notifyItemsChanged();
                         neutralButton.setText(R.string.click_to_go);
                         neutralButton.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -152,7 +140,7 @@ public class LinkSelectionDialog extends DialogFragment {
                                         @Override
                                         public void onNext(Document document) {
                                             sLinks = document.select("a");
-                                            mDialog.notifyItemsChanged();
+
                                         }
                                     };
 
@@ -208,7 +196,6 @@ public class LinkSelectionDialog extends DialogFragment {
                 sLinks = DOCUMENT.select("a:matches(借阅)");
                 break;
         }
-        mDialog.notifyItemsChanged();
     }
 
     @Override

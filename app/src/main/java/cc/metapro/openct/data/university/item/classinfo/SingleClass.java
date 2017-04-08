@@ -17,7 +17,6 @@ package cc.metapro.openct.data.university.item.classinfo;
  */
 
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,20 +72,20 @@ public class SingleClass implements Comparable<SingleClass>, View.OnClickListene
         return teacher;
     }
 
-    public void addViewTo(final ViewGroup gridLayout, LayoutInflater inflater) {
+    public void addViewTo(final ViewGroup container, LayoutInflater inflater) {
         int x = (time.getWeekDay() - 1) * Constants.CLASS_WIDTH;
         int y = (time.getDailySeq() - 1) * Constants.CLASS_BASE_HEIGHT;
-        int N = gridLayout.getChildCount();
+        int N = container.getChildCount();
         for (int i = 0; i < N; i++) {
-            int childX = (int) gridLayout.getChildAt(i).getX();
-            int childY = (int) gridLayout.getChildAt(i).getY();
+            int childX = (int) container.getChildAt(i).getX();
+            int childY = (int) container.getChildAt(i).getY();
             if (childX == x && childY == y) {
                 return;
             }
         }
 
-        final CardView card = (CardView) inflater.inflate(R.layout.item_class_info, gridLayout, false);
-        card.setCardBackgroundColor(color);
+        final TextView card = (TextView) inflater.inflate(R.layout.item_class_info, container, false);
+        card.setBackgroundColor(color);
 
         TextView textView = (TextView) card.findViewById(R.id.class_name);
         int length = time.getDailyEnd() - time.getDailySeq() + 1;
@@ -99,7 +98,7 @@ public class SingleClass implements Comparable<SingleClass>, View.OnClickListene
 
         card.setX(x);
         card.setY(y);
-        gridLayout.addView(card);
+        container.addView(card);
         card.getLayoutParams().height = length * Constants.CLASS_BASE_HEIGHT;
         card.getLayoutParams().width = Constants.CLASS_WIDTH;
         card.setOnClickListener(this);

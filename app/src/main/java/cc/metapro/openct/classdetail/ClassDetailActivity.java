@@ -30,7 +30,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.TextView;
 
 import com.jrummyapps.android.colorpicker.ColorPickerDialog;
 import com.jrummyapps.android.colorpicker.ColorPickerDialogListener;
@@ -72,6 +71,12 @@ public class ClassDetailActivity extends AppCompatActivity {
     private EnrichedClassInfo mInfoEditing;
     private List<ClassTime> classTimes;
 
+    public static void actionStart(Context context, String name) {
+        Intent intent = new Intent(context, ClassDetailActivity.class);
+        intent.putExtra(KEY_CLASS_NAME, name);
+        context.startActivity(intent);
+    }
+
     @OnClick(R.id.bg)
     void showColorPicker() {
         ColorPickerDialog dialog = ColorPickerDialog.newBuilder().setColor(mInfoEditing.getColor()).create();
@@ -88,12 +93,6 @@ public class ClassDetailActivity extends AppCompatActivity {
             }
         });
         dialog.show(getFragmentManager(), "color_picker");
-    }
-
-    public static void actionStart(Context context, String name) {
-        Intent intent = new Intent(context, ClassDetailActivity.class);
-        intent.putExtra(KEY_CLASS_NAME, name);
-        context.startActivity(intent);
     }
 
     @Override

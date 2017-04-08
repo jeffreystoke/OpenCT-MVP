@@ -19,12 +19,10 @@ package cc.metapro.openct.data.source;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.annotation.Keep;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Keep
 class DBHelper extends SQLiteOpenHelper {
 
     static final String SCHOOL_NAME = "school_name";

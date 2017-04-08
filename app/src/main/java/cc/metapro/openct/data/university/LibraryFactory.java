@@ -17,7 +17,6 @@ package cc.metapro.openct.data.university;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -41,7 +40,6 @@ import cc.metapro.openct.utils.webutils.FormUtils;
 import okhttp3.HttpUrl;
 import retrofit2.Call;
 
-@Keep
 public class LibraryFactory extends UniversityFactory {
 
     private static final String TAG = LibraryFactory.class.getSimpleName();
@@ -182,13 +180,18 @@ public class LibraryFactory extends UniversityFactory {
         String LOGIN_URL, LOGIN_REF, SEARCH_URL, SEARCH_REF;
 
         LibURLFactory(String libBaseURL) {
-            libBaseURL = HttpUrl.parse(libBaseURL).toString();
+            HttpUrl baseUrl = HttpUrl.parse(libBaseURL);
 
             if (Constants.NJHUIWEN.equalsIgnoreCase(SYS)) {
-                SEARCH_URL = libBaseURL + "opac/search.php";
-                SEARCH_REF = libBaseURL + "opac/openlink.php";
-                LOGIN_URL = libBaseURL + "reader/redr_verify.php";
-                LOGIN_REF = libBaseURL + "reader/login.php";
+                SEARCH_URL = baseUrl.newBuilder("opac/search.php").toString();
+                SEARCH_REF = baseUrl.newBuilder("opac/openlink.php").toString();
+                LOGIN_URL = baseUrl.newBuilder("reader/redr_verify.php").toString();
+                LOGIN_REF = baseUrl.newBuilder("reader/login.php").toString();
+            } else {
+                SEARCH_URL = libBaseURL;
+                SEARCH_REF = libBaseURL;
+                LOGIN_URL = libBaseURL;
+                LOGIN_REF = libBaseURL;
             }
         }
     }

@@ -29,7 +29,7 @@ import okhttp3.ResponseBody;
 public class SchoolInterceptor implements Interceptor {
 
     public static final String userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
-    private static final String URL_PATTERN = "((http|ftp|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9&%_\\./-~-]*)?";
+    private static final String URL_PATTERN = "((http|ftp|https)://)(([a-zA-Z0-9._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9&%_./-~-]*)?";
     private static final String JS_REDIRECT_PATTERN = "(window\\.location).*?" + URL_PATTERN;
     private RedirectObserver<String> mObserver;
 

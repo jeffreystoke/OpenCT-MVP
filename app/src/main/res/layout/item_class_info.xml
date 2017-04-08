@@ -15,19 +15,12 @@
   ~ limitations under the License.
   -->
 
-<android.support.v7.widget.CardView
+<TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/class_name"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="3dp">
-
-    <TextView
-        android:id="@+id/class_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="3dp"
-        android:gravity="top"
-        android:textSize="12sp"/>
-</android.support.v7.widget.CardView>
+    android:layout_margin="3dp"
+    android:padding="3dp"
+    android:gravity="top"
+    android:textSize="12sp"/>

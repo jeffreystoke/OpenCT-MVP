@@ -43,9 +43,9 @@ import cc.metapro.openct.utils.PrefHelper;
 public class DBManger {
 
     private static final String TAG = DBManger.class.getSimpleName();
-
+    private static final UniversityInfo DEFAULT_UNIVERSITY =
+            new UniversityInfo("OpenCT-Default", "common", "example.com", "common", "example.com");
     private static SQLiteDatabase mDatabase;
-
     private static DBManger manger;
 
     private DBManger(Context context) {
@@ -187,13 +187,13 @@ public class DBManger {
                 universityInfo = StoreHelper.fromJson(cursor.getString(1), UniversityInfo.class);
             }
             if (universityInfo == null) {
-                universityInfo = new UniversityInfo("OpenCT", "custom", "example.com", "custom", "example.com");
+                universityInfo = DEFAULT_UNIVERSITY;
             }
             cursor.close();
             return universityInfo;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
-            return new UniversityInfo("OpenCT", "custom", "example.com", "custom", "example.com");
+            return DEFAULT_UNIVERSITY;
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -215,13 +215,13 @@ public class DBManger {
                 info = StoreHelper.fromJson(cursor.getString(1), UniversityInfo.class);
             }
             if (info == null) {
-                info = new UniversityInfo("OpenCT", "custom", "example.com", "custom", "example");
+                info = DEFAULT_UNIVERSITY;
             }
             cursor.close();
             return info;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
-            return new UniversityInfo("OpenCT", "custom", "example.com", "custom", "example");
+            return DEFAULT_UNIVERSITY;
         } finally {
             if (cursor != null) {
                 cursor.close();
