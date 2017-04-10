@@ -332,4 +332,5 @@
     <string name="selected_school">Selected %1$s</string>
     <string name="schools_updated">Schools updated</string>
     <string name="select_week">Select week</string>
+    <string name="what_is">What means %1$s ?</string>
 </resources>

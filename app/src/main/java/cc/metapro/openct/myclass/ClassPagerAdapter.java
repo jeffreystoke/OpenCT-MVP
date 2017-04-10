@@ -70,14 +70,8 @@ class ClassPagerAdapter extends FragmentStatePagerAdapter {
         throw new IndexOutOfBoundsException("two fragments at most");
     }
 
-    public void updateClasses(Classes classes, int week) {
+    void updateClasses(Classes classes, int week) {
         mDailyFragment.showClasses(classes, week);
         mTableFragment.showClasses(classes, week);
     }
-
-    public void showTableDesignatedWeek(Classes classes, int week) {
-        mTableFragment.showClasses(classes, week);
-        notifyDataSetChanged();
-    }
-
 }

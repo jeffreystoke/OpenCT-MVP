@@ -19,14 +19,20 @@ package cc.metapro.openct.customviews;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jsoup.nodes.Document;
@@ -36,6 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.BorrowContract;
@@ -54,10 +62,12 @@ public class TableChooseDialog extends DialogFragment {
 
     private static String TYPE;
     private static Map<String, Element> tableMap;
-    private static List<String> tableIds;
     private static LoginPresenter mPresenter;
-
+    @BindView(R.id.view_pager)
     ViewPager mViewPager;
+    @BindView(R.id.tab_bar)
+    TabLayout mTabBar;
+    private List<String> mTableIds;
 
     public static TableChooseDialog newInstance(String type, Document source, @Nullable LoginPresenter presenter) {
         tableMap = TableUtils.getTablesFromTargetPage(source);
@@ -105,8 +115,8 @@ public class TableChooseDialog extends DialogFragment {
     }
 
     public void select() {
-        if (!tableIds.isEmpty()) {
-            final String tableId = tableIds.get(mViewPager.getCurrentItem());
+        if (!mTableIds.isEmpty()) {
+            final String tableId = mTableIds.get(mViewPager.getCurrentItem());
             final DBManger manger = DBManger.getInstance(getActivity());
             final Context context = getActivity();
             Element targetTable = tableMap.get(tableId);
@@ -162,29 +172,14 @@ public class TableChooseDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        tableIds = new ArrayList<>(tableMap.size());
-        for (String s : tableMap.keySet()) {
-            tableIds.add(s);
-        }
-
-        mViewPager = new ViewPager(getActivity());
-        mViewPager.setId(R.id.view_pager);
-        mViewPager.setAdapter(new FragmentStatePagerAdapter(getFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                return HtmlTableFragment.newInstance(tableMap.get(tableIds.get(position)).html());
-            }
-
-            @Override
-            public int getCount() {
-                return tableMap.size();
-            }
-        });
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_table_choose, null);
+        ButterKnife.bind(this, view);
+        setView();
 
         Constants.checkAdvCustomInfo(getActivity());
         return new AlertDialog.Builder(getActivity())
+                .setView(view)
                 .setTitle(R.string.swipe_choose_table)
-                .setView(mViewPager)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -194,12 +189,61 @@ public class TableChooseDialog extends DialogFragment {
                 .create();
     }
 
+    private void setView() {
+        mTableIds = new ArrayList<>(tableMap.size());
+        for (String s : tableMap.keySet()) {
+            mTableIds.add(s);
+        }
+
+        final List<View> views = new ArrayList<>(mTableIds.size());
+        for (String s : mTableIds) {
+            TextView textView = new TextView(getActivity());
+
+            String content = tableMap.get(s).toString();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                textView.setText(Html.fromHtml(content, Html.FROM_HTML_MODE_COMPACT));
+            } else {
+                textView.setText(Html.fromHtml(content));
+            }
+            views.add(textView);
+        }
+
+        mTabBar.setupWithViewPager(mViewPager);
+        mViewPager.setAdapter(new PagerAdapter() {
+            @Override
+            public int getCount() {
+                return mTableIds.size();
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return mTableIds.get(position);
+            }
+
+            @Override
+            public boolean isViewFromObject(View view, Object object) {
+                return view == object;
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object) {
+                container.removeView(views.get(position));
+            }
+
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                container.addView(views.get(position));
+                return views.get(position);
+            }
+        });
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         mPresenter = null;
         TYPE = null;
         tableMap = null;
-        tableIds = null;
+        mTableIds = null;
     }
 }

@@ -25,7 +25,6 @@ import com.squareup.leakcanary.LeakCanary;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.CrashHandler;
-import cc.metapro.openct.utils.PrefHelper;
 
 @Keep
 public class OpenCT extends Application {
@@ -60,7 +59,6 @@ public class OpenCT extends Application {
         Constants.ACTION_KEY = getString(R.string.key_action);
         Constants.SEARCH_TYPE_KEY = getString(R.string.key_search_type);
         Constants.SEARCH_CONTENT_KEY = getString(R.string.key_search_content);
-        Constants.DAILY_CLASSES = Integer.parseInt(PrefHelper.getString(this, R.string.pref_daily_class_count, "12"));
     }
 
     @Override

@@ -55,7 +55,7 @@ public final class Constants {
     // 汇文
     public static final String NJHUIWEN = "njhuiwen";
     public static Classes sClasses = new Classes();
-    public static int DAILY_CLASSES = 12;
+
     // map keys
     public static String ACTION_KEY;
     public static String USERNAME_KEY;

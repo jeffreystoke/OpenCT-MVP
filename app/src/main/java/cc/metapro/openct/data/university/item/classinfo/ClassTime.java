@@ -46,7 +46,7 @@ public class ClassTime implements Comparable<ClassTime> {
 
     }
 
-    public ClassTime(int weekDay, int dailySeq, int dailyEnd, String teacher, String place, boolean[] weeks) {
+    ClassTime(int weekDay, int dailySeq, int dailyEnd, String teacher, String place, boolean[] weeks) {
         this.weekDay = weekDay;
         this.dailySeq = dailySeq;
         this.dailyEnd = dailyEnd;
@@ -129,7 +129,7 @@ public class ClassTime implements Comparable<ClassTime> {
 
     public String getTime() {
         if (dailyEnd - dailySeq <= 0) {
-            return "第 " + dailySeq + "";
+            return dailySeq + "";
         } else {
             return dailySeq + " - " + dailyEnd;
         }

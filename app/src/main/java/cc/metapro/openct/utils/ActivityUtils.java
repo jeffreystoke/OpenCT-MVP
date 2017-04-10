@@ -45,7 +45,7 @@ public final class ActivityUtils {
     }
 
     public static void showLinkSelectionDialog(FragmentManager manager, String type, Document document, LoginPresenter presenter) {
-        LinkSelectionDialog.newInstance(type, document, presenter).show(manager, "link_selection_dialog");
+        LinkSelectionDialog.newInstance(type, document, presenter, true, false).show(manager, "link_selection_dialog");
     }
 
     public static void showTableChooseDialog(FragmentManager manager, String type, Document document, LoginPresenter presenter) {
@@ -71,7 +71,7 @@ public final class ActivityUtils {
                 .create().show();
     }
 
-    public static void showProgressDialog(Context context, @StringRes int messageId, boolean cancelable) {
+    private static void showProgressDialog(Context context, @StringRes int messageId, boolean cancelable) {
         sProgressDialog = new ProgressDialog(context);
         sProgressDialog.setMessage(context.getString(messageId));
         sProgressDialog.setCancelable(cancelable);

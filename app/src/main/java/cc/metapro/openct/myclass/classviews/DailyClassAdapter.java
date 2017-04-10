@@ -17,7 +17,6 @@ package cc.metapro.openct.myclass.classviews;
  */
 
 import android.content.Context;
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -35,8 +34,7 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.SingleClass;
 
-@Keep
-public class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassViewHolder> {
+class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassViewHolder> {
 
     @NonNull
     private List<SingleClass> mTodayClasses = new ArrayList<>(0);
@@ -71,7 +69,7 @@ public class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.Cl
         return mTodayClasses.size() > 0;
     }
 
-    public static class ClassViewHolder extends RecyclerView.ViewHolder {
+    static class ClassViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.class_name)
         TextView mClassName;

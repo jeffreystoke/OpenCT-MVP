@@ -66,7 +66,7 @@ public class ClickDialog extends DialogFragment {
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
     }
 
-    public interface TypeCallback {
+    interface TypeCallback {
         void onResult(String type);
     }
 }

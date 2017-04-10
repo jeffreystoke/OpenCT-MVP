@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~  Copyright 2016 - 2017 metapro.cc Jeffctor
+  ~  Copyright 2016 - 2017 OpenCT open source class table
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,8 +15,13 @@
   ~ limitations under the License.
   -->
 
-<TextView
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/table_content"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/table_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</ScrollView>

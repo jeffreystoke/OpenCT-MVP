@@ -36,6 +36,7 @@ import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.SingleClass;
 import cc.metapro.openct.myclass.ClassContract;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.PrefHelper;
 
 public class TableFragment extends Fragment implements ClassContract.View {
 
@@ -67,7 +68,9 @@ public class TableFragment extends Fragment implements ClassContract.View {
     }
 
     private void addSeqViews() {
-        for (int i = 1; i <= Constants.DAILY_CLASSES; i++) {
+        final int DailyClasses = Integer
+                .parseInt(PrefHelper.getString(getContext(), R.string.pref_daily_class_count, "12"));
+        for (int i = 1; i <= DailyClasses; i++) {
             TextView textView = new TextView(getContext());
             textView.setText(i + "");
             textView.setGravity(Gravity.CENTER);
