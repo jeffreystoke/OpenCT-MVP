@@ -89,12 +89,11 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         findPreference(getString(R.string.pref_custom_action_clear)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                // TODO: 17/3/2 better translation
                 new AlertDialog.Builder(getActivity())
-                        .setTitle("提示")
-                        .setMessage("这将清空你的操作记录, 是否继续?")
-                        .setNegativeButton("取消", null)
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        .setTitle(R.string.notice)
+                        .setMessage(R.string.clear_action_confirm)
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 DBManger manger = DBManger.getInstance(getActivity());
@@ -112,8 +111,7 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (mCustomEnablePreference.isChecked()) {
-                    // TODO: 17/3/2 better translation
-                    Toast.makeText(getActivity(), "如需选择默认支持的学校请先停用基础自定义", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), R.string.disable_custom_first, Toast.LENGTH_LONG).show();
                 } else {
                     startActivityForResult(new Intent(getActivity(), SchoolSelectionActivity.class),
                             SchoolSelectionActivity.REQUEST_SCHOOL_NAME);
@@ -190,9 +188,8 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
             if (8 + i < 10) prefix += "0";
             int t = (8 + i) > 23 ? 23 : (8 + i);
             final String defaultValue = prefix + t + ":00";
-            // TODO: 17/3/2 better translation
             preference.setKey(key);
-            preference.setTitle("第 " + (i + 1) + " 节");
+            preference.setTitle(getString(R.string.the_class_seq, (i + 1)));
             preference.setDefaultValue(defaultValue);
             String value = PrefHelper.getString(getActivity(), key, defaultValue);
             preference.setSummary(value);

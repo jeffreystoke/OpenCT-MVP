@@ -72,9 +72,11 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="layout_collapseMode">pin</item>
-        <!--<item name="android:layout_marginTop">@dimen/toolbar_padding_top</item>-->
     </style>
 
+    <style name="AppTheme.AlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+
+    </style>
     <!--toolbar expanded text appearance-->
     <style name="AppTheme.CollExpanded" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
         <item name="android:textColor">@color/material_black</item>

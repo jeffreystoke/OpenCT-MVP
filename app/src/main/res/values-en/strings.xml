@@ -277,8 +277,8 @@
     <string name="fetch_captcha_fail">Fetch Captcha Failed\n</string>
     <string name="new_class">New Class</string>
     <string name="mandatory">Mandatory</string>
-    <string name="time_deleted">%1$s %2$s %3$s Deleted</string>
-    <string name="restored">%1$s %2$s %3$ Restored</string>
+    <string name="deleted">Deleted</string>
+    <string name="restored">Restored</string>
     <string name="error_creating_calendar">Error Creating Calendar\n</string>
     <string name="warning">Warning</string>
     <string name="clear_classes_tip">This action will delete all your classes, confirm?</string>
@@ -333,4 +333,9 @@
     <string name="schools_updated">Schools updated</string>
     <string name="select_week">Select week</string>
     <string name="what_is">What means %1$s ?</string>
+    <string name="crash_pop">Crash report openct-crash.txt has been stored in external storage</string>
+    <string name="clear_action_confirm">All of you actions will be removed, continue?</string>
+    <string name="disable_custom_first">Please disable custom first</string>
+    <string name="no_borrows">No borrows here.</string>
+    <string name="the_class_seq">Class %1$d</string>
 </resources>

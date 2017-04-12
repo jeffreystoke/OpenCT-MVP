@@ -125,7 +125,7 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
                 final EnrichedClassInfo toRemove = Constants.sClasses.get(position);
                 Constants.sClasses.remove(position);
                 mAdapter.notifyDataSetChanged();
-                final Snackbar snackbar = Snackbar.make(mRecyclerView, toRemove.getName() + " " + getString(R.string.time_deleted), BaseTransientBottomBar.LENGTH_INDEFINITE);
+                final Snackbar snackbar = Snackbar.make(mRecyclerView, toRemove.getName() + " " + getString(R.string.deleted), BaseTransientBottomBar.LENGTH_INDEFINITE);
                 snackbar.setAction(android.R.string.cancel, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

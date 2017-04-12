@@ -92,4 +92,10 @@ public class CETQueryDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter = null;
+    }
 }

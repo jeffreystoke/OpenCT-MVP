@@ -141,11 +141,11 @@ public class ClassDetailActivity extends AppCompatActivity {
                 final ClassTime toRemove = classTimes.get(position);
                 classTimes.remove(toRemove);
                 mDetailAdapter.notifyDataSetChanged();
-                String msg = getString(R.string.time_deleted,
-                        mName.getText().toString(),
-                        DateHelper.weekDayTrans(ClassDetailActivity.this, toRemove.getWeekDay()),
-                        toRemove.getTime());
+                final String prefix = mName.getText().toString() + " " +
+                        DateHelper.weekDayTrans(ClassDetailActivity.this, toRemove.getWeekDay()) + " " +
+                        toRemove.getTime() + " ";
 
+                String msg = prefix + getString(R.string.deleted);
                 final Snackbar snackbar = Snackbar.make(mRecyclerView, msg, BaseTransientBottomBar.LENGTH_INDEFINITE);
                 snackbar.setAction(android.R.string.cancel, new View.OnClickListener() {
                     @Override
@@ -153,10 +153,8 @@ public class ClassDetailActivity extends AppCompatActivity {
                         classTimes.add(toRemove);
                         mDetailAdapter.notifyDataSetChanged();
                         snackbar.dismiss();
-                        String msg = getString(R.string.restored,
-                                mName.getText().toString(),
-                                DateHelper.weekDayTrans(ClassDetailActivity.this, toRemove.getWeekDay()),
-                                toRemove.getTime());
+
+                        String msg = prefix + getString(R.string.restored);
 
                         Snackbar.make(mRecyclerView, msg, BaseTransientBottomBar.LENGTH_LONG).show();
                         mRecyclerView.smoothScrollToPosition(classTimes.size() - 1);
@@ -189,13 +187,16 @@ public class ClassDetailActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        String oldName = mInfoEditing.getName();
+
         mInfoEditing.setType(mType.getText().toString());
         mInfoEditing.setTimes(mDetailAdapter.getResultTime());
+        mInfoEditing.setName(mName.getText().toString());
         try {
             DBManger.getInstance(this)
                     .updateSingleClass(
+                            oldName,
                             mInfoEditing.getName(),
-                            mName.getText().toString(),
                             mInfoEditing
                     );
         } catch (Exception e) {

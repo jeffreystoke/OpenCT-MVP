@@ -21,8 +21,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -32,6 +34,7 @@ import java.io.PrintWriter;
 import java.util.Date;
 
 import cc.metapro.openct.OpenCT;
+import cc.metapro.openct.R;
 
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
@@ -63,6 +66,14 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
                 if (mDefaultHandler != null) {
                     mDefaultHandler.uncaughtException(thread, ex);
                 }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Looper.prepare();
+                        Toast.makeText(mContext, R.string.crash_pop, Toast.LENGTH_LONG).show();
+                        Looper.loop();
+                    }
+                }).start();
             } catch (IOException e) {
                 e.printStackTrace();
             }

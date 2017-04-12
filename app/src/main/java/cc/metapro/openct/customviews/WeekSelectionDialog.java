@@ -56,6 +56,12 @@ public class WeekSelectionDialog extends DialogFragment {
                 .create();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        sCallBack = null;
+    }
+
     public interface SelectionCallback {
         void onSelection(int index);
     }

@@ -19,9 +19,16 @@ package cc.metapro.openct.utils;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ScrollView;
 
 import org.jsoup.nodes.Document;
 
@@ -87,5 +94,37 @@ public final class ActivityUtils {
             sProgressDialog.dismiss();
             sProgressDialog = null;
         }
+    }
+
+    public static AlertDialog addViewToAlertDialog(@NonNull final AlertDialog.Builder builder, @NonNull final View view) {
+        ViewGroup parent = (ViewGroup) view.getParent();
+        if (parent != null) {
+            parent.removeView(view);
+        }
+
+        ScrollView scrollView = new ScrollView(builder.getContext());
+        scrollView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        scrollView.addView(view);
+
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                InputMethodManager imm = (InputMethodManager) builder.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        });
+
+        AlertDialog dialog = builder.setView(scrollView).create();
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        }
+        return dialog;
+    }
+
+    public static AlertDialog.Builder getAlertBuilder(@NonNull Context context, @StringRes int title) {
+        return new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setPositiveButton(android.R.string.ok, null);
     }
 }

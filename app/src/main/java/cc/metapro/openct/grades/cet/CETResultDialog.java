@@ -109,4 +109,10 @@ public class CETResultDialog extends DialogFragment {
             mGrade.setText(getString(R.string.grades) + ":\t" + grade);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        result = null;
+    }
 }

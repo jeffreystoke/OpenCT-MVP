@@ -43,6 +43,7 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.webutils.Form;
 import cc.metapro.openct.utils.webutils.FormHandler;
@@ -85,9 +86,9 @@ public class FormDialog extends DialogFragment {
             return new AlertDialog.Builder(getActivity()).create();
         }
         ButterKnife.bind(this, view);
-        return new AlertDialog.Builder(getActivity())
-                .setView(view)
-                .setTitle(R.string.query_what)
+
+        AlertDialog.Builder builder = ActivityUtils
+                .getAlertBuilder(getActivity(), R.string.query_what)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -122,7 +123,8 @@ public class FormDialog extends DialogFragment {
                         mPresenter.loadQuery(getFragmentManager(), mForm.getAction(), map, selectionChanged);
                     }
                 })
-                .setNegativeButton(android.R.string.cancel, null)
-                .create();
+                .setNegativeButton(android.R.string.cancel, null);
+
+        return ActivityUtils.addViewToAlertDialog(builder, view);
     }
 }

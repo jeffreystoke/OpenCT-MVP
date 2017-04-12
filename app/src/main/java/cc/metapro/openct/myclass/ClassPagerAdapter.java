@@ -27,7 +27,6 @@ import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.myclass.classviews.DailyFragment;
 import cc.metapro.openct.myclass.classviews.TableFragment;
 
-
 class ClassPagerAdapter extends FragmentStatePagerAdapter {
 
     private Context mContext;

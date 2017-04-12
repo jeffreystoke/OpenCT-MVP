@@ -17,7 +17,6 @@ package cc.metapro.openct.myclass;
  */
 
 import android.content.Context;
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
@@ -51,7 +50,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-@Keep
 class ClassPresenter implements ClassContract.Presenter {
 
     private final String TAG = ClassPresenter.class.getSimpleName();

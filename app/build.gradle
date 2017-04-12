@@ -65,6 +65,7 @@ dependencies {
     compile 'com.android.support:gridlayout-v7:25.3.1'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.scottyab:aescrypt:0.0.1'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
     compile 'com.github.clans:fab:1.6.4'
     compile 'com.jrummyapps:colorpicker:2.1.6'

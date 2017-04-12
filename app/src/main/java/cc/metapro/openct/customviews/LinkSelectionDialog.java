@@ -36,6 +36,7 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.CmsFactory;
+import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.base.MyObserver;
 import io.reactivex.Observable;
@@ -77,9 +78,8 @@ public class LinkSelectionDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.target_selection)
-                .setPositiveButton(android.R.string.ok, null)
+        AlertDialog.Builder builder = ActivityUtils
+                .getAlertBuilder(getActivity(), R.string.target_selection)
                 .setNeutralButton(R.string.not_in_range_above, null);
 
         setView(builder);
@@ -141,9 +141,6 @@ public class LinkSelectionDialog extends DialogFragment {
                         observable.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(observer);
-                    } else if (TYPE_BORROW.equalsIgnoreCase(TYPE)) {
-                        // LibraryFactory factory = Loader.getLibrary(getActivity());
-                        // TODO: 17/4/10 add borrow page fetch
                     }
                 } else {
                     newInstance(TYPE, DOCUMENT, mPresenter, true, true)

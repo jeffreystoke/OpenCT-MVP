@@ -100,7 +100,7 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
     @Override
     public void updateBorrows(List<BorrowInfo> borrows) {
         if (borrows == null) {
-            // TODO: 17/3/2 notice empty borrows
+            Snackbar.make(mRecyclerView, R.string.no_borrows, BaseTransientBottomBar.LENGTH_LONG).show();
         } else {
             mBorrowAdapter.setNewBorrows(borrows);
             mBorrowAdapter.notifyDataSetChanged();

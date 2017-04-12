@@ -280,7 +280,6 @@ class BorrowPresenter implements BorrowContract.Presenter {
             for (String s : mBorrows.get(0).getTitles()) {
                 list.add(s);
             }
-            // TODO: 17/3/18 add filter
         } else {
             Toast.makeText(mContext, mContext.getString(R.string.borrows_cannot_filter_tip), Toast.LENGTH_LONG).show();
         }
