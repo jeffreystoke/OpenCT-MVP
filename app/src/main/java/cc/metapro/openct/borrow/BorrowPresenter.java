@@ -75,7 +75,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
     public Disposable loadOnlineInfo(final FragmentManager manager) {
         ActivityUtils.showProgressDialog(mContext, R.string.preparing_school_sys_info);
 
-        Observable<Boolean> observable = Loader.prepareOnlineInfo(Loader.ACTION_LIBRARY, mContext);
+        Observable<Boolean> observable = Loader.prepareOnlineInfo(Constants.TYPE_LIB, mContext);
 
         Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
             @Override
@@ -106,7 +106,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
     @Override
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
         ActivityUtils.showProgressDialog(mContext, R.string.loading_borrows);
-        Observable<Document> observable = Loader.login(Loader.ACTION_LIBRARY, mContext, code);
+        Observable<Document> observable = Loader.login(Constants.TYPE_LIB, mContext, code);
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override

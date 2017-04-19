@@ -20,23 +20,19 @@ import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Keep;
-import android.support.v7.app.AppCompatActivity;
 
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.base.BaseActivity;
 
-@Keep
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_preference);
-
         ButterKnife.bind(this);
 
         // setup actionbar
@@ -49,6 +45,11 @@ public class SettingsActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.pref_container, new SchoolPreferenceFragment())
                 .commit();
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_preference;
     }
 
     @Override

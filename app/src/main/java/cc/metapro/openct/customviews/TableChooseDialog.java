@@ -24,7 +24,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -44,7 +43,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.BorrowContract;
 import cc.metapro.openct.data.source.DBManger;
@@ -56,9 +54,11 @@ import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.grades.GradeContract;
 import cc.metapro.openct.myclass.ClassContract;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.base.BaseDialog;
+import cc.metapro.openct.utils.base.LoginPresenter;
 import cc.metapro.openct.utils.webutils.TableUtils;
 
-public class TableChooseDialog extends DialogFragment {
+public class TableChooseDialog extends BaseDialog {
 
     private static String TYPE;
     private static Map<String, Element> tableMap;

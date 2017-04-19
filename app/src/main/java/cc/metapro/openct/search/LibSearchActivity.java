@@ -21,7 +21,6 @@ import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +29,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -43,32 +43,57 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.EndlessRecyclerOnScrollListener;
 import cc.metapro.openct.data.university.item.BookInfo;
 import cc.metapro.openct.utils.RecyclerViewHelper;
+import cc.metapro.openct.utils.base.BaseActivity;
 import io.reactivex.disposables.Disposable;
 
-public class LibSearchActivity extends AppCompatActivity implements LibSearchContract.View {
+public class LibSearchActivity extends BaseActivity implements LibSearchContract.View {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-
     @BindView(R.id.fab)
     FloatingActionButton mFabSearch;
-
     @BindView(R.id.lib_search_content_edittext)
     EditText mEditText;
-
     @BindView(R.id.type_spinner)
     Spinner mSpinner;
-
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
-
     @BindView(R.id.fab_up)
     FloatingActionButton mFabUp;
+    @BindView(R.id.image)
+    ImageView mImage;
 
     private LibSearchContract.Presenter mPresenter;
     private BooksAdapter mAdapter;
     private Disposable mTask;
     private LinearLayoutManager mLinearLayoutManager;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ButterKnife.bind(this);
+
+        // set mToolbar
+        setSupportActionBar(mToolbar);
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
+
+        mAdapter = new BooksAdapter(this);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.lib_search_type));
+        mSpinner.setAdapter(adapter);
+        mLinearLayoutManager = RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mAdapter);
+        mEditText.requestFocus();
+
+        // TODO: 17/4/12 load image
+        new LibSearchPresenter(this, this);
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_search;
+    }
 
     @OnClick(R.id.fab_up)
     public void upToTop() {
@@ -87,28 +112,6 @@ public class LibSearchActivity extends AppCompatActivity implements LibSearchCon
             return true;
         }
         return false;
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-
-        ButterKnife.bind(this);
-
-        // set mToolbar
-        setSupportActionBar(mToolbar);
-        ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            ab.setDisplayHomeAsUpEnabled(true);
-        }
-
-        mAdapter = new BooksAdapter(this);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.lib_search_type));
-        mSpinner.setAdapter(adapter);
-        mLinearLayoutManager = RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mAdapter);
-        mEditText.requestFocus();
-        new LibSearchPresenter(this, this);
     }
 
     @Override

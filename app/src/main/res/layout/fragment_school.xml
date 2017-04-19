@@ -90,7 +90,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/pref_title_current_week"
+            android:text="@string/current_week"
             android:textSize="@dimen/ex_large_text"/>
 
         <Spinner

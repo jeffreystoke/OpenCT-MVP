@@ -26,11 +26,11 @@ public class WebConfiguration {
 
     private LinkedHashMap<String, String> mMap;
 
-    public WebConfiguration() {
+    WebConfiguration() {
         mMap = new LinkedHashMap<>();
     }
 
-    public void addAction(Element element, String valueOrFlag) {
+    void addAction(Element element, String valueOrFlag) {
         if (element == null) return;
         mMap.remove(element.toString());
         mMap.put(element.toString(), valueOrFlag);

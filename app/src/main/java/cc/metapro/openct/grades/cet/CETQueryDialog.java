@@ -22,8 +22,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Toast;
@@ -37,8 +35,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.grades.GradeContract;
+import cc.metapro.openct.utils.base.BaseDialog;
 
-public class CETQueryDialog extends DialogFragment {
+public class CETQueryDialog extends BaseDialog {
 
     private static GradeContract.Presenter mPresenter;
     SharedPreferences mPreferences;
@@ -85,12 +84,6 @@ public class CETQueryDialog extends DialogFragment {
         mNum.setText(mPreferences.getString(getString(R.string.pref_cet_ticket_num), ""));
         mName.setText(mPreferences.getString(getString(R.string.pref_cet_full_name), ""));
         return alertDialog;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
     }
 
     @Override

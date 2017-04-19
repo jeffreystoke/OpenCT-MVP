@@ -76,7 +76,7 @@ class GradePresenter implements GradeContract.Presenter {
     public Disposable loadOnlineInfo(final FragmentManager manager) {
         ActivityUtils.showProgressDialog(mContext, R.string.preparing_school_sys_info);
 
-        Observable<Boolean> observable = Loader.prepareOnlineInfo(Loader.ACTION_CMS, mContext);
+        Observable<Boolean> observable = Loader.prepareOnlineInfo(Constants.TYPE_CMS, mContext);
 
         Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
             @Override
@@ -107,7 +107,7 @@ class GradePresenter implements GradeContract.Presenter {
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
         ActivityUtils.showProgressDialog(mContext, R.string.login_to_system);
 
-        Observable<Document> observable = Loader.login(Loader.ACTION_CMS, mContext, code);
+        Observable<Document> observable = Loader.login(Constants.TYPE_CMS, mContext, code);
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
@@ -287,7 +287,7 @@ class GradePresenter implements GradeContract.Presenter {
             public void subscribe(ObservableEmitter<Map<String, String>> e) throws Exception {
                 CETService service = ServiceGenerator.createCETService();
                 String queryResult = service.queryCET(
-                        mContext.getString(R.string.chsi_referer),
+                        mContext.getString(R.string.url_chsi_referer),
                         queryMap.get(mContext.getString(R.string.key_ticket_num)),
                         queryMap.get(mContext.getString(R.string.key_full_name)), "t")
                         .execute().body();
@@ -325,7 +325,7 @@ class GradePresenter implements GradeContract.Presenter {
                 .onErrorReturn(new Function<Throwable, Map<String, String>>() {
                     @Override
                     public Map<String, String> apply(Throwable throwable) throws Exception {
-                        Toast.makeText(mContext, R.string.load_cet_grade_fail, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, R.string.fetch_cet_fail, Toast.LENGTH_SHORT).show();
                         return new HashMap<>();
                     }
                 })

@@ -17,7 +17,6 @@ package cc.metapro.openct.data.university;
  */
 
 import android.content.Context;
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ import cc.metapro.openct.custom.WebConfiguration;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.PrefHelper;
 
-@Keep
 public class AdvancedCustomInfo {
 
     public CmsFactory.ClassTableInfo mClassTableInfo;

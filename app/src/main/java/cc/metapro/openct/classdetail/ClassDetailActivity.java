@@ -23,7 +23,6 @@ import android.support.annotation.ColorInt;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -50,8 +49,9 @@ import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.RecyclerViewHelper;
+import cc.metapro.openct.utils.base.BaseActivity;
 
-public class ClassDetailActivity extends AppCompatActivity {
+public class ClassDetailActivity extends BaseActivity {
 
     private static final String KEY_CLASS_NAME = "class_name";
     private static final String TAG = ClassDetailActivity.class.getName();
@@ -77,6 +77,19 @@ public class ClassDetailActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        super.onCreate(savedInstanceState);
+        ButterKnife.bind(this);
+        setSupportActionBar(mToolbar);
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_class_detail;
+    }
+
     @OnClick(R.id.bg)
     void showColorPicker() {
         ColorPickerDialog dialog = ColorPickerDialog.newBuilder().setColor(mInfoEditing.getColor()).create();
@@ -84,7 +97,7 @@ public class ClassDetailActivity extends AppCompatActivity {
             @Override
             public void onColorSelected(int dialogId, @ColorInt int color) {
                 mInfoEditing.setColor(color);
-                mBackground.setBackgroundColor(color);
+                mBackground.setColorFilter(color);
             }
 
             @Override
@@ -96,25 +109,12 @@ public class ClassDetailActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_class_detail);
-        ButterKnife.bind(this);
-        setSupportActionBar(mToolbar);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         String name = getIntent().getStringExtra(KEY_CLASS_NAME);
         mInfoEditing = DBManger.getInstance(this).getSingleClass(name);
         if (mInfoEditing == null) {
-            mInfoEditing = new EnrichedClassInfo(
-                    getString(R.string.new_class),
-                    getString(R.string.mandatory),
-                    new ClassTime()
-            );
+            mInfoEditing = new EnrichedClassInfo(getString(R.string.new_class), getString(R.string.mandatory), new ClassTime());
         }
 
         classTimes = new ArrayList<>(mInfoEditing.getTimeSet());
@@ -122,7 +122,7 @@ public class ClassDetailActivity extends AppCompatActivity {
 
         mName.setText(mInfoEditing.getName());
         mType.setText(mInfoEditing.getType());
-        mBackground.setBackgroundColor(mInfoEditing.getColor());
+        mBackground.setColorFilter(mInfoEditing.getColor());
         setRecyclerView();
     }
 
@@ -194,16 +194,11 @@ public class ClassDetailActivity extends AppCompatActivity {
         mInfoEditing.setName(mName.getText().toString());
         try {
             DBManger.getInstance(this)
-                    .updateSingleClass(
-                            oldName,
-                            mInfoEditing.getName(),
-                            mInfoEditing
-                    );
+                    .updateSingleClass(oldName, mInfoEditing.getName(), mInfoEditing);
         } catch (Exception e) {
             Log.d(TAG, e.getMessage(), e);
             return;
         }
         super.onBackPressed();
     }
-
 }

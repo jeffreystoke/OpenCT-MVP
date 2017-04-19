@@ -17,13 +17,12 @@ package cc.metapro.openct.utils;
  */
 
 import android.content.Context;
-import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.AdvancedCustomInfo;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 
-@Keep
 public final class Constants {
 
     public static final int WEEKS = 30;
@@ -34,12 +33,13 @@ public final class Constants {
     public static final String TYPE_SEARCH = "search";
     public static final String TYPE_BORROW = "borrow";
     public static final String TIME_PREFIX = "class_time_";
+
     // encryption seed
     public static final String seed =
             "MGICAQACEQDkTyaa2c4v50mkZfyNT0HFAgMBAAECEDrkM9gTwLzYFoimr5b74KECCQD1rE5MzS2H7QIJAO3neDhgDY5AghQ4kbxQEgyTQIIYe3qGoSYgzkCCQCwrArrXqKPw";
-    public static final String TITLE = "title";
-    public static final String URL = "url";
+
     public static final int CLASS_LENGTH = 1;
+
     // 正方系列
     public static final String ZFSOFT = "zfsoft";
     // 苏文
@@ -52,19 +52,23 @@ public final class Constants {
     public static final String KINGOSOFT = "kingosoft";
     // 清元优软
     public static final String URP = "urp";
+
+    // 图书馆
     // 汇文
     public static final String NJHUIWEN = "njhuiwen";
-    public static Classes sClasses = new Classes();
 
-    // map keys
+    // web page form key
     public static String ACTION_KEY;
     public static String USERNAME_KEY;
     public static String PASSWORD_KEY;
     public static String CAPTCHA_KEY;
     public static String SEARCH_TYPE_KEY;
     public static String SEARCH_CONTENT_KEY;
+
+    // captcha cache file path
     public static String CAPTCHA_FILE;
 
+    // table choose dialog options
     public static String NAME;
     public static String TIME;
     public static String TYPE;
@@ -75,9 +79,17 @@ public final class Constants {
     public static int CLASS_WIDTH = 0;
     public static int CLASS_BASE_HEIGHT = 0;
 
+    @NonNull
+    public static Classes sClasses = new Classes();
+
+
     public static AdvancedCustomInfo advCustomInfo;
 
     public static void checkAdvCustomInfo(Context context) {
         advCustomInfo = DBManger.getAdvancedCustomInfo(context);
+    }
+
+    public static void storeAdvCustomInfo(Context context) {
+        DBManger.getInstance(context).updateAdvCustomInfo(advCustomInfo);
     }
 }

@@ -20,14 +20,14 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.PrefHelper;
+import cc.metapro.openct.utils.base.BaseDialog;
 
 
-public class WeekSelectionDialog extends DialogFragment {
+public class WeekSelectionDialog extends BaseDialog {
 
     private static SelectionCallback sCallBack;
 

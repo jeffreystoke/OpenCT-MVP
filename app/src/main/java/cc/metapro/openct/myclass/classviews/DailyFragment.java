@@ -33,7 +33,6 @@ import cc.metapro.openct.myclass.ClassContract;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 
-
 public class DailyFragment extends Fragment implements ClassContract.View {
 
     @BindView(R.id.recycler_view)
@@ -41,8 +40,6 @@ public class DailyFragment extends Fragment implements ClassContract.View {
 
     @BindView(R.id.empty_view)
     TextView mEmptyView;
-
-    private DailyClassAdapter mDailyClassAdapter;
 
     public static DailyFragment newInstance() {
         return new DailyFragment();
@@ -73,16 +70,16 @@ public class DailyFragment extends Fragment implements ClassContract.View {
 
     @Override
     public void showClasses(Classes classes, int week) {
-        mDailyClassAdapter = new DailyClassAdapter(getContext());
-        RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, mDailyClassAdapter);
+        DailyClassAdapter dailyClassAdapter = new DailyClassAdapter(getContext());
+        RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, dailyClassAdapter);
 
-        mDailyClassAdapter.updateTodayClasses(classes, week);
-        mDailyClassAdapter.notifyDataSetChanged();
+        dailyClassAdapter.updateTodayClasses(classes, week);
+        dailyClassAdapter.notifyDataSetChanged();
 
-        if (mDailyClassAdapter.hasClassToday()) {
+        if (dailyClassAdapter.hasClassToday()) {
             showClasses();
         } else {
-            mEmptyView.setText(PrefHelper.getString(getContext(), R.string.pref_empty_class_motto, getString(R.string.default_motto)));
+            mEmptyView.setText(PrefHelper.getString(getContext(), R.string.pref_empty_class_motto, getString(R.string.motto_default)));
             showEmptyView();
         }
     }

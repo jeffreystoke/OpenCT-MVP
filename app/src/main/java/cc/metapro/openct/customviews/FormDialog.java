@@ -20,7 +20,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
@@ -40,16 +39,17 @@ import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.base.BaseDialog;
+import cc.metapro.openct.utils.base.LoginPresenter;
 import cc.metapro.openct.utils.webutils.Form;
 import cc.metapro.openct.utils.webutils.FormHandler;
 import cc.metapro.openct.utils.webutils.FormUtils;
 
-public class FormDialog extends DialogFragment {
+public class FormDialog extends BaseDialog {
 
     private static Document document;
     private static LoginPresenter mPresenter;

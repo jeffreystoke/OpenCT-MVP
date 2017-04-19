@@ -1,4 +1,4 @@
-package cc.metapro.openct;
+package cc.metapro.openct.utils.base;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,7 +16,8 @@ package cc.metapro.openct;
  * limitations under the License.
  */
 
-public interface BaseView<T> {
+public interface BasePresenter {
 
-    void setPresenter(T presenter);
+    void start();
+
 }

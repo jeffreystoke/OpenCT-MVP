@@ -20,11 +20,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -43,36 +43,25 @@ import cc.metapro.openct.grades.cet.CETResultDialog;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
+import cc.metapro.openct.utils.base.BaseActivity;
 
-public class GradeActivity extends AppCompatActivity implements GradeContract.View {
+public class GradeActivity extends BaseActivity implements GradeContract.View {
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
-
     @BindView(R.id.fab)
     FloatingActionButton fab;
-
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.image)
+    ImageView mImage;
+
     private GradeContract.Presenter mPresenter;
     private GradeAdapter mGradeAdapter;
-
-    @OnClick(R.id.fab)
-    public void refresh() {
-        Map<String, String> map = Loader.getCmsStuInfo(this);
-        if (map.size() < 2) {
-            Toast.makeText(this, R.string.enrich_cms_info, Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-        } else {
-            mPresenter.loadOnlineInfo(getSupportFragmentManager());
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_grade);
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
@@ -82,9 +71,25 @@ public class GradeActivity extends AppCompatActivity implements GradeContract.Vi
         }
 
         mGradeAdapter = new GradeAdapter(this);
-
         RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mGradeAdapter);
         new GradePresenter(this, this);
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_grade;
+    }
+
+    @OnClick(R.id.fab)
+    public void refresh() {
+        Map<String, String> map = Loader.getCmsStuInfo(this);
+        if (map.size() < 2) {
+            Toast.makeText(this, R.string.please_fill_cms_info, Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        } else {
+            mPresenter.loadOnlineInfo(getSupportFragmentManager());
+        }
     }
 
     @Override
@@ -118,7 +123,7 @@ public class GradeActivity extends AppCompatActivity implements GradeContract.Vi
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.grade_menu, menu);
+        getMenuInflater().inflate(R.menu.grade, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

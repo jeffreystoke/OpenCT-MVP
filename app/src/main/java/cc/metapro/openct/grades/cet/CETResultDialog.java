@@ -20,8 +20,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -31,9 +29,10 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
+import cc.metapro.openct.utils.base.BaseDialog;
 
 
-public class CETResultDialog extends DialogFragment {
+public class CETResultDialog extends BaseDialog {
 
     private static Map<String, String> result;
     @BindView(R.id.full_name)
@@ -64,12 +63,6 @@ public class CETResultDialog extends DialogFragment {
                 .setView(view)
                 .setPositiveButton(android.R.string.ok, null)
                 .create();
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
     }
 
     private void setInfo() {

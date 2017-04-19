@@ -66,7 +66,7 @@ class ClassPresenter implements ClassContract.Presenter {
     public Disposable loadOnlineInfo(final FragmentManager manager) {
         ActivityUtils.showProgressDialog(mContext, R.string.preparing_school_sys_info);
 
-        Observable<Boolean> observable = Loader.prepareOnlineInfo(Loader.ACTION_CMS, mContext);
+        Observable<Boolean> observable = Loader.prepareOnlineInfo(Constants.TYPE_CMS, mContext);
 
         Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
             @Override
@@ -98,7 +98,7 @@ class ClassPresenter implements ClassContract.Presenter {
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
         ActivityUtils.showProgressDialog(mContext, R.string.login_to_system);
 
-        Observable<Document> observable = Loader.login(Loader.ACTION_CMS, mContext, code);
+        Observable<Document> observable = Loader.login(Constants.TYPE_CMS, mContext, code);
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override

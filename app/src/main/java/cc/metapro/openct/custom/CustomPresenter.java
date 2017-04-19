@@ -19,15 +19,9 @@ package cc.metapro.openct.custom;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
-import android.text.TextUtils;
-import android.widget.Toast;
 
 import org.jsoup.nodes.Element;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import cc.metapro.interactiveweb.InteractiveWebView;
@@ -35,39 +29,20 @@ import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.UniversityUtils;
-import cc.metapro.openct.data.university.item.BorrowInfo;
-import cc.metapro.openct.data.university.item.GradeInfo;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
-import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
-import cc.metapro.openct.utils.base.MyObserver;
-import cc.metapro.openct.utils.webutils.TableUtils;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.schedulers.Schedulers;
 
 import static cc.metapro.interactiveweb.InteractiveWebView.CLICK_FLAG;
 
-public class CustomPresenter implements CustomContract.Presenter {
+class CustomPresenter implements CustomContract.Presenter {
 
-    private static final String TAG = CustomPresenter.class.getSimpleName();
-    private CustomContract.View mView;
     private Context mContext;
     private String USERNAME;
     private String PASSWORD;
-    private int CMD_INDEX;
-    private List<Map<Element, String>> commands;
-    private Observer<Map<Element, String>> mObserver;
     private WebConfiguration mConfiguration;
     private String TYPE;
 
-    CustomPresenter(Context context, CustomContract.View view, String type) {
-        mView = view;
+    CustomPresenter(Context context, String type) {
         mContext = context;
-        mView.setPresenter(this);
         TYPE = type;
     }
 
@@ -136,115 +111,4 @@ public class CustomPresenter implements CustomContract.Presenter {
             }
         });
     }
-
-    @Override
-    public void execCommands(final InteractiveWebView mWebView) {
-        CMD_INDEX = 0;
-        commands = new ArrayList<>();
-        Observable<Map<Element, String>> observable =
-                Observable.create(new ObservableOnSubscribe<Map<Element, String>>() {
-                    @Override
-                    public void subscribe(final ObservableEmitter<Map<Element, String>> e) throws Exception {
-                        final LinkedHashMap<Element, String> map = mConfiguration.getClickedCommands();
-                        Map<Element, String> tmpMap = new HashMap<>();
-                        for (final Element element : map.keySet()) {
-                            final String value = map.get(element);
-                            if (HTMLUtils.isClickable(element)) {
-                                commands.add(tmpMap);
-                                commands.add(new HashMap<Element, String>() {{
-                                    put(element, value);
-                                }});
-                                tmpMap = new HashMap<>();
-                                commands.add(tmpMap);
-                            } else {
-                                tmpMap.put(element, value);
-                            }
-                        }
-                    }
-                });
-
-        mObserver = new MyObserver<Map<Element, String>>(TAG) {
-            @Override
-            public void onNext(Map<Element, String> map) {
-                for (Element e : map.keySet()) {
-                    String command = map.get(e);
-                    switch (command) {
-                        case CLICK_FLAG:
-                            if (!mWebView.clickElementById(e.id())) {
-                                if (!mWebView.clickElementsByName(e.attr("name"))) {
-                                    if (!mWebView.clickElementsByPattern(e.html())) {
-                                        mWebView.clickElementsByTag(e.tagName());
-                                    }
-                                }
-                            }
-                            break;
-                        default:
-                            if (!mWebView.setById(e.id(), "value", map.get(e))) {
-                                if (!mWebView.setByName(e.attr("name"), "value", map.get(e))) {
-                                    if (!mWebView.setByPattern(e.toString(), "value", map.get(e))) {
-                                        mWebView.setByTag(e.tagName(), "value", map.get(e));
-                                    }
-                                }
-                            }
-                    }
-                }
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                super.onError(e);
-            }
-        };
-
-        observable.subscribeOn(Schedulers.computation())
-                .observeOn(Schedulers.newThread())
-                .subscribe(mObserver);
-    }
-
-    @Override
-    public void nextStep(final InteractiveWebView mWebView, final FragmentManager manager) {
-        if (mObserver != null) {
-            if (CMD_INDEX < commands.size()) {
-                mObserver.onNext(commands.get(CMD_INDEX++));
-            } else {
-                Toast.makeText(mContext, R.string.reached_previous_end_point, Toast.LENGTH_SHORT).show();
-                mObserver.onComplete();
-                switch (TYPE) {
-                    case Constants.TYPE_CLASS:
-                        if (!TextUtils.isEmpty(Constants.advCustomInfo.mClassTableInfo.mClassTableID)) {
-                            List<Element> rawClasses = UniversityUtils.getRawClasses(TableUtils
-                                    .getTablesFromTargetPage(mWebView.getPageDom())
-                                    .get(Constants.advCustomInfo.mClassTableInfo.mClassTableID), mContext);
-                            Classes classInfoList = UniversityUtils
-                                    .generateClasses(mContext, rawClasses, Constants.advCustomInfo.mClassTableInfo);
-                            DBManger.getInstance(mContext).updateClasses(classInfoList);
-                            Toast.makeText(mContext, R.string.custom_finish_tip, Toast.LENGTH_LONG).show();
-                        }
-                        return;
-                    case Constants.TYPE_GRADE:
-                        if (!TextUtils.isEmpty(Constants.advCustomInfo.GRADE_TABLE_ID)) {
-                            List<GradeInfo> grades = UniversityUtils.generateInfo(TableUtils
-                                    .getTablesFromTargetPage(mWebView.getPageDom())
-                                    .get(Constants.advCustomInfo.GRADE_TABLE_ID), GradeInfo.class);
-                            DBManger.getInstance(mContext).updateGrades(grades);
-                            Toast.makeText(mContext, R.string.fetch_borrows_successful, Toast.LENGTH_LONG).show();
-                        }
-                        return;
-                    case Constants.TYPE_SEARCH:
-                        return;
-                    case Constants.TYPE_BORROW:
-                        if (!TextUtils.isEmpty(Constants.advCustomInfo.BORROW_TABLE_ID)) {
-                            List<BorrowInfo> borrows = UniversityUtils.generateInfo(TableUtils
-                                    .getTablesFromTargetPage(mWebView.getPageDom())
-                                    .get(Constants.advCustomInfo.BORROW_TABLE_ID), BorrowInfo.class);
-                            DBManger.getInstance(mContext).updateBorrows(borrows);
-                            Toast.makeText(mContext, R.string.fetch_borrows_successful, Toast.LENGTH_LONG).show();
-                        }
-                        return;
-                }
-                ActivityUtils.showTableChooseDialog(manager, TYPE, mWebView.getPageDom(), null);
-            }
-        }
-    }
-
 }

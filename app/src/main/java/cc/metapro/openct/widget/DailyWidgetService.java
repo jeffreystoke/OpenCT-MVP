@@ -18,6 +18,7 @@ package cc.metapro.openct.widget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -38,6 +39,7 @@ public class DailyWidgetService extends RemoteViewsService {
 
     private static class DailyWidgetFactory implements RemoteViewsFactory {
 
+        @NonNull
         private List<SingleClass> mDailyClasses = new ArrayList<>();
         private Context mContext;
 
@@ -63,7 +65,7 @@ public class DailyWidgetService extends RemoteViewsService {
 
         @Override
         public int getCount() {
-            return mDailyClasses == null ? 0 : mDailyClasses.size();
+            return mDailyClasses.size();
         }
 
         @Override

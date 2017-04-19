@@ -29,6 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             style="@style/AppTheme.Toolbar"
@@ -68,6 +69,7 @@
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/bg"
         style="@style/AppTheme.Fab"
-        app:layout_anchorGravity="bottom|end"
-        app:layout_anchor="@id/toolbar"/>
+        android:src="@drawable/ic_color"
+        app:layout_anchor="@id/toolbar"
+        app:layout_anchorGravity="bottom|end"/>
 </android.support.design.widget.CoordinatorLayout>

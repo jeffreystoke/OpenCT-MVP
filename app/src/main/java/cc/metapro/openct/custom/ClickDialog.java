@@ -19,17 +19,14 @@ package cc.metapro.openct.custom;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
 import cc.metapro.interactiveweb.InteractiveWebView;
 import cc.metapro.openct.R;
+import cc.metapro.openct.utils.base.BaseDialog;
 
-@Keep
-public class ClickDialog extends DialogFragment {
+public class ClickDialog extends BaseDialog {
     private static TypeCallback mTypeCallback;
 
     public static ClickDialog newInstance(TypeCallback typeCallback) {
@@ -61,9 +58,9 @@ public class ClickDialog extends DialogFragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Holo_Light_Dialog_MinWidth);
+    public void onDestroy() {
+        super.onDestroy();
+        mTypeCallback = null;
     }
 
     interface TypeCallback {

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +35,9 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.base.BaseActivity;
 
-public class CustomActivity extends AppCompatActivity implements CustomContract.View {
+public class CustomActivity extends BaseActivity implements CustomContract.View {
 
     public static final String TAG = CustomActivity.class.getSimpleName();
 
@@ -98,8 +98,6 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom);
-
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
@@ -108,6 +106,7 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
             ab.setDisplayHomeAsUpEnabled(true);
         }
         Loader.needUpdateUniversity();
+
         switch (TYPE) {
             case Constants.TYPE_CLASS:
             case Constants.TYPE_GRADE:
@@ -119,24 +118,16 @@ public class CustomActivity extends AppCompatActivity implements CustomContract.
                 break;
         }
 
-        new CustomPresenter(this, this, TYPE);
+        new CustomPresenter(this, TYPE);
     }
 
     @Override
+    protected int getLayout() {
+        return R.layout.activity_custom;
+    }
+
     public String getUrl() {
         return URLUtil.guessUrl(mURL.getText().toString());
-    }
-
-    @Override
-    public void disableNextStep() {
-//        mFabNext.setEnabled(false);
-//        mFabNext.setClickable(false);
-    }
-
-    @Override
-    public void enableNextStep() {
-//        mFabNext.setEnabled(true);
-//        mFabNext.setClickable(true);
     }
 
     @Override

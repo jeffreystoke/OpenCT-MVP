@@ -20,13 +20,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,8 +47,9 @@ import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
+import cc.metapro.openct.utils.base.BaseActivity;
 
-public class ClassActivity extends AppCompatActivity
+public class ClassActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, ClassContract.View {
 
     @BindView(R.id.toolbar)
@@ -61,6 +62,8 @@ public class ClassActivity extends AppCompatActivity
     TabLayout mTabLayout;
     @BindView(R.id.view_pager)
     ViewPager mViewPager;
+    @BindView(R.id.content_main)
+    CoordinatorLayout mBackground;
 
     ClassContract.Presenter mPresenter;
     private boolean mExitState;
@@ -69,7 +72,6 @@ public class ClassActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         mExitState = false;
@@ -81,6 +83,11 @@ public class ClassActivity extends AppCompatActivity
 
         initViewPager();
         new ClassPresenter(this, this);
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_main;
     }
 
     private void initViewPager() {
@@ -135,7 +142,7 @@ public class ClassActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
 
@@ -145,7 +152,7 @@ public class ClassActivity extends AppCompatActivity
         if (id == R.id.refresh_classes) {
             Map<String, String> map = Loader.getCmsStuInfo(this);
             if (map.size() < 2) {
-                Toast.makeText(this, R.string.enrich_cms_info, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.please_fill_cms_info, Toast.LENGTH_LONG).show();
                 startActivity(new Intent(this, SettingsActivity.class));
             } else {
                 mPresenter.loadOnlineInfo(getSupportFragmentManager());

@@ -21,7 +21,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
@@ -31,13 +30,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.base.BaseDialog;
+import cc.metapro.openct.utils.base.LoginPresenter;
 import cc.metapro.openct.utils.base.MyObserver;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -52,7 +52,7 @@ import static cc.metapro.openct.utils.Constants.TYPE_GRADE;
 import static cc.metapro.openct.utils.Constants.advCustomInfo;
 
 
-public class LinkSelectionDialog extends DialogFragment {
+public class LinkSelectionDialog extends BaseDialog {
 
     private static final String TAG = LinkSelectionDialog.class.getSimpleName();
 
@@ -201,7 +201,7 @@ public class LinkSelectionDialog extends DialogFragment {
             }
         } else if (TYPE_GRADE.equals(TYPE)) {
             if (sIsFirst) {
-                advCustomInfo.setFirstClassUrlPattern(mTarget.toString());
+                advCustomInfo.setFirstGradeUrlPattern(mTarget.toString());
             } else {
                 advCustomInfo.addGradeUrlPattern(mTarget.toString());
             }

@@ -16,8 +16,8 @@ package cc.metapro.openct.splash.views;
  * limitations under the License.
  */
 
-import cc.metapro.openct.BasePresenter;
-import cc.metapro.openct.BaseView;
+import cc.metapro.openct.utils.base.BasePresenter;
+import cc.metapro.openct.utils.base.BaseView;
 
 public interface SplashContract {
 

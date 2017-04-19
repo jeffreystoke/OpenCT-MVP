@@ -18,9 +18,9 @@ package cc.metapro.openct.myclass;
 
 import android.support.annotation.Keep;
 
-import cc.metapro.openct.BaseView;
-import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.utils.base.BaseView;
+import cc.metapro.openct.utils.base.LoginPresenter;
 
 @Keep
 public interface ClassContract {

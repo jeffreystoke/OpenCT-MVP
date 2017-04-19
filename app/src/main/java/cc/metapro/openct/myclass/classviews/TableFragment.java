@@ -57,7 +57,7 @@ public class TableFragment extends Fragment implements ClassContract.View {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.viewpager_class_large, container, false);
+        View view = inflater.inflate(R.layout.fragment_class_table, container, false);
         ButterKnife.bind(this, view);
         return view;
     }

@@ -16,8 +16,6 @@ package cc.metapro.openct.data.openctservice;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
-
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +26,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-@Keep
 public class ServiceGenerator {
 
     public static CETService createCETService() {

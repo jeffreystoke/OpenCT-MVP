@@ -19,15 +19,15 @@ package cc.metapro.openct.splash;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.myclass.ClassActivity;
 import cc.metapro.openct.utils.PrefHelper;
+import cc.metapro.openct.utils.base.BaseActivity;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends BaseActivity {
 
     @BindView(R.id.view_pager)
     ViewPager mViewPager;
@@ -40,11 +40,17 @@ public class SplashActivity extends AppCompatActivity {
         if (PrefHelper.getBoolean(this, R.string.pref_initialed)) {
             startActivity(new Intent(this, ClassActivity.class));
             finish();
+            return;
         }
+
         PrefHelper.putBoolean(this, R.string.pref_initialed, true);
-        setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
         setViewPager();
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_splash;
     }
 
     private void setViewPager() {

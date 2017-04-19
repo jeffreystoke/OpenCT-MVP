@@ -17,7 +17,6 @@ package cc.metapro.openct.data.source;
  */
 
 import android.content.Context;
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -48,12 +47,7 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.schedulers.Schedulers;
 
-@Keep
 public class Loader {
-
-    public static final int ACTION_CMS = 0;
-    public static final int ACTION_LIBRARY = 1;
-
     private static final String TAG = Loader.class.getName();
 
     public static UniversityInfo university;
@@ -83,9 +77,9 @@ public class Loader {
             @Override
             public void subscribe(ObservableEmitter<Document> e) throws Exception {
                 Map<String, String> loginMap;
-                if (actionType == ACTION_CMS) {
+                if (actionType == Constants.TYPE_CMS) {
                     loginMap = getCmsStuInfo(context);
-                } else if (actionType == ACTION_LIBRARY) {
+                } else if (actionType == Constants.TYPE_LIB) {
                     loginMap = getLibStuInfo(context);
                 } else {
                     loginMap = new HashMap<>();
@@ -135,10 +129,10 @@ public class Loader {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                if (actionType == ACTION_CMS) {
+                if (actionType == Constants.TYPE_CMS) {
                     checkUniversity(context);
                     e.onNext(new CmsFactory(university.cmsSys, university.cmsURL).prepareOnlineInfo());
-                } else if (actionType == ACTION_LIBRARY) {
+                } else if (actionType == Constants.TYPE_LIB) {
                     e.onNext(new LibraryFactory(university.libSys, university.libURL).prepareOnlineInfo());
                 }
             }

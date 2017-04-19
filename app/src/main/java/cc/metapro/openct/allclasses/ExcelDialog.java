@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -38,12 +37,12 @@ import java.io.File;
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.ExcelHelper;
 import cc.metapro.openct.utils.FileUtils;
+import cc.metapro.openct.utils.base.BaseDialog;
 
 
-public class ExcelDialog extends DialogFragment {
+public class ExcelDialog extends BaseDialog {
 
     private static final int FILE_SELECT_CODE = 101;
-
     private static ExcelCallback mCallback;
 
     public static ExcelDialog newInstance(@NonNull ExcelCallback callback) {

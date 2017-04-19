@@ -23,11 +23,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -41,8 +41,9 @@ import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.utils.RecyclerViewHelper;
+import cc.metapro.openct.utils.base.BaseActivity;
 
-public class BorrowActivity extends AppCompatActivity implements BorrowContract.View {
+public class BorrowActivity extends BaseActivity implements BorrowContract.View {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -50,6 +51,8 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
     FloatingActionButton mFab;
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
+    @BindView(R.id.image)
+    ImageView mImage;
 
     private BorrowContract.Presenter mPresenter;
     private BorrowAdapter mBorrowAdapter;
@@ -58,7 +61,7 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
     public void load() {
         Map<String, String> map = Loader.getLibStuInfo(this);
         if (map.size() < 2) {
-            Toast.makeText(this, R.string.enrich_lib_info, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.please_fill_lib_info, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         } else {
@@ -69,7 +72,6 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_borrow);
         ButterKnife.bind(this);
 
         // set toolbar
@@ -82,8 +84,12 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
 
         mBorrowAdapter = new BorrowAdapter(this);
         RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mBorrowAdapter);
-        // add fragment
         new BorrowPresenter(this, this);
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_borrow;
     }
 
     @Override
@@ -123,7 +129,7 @@ public class BorrowActivity extends AppCompatActivity implements BorrowContract.
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.borrow_menu, menu);
+        getMenuInflater().inflate(R.menu.borrow, menu);
         return true;
     }
 }

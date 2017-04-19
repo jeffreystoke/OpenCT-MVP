@@ -20,10 +20,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.Keep;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,61 +32,64 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
-import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.base.BaseActivity;
 
-@Keep
-public class BookDetailActivity extends AppCompatActivity {
+public class BookDetailActivity extends BaseActivity {
 
+    public static final String KEY_TITLE = "title";
+    public static final String KEY_URL = "url";
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-
     @BindView(R.id.fab_back)
     FloatingActionButton mFab;
-
     @BindView(R.id.book_detail_web)
     WebView mWebView;
-
     @BindView(R.id.book_detail_progress)
     ProgressBar pb;
+    @BindView(R.id.activity_book_detail)
+    CoordinatorLayout mActivityBookDetail;
 
     public static void actionStart(Context context, String title, String url) {
         Intent intent = new Intent(context, BookDetailActivity.class);
-        intent.putExtra(Constants.TITLE, title);
-        intent.putExtra(Constants.URL, url);
+        intent.putExtra(KEY_TITLE, title);
+        intent.putExtra(KEY_URL, url);
         context.startActivity(intent);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ButterKnife.bind(this);
+
+        Intent intent = getIntent();
+        String title = intent.getStringExtra(KEY_TITLE);
+        String url = intent.getStringExtra(KEY_URL);
+
+        setSupportActionBar(mToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        setTitle(title);
+        setWebView(url);
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_book_detail;
     }
 
     @OnClick(R.id.fab_back)
     public void goBack() {
         if (mWebView.canGoBack()) {
             mWebView.goBack();
-        } else {
-            Toast.makeText(this, "不能再后退啦", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book_detail);
-
-        ButterKnife.bind(this);
-
-        Intent intent = getIntent();
-        String title = intent.getStringExtra(Constants.TITLE);
-        String URL = intent.getStringExtra(Constants.URL);
-
-        setSupportActionBar(mToolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        setTitle(title);
-        setWebView(URL);
     }
 
     @Override
@@ -134,5 +136,12 @@ public class BookDetailActivity extends AppCompatActivity {
         mWebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         mWebView.getSettings().setSupportZoom(true);
         mWebView.getSettings().setUseWideViewPort(true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mWebView = null;
+        mActivityBookDetail = null;
     }
 }

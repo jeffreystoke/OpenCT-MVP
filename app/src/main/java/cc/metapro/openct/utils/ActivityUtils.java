@@ -32,12 +32,12 @@ import android.widget.ScrollView;
 
 import org.jsoup.nodes.Document;
 
-import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.customviews.CaptchaDialog;
 import cc.metapro.openct.customviews.LinkSelectionDialog;
 import cc.metapro.openct.customviews.TableChooseDialog;
+import cc.metapro.openct.utils.base.LoginPresenter;
 
 public final class ActivityUtils {
 

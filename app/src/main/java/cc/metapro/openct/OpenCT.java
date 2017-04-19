@@ -17,7 +17,6 @@ package cc.metapro.openct;
  */
 
 import android.app.Application;
-import android.support.annotation.Keep;
 import android.util.DisplayMetrics;
 
 import com.squareup.leakcanary.LeakCanary;
@@ -26,7 +25,6 @@ import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.CrashHandler;
 
-@Keep
 public class OpenCT extends Application {
 
     @Override

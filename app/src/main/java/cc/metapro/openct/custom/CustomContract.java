@@ -19,27 +19,15 @@ package cc.metapro.openct.custom;
 import android.support.v4.app.FragmentManager;
 
 import cc.metapro.interactiveweb.InteractiveWebView;
-import cc.metapro.openct.BasePresenter;
-import cc.metapro.openct.BaseView;
+import cc.metapro.openct.utils.base.BasePresenter;
+import cc.metapro.openct.utils.base.BaseView;
 
-public interface CustomContract {
+interface CustomContract {
 
     interface View extends BaseView<Presenter> {
-
-        void disableNextStep();
-
-        void enableNextStep();
-
-        String getUrl();
-
     }
 
     interface Presenter extends BasePresenter {
-
         void setWebView(final InteractiveWebView webView, final FragmentManager manager);
-
-        void execCommands(final InteractiveWebView webView);
-
-        void nextStep(final InteractiveWebView webView, final FragmentManager manager);
     }
 }

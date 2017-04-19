@@ -34,9 +34,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.base.BaseDialog;
 
 
-public class DuringDialog extends DialogFragment {
+public class DuringDialog extends BaseDialog {
 
     private static boolean[] DURING;
     @BindView(R.id.during_container)

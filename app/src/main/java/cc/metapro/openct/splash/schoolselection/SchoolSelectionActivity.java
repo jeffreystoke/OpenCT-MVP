@@ -20,7 +20,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -36,6 +35,7 @@ import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.source.Loader;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.PrefHelper;
+import cc.metapro.openct.utils.base.BaseActivity;
 import cc.metapro.openct.utils.base.MyObserver;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -46,7 +46,7 @@ import io.reactivex.schedulers.Schedulers;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 public class SchoolSelectionActivity
-        extends AppCompatActivity implements SearchView.OnQueryTextListener {
+        extends BaseActivity implements SearchView.OnQueryTextListener {
 
     public static final int REQUEST_SCHOOL_NAME = 1;
     public static final String SCHOOL_RESULT = "school_name";
@@ -65,10 +65,14 @@ public class SchoolSelectionActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_school_selection);
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         result = PrefHelper.getString(this, R.string.pref_school_name, "");
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_school_selection;
     }
 
     @Override

@@ -15,12 +15,19 @@
   ~ limitations under the License.
   -->
 
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/class_name"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="3dp"
-    android:gravity="top"
-    android:padding="3dp"
-    android:textSize="12sp"/>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/show_all"
+        android:title="@string/show_all_borrows"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/show_due"
+        android:title="@string/show_exceeded"
+        app:showAsAction="never"/>
+    <!--<item-->
+    <!--android:id="@+id/filter"-->
+    <!--android:title="@string/filter"-->
+    <!--app:showAsAction="never"/>-->
+</menu>

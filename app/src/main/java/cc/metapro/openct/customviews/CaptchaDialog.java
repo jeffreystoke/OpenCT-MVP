@@ -22,8 +22,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -40,12 +38,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
-import cc.metapro.openct.LoginPresenter;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.data.university.UniversityFactory;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.base.BaseDialog;
+import cc.metapro.openct.utils.base.LoginPresenter;
 import cc.metapro.openct.utils.base.MyObserver;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -54,7 +53,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class CaptchaDialog extends DialogFragment {
+public class CaptchaDialog extends BaseDialog {
 
     private static final String TAG = CaptchaDialog.class.getSimpleName();
     private static LoginPresenter mLoginPresenter;
@@ -139,12 +138,6 @@ public class CaptchaDialog extends DialogFragment {
         });
 
         return dialog;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.Theme_AppCompat_Dialog_Alert);
     }
 
     private void setCaptchaImg() {

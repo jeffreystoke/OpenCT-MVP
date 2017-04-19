@@ -19,9 +19,7 @@ package cc.metapro.openct.customviews;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
 import org.jsoup.nodes.Element;
@@ -35,9 +33,9 @@ import java.util.Map;
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.base.BaseDialog;
 
-@Keep
-public class TableSettingDialog extends DialogFragment {
+public class TableSettingDialog extends BaseDialog {
 
     public static List<String> mOptions;
     private static List<String> mContents;

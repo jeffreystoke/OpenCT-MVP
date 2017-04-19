@@ -24,7 +24,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,8 +41,9 @@ import cc.metapro.openct.custom.CustomActivity;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
+import cc.metapro.openct.utils.base.BaseActivity;
 
-public class AllClassesActivity extends AppCompatActivity implements AllClassesContract.View {
+public class AllClassesActivity extends BaseActivity implements AllClassesContract.View {
 
     private static final int REQUEST_WRITE_STORAGE = 112;
     @BindView(R.id.toolbar)
@@ -57,12 +57,14 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_classes);
         ButterKnife.bind(this);
-
         setSupportActionBar(mToolbar);
-
         new AllClassesPresenter(this, this);
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_all_classes;
     }
 
     @Override
@@ -78,7 +80,7 @@ public class AllClassesActivity extends AppCompatActivity implements AllClassesC
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.all_classes, menu);
+        getMenuInflater().inflate(R.menu.classes, menu);
         return true;
     }
 

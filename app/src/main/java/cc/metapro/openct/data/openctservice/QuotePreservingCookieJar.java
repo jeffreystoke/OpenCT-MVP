@@ -16,8 +16,6 @@ package cc.metapro.openct.data.openctservice;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
-
 import java.io.IOException;
 import java.net.CookieHandler;
 import java.net.HttpCookie;
@@ -44,7 +42,6 @@ import static okhttp3.internal.platform.Platform.WARN;
 /**
  * A cookie jar that delegates to a {@link java.net.CookieHandler}.
  */
-@Keep
 public final class QuotePreservingCookieJar implements CookieJar {
     private final CookieHandler cookieHandler;
 
