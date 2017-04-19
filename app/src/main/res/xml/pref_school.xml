@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--校园信息-->
     <PreferenceCategory android:title="@string/school_info">

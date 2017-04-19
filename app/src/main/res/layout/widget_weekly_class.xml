@@ -47,37 +47,37 @@
             android:layout_weight="1"/>
 
         <TextView
-            style="@style/TextAppearance.AppCompat.SeqText"
+            style="@style/AppTheme.SeqText"
             android:text="@string/monday"
             android:textColor="@color/material_white"/>
 
         <TextView
-            style="@style/TextAppearance.AppCompat.SeqText"
+            style="@style/AppTheme.SeqText"
             android:text="@string/tuesday"
             android:textColor="@color/material_white"/>
 
         <TextView
-            style="@style/TextAppearance.AppCompat.SeqText"
+            style="@style/AppTheme.SeqText"
             android:text="@string/wednesday"
             android:textColor="@color/material_white"/>
 
         <TextView
-            style="@style/TextAppearance.AppCompat.SeqText"
+            style="@style/AppTheme.SeqText"
             android:text="@string/thursday"
             android:textColor="@color/material_white"/>
 
         <TextView
-            style="@style/TextAppearance.AppCompat.SeqText"
+            style="@style/AppTheme.SeqText"
             android:text="@string/friday"
             android:textColor="@color/material_white"/>
 
         <TextView
-            style="@style/TextAppearance.AppCompat.SeqText"
+            style="@style/AppTheme.SeqText"
             android:text="@string/saturday"
             android:textColor="@color/material_white"/>
 
         <TextView
-            style="@style/TextAppearance.AppCompat.SeqText"
+            style="@style/AppTheme.SeqText"
             android:text="@string/sunday"
             android:textColor="@color/material_white"/>
     </LinearLayout>

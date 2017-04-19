@@ -164,12 +164,10 @@
     <string-array name="pref_homepage_selection_keys">
         <item>@string/text_daily_classes</item>
         <item>@string/text_weekly_classes</item>
-        <item>@string/text_sem_classes</item>
     </string-array>
     <string-array name="pref_homepage_selection_values">
         <item>0</item>
         <item>1</item>
-        <item>2</item>
     </string-array>
 
     <string name="pref_class_settings" translatable="false">class_settings</string>

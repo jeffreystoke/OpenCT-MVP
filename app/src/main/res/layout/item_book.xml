@@ -17,7 +17,7 @@
 
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/CardView.FullWidth"
+    style="@style/AppTheme.CardView.FullWidth"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -29,19 +29,19 @@
 
         <TextView
             android:id="@+id/book_title"
-            style="@style/ItemTitleText"/>
+            style="@style/AppTheme.ItemTitleText"/>
 
         <TextView
             android:id="@+id/author"
-            style="@style/ItemContentText"/>
+            style="@style/AppTheme.ItemContentText"/>
 
         <TextView
             android:id="@+id/content"
-            style="@style/ItemContentText"/>
+            style="@style/AppTheme.ItemContentText"/>
 
         <TextView
             android:id="@+id/store_info"
-            style="@style/ItemContentText"/>
+            style="@style/AppTheme.ItemContentText"/>
 
         <TextView
             android:id="@+id/load_raw"

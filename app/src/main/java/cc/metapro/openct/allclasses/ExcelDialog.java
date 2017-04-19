@@ -63,6 +63,14 @@ public class ExcelDialog extends BaseDialog {
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)
+                .setNeutralButton(R.string.refer_to_usage, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse("https://github.com/jeffreystoke/openct-mvp#import-from-xlsx-excel-2007"));
+                        startActivity(intent);
+                    }
+                })
                 .create();
 
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -112,9 +120,8 @@ public class ExcelDialog extends BaseDialog {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-
         try {
-            startActivityForResult(Intent.createChooser(intent, "Select a File to Upload"), FILE_SELECT_CODE);
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_schedule_file)), FILE_SELECT_CODE);
         } catch (ActivityNotFoundException ex) {
             Toast.makeText(getActivity(), R.string.fail_file_chooser, Toast.LENGTH_LONG).show();
         }

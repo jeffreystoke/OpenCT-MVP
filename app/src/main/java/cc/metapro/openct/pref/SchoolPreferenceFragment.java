@@ -257,7 +257,6 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
                 preference.setSummary(R.string.encrypted);
                 return false;
             } catch (Exception e) {
-//                preference.setSummary(R.string.encrypt_fail);
                 Log.e("ENCRYPTION FAIL", e.getMessage());
             }
         }

@@ -20,27 +20,18 @@
         <item name="colorPrimary">@color/material_white</item>
         <item name="colorPrimaryDark">@color/material_white_dark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
         <item name="android:textColorPrimary">@color/material_black</item>
         <item name="android:textColorSecondary">@color/material_grey</item>
+
         <item name="android:fitsSystemWindows">true</item>
         <item name="android:clipToPadding">false</item>
     </style>
 
-    <style name="CustomPreferenceCategoryText" parent="@android:style/Widget.TextView">
-        <!-- Style your PreferenceCategory here. -->
-        <item name="android:textColor">@color/colorAccent</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:padding">20dp</item>
-        <item name="android:background">@color/colorPrimary</item>
-    </style>
-
-    <style name="AppTheme.Actionbar" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/material_white</item>
-        <item name="colorPrimaryDark">@color/material_white_dark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorPrimary">@color/material_black</item>
-        <item name="android:textColorSecondary">@color/material_grey</item>
+    <!--Actionbar Theme-->
+    <style name="AppTheme.Actionbar" parent="AppTheme">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
     </style>
 
     <!--CollapsingToolbarLayout-->
@@ -83,8 +74,8 @@
         <item name="android:textSize">@dimen/large_text</item>
     </style>
 
-    <!--对话框输入组件默认样式-->
-    <style name="dialog_edit_style" parent="Widget.AppCompat.EditText">
+    <!--Dialog Input style-->
+    <style name="AppTheme.Dialog.Input" parent="Widget.AppCompat.EditText">
         <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">20dp</item>
         <item name="android:layout_marginRight">20dp</item>
         <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">20dp</item>
@@ -95,7 +86,7 @@
     </style>
 
     <!--RecyclerView Item Title-->
-    <style name="ItemTitleText" parent="TextAppearance.AppCompat">
+    <style name="AppTheme.ItemTitleText" parent="TextAppearance.AppCompat">
         <item name="android:textSize">@dimen/ex_large_text</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -104,14 +95,14 @@
     </style>
 
     <!--RecyclerView Item Content-->
-    <style name="ItemContentText" parent="TextAppearance.AppCompat">
+    <style name="AppTheme.ItemContentText" parent="TextAppearance.AppCompat">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/medium_text</item>
         <item name="android:textColor">@color/material_grey</item>
     </style>
 
-    <style name="TextAppearance.AppCompat.SeqText" parent="TextAppearance.AppCompat">
+    <style name="AppTheme.SeqText" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/material_black</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_width">0dp</item>
@@ -119,7 +110,7 @@
         <item name="android:layout_height">match_parent</item>
     </style>
 
-    <style name="TextAppearance.AppCompat.InitialText" parent="TextAppearance.AppCompat">
+    <style name="AppTheme.InitialText" parent="TextAppearance.AppCompat">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
@@ -135,7 +126,7 @@
         <item name="android:layout_margin">@dimen/fab_margin</item>
     </style>
 
-    <style name="CardView.FullWidth" parent="CardView">
+    <style name="AppTheme.CardView.FullWidth" parent="CardView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_margin">5dp</item>
@@ -143,7 +134,7 @@
         <item name="cardElevation">3dp</item>
     </style>
 
-    <style name="Widget.AppCompat.Spinner.MySpinner" parent="Widget.AppCompat.Spinner">
+    <style name="MySpinner" parent="Widget.AppCompat.Spinner">
         <item name="android:gravity">center</item>
         <item name="android:layout_marginTop">20dp</item>
         <item name="android:layout_marginLeft">50dp</item>
@@ -151,9 +142,5 @@
         <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">50dp</item>
         <item name="android:layout_marginRight">50dp</item>
         <item name="android:textAlignment" tools:targetApi="jelly_bean_mr1">center</item>
-    </style>
-
-    <style name="Base.V7.ThemeOverlay.AppCompat.Dialog.FitSoftInput" parent="Base.V7.ThemeOverlay.AppCompat.Dialog">
-        <item name="android:windowSoftInputMode">adjustPan|stateAlwaysVisible</item>
     </style>
 </resources>

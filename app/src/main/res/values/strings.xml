@@ -206,6 +206,7 @@
     <string name="no_related_books">没有查询到相关书籍</string>
     <string name="no_more_results">没有更多结果了</string>
     <string name="edit_class_info">编辑课程</string>
+    <string name="personalise">个性化</string>
 
     <string name="encrypted">已加密</string>
     <string name="empty_class_tip">今天没有课, 好好休息一下吧~</string>
@@ -318,4 +319,6 @@
     <string name="the_class_seq">第 %1$d 节</string>
 
     <string name="default_school_name">未知学校</string>
+    <string name="refer_to_usage">查看教程</string>
+    <string name="select_schedule_file">选择课程文件</string>
 </resources>

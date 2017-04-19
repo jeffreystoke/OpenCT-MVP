@@ -34,31 +34,31 @@
             android:layout_weight="1"/>
 
         <TextView
-            style="@style/TextAppearance.AppCompat.SeqText"
+            style="@style/AppTheme.SeqText"
             android:text="@string/monday"/>
 
         <TextView
-            style="@style/TextAppearance.AppCompat.SeqText"
+            style="@style/AppTheme.SeqText"
             android:text="@string/tuesday"/>
 
         <TextView
-            style="@style/TextAppearance.AppCompat.SeqText"
+            style="@style/AppTheme.SeqText"
             android:text="@string/wednesday"/>
 
         <TextView
-            style="@style/TextAppearance.AppCompat.SeqText"
+            style="@style/AppTheme.SeqText"
             android:text="@string/thursday"/>
 
         <TextView
-            style="@style/TextAppearance.AppCompat.SeqText"
+            style="@style/AppTheme.SeqText"
             android:text="@string/friday"/>
 
         <TextView
-            style="@style/TextAppearance.AppCompat.SeqText"
+            style="@style/AppTheme.SeqText"
             android:text="@string/saturday"/>
 
         <TextView
-            style="@style/TextAppearance.AppCompat.SeqText"
+            style="@style/AppTheme.SeqText"
             android:text="@string/sunday"/>
     </LinearLayout>
 
