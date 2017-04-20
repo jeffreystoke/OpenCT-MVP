@@ -24,18 +24,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import cc.metapro.openct.utils.CloseUtils;
+import okio.Buffer;
+import okio.ByteString;
 
 public final class StoreHelper {
 
@@ -43,21 +42,11 @@ public final class StoreHelper {
 
     @NonNull
     static String getAssetText(Context context, String filename) throws IOException {
-        InputStream fis = null;
-        BufferedReader br = null;
-        try {
-            fis = context.getAssets().open(filename);
-            br = new BufferedReader(new InputStreamReader(fis));
-            StringBuilder sb = new StringBuilder();
-            String tmp = br.readLine();
-            while (tmp != null) {
-                sb.append(tmp);
-                tmp = br.readLine();
-            }
-            return sb.toString();
-        } finally {
-            CloseUtils.close(fis, br);
-        }
+        Buffer buffer = new Buffer();
+        ByteString byteString = buffer
+                .readFrom(context.getAssets().open(filename))
+                .readByteString();
+        return byteString.toString();
     }
 
     public static String toJson(Object o) {
@@ -78,18 +67,13 @@ public final class StoreHelper {
     }
 
     public static void storeBytes(String path, InputStream in) throws IOException {
-        DataInputStream din = null;
         DataOutputStream out = null;
         try {
-            din = new DataInputStream(in);
             out = new DataOutputStream(new FileOutputStream(path));
-            byte[] buffer = new byte[2048];
-            int count;
-            while ((count = din.read(buffer)) > 0) {
-                out.write(buffer, 0, count);
-            }
+            Buffer buffer = new Buffer();
+            buffer.readFrom(in).writeTo(out);
         } finally {
-            CloseUtils.close(din, out);
+            CloseUtils.close(out);
         }
     }
 

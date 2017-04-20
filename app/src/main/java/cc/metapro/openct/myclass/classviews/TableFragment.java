@@ -37,6 +37,11 @@ import cc.metapro.openct.data.university.item.classinfo.SingleClass;
 import cc.metapro.openct.myclass.ClassContract;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 
 public class TableFragment extends Fragment implements ClassContract.View {
 
@@ -46,6 +51,7 @@ public class TableFragment extends Fragment implements ClassContract.View {
     RelativeLayout mContent;
 
     private List<SingleClass> mClasses;
+    private Observable mObservable;
 
     public static TableFragment newInstance() {
         Bundle args = new Bundle();
@@ -63,13 +69,16 @@ public class TableFragment extends Fragment implements ClassContract.View {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onResume() {
+        super.onResume();
+        if (mObservable != null) {
+            mObservable.subscribe();
+            mObservable = null;
+        }
     }
 
     private void addSeqViews() {
-        final int DailyClasses = Integer
-                .parseInt(PrefHelper.getString(getContext(), R.string.pref_daily_class_count, "12"));
+        final int DailyClasses = Integer.parseInt(PrefHelper.getString(getContext(), R.string.pref_daily_class_count, "12"));
         for (int i = 1; i <= DailyClasses; i++) {
             TextView textView = new TextView(getContext());
             textView.setText(i + "");
@@ -88,14 +97,24 @@ public class TableFragment extends Fragment implements ClassContract.View {
     }
 
     @Override
-    public void showClasses(Classes classes, int week) {
-        mClasses = classes.getWeekClasses(week);
-        mContent.removeAllViews();
-        mSeq.removeAllViews();
+    public void showClasses(final Classes classes, final int week) {
+        mObservable = Observable.create(new ObservableOnSubscribe() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter observableEmitter) throws Exception {
+                mClasses = classes.getWeekClasses(week);
+                mContent.removeAllViews();
+                mSeq.removeAllViews();
 
-        if (!mClasses.isEmpty()) {
-            addSeqViews();
-            addContentView();
+                if (!mClasses.isEmpty()) {
+                    addSeqViews();
+                    addContentView();
+                }
+            }
+        }).subscribeOn(AndroidSchedulers.mainThread());
+
+        if (isResumed()) {
+            mObservable.subscribe();
+            mObservable = null;
         }
     }
 

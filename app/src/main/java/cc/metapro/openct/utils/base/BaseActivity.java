@@ -17,8 +17,11 @@ package cc.metapro.openct.utils.base;
  */
 
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.StyleRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import cc.metapro.openct.R;
@@ -29,12 +32,35 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         int theme = PrefHelper.getInt(this, R.string.pref_theme_activity, R.style.AppTheme);
         setTheme(theme);
+        super.onCreate(savedInstanceState);
         setContentView(getLayout());
     }
 
     @LayoutRes
     protected abstract int getLayout();
+
+    @StyleRes
+    protected final int getThemeByColor(@ColorRes int color) {
+        if (color == ContextCompat.getColor(this, R.color.material_white)) {
+            return R.style.AppTheme;
+        } else if (color == ContextCompat.getColor(this, R.color.material_blue)) {
+            return R.style.AppTheme_Blue;
+        } else if (color == ContextCompat.getColor(this, R.color.material_teal)) {
+            return R.style.AppTheme_Teal;
+        } else if (color == ContextCompat.getColor(this, R.color.material_green)) {
+            return R.style.AppTheme_Green;
+        } else if (color == ContextCompat.getColor(this, R.color.material_grey_blue)) {
+            return R.style.AppTheme_Grey;
+        } else if (color == ContextCompat.getColor(this, R.color.material_amber)) {
+            return R.style.AppTheme_Amber;
+        } else if (color == ContextCompat.getColor(this, R.color.material_indigo)) {
+            return R.style.AppTheme_Indigo;
+        } else if (color == ContextCompat.getColor(this, R.color.material_red)) {
+            return R.style.AppTheme_Red;
+        } else {
+            throw new UnsupportedOperationException("the color is not supported");
+        }
+    }
 }

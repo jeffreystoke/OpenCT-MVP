@@ -42,6 +42,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingTop="10dp"
-            android:textColor="@color/colorAccent"/>
+            android:textColor="?attr/colorAccent"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>

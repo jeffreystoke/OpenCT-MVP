@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -89,6 +90,7 @@ public class SchoolSelectionActivity
                 updateSchools(true);
                 break;
             case R.id.report:
+                Toast.makeText(this, R.string.tmp_add_school_promt, Toast.LENGTH_LONG).show();
                 break;
         }
         return super.onOptionsItemSelected(item);

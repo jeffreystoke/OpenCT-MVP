@@ -19,7 +19,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_class_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -45,6 +44,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|start"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:hint="@string/class_name"
                     app:met_floatingLabel="normal"/>
 
@@ -53,6 +53,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|start"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:hint="@string/class_type"
                     app:met_floatingLabel="normal"/>
             </LinearLayout>

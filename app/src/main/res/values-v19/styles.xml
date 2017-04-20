@@ -19,11 +19,138 @@
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/material_white</item>
-        <item name="colorPrimaryDark">@color/material_white_dark</item>
+        <item name="colorPrimaryDark">@color/material_white</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorPrimary">@color/material_black</item>
         <item name="android:textColorSecondary">@color/material_grey</item>
+
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">false</item>
+        <!--reverse against color primary-->
+        <item name="android:textColorPrimaryInverse">@color/material_black</item>
+        <item name="android:textColorSecondaryInverse">@color/material_grey</item>
+    </style>
+
+    <!--CollapsingToolbarLayout-->
+    <style name="AppTheme.CollapsingToolbarLayout" parent="Widget.Design.CollapsingToolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="contentScrim">?android:attr/colorPrimary</item>
+        <item name="layout_scrollFlags">scroll|exitUntilCollapsed</item>
+        <item name="android:textColorPrimary">?android:attr/textColorPrimaryInverse</item>
+        <item name="expandedTitleTextAppearance">@style/AppTheme.Expanded</item>
+        <item name="collapsedTitleTextAppearance">@style/AppTheme.Collapsed</item>
+    </style>
+
+    <!--app bar layout-->
+    <style name="AppTheme.AppBarLayout" parent="Widget.Design.AppBarLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">200dp</item>
+    </style>
+
+    <!--app bar imageView-->
+    <style name="AppTheme.AppBarImage">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="layout_collapseMode">parallax</item>
+        <item name="layout_collapseParallaxMultiplier">0.5</item>
+    </style>
+
+    <!--toolbar-->
+    <style name="AppTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="layout_collapseMode">pin</item>
+        <item name="titleTextColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="subtitleTextColor">?android:attr/textColorSecondaryInverse</item>
+        <item name="popupTheme">@style/AppTheme.Toolbar.Popup</item>
+    </style>
+
+    <style name="AppTheme.Toolbar.Popup" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    </style>
+
+    <style name="AppTheme.AlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+
+    </style>
+
+    <!--toolbar expanded text appearance-->
+    <style name="AppTheme.Expanded" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
+        <item name="android:textColor">?android:attr/textColorSecondaryInverse</item>
+        <item name="android:textSize">@dimen/ex_large_text</item>
+    </style>
+
+    <style name="AppTheme.Collapsed" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textSize">@dimen/ex_large_text</item>
+    </style>
+
+    <!--Dialog Input style-->
+    <style name="AppTheme.Dialog.Input" parent="Widget.AppCompat.EditText">
+        <item name="android:layout_marginEnd">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginStart">20dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <!--RecyclerView Item Title-->
+    <style name="AppTheme.ItemTitleText" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/ex_large_text</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/material_black</item>
+        <item name="android:paddingBottom">20dp</item>
+    </style>
+
+    <!--RecyclerView Item Content-->
+    <style name="AppTheme.ItemContentText" parent="TextAppearance.AppCompat">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/medium_text</item>
+        <item name="android:textColor">@color/material_grey</item>
+    </style>
+
+    <style name="AppTheme.SeqText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/material_black</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">2</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="AppTheme.InitialText" parent="TextAppearance.AppCompat">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!--FloatingActionButton-->
+    <style name="AppTheme.Fab" parent="Widget.Design.FloatingActionButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="borderWidth">0dp</item>
+        <item name="elevation">6dp</item>
+        <item name="fabSize">normal</item>
+        <item name="pressedTranslationZ">10dp</item>
+        <item name="android:layout_margin">@dimen/fab_margin</item>
+    </style>
+
+    <style name="AppTheme.CardView.FullWidth" parent="CardView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="cardCornerRadius">3dp</item>
+        <item name="cardElevation">3dp</item>
+    </style>
+
+    <style name="MySpinner" parent="Widget.AppCompat.Spinner">
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:layout_marginLeft">50dp</item>
+        <item name="android:layout_marginStart">50dp</item>
+        <item name="android:layout_marginEnd">50dp</item>
+        <item name="android:layout_marginRight">50dp</item>
+        <item name="android:textAlignment">center</item>
     </style>
 </resources>

@@ -16,31 +16,89 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/material_white</item>
-        <item name="colorPrimaryDark">@color/material_white_dark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-
-        <item name="android:textColorPrimary">@color/material_black</item>
-        <item name="android:textColorSecondary">@color/material_grey</item>
-
-        <item name="android:fitsSystemWindows">true</item>
-        <item name="android:clipToPadding">false</item>
-    </style>
-
     <!--Actionbar Theme-->
     <style name="AppTheme.Actionbar" parent="AppTheme">
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">false</item>
     </style>
 
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/material_white</item>
+        <item name="colorPrimaryDark">@color/material_white</item>
+        <item name="colorAccent">@color/material_blue</item>
+
+        <item name="android:textColorPrimary">@color/material_black</item>
+        <item name="android:textColorSecondary">@color/material_grey</item>
+        <!--reverse against color primary-->
+        <item name="android:textColorPrimaryInverse">@color/material_black</item>
+        <item name="android:textColorSecondaryInverse">@color/material_grey</item>
+    </style>
+
+    <style name="AppTheme.Blue" parent="AppTheme">
+        <item name="colorPrimary">@color/material_blue</item>
+        <item name="colorPrimaryDark">@color/material_blue</item>
+        <item name="colorAccent">@color/material_pink</item>
+        <item name="android:textColorPrimaryInverse">@color/material_white</item>
+        <item name="android:textColorSecondaryInverse">@color/material_white_dark</item>
+    </style>
+
+    <style name="AppTheme.Green" parent="AppTheme">
+        <item name="colorPrimary">@color/material_green</item>
+        <item name="colorPrimaryDark">@color/material_green</item>
+        <item name="colorAccent">@color/material_amber</item>
+        <item name="android:textColorPrimaryInverse">@color/material_white</item>
+        <item name="android:textColorSecondaryInverse">@color/material_white_dark</item>
+    </style>
+
+    <style name="AppTheme.Teal" parent="AppTheme">
+        <item name="colorPrimary">@color/material_teal</item>
+        <item name="colorPrimaryDark">@color/material_teal</item>
+        <item name="colorAccent">@color/material_orange</item>
+        <item name="android:textColorPrimaryInverse">@color/material_white</item>
+        <item name="android:textColorSecondaryInverse">@color/material_white_dark</item>
+    </style>
+
+    <style name="AppTheme.Grey" parent="AppTheme">
+        <item name="colorPrimary">@color/material_grey_blue</item>
+        <item name="colorPrimaryDark">@color/material_grey_blue</item>
+        <item name="colorAccent">@color/material_blue</item>
+        <item name="android:textColorPrimaryInverse">@color/material_white</item>
+        <item name="android:textColorSecondaryInverse">@color/material_white_dark</item>
+    </style>
+
+    <style name="AppTheme.Indigo" parent="AppTheme">
+        <item name="colorPrimary">@color/material_indigo</item>
+        <item name="colorPrimaryDark">@color/material_indigo</item>
+        <item name="colorAccent">@color/material_blue</item>
+        <item name="android:textColorPrimaryInverse">@color/material_white</item>
+        <item name="android:textColorSecondaryInverse">@color/material_white_dark</item>
+    </style>
+
+    <style name="AppTheme.Amber" parent="AppTheme">
+        <item name="colorPrimary">@color/material_amber</item>
+        <item name="colorPrimaryDark">@color/material_amber</item>
+        <item name="colorAccent">@color/material_blue</item>
+        <item name="android:textColorPrimaryInverse">@color/material_white</item>
+        <item name="android:textColorSecondaryInverse">@color/material_white_dark</item>
+    </style>
+
+    <style name="AppTheme.Red" parent="AppTheme">
+        <item name="colorPrimary">@color/material_red</item>
+        <item name="colorPrimaryDark">@color/material_red</item>
+        <item name="colorAccent">@color/material_orange</item>
+        <item name="android:textColorPrimaryInverse">@color/material_white</item>
+        <item name="android:textColorSecondaryInverse">@color/material_white_dark</item>
+    </style>
+
     <!--CollapsingToolbarLayout-->
     <style name="AppTheme.CollapsingToolbarLayout" parent="Widget.Design.CollapsingToolbar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="contentScrim">@color/colorPrimary</item>
+        <item name="contentScrim">?android:attr/colorPrimary</item>
         <item name="layout_scrollFlags">scroll|exitUntilCollapsed</item>
-        <item name="expandedTitleTextAppearance">@style/AppTheme.CollExpanded</item>
+        <item name="android:textColorPrimary">?android:attr/textColorPrimaryInverse</item>
+        <item name="expandedTitleTextAppearance">@style/AppTheme.Expanded</item>
+        <item name="collapsedTitleTextAppearance">@style/AppTheme.Collapsed</item>
     </style>
 
     <!--app bar layout-->
@@ -63,15 +121,30 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="layout_collapseMode">pin</item>
+        <item name="titleTextColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="subtitleTextColor">?android:attr/textColorSecondaryInverse</item>
+        <item name="popupTheme">@style/AppTheme.Toolbar.Popup</item>
+    </style>
+
+    <style name="AppTheme.Toolbar.Popup" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <!--<item name="colorControlNormal">?android:attr/textColorPrimaryInverse</item>-->
+        <!--<item name="actionMenuTextColor">?android:attr/textColorPrimaryInverse</item>-->
+        <!--<item name="android:colorBackground">?android:attr/colorPrimary</item>-->
     </style>
 
     <style name="AppTheme.AlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
 
     </style>
+
     <!--toolbar expanded text appearance-->
-    <style name="AppTheme.CollExpanded" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
-        <item name="android:textColor">@color/material_black</item>
-        <item name="android:textSize">@dimen/large_text</item>
+    <style name="AppTheme.Expanded" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
+        <item name="android:textColor">?android:attr/textColorSecondaryInverse</item>
+        <item name="android:textSize">@dimen/ex_large_text</item>
+    </style>
+
+    <style name="AppTheme.Collapsed" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textSize">@dimen/ex_large_text</item>
     </style>
 
     <!--Dialog Input style-->

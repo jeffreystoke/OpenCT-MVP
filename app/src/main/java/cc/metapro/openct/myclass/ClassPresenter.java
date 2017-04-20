@@ -272,7 +272,6 @@ class ClassPresenter implements ClassContract.Presenter {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override

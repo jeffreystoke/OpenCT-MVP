@@ -117,7 +117,7 @@
             android:layout_gravity="end|center_vertical"
             android:padding="10dp"
             android:text="@string/edit"
-            android:textColor="@color/colorAccent"
+            android:textColor="?attr/colorAccent"
             android:textSize="16sp"/>
 
     </LinearLayout>

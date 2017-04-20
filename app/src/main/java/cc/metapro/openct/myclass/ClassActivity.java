@@ -17,8 +17,10 @@ package cc.metapro.openct.myclass;
  */
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -28,9 +30,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.jrummyapps.android.colorpicker.ColorPickerDialog;
+import com.jrummyapps.android.colorpicker.ColorPickerDialogListener;
+import com.jrummyapps.android.colorpicker.ColorShape;
 
 import java.util.Map;
 
@@ -47,6 +54,7 @@ import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
+import cc.metapro.openct.utils.ReferenceUtils;
 import cc.metapro.openct.utils.base.BaseActivity;
 
 public class ClassActivity extends BaseActivity
@@ -67,7 +75,7 @@ public class ClassActivity extends BaseActivity
 
     ClassContract.Presenter mPresenter;
     private boolean mExitState;
-    private ClassPagerAdapter mClassPagerAdapter;
+    private ClassPagerAdapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +90,7 @@ public class ClassActivity extends BaseActivity
         mNavigationView.setNavigationItemSelectedListener(this);
 
         initViewPager();
-        new ClassPresenter(this, this);
+        mPresenter = new ClassPresenter(this, this);
     }
 
     @Override
@@ -91,8 +99,8 @@ public class ClassActivity extends BaseActivity
     }
 
     private void initViewPager() {
-        mTabLayout.setupWithViewPager(mViewPager);
-
+        mPagerAdapter = new ClassPagerAdapter(getSupportFragmentManager(), this);
+        mViewPager.setAdapter(mPagerAdapter);
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -118,8 +126,7 @@ public class ClassActivity extends BaseActivity
                 }
             }
         });
-        mClassPagerAdapter = new ClassPagerAdapter(getSupportFragmentManager(), this);
-        mViewPager.setAdapter(mClassPagerAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
 
         int index = Integer.parseInt(PrefHelper.getString(this, R.string.pref_homepage_selection, "0"));
         if (index > 1) {
@@ -131,8 +138,8 @@ public class ClassActivity extends BaseActivity
 
     @Override
     public void showClasses(@NonNull Classes classes, int week) {
-        mClassPagerAdapter.updateClasses(classes, week);
-        mClassPagerAdapter.notifyDataSetChanged();
+        mPagerAdapter.updateClasses(classes, week);
+        mPagerAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -179,16 +186,54 @@ public class ClassActivity extends BaseActivity
             case R.id.nav_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
+            case R.id.nav_theme:
+                showThemePicker();
+                break;
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showThemePicker() {
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = getTheme();
+        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        ColorPickerDialog dialog = ColorPickerDialog.newBuilder()
+                .setDialogTitle(R.string.select_theme)
+                .setColorShape(ColorShape.CIRCLE)
+                .setAllowCustom(false)
+                .setAllowPresets(false)
+                .setDialogType(ColorPickerDialog.TYPE_PRESETS)
+                .setShowAlphaSlider(false)
+                .setShowColorShades(false)
+                .setPresets(getResources().getIntArray(R.array.theme_color))
+                .setColor(ReferenceUtils.getThemeColor(this, R.attr.colorPrimary))
+                .create();
+
+        final int oldTheme = PrefHelper.getInt(this, R.string.pref_theme_activity, R.style.AppTheme);
+        dialog.setColorPickerDialogListener(new ColorPickerDialogListener() {
+            @Override
+            public void onColorSelected(int i, @ColorInt int i1) {
+                PrefHelper.putInt(ClassActivity.this, R.string.pref_theme_activity, getThemeByColor(i1));
+            }
+
+            @Override
+            public void onDialogDismissed(int i) {
+                int newTheme = PrefHelper.getInt(ClassActivity.this, R.string.pref_theme_activity, R.style.AppTheme);
+                if (oldTheme != newTheme) {
+                    finish();
+                    startActivity(getIntent());
+                }
+            }
+        });
+        dialog.show(getFragmentManager(), "color_picker");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mPresenter.start();
-        mClassPagerAdapter.notifyDataSetChanged();
+        mPagerAdapter.notifyDataSetChanged();
     }
 
     @Override

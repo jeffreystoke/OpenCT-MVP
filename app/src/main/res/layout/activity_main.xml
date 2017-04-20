@@ -54,7 +54,9 @@
                 <android.support.design.widget.TabLayout
                     android:id="@+id/tab_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    app:tabSelectedTextColor="?android:attr/textColorPrimaryInverse"
+                    app:tabTextColor="?android:attr/textColorSecondaryInverse"/>
             </android.support.design.widget.AppBarLayout>
         </android.support.design.widget.CoordinatorLayout>
 

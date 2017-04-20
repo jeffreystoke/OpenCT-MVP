@@ -26,9 +26,6 @@
 
     <!--成绩查询相关-->
 
-    <!--CET 成绩结果对话框-->
-    <string name="cet_result">CET 成绩</string>
-
     <!--CET 成绩结果key-->
     <string name="key_full_name" translatable="false">full_name</string>
     <string name="key_school" translatable="false">school</string>
@@ -54,12 +51,6 @@
 
     <!--设置当前周的年度周数, 用于判断是否更新周数-->
     <string name="pref_week_set_week" translatable="false">week_set_week</string>
-
-    <!--设置启用验证码自动识别-->
-    <string name="pref_auto_captcha" translatable="false">auto_captcha</string>
-
-    <!--设置加密与否-->
-    <string name="pref_need_encryption" translatable="false">need_encryption</string>
 
     <!--CET 准考证号和姓名-->
     <string name="pref_cet_ticket_num" translatable="false">cet_tick_num</string>
@@ -93,6 +84,15 @@
     <string name="pref_class_type_re" translatable="false">class_type_re</string>
     <string name="pref_class_teacher_re" translatable="false">class_teacher_re</string>
     <string name="pref_class_place_re" translatable="false">class_place_re</string>
+
+    <string name="pref_class_settings" translatable="false">class_settings</string>
+    <!--一天几节课-->
+    <string name="pref_daily_class_count" translatable="false">daily_class_count</string>
+    <string name="pref_every_class_time" translatable="false">every_class_length</string>
+    <string name="pref_rest_time" translatable="false">rest_time</string>
+
+    <string name="pref_theme_activity" translatable="false">theme_activity</string>
+    <string name="pref_theme_dialog" translatable="false">theme_dialog</string>
 
     <!--周数键值-->
     <string-array name="pref_week_seq_keys">
@@ -169,15 +169,4 @@
         <item>0</item>
         <item>1</item>
     </string-array>
-
-    <string name="pref_class_settings" translatable="false">class_settings</string>
-    <!--一天几节课-->
-    <string name="pref_daily_class_count" translatable="false">daily_class_count</string>
-    <string name="pref_every_class_time" translatable="false">every_class_length</string>
-    <string name="pref_rest_time" translatable="false">rest_time</string>
-
-    <string name="pref_check_school_info_update" translatable="false">check_school_info_update</string>
-
-    <string name="pref_theme_activity" translatable="false">theme_activity</string>
-    <string name="pref_theme_dialog" translatable="false">theme_dialog</string>
 </resources>

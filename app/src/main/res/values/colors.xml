@@ -24,8 +24,15 @@
     <color name="material_white_dark">#e0e0e0</color>
     <color name="material_black">#212121</color>
     <color name="material_grey">#616161</color>
-    <color name="material_red">#FF4081</color>
     <color name="material_blue">#42a5f5</color>
+    <color name="material_pink">#FF4081</color>
+    <color name="material_green">#4CAF50</color>
+    <color name="material_amber">#FFC107</color>
+    <color name="material_teal">#009688</color>
+    <color name="material_orange">#FF9800</color>
+    <color name="material_grey_blue">#607D8B</color>
+    <color name="material_indigo">#3F51B5</color>
+    <color name="material_red">#F44336</color>
 
     <array name="class_background">
         <item>#968bc34a</item>
@@ -36,5 +43,16 @@
         <item>#96f44336</item>
         <item>#964dd0e1</item>
         <item>#96d4e157</item>
+    </array>
+
+    <array name="theme_color">
+        <item>@color/material_white</item>
+        <item>@color/material_blue</item>
+        <item>@color/material_green</item>
+        <item>@color/material_teal</item>
+        <item>@color/material_grey_blue</item>
+        <item>@color/material_indigo</item>
+        <item>@color/material_amber</item>
+        <item>@color/material_red</item>
     </array>
 </resources>

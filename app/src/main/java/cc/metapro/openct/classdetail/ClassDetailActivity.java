@@ -23,6 +23,7 @@ import android.support.annotation.ColorInt;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.util.ArraySet;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -69,7 +70,7 @@ public class ClassDetailActivity extends BaseActivity {
 
     private ClassDetailAdapter mDetailAdapter;
     private EnrichedClassInfo mInfoEditing;
-    private List<ClassTime> classTimes;
+    private List<ClassTime> mClassTimes;
 
     public static void actionStart(Context context, String name) {
         Intent intent = new Intent(context, ClassDetailActivity.class);
@@ -117,8 +118,8 @@ public class ClassDetailActivity extends BaseActivity {
             mInfoEditing = new EnrichedClassInfo(getString(R.string.new_class), getString(R.string.mandatory), new ClassTime());
         }
 
-        classTimes = new ArrayList<>(mInfoEditing.getTimeSet());
-        Collections.sort(classTimes);
+        mClassTimes = new ArrayList<>(mInfoEditing.getTimeSet());
+        Collections.sort(mClassTimes);
 
         mName.setText(mInfoEditing.getName());
         mType.setText(mInfoEditing.getType());
@@ -127,7 +128,7 @@ public class ClassDetailActivity extends BaseActivity {
     }
 
     private void setRecyclerView() {
-        mDetailAdapter = new ClassDetailAdapter(this, mInfoEditing.getTimeSet());
+        mDetailAdapter = new ClassDetailAdapter(this, mClassTimes);
         RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mDetailAdapter);
         mRecyclerView.setItemViewSwipeEnabled(true);
         mRecyclerView.setOnItemMoveListener(new OnItemMoveListener() {
@@ -138,8 +139,8 @@ public class ClassDetailActivity extends BaseActivity {
 
             @Override
             public void onItemDismiss(final int position) {
-                final ClassTime toRemove = classTimes.get(position);
-                classTimes.remove(toRemove);
+                final ClassTime toRemove = mClassTimes.get(position);
+                mClassTimes.remove(toRemove);
                 mDetailAdapter.notifyDataSetChanged();
                 final String prefix = mName.getText().toString() + " " +
                         DateHelper.weekDayTrans(ClassDetailActivity.this, toRemove.getWeekDay()) + " " +
@@ -150,14 +151,14 @@ public class ClassDetailActivity extends BaseActivity {
                 snackbar.setAction(android.R.string.cancel, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        classTimes.add(toRemove);
+                        mClassTimes.add(toRemove);
                         mDetailAdapter.notifyDataSetChanged();
                         snackbar.dismiss();
 
                         String msg = prefix + getString(R.string.restored);
 
                         Snackbar.make(mRecyclerView, msg, BaseTransientBottomBar.LENGTH_LONG).show();
-                        mRecyclerView.smoothScrollToPosition(classTimes.size() - 1);
+                        mRecyclerView.smoothScrollToPosition(mClassTimes.size() - 1);
                     }
                 });
                 snackbar.show();
@@ -175,10 +176,10 @@ public class ClassDetailActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.add) {
-            if (!classTimes.isEmpty()) {
-                classTimes.add(0, new ClassTime(classTimes.get(classTimes.size() - 1)));
+            if (!mClassTimes.isEmpty()) {
+                mClassTimes.add(0, new ClassTime(mClassTimes.get(mClassTimes.size() - 1)));
             } else {
-                classTimes.add(0, new ClassTime());
+                mClassTimes.add(0, new ClassTime());
             }
             mDetailAdapter.notifyDataSetChanged();
         }
@@ -190,11 +191,18 @@ public class ClassDetailActivity extends BaseActivity {
         String oldName = mInfoEditing.getName();
 
         mInfoEditing.setType(mType.getText().toString());
-        mInfoEditing.setTimes(mDetailAdapter.getResultTime());
+        mInfoEditing.setTimes(new ArraySet<>(mClassTimes));
+        if (mClassTimes == null || mClassTimes.isEmpty()) {
+            try {
+                DBManger.getInstance(this).updateSingleClass(oldName, "", null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return;
+        }
         mInfoEditing.setName(mName.getText().toString());
         try {
-            DBManger.getInstance(this)
-                    .updateSingleClass(oldName, mInfoEditing.getName(), mInfoEditing);
+            DBManger.getInstance(this).updateSingleClass(oldName, mInfoEditing.getName(), mInfoEditing);
         } catch (Exception e) {
             Log.d(TAG, e.getMessage(), e);
             return;

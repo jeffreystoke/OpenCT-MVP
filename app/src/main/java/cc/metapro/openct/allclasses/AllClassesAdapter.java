@@ -65,7 +65,7 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassView
 
     @Override
     public int getItemCount() {
-        return Constants.sClasses == null ? 0 : Constants.sClasses.size();
+        return Constants.sClasses.size();
     }
 
     static class ClassViewHolder extends RecyclerView.ViewHolder {

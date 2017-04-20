@@ -47,7 +47,6 @@
             android:textSize="@dimen/ex_large_text"/>
 
         <TextView
-            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_description"

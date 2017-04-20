@@ -32,14 +32,20 @@ import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.myclass.ClassContract;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.RecyclerViewHelper;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 
 public class DailyFragment extends Fragment implements ClassContract.View {
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
-
     @BindView(R.id.empty_view)
     TextView mEmptyView;
+
+    private Observable mObservable;
 
     public static DailyFragment newInstance() {
         return new DailyFragment();
@@ -51,6 +57,15 @@ public class DailyFragment extends Fragment implements ClassContract.View {
         View view = inflater.inflate(R.layout.fragment_class_today, container, false);
         ButterKnife.bind(this, view);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mObservable != null) {
+            mObservable.subscribe();
+            mObservable = null;
+        }
     }
 
     private void showClasses() {
@@ -69,18 +84,28 @@ public class DailyFragment extends Fragment implements ClassContract.View {
     }
 
     @Override
-    public void showClasses(Classes classes, int week) {
-        DailyClassAdapter dailyClassAdapter = new DailyClassAdapter(getContext());
-        RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, dailyClassAdapter);
+    public void showClasses(final Classes classes, final int week) {
+        mObservable = Observable.create(new ObservableOnSubscribe() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter observableEmitter) throws Exception {
+                DailyClassAdapter dailyClassAdapter = new DailyClassAdapter(getContext());
+                RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, dailyClassAdapter);
 
-        dailyClassAdapter.updateTodayClasses(classes, week);
-        dailyClassAdapter.notifyDataSetChanged();
+                dailyClassAdapter.updateTodayClasses(classes, week);
+                dailyClassAdapter.notifyDataSetChanged();
 
-        if (dailyClassAdapter.hasClassToday()) {
-            showClasses();
-        } else {
-            mEmptyView.setText(PrefHelper.getString(getContext(), R.string.pref_empty_class_motto, getString(R.string.motto_default)));
-            showEmptyView();
+                if (dailyClassAdapter.hasClassToday()) {
+                    showClasses();
+                } else {
+                    mEmptyView.setText(PrefHelper.getString(getContext(), R.string.pref_empty_class_motto, getString(R.string.motto_default)));
+                    showEmptyView();
+                }
+            }
+        }).subscribeOn(AndroidSchedulers.mainThread());
+
+        if (isResumed()) {
+            mObservable.subscribe();
+            mObservable = null;
         }
     }
 }

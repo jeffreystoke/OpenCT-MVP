@@ -1,4 +1,4 @@
-package cc.metapro.openct.myclass;
+package cc.metapro.openct.utils;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,20 +16,19 @@ package cc.metapro.openct.myclass;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
+import android.content.Context;
+import android.content.res.Resources;
+import android.support.annotation.AttrRes;
+import android.support.annotation.ColorInt;
+import android.util.TypedValue;
 
-import cc.metapro.openct.data.university.item.classinfo.Classes;
-import cc.metapro.openct.utils.base.BaseView;
-import cc.metapro.openct.utils.base.LoginPresenter;
+public class ReferenceUtils {
 
-@Keep
-public interface ClassContract {
-
-    interface View extends BaseView<Presenter> {
-        void showClasses(Classes classes, int week);
-    }
-
-    interface Presenter extends LoginPresenter {
-        void loadLocalClasses();
+    @ColorInt
+    public static int getThemeColor(Context context, @AttrRes int attr) {
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(attr, typedValue, true);
+        return typedValue.data;
     }
 }

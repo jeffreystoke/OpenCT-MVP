@@ -41,9 +41,10 @@ class CustomPresenter implements CustomContract.Presenter {
     private WebConfiguration mConfiguration;
     private String TYPE;
 
-    CustomPresenter(Context context, String type) {
+    CustomPresenter(Context context, CustomContract.View view, String type) {
         mContext = context;
         TYPE = type;
+        view.setPresenter(this);
     }
 
     @Override

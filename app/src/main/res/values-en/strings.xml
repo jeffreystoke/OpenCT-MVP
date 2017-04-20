@@ -20,11 +20,6 @@
     <string name="navigation_drawer_open">Open drawer</string>
     <string name="navigation_drawer_close">Close drawer</string>
 
-    <string name="login_fail">Login fail, please check you username, password and captcha code</string>
-    <string name="network_error">Network error, is network available\?</string>
-    <string name="network_timeout">Can\'t connect school server</string>
-    <string name="unknown_error">Unknown error happened</string>
-
     <!--week seq-->
     <string name="monday">Mon</string>
     <string name="tuesday">Tue</string>
@@ -44,7 +39,6 @@
         <item>@string/sunday</item>
     </string-array>
 
-    <string name="class_table">Class Schedule</string>
     <string name="grade_list">Academic Grades</string>
     <string name="search_lib">Library Search</string>
     <string name="borrow_info">My Borrows</string>
@@ -60,7 +54,6 @@
     <string name="show_exceeded">Exceeded</string>
     <string name="app_description">Open Source Class Schedule and Library Application</string>
     <string name="show_book_detail">Detailed Info</string>
-    <string name="password_notice">username and password will be kept locally</string>
     <string name="notice">Caution</string>
     <string name="password">Password</string>
     <string name="username">Username</string>
@@ -75,34 +68,15 @@
     <string name="loading_grades">Loading grades</string>
 
     <string name="loading_target_page">Heading for your target</string>
-    <string name="loading_user_center">Loading user center</string>
     <string name="loading_borrows">Loading your borrows</string>
-    <string name="please_enter_captcha">Please enter code first</string>
 
-    <string name="loading_cet_grade">Loading CET grades</string>
-    <string name="filter">Filter</string>
-
-    <string name="show_all_avail_time">Show All Available</string>
-    <string name="empty_room_query">Empty Room</string>
     <string name="please_fill_cms_info">Fill your education username and password first</string>
     <string name="please_fill_lib_info">Fill your library username and password first</string>
     <string name="fetch_cet_fail">Fetch CET grade unsuccessful, give another try\?</string>
-    <string name="no_grades_to_show">No grades to show</string>
-    <string name="fetch_grades_fail"><![CDATA[No grades from education system]]></string>
-    <string name="fetch_classes_fail"><![CDATA[No classes from education system]]></string>
-    <string name="fetch_borrows_fail"><![CDATA[No borrows from library system]]></string>
-    <string name="no_local_classes_avail">No classes available</string>
-    <string name="no_local_grades_avail">No grades available</string>
-    <string name="no_local_borrows_avail">No borrows available</string>
-    <string name="something_wrong">Something Wrong</string>
     <string name="text_daily_classes">Daily</string>
-    <string name="text_sem_classes">Semester</string>
     <string name="no_daily_classes">No class today\nJust enjoy it~</string>
     <string name="creating_class_ical">Creating iCal, please wait</string>
     <string name="export_to_ical">Export iCal</string>
-    <string name="classes">Classes</string>
-    <string name="optional">Optional</string>
-    <string name="compulsory">Important</string>
     <string name="select_school">Select School</string>
     <string name="custom_tip">Tips:\n\n
         \t1)Enter or modify the address\n\n
@@ -110,15 +84,10 @@
         \t3)Go to your destination the click Finish\n\n
         \t4)Select and click accordingly
     </string>
-    <string name="address_author_mail">jeffctor@gmail.com</string>
     <string name="tip_school_not_exist">Custom your school, if it doesn\'t exist in the list</string>
-    <string name="pref_custom_school">Custom</string>
     <string name="enter_captcha">Please enter the code</string>
-    <string name="custom_your_class_fetch_way">自定义你的课程表获取方式</string>
-    <string name="load_captcha_fail">Error fetch captcha</string>
 
     <!--URLs-->
-    <string name="url_chsi_referer">http://www.chsi.com.cn/cet/</string>
 
     <!--copyright-->
     <string name="pref_license_info">
@@ -128,7 +97,7 @@
     <!--preference fragment-->
     <string name="school">School</string>
     <string name="current_week">Current Week</string>
-    <string name="motto_default">Thought is already is late\n\nexactly is the earliest time</string>
+    <string name="motto_default">Time and tide wait for no man.</string>
 
     <string name="school_info">My School Information</string>
     <string name="school_name">School Name</string>
@@ -138,40 +107,30 @@
 
     <string name="homepage_showing">Default Page</string>
     <string name="empty_class_motto">Motto</string>
-    <string name="basic_custom">Basic Custom</string>
     <string name="enable_custom">Enable Custom</string>
     <string name="cms_config">Education System Configuration</string>
     <string name="cms">Education</string>
     <string name="cms_sys">Education System</string>
     <string name="lib_config">Library System Configuration</string>
     <string name="lib_sys">Library System</string>
-    <string name="security">Security</string>
     <string name="personalise">Personalize</string>
     <string name="project_address">Project Site</string>
     <string name="open_source_license">Open Source License</string>
     <string name="about_app">About OpenCT</string>
     <string name="saved">Saved</string>
-    <string name="load_grade_page_fail">Fetch grade page fail</string>
     <string name="enter_address">Enter address</string>
     <string name="no_related_books">No result for your query</string>
     <string name="no_more_results">There are no more results</string>
     <string name="edit_class_info">Edit</string>
     <string name="encrypted">Encrypted</string>
-    <string name="unencrypted">Unencrypted</string>
-    <string name="empty_class_tip">No classes today, Just enjoy it ~</string>
     <string name="searching_library">Searching library</string>
     <string name="class_detail">Class Detail</string>
-    <string name="choose_background">Choose Background</string>
     <string name="class_name">Name</string>
     <string name="class_type">Type</string>
     <string name="class_time">Time</string>
     <string name="start">Start</string>
-    <string name="to">To</string>
     <string name="end">End</string>
     <string name="class_during">During (week)</string>
-    <string name="odd_week">Odd Week</string>
-    <string name="even_week">Even Week</string>
-    <string name="common">Common</string>
     <string name="class_teacher">Teacher</string>
     <string name="class_place">Place</string>
     <string name="ical_create_success">Created successful, OpenCT Classes.ics has been stored in your external storage</string>
@@ -180,13 +139,10 @@
     <string name="custom_finish_tip">Classes loaded, you may have to change some value, modify the RegularExpression may be helpful</string>
     <string name="sorry_for_unable_to_get_class_info">Sorry, No classes in this page</string>
     <string name="swipe_choose_table">Swipe to choose table</string>
-    <string name="what_is_that">What\'s meaning of the content above\?</string>
-    <string name="click_to_choose_your_school">Select your school</string>
     <string name="not_in_range_above">Not in range</string>
     <string name="what_did_you_clicked">What did you clicked\?</string>
     <string name="username_input">Username Input</string>
     <string name="common_input">Common</string>
-    <string name="select_target_link">Select target</string>
     <string name="question">Question</string>
     <string name="load_online_classes_successful">Fetch classes successful</string>
     <string name="load_online_borrows_successful">Fetch borrows successful</string>
@@ -194,11 +150,8 @@
     <string name="borrows_empty">Borrows Empty</string>
     <string name="grades_empty">Grades Empty</string>
     <string name="classes_empty">Classes Empty</string>
-    <string name="delete">Delete</string>
-    <string name="weekly_class_empty">No classes weekly</string>
     <string name="clear_classes">Clear Classes</string>
     <string name="advanced_custom">Web Import</string>
-    <string name="no_class_weekly">No classes weekly!</string>
     <string name="add_class_info">Add Class</string>
     <string name="import_from_excel">Excel Import</string>
     <string name="all_classes">My Classes</string>
@@ -209,12 +162,7 @@
     <string name="loading_university_info_list">Loading Schools</string>
     <string name="loading_school_list">Loading School List</string>
     <string name="one_more_press_to_exit">One more press to exit</string>
-    <string name="today_has">Today has</string>
-    <string name="class_count"> classes</string>
-    <string name="di">The</string>
     <string name="week">week</string>
-    <string name="check_schools_update">Check Schools Update</string>
-    <string name="encryption_tip">All your personal info (username and password) will be stored locally, please ensure you are in reliable network when you use online service</string>
     <string name="re_for_classes">RegularExp for classes</string>
     <string name="clear_links_table_selection">Clear actions</string>
     <string name="clear_action_tip">This will wipe all your action history, including your link selections and table selections</string>
@@ -286,26 +234,17 @@
     <string name="classes_updated">Classes updated</string>
     <string name="classes_combined">Classes combined</string>
     <string name="borrow_entries">%1$d borrow entries in total</string>
-    <string name="the">The</string>
-    <string name="reached_previous_end_point">Reached previous end point</string>
-    <string name="fetch_grades_successful">Fetch grades successful</string>
-    <string name="fetch_borrows_successful">Fetch borrows successful</string>
     <string name="founded_entries">Showing %1$d entries, maybe more</string>
     <string name="loaded_entries">Loaded %1$d entries</string>
     <string name="load_fail">Load fail</string>
     <string name="load_fail_tip">Load from web page?</string>
     <string name="excel_fail_tip">Failed import from table</string>
-    <string name="paste_content_here">Paste your table here</string>
     <string name="add_info">Add Info</string>
     <string name="finish">Finish</string>
     <string name="can_not_fetch_target_page">Can\'t fetch target page according to previous settings</string>
-    <string name="fetch_remote_school_list_tip">You\'re going to update school list from github repo, continue?</string>
     <string name="fetch_school_list_fail">Fetch school list fail, please check your network</string>
-    <string name="updated_schools"><![CDATA[更新成功, 请到 设置 -> 学校 搜索并选择你想要的学校]]></string>
-    <string name="sift_contents">Sift Content Display</string>
     <string name="borrows_cannot_filter_tip">No borrows here, no filter available</string>
     <string name="report_school">Report School</string>
-    <string name="cet_result">CET Grades</string>
 
     <string name="text_current_week">WEEK %1$d</string>
     <string name="text_today_seq">Today %1$s</string>
@@ -339,4 +278,7 @@
     <string name="default_school_name">Unknown</string>
     <string name="refer_to_usage">How To</string>
     <string name="select_schedule_file">Select Class Schedule</string>
+    <string name="tmp_add_school_promt">Currently not supported, Please wait</string>
+    <string name="theme">Theme</string>
+    <string name="select_theme">Select a Theme</string>
 </resources>

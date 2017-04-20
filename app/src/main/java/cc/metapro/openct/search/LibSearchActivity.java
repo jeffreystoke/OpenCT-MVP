@@ -21,6 +21,7 @@ import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -30,7 +31,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.List;
@@ -55,7 +55,7 @@ public class LibSearchActivity extends BaseActivity implements LibSearchContract
     @BindView(R.id.lib_search_content_edittext)
     EditText mEditText;
     @BindView(R.id.type_spinner)
-    Spinner mSpinner;
+    AppCompatSpinner mSpinner;
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
     @BindView(R.id.fab_up)
@@ -81,7 +81,7 @@ public class LibSearchActivity extends BaseActivity implements LibSearchContract
         }
 
         mAdapter = new BooksAdapter(this);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.lib_search_type));
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.item_search_type, getResources().getStringArray(R.array.lib_search_type));
         mSpinner.setAdapter(adapter);
         mLinearLayoutManager = RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mAdapter);
         mEditText.requestFocus();

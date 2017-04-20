@@ -19,7 +19,7 @@ package cc.metapro.openct.myclass;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.Loader;
@@ -27,7 +27,7 @@ import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.myclass.classviews.DailyFragment;
 import cc.metapro.openct.myclass.classviews.TableFragment;
 
-class ClassPagerAdapter extends FragmentStatePagerAdapter {
+class ClassPagerAdapter extends FragmentPagerAdapter {
 
     private Context mContext;
     private String titleWeek;
@@ -69,7 +69,7 @@ class ClassPagerAdapter extends FragmentStatePagerAdapter {
         throw new IndexOutOfBoundsException("two fragments at most");
     }
 
-    void updateClasses(Classes classes, int week) {
+    void updateClasses(final Classes classes, final int week) {
         mDailyFragment.showClasses(classes, week);
         mTableFragment.showClasses(classes, week);
     }

@@ -86,11 +86,7 @@
     </string-array>
 
     <!--error message-->
-    <string name="login_fail">登录失败, 请检查您的用户名密码</string>
     <string name="fetch_captcha_fail">获取验证码失败 </string>
-    <string name="fetch_grades_fail">很抱歉, 没能从教务网获取到成绩</string>
-    <string name="fetch_classes_fail">很抱歉, 没能从教务网获取到课表</string>
-    <string name="fetch_borrows_fail">很抱歉, 没能从图书馆获取到借阅信息</string>
     <string name="fetch_cet_fail">获取 CET 成绩失败, 要不一会儿再试试?</string>
 
     <!--loading message-->
@@ -100,9 +96,7 @@
     <string name="loading_grade_page">正在加载成绩页面</string>
     <string name="loading_grades">正在加载成绩信息</string>
     <string name="loading_target_page">正在前往指定页面</string>
-    <string name="loading_user_center">正在加载用户中心</string>
     <string name="loading_borrows">正在加载借阅信息</string>
-    <string name="loading_cet_grade">正在加载CET成绩</string>
 
     <!--drawer menu items-->
     <string name="app_description">开源高校应用</string>
@@ -136,7 +130,6 @@
     <!--preference-->
     <string name="pref_lib_summary">图书管理系统用户名及密码</string>
     <string name="pref_cms_summary">教务网用户名及密码</string>
-    <string name="pref_custom_school">自定义学校</string>
     <string name="enable_custom">启用自定义学校</string>
 
     <string name="cms_config">教务网配置</string>
@@ -168,7 +161,6 @@
     <!--captcha dialog-->
     <string name="press_to_get_captcha">点击获取验证码</string>
     <string name="enter_captcha">请输入验证码</string>
-    <string name="please_enter_captcha">请输入验证码</string>
 
     <string name="no_daily_classes">今天没有课, 好好休息一下吧 ~</string>
     <string name="creating_class_ical">正在创建课程日历文件</string>
@@ -183,7 +175,6 @@
     <string name="exam_time">时间</string>
 
     <!--URLs-->
-    <string name="address_author_mail" translatable="false">jeffctor@gmail.com</string>
     <string name="url_apache_license2" translatable="false">https://www.apache.org/licenses/LICENSE-2.0</string>
     <string name="url_project" translatable="false">https://github.com/jeffreystoke/openct-mvp</string>
     <string name="url_chsi_referer" translatable="false">http://www.chsi.com.cn/cet/</string>
@@ -201,7 +192,6 @@
     <string name="open_source_license">开源许可</string>
     <string name="about_app">关于开源课程表</string>
     <string name="saved">已保存</string>
-    <string name="load_grade_page_fail">获取成绩页面失败</string>
     <string name="enter_address">输入地址</string>
     <string name="no_related_books">没有查询到相关书籍</string>
     <string name="no_more_results">没有更多结果了</string>
@@ -209,20 +199,14 @@
     <string name="personalise">个性化</string>
 
     <string name="encrypted">已加密</string>
-    <string name="empty_class_tip">今天没有课, 好好休息一下吧~</string>
     <string name="searching_library">正在检索图书馆馆藏</string>
     <string name="class_detail">课程详情</string>
-    <string name="choose_background">选择背景色</string>
     <string name="class_name">课程名称</string>
     <string name="class_type">类型</string>
     <string name="class_time">时间</string>
     <string name="start">开始</string>
-    <string name="to">到</string>
     <string name="end">结束</string>
     <string name="class_during">课程周期 (周)</string>
-    <string name="odd_week">单周</string>
-    <string name="even_week">双周</string>
-    <string name="common">普通</string>
     <string name="class_teacher">授课教师</string>
     <string name="class_place">上课地点</string>
     <string name="ical_create_success">创建成功, 文件 OpenCT Classes.ics 保存在手机存储根目录中</string>
@@ -235,7 +219,6 @@
     <string name="what_did_you_clicked">刚刚点击的输入框是?</string>
     <string name="username_input">用户名输入</string>
     <string name="common_input">普通输入</string>
-    <string name="select_target_link">选择目标连接</string>
     <string name="question">提问</string>
     <string name="load_online_classes_successful">加载课程信息成功</string>
     <string name="load_online_borrows_successful">加载借阅信息成功</string>
@@ -243,22 +226,15 @@
     <string name="borrows_empty">借阅信息为空</string>
     <string name="grades_empty">成绩信息为空</string>
     <string name="classes_empty">课程信息为空</string>
-    <string name="delete">删除</string>
-    <string name="weekly_class_empty">本周课表为空</string>
     <string name="clear_classes">清空课程</string>
     <string name="advanced_custom">从网页导入</string>
-    <string name="no_class_weekly">本周没有课, 尽情学!习!吧!</string>
     <string name="add_class_info">添加课程</string>
     <string name="import_from_excel">从Excel导入</string>
     <string name="all_classes">所有课程</string>
     <string name="loading_university_info_list">正在获取学校信息</string>
     <string name="loading_school_list">正在加载学校列表</string>
     <string name="one_more_press_to_exit">再按一次返回键退出</string>
-    <string name="today_has">今天有 </string>
-    <string name="class_count"> 节课</string>
     <string name="week">周</string>
-    <string name="di">第</string>
-    <string name="check_schools_update">检查校园信息库更新</string>
     <string name="re_for_classes">课程表正则表达式</string>
     <string name="clear_links_table_selection">清空链接/表格选择</string>
     <string name="clear_action_tip">这将清除你的操作记录, 同时重新获取教务网或图书馆信息时需要再次选择</string>
@@ -291,7 +267,6 @@
     <string name="load_fail">获取信息失败</string>
     <string name="load_fail_tip">是否使用网页进行导入?</string>
     <string name="excel_fail_tip">从Excel导入失败</string>
-    <string name="paste_content_here">将表格粘贴至此</string>
     <string name="add_info">添加信息</string>
     <string name="can_not_fetch_target_page">根据之前的设置未能获取到预期的页面</string>
     <string name="fetch_school_list_fail">获取仓库内校园信息失败, 请检查网络环境</string>
@@ -299,7 +274,6 @@
 
     <string name="text_daily_classes">今日课表</string>
     <string name="text_current_week">第%1$d周</string>
-    <string name="text_sem_classes">学期课表</string>
     <string name="text_today_seq">今天 %1$s 节</string>
     <string name="text_place_at">在 %1$s</string>
     <string name="fail_file_chooser">无法打开文件管理器</string>
@@ -321,4 +295,13 @@
     <string name="default_school_name">未知学校</string>
     <string name="refer_to_usage">查看教程</string>
     <string name="select_schedule_file">选择课程文件</string>
+    <string name="sep"> - </string>
+    <string name="search">检索</string>
+    <string name="jie">节</string>
+    <string name="finish">结束</string>
+    <string name="enter_code">输入验证码</string>
+    <string name="borrows_cannot_filter_tip">没有借阅信息, 无法过滤</string>
+    <string name="tmp_add_school_promt">添加学校功能暂未开放, 敬请期待!</string>
+    <string name="theme">主题</string>
+    <string name="select_theme">选择主题色</string>
 </resources>

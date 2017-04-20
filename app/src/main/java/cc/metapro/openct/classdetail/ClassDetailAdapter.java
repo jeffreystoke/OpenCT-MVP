@@ -18,7 +18,6 @@ package cc.metapro.openct.classdetail;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.ArraySet;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,26 +29,23 @@ import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.ReferenceUtils;
 
 class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDetailViewHolder> {
 
     private LayoutInflater mInflater;
     private List<ClassTime> mClassTimes;
 
-    ClassDetailAdapter(Context context, Set<ClassTime> classTimes) {
+    ClassDetailAdapter(Context context, List<ClassTime> classTimes) {
         mInflater = LayoutInflater.from(context);
-        mClassTimes = new ArrayList<>(classTimes);
-        Collections.sort(mClassTimes);
+        mClassTimes = classTimes;
     }
 
     @Override
@@ -66,10 +62,6 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
     @Override
     public int getItemCount() {
         return mClassTimes == null ? 0 : mClassTimes.size();
-    }
-
-    public Set<ClassTime> getResultTime() {
-        return new ArraySet<>(mClassTimes);
     }
 
     class ClassDetailViewHolder extends RecyclerView.ViewHolder {
@@ -161,7 +153,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                     textView.setGravity(Gravity.CENTER);
                     if (time.hasClass(week)) {
                         textView.setBackground(ContextCompat.getDrawable(context, R.drawable.text_view_card_style_blue));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+                        textView.setTextColor(ReferenceUtils.getThemeColor(context, R.attr.colorAccent));
                     } else {
                         textView.setBackground(ContextCompat.getDrawable(context, R.drawable.text_view_card_style_grey));
                         textView.setTextColor(ContextCompat.getColor(context, R.color.material_grey));
@@ -177,7 +169,7 @@ class ClassDetailAdapter extends RecyclerView.Adapter<ClassDetailAdapter.ClassDe
                                 time.disableWeek(week);
                             } else {
                                 textView.setBackground(ContextCompat.getDrawable(context, R.drawable.text_view_card_style_blue));
-                                textView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+                                textView.setTextColor(ReferenceUtils.getThemeColor(context, R.attr.colorAccent));
                                 time.enableWeek(week);
                             }
                             mClassTimes.add(position, time);

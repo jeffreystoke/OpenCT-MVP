@@ -66,11 +66,8 @@ public class CustomActivity extends BaseActivity implements CustomContract.View 
     @OnClick(R.id.fab)
     public void startRecord() {
         mURL.setText(getUrl());
-
         mConfiguration = new WebConfiguration();
-
         mPresenter.setWebView(mWebView, getSupportFragmentManager());
-
         tipText.setVisibility(View.GONE);
         mWebView.setVisibility(View.VISIBLE);
 
@@ -118,7 +115,7 @@ public class CustomActivity extends BaseActivity implements CustomContract.View 
                 break;
         }
 
-        new CustomPresenter(this, TYPE);
+        new CustomPresenter(this, this, TYPE);
     }
 
     @Override

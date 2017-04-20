@@ -51,7 +51,7 @@
             android:gravity="center"
             android:paddingTop="10dp"
             android:text="@string/show_book_detail"
-            android:textColor="@color/colorAccent"
+            android:textColor="?attr/colorAccent"
             android:textSize="15sp"/>
     </LinearLayout>
 
