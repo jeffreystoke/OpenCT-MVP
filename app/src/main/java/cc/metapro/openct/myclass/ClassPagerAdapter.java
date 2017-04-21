@@ -70,6 +70,7 @@ class ClassPagerAdapter extends FragmentPagerAdapter {
     }
 
     void updateClasses(final Classes classes, final int week) {
+        titleWeek = mContext.getString(R.string.text_current_week, Loader.getCurrentWeek(mContext));
         mDailyFragment.showClasses(classes, week);
         mTableFragment.showClasses(classes, week);
     }

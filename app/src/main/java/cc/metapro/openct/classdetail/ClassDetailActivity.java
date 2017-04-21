@@ -30,6 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.jrummyapps.android.colorpicker.ColorPickerDialog;
 import com.jrummyapps.android.colorpicker.ColorPickerDialogListener;
@@ -48,6 +49,7 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.source.DBManger;
 import cc.metapro.openct.data.university.item.classinfo.ClassTime;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 import cc.metapro.openct.utils.base.BaseActivity;
@@ -71,6 +73,7 @@ public class ClassDetailActivity extends BaseActivity {
     private ClassDetailAdapter mDetailAdapter;
     private EnrichedClassInfo mInfoEditing;
     private List<ClassTime> mClassTimes;
+    private String mOldName;
 
     public static void actionStart(Context context, String name) {
         Intent intent = new Intent(context, ClassDetailActivity.class);
@@ -112,8 +115,8 @@ public class ClassDetailActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        String name = getIntent().getStringExtra(KEY_CLASS_NAME);
-        mInfoEditing = DBManger.getInstance(this).getSingleClass(name);
+        mOldName = getIntent().getStringExtra(KEY_CLASS_NAME);
+        mInfoEditing = DBManger.getInstance(this).getSingleClass(mOldName);
         if (mInfoEditing == null) {
             mInfoEditing = new EnrichedClassInfo(getString(R.string.new_class), getString(R.string.mandatory), new ClassTime());
         }
@@ -188,24 +191,27 @@ public class ClassDetailActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        String oldName = mInfoEditing.getName();
-
+        mInfoEditing.setName(mName.getText().toString());
         mInfoEditing.setType(mType.getText().toString());
         mInfoEditing.setTimes(new ArraySet<>(mClassTimes));
-        if (mClassTimes == null || mClassTimes.isEmpty()) {
-            try {
-                DBManger.getInstance(this).updateSingleClass(oldName, "", null);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return;
-        }
-        mInfoEditing.setName(mName.getText().toString());
         try {
-            DBManger.getInstance(this).updateSingleClass(oldName, mInfoEditing.getName(), mInfoEditing);
-        } catch (Exception e) {
-            Log.d(TAG, e.getMessage(), e);
-            return;
+            if (mClassTimes == null || mClassTimes.isEmpty()) {
+                try {
+                    DBManger.getInstance(this).updateSingleClass(mOldName, "", null);
+                } catch (Exception e) {
+                    Log.d(TAG, e.getMessage(), e);
+                }
+            } else {
+                try {
+                    DBManger.getInstance(this).updateSingleClass(mOldName, mInfoEditing.getName(), mInfoEditing);
+                } catch (Exception e) {
+                    Log.d(TAG, e.getMessage(), e);
+                    Toast.makeText(this, R.string.class_with_same_name, Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+        } finally {
+            Constants.sClasses.setInfoByName(mOldName, mInfoEditing);
         }
         super.onBackPressed();
     }

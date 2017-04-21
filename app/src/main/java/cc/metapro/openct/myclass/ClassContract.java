@@ -16,13 +16,10 @@ package cc.metapro.openct.myclass;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
-
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.utils.base.BaseView;
 import cc.metapro.openct.utils.base.LoginPresenter;
 
-@Keep
 public interface ClassContract {
 
     interface View extends BaseView<Presenter> {

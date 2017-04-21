@@ -46,12 +46,10 @@ import cc.metapro.openct.splash.schoolselection.SchoolSelectionActivity;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.REHelper;
-import cc.metapro.openct.widget.DailyClassWidget;
 
 public class SchoolPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
     private Preference mSchoolPreference;
-    private Preference mCurrentWeekPreference;
     private Preference mCmsPasswordPreference;
     private Preference mLibPasswordPreference;
     private SwitchPreference mCustomEnablePreference;
@@ -120,10 +118,6 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
             }
         });
         mPreferences.add(mSchoolPreference);
-
-        mCurrentWeekPreference = findPreference(getString(R.string.pref_current_week));
-        mPreferences.add(mCurrentWeekPreference);
-
         mCmsPasswordPreference = findPreference(getString(R.string.pref_cms_password));
         mPreferences.add(mCmsPasswordPreference);
 
@@ -231,9 +225,7 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
         String value = newValue.toString();
         bindSummary(preference, value);
 
-        if (preference.equals(mCurrentWeekPreference)) {
-            DailyClassWidget.update(getActivity());
-        } else if (preference.equals(mCustomSchoolNamePreference)) {
+        if (preference.equals(mCustomSchoolNamePreference)) {
             if (mCustomEnablePreference.isChecked()) {
                 bindSummary(mSchoolPreference, value);
             }

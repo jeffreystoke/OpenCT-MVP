@@ -25,6 +25,8 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import net.fortuna.ical4j.validate.ValidationException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,7 @@ import cc.metapro.openct.data.university.item.BorrowInfo;
 import cc.metapro.openct.data.university.item.GradeInfo;
 import cc.metapro.openct.data.university.item.classinfo.Classes;
 import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
+import cc.metapro.openct.utils.CloseUtils;
 import cc.metapro.openct.utils.PrefHelper;
 
 public class DBManger {
@@ -193,9 +196,7 @@ public class DBManger {
             Log.e(TAG, e.getMessage(), e);
             return DEFAULT_UNIVERSITY;
         } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+            CloseUtils.close(cursor);
         }
     }
 
@@ -221,9 +222,7 @@ public class DBManger {
             Log.e(TAG, e.getMessage(), e);
             return DEFAULT_UNIVERSITY;
         } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+            CloseUtils.close(cursor);
         }
     }
 
@@ -253,9 +252,7 @@ public class DBManger {
             Log.e(TAG, e.getMessage(), e);
             return null;
         } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+            CloseUtils.close(cursor);
         }
     }
 
@@ -267,34 +264,41 @@ public class DBManger {
      * @param info    edited class info
      * @throws Exception if the edited class info with a empty name
      */
-    public void updateSingleClass(@Nullable String oldName, @NonNull String newName, EnrichedClassInfo info) throws Exception {
+    public void updateSingleClass(@Nullable String oldName, @NonNull String newName, EnrichedClassInfo info) throws ValidationException {
         mDatabase.beginTransaction();
         Cursor cursor = null;
         try {
-            if (!TextUtils.isEmpty(oldName)) {
-                mDatabase.delete(DBHelper.CLASS_TABLE, "id=? COLLATE NOCASE", new String[]{oldName});
-            }
-
-            // check if the new name exists
-            cursor = mDatabase.query(
-                    DBHelper.CLASS_TABLE, null,
-                    "id=? COLLATE NOCASE", new String[]{newName},
-                    null, null, null);
+            cursor = mDatabase.query(DBHelper.CLASS_TABLE, null, "id=? COLLATE NOCASE", new String[]{newName}, null, null, null);
             cursor.moveToFirst();
-            if (!cursor.isAfterLast()) {
-                throw new Exception("Duplicate class name, won't be accepted!");
+
+            // name not modified
+            if (!TextUtils.isEmpty(oldName) && oldName.equals(newName)) {
+                if (info != null) {
+                    ContentValues values = new ContentValues();
+                    values.put("id", oldName);
+                    values.put(DBHelper.JSON, info.toString());
+                    mDatabase.update(DBHelper.CLASS_TABLE, values, "id=? COLLATE NOCASE", new String[]{oldName});
+                }
+            } else if (!cursor.isAfterLast()) {
+                // name modified and new name is duplicated
+                throw new ValidationException("Duplicate class name, won't be accepted!");
             } else {
-                ContentValues values = new ContentValues();
-                values.put("id", newName);
-                values.put(DBHelper.JSON, info.toString());
-                mDatabase.insert(DBHelper.CLASS_TABLE, null, values);
+                // name modified and new name is valid
+                if (!TextUtils.isEmpty(oldName)) {
+                    mDatabase.delete(DBHelper.CLASS_TABLE, "id=? COLLATE NOCASE", new String[]{oldName});
+                }
+
+                if (info != null) {
+                    ContentValues values = new ContentValues();
+                    values.put("id", newName);
+                    values.put(DBHelper.JSON, info.toString());
+                    mDatabase.insert(DBHelper.CLASS_TABLE, null, values);
+                }
             }
             mDatabase.setTransactionSuccessful();
         } finally {
             mDatabase.endTransaction();
-            if (cursor != null) {
-                cursor.close();
-            }
+            CloseUtils.close(cursor);
         }
     }
 

@@ -26,14 +26,7 @@
             android:title="@string/school">
             <intent android:action="cc.metapro.openct.schoolselection"/>
         </Preference>
-        <!--周数选择-->
-        <ListPreference
-            android:entries="@array/pref_week_seq_keys"
-            android:entryValues="@array/pref_week_seq_values"
-            android:key="@string/pref_current_week"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="@string/current_week"/>
+
         <!--教务网信息-->
         <PreferenceScreen
             android:summary="@string/pref_cms_summary"

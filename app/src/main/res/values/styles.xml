@@ -14,12 +14,15 @@
   ~ limitations under the License.
   -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <!--Actionbar Theme-->
     <style name="AppTheme.Actionbar" parent="AppTheme">
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">false</item>
+
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:clipToPadding">false</item>
     </style>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -117,7 +120,7 @@
     </style>
 
     <!--toolbar-->
-    <style name="AppTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
+    <style name="AppTheme.Toolbar.Light" parent="Widget.AppCompat.Light.ActionBar.Solid">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="layout_collapseMode">pin</item>
@@ -126,7 +129,7 @@
         <item name="popupTheme">@style/AppTheme.Toolbar.Popup</item>
     </style>
 
-    <style name="AppTheme.Toolbar.Popup" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="AppTheme.Toolbar.Popup" parent="ThemeOverlay.AppCompat.ActionBar">
         <!--<item name="colorControlNormal">?android:attr/textColorPrimaryInverse</item>-->
         <!--<item name="actionMenuTextColor">?android:attr/textColorPrimaryInverse</item>-->
         <!--<item name="android:colorBackground">?android:attr/colorPrimary</item>-->
@@ -149,9 +152,7 @@
 
     <!--Dialog Input style-->
     <style name="AppTheme.Dialog.Input" parent="Widget.AppCompat.EditText">
-        <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">20dp</item>
         <item name="android:layout_marginRight">20dp</item>
-        <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">20dp</item>
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -211,9 +212,6 @@
         <item name="android:gravity">center</item>
         <item name="android:layout_marginTop">20dp</item>
         <item name="android:layout_marginLeft">50dp</item>
-        <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">50dp</item>
-        <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">50dp</item>
         <item name="android:layout_marginRight">50dp</item>
-        <item name="android:textAlignment" tools:targetApi="jelly_bean_mr1">center</item>
     </style>
 </resources>

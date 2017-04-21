@@ -17,10 +17,19 @@
 
 <resources>
 
+    <!--Actionbar Theme-->
+    <style name="AppTheme.Actionbar" parent="AppTheme">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:clipToPadding">false</item>
+    </style>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/material_white</item>
         <item name="colorPrimaryDark">@color/material_white</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/material_blue</item>
         <item name="android:textColorPrimary">@color/material_black</item>
         <item name="android:textColorSecondary">@color/material_grey</item>
 
@@ -57,7 +66,7 @@
     </style>
 
     <!--toolbar-->
-    <style name="AppTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
+    <style name="AppTheme.Toolbar.Light" parent="Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="layout_collapseMode">pin</item>
@@ -66,7 +75,10 @@
         <item name="popupTheme">@style/AppTheme.Toolbar.Popup</item>
     </style>
 
-    <style name="AppTheme.Toolbar.Popup" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="AppTheme.Toolbar.Popup" parent="ThemeOverlay.AppCompat.ActionBar">
+        <!--<item name="colorControlNormal">?android:attr/textColorPrimaryInverse</item>-->
+        <!--<item name="actionMenuTextColor">?android:attr/textColorPrimaryInverse</item>-->
+        <!--<item name="android:colorBackground">?android:attr/colorPrimary</item>-->
     </style>
 
     <style name="AppTheme.AlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">

@@ -83,7 +83,6 @@ public class LinkSelectionDialog extends BaseDialog {
                 .setNeutralButton(R.string.not_in_range_above, null);
 
         setView(builder);
-
         final AlertDialog alertDialog = builder.create();
 
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -112,40 +111,50 @@ public class LinkSelectionDialog extends BaseDialog {
                     }
                 });
 
-                if (!sIsFirst || sShowAll) {
-                    neutralButton.setText(R.string.click_to_go);
-                    if (mTarget == null) {
-                        Toast.makeText(getActivity(), "Please select a link first", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    setUrlPattern();
-
-                    if (TYPE_GRADE.equals(TYPE) || TYPE_CLASS.equals(TYPE)) {
-                        Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
-                            @Override
-                            public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                                CmsFactory factory = Loader.getCms(getActivity());
-                                e.onNext(factory.getPageDom(mTarget.absUrl("href")));
-                            }
-                        });
-
-                        Observer<Document> observer = new MyObserver<Document>(TAG) {
-                            @Override
-                            public void onNext(Document document) {
-                                newInstance(TYPE, document, mPresenter, false, false)
-                                        .show(getFragmentManager(), "link_selection");
-                                dismiss();
-                            }
-                        };
-
-                        observable.subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(observer);
-                    }
+                if (sIsFirst) {
+                    neutralButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            newInstance(TYPE, DOCUMENT, mPresenter, true, true)
+                                    .show(getFragmentManager(), "link_selection");
+                            dismiss();
+                        }
+                    });
                 } else {
-                    newInstance(TYPE, DOCUMENT, mPresenter, true, true)
-                            .show(getFragmentManager(), "link_selection");
-                    dismiss();
+                    neutralButton.setText(R.string.click_to_go);
+                    neutralButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (mTarget == null) {
+                                Toast.makeText(getActivity(), "Please select a link first", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+
+                            setUrlPattern();
+                            if (TYPE_GRADE.equals(TYPE) || TYPE_CLASS.equals(TYPE)) {
+                                Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
+                                    @Override
+                                    public void subscribe(ObservableEmitter<Document> e) throws Exception {
+                                        CmsFactory factory = Loader.getCms(getActivity());
+                                        e.onNext(factory.getPageDom(mTarget.absUrl("href")));
+                                    }
+                                });
+
+                                Observer<Document> observer = new MyObserver<Document>(TAG) {
+                                    @Override
+                                    public void onNext(Document document) {
+                                        newInstance(TYPE, document, mPresenter, false, false)
+                                                .show(getFragmentManager(), "link_selection");
+                                        dismiss();
+                                    }
+                                };
+
+                                observable.subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(observer);
+                            }
+                        }
+                    });
                 }
             }
         });

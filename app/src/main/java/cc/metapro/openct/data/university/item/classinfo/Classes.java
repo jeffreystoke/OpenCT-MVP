@@ -18,6 +18,7 @@ package cc.metapro.openct.data.university.item.classinfo;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +56,23 @@ public class Classes extends ArrayList<EnrichedClassInfo> {
     @Override
     public void add(int index, EnrichedClassInfo element) {
         add(element);
+    }
+
+    public boolean setInfoByName(String name, EnrichedClassInfo newInfo) {
+        EnrichedClassInfo target = null;
+        for (EnrichedClassInfo info : this) {
+            String s = info.getName();
+            if (TextUtils.isEmpty(s) && s.equalsIgnoreCase(name)) {
+                target = info;
+                break;
+            }
+        }
+
+        if (target != null) {
+            remove(target);
+            return add(newInfo);
+        }
+        return false;
     }
 
     @NonNull

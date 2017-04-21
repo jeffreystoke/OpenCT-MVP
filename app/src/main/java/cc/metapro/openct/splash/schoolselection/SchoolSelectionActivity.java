@@ -22,7 +22,6 @@ import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -109,6 +108,8 @@ public class SchoolSelectionActivity
             @Override
             public void subscribe(ObservableEmitter<SchoolAdapter> e) throws Exception {
                 if (online) {
+                    // delete current schools
+                    ActivityUtils.dismissProgressDialog();
                     DBManger.updateSchools(SchoolSelectionActivity.this, null);
                 }
 
@@ -120,16 +121,10 @@ public class SchoolSelectionActivity
         Observer<SchoolAdapter> observer = new MyObserver<SchoolAdapter>(TAG) {
             @Override
             public void onNext(SchoolAdapter schoolAdapter) {
-                super.onNext(schoolAdapter);
-                if (online) {
-                    Snackbar.make(mListView, R.string.schools_updated, BaseTransientBottomBar.LENGTH_LONG).show();
+                if (!online) {
+                    ActivityUtils.dismissProgressDialog();
                 }
                 setViews(schoolAdapter);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                super.onError(e);
             }
         };
 
@@ -165,22 +160,27 @@ public class SchoolSelectionActivity
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        if (!TextUtils.isEmpty(query)) {
-            mAdapter.setTextFilter(query);
-            mAdapter.notifyDataSetChanged();
-        }
+        mAdapter.setTextFilter(query)
+                .subscribeWith(new MyObserver("") {
+                    @Override
+                    public void onNext(Object o) {
+                        mAdapter.notifyDataSetChanged();
+                        mListView.smoothScrollToPosition(0);
+                    }
+                });
         return true;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if (TextUtils.isEmpty(newText)) {
-            mAdapter.clearTextFilter();
-            mAdapter.notifyDataSetChanged();
-        } else {
-            mAdapter.setTextFilter(newText);
-            mAdapter.notifyDataSetChanged();
-        }
+        mAdapter.setTextFilter(newText)
+                .subscribeWith(new MyObserver("") {
+                    @Override
+                    public void onNext(Object o) {
+                        mAdapter.notifyDataSetChanged();
+                        mListView.smoothScrollToPosition(0);
+                    }
+                });
         return true;
     }
 

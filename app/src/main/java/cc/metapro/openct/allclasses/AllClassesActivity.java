@@ -50,7 +50,6 @@ public class AllClassesActivity extends BaseActivity implements AllClassesContra
     Toolbar mToolbar;
     @BindView(R.id.recycler_view)
     SwipeMenuRecyclerView mRecyclerView;
-
     private AllClassesAdapter mAdapter;
     private AllClassesContract.Presenter mPresenter;
 

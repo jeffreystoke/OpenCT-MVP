@@ -79,6 +79,10 @@ public final class ActivityUtils {
     }
 
     private static void showProgressDialog(Context context, @StringRes int messageId, boolean cancelable) {
+        if (sProgressDialog != null) {
+            sProgressDialog.dismiss();
+            sProgressDialog = null;
+        }
         sProgressDialog = new ProgressDialog(context);
         sProgressDialog.setMessage(context.getString(messageId));
         sProgressDialog.setCancelable(cancelable);

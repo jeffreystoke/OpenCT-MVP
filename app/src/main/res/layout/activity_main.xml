@@ -49,7 +49,7 @@
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
-                    style="@style/AppTheme.Toolbar"/>
+                    style="@style/AppTheme.Toolbar.Light"/>
 
                 <android.support.design.widget.TabLayout
                     android:id="@+id/tab_layout"

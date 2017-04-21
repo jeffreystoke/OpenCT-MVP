@@ -19,8 +19,6 @@ package cc.metapro.openct;
 import android.app.Application;
 import android.util.DisplayMetrics;
 
-import com.squareup.leakcanary.LeakCanary;
-
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.CrashHandler;
@@ -30,10 +28,10 @@ public class OpenCT extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            return;
-        }
-        LeakCanary.install(this);
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            return;
+//        }
+//        LeakCanary.install(this);
         initStatic();
         CrashHandler.initInstance(this);
     }

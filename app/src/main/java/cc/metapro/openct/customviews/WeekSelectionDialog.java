@@ -25,6 +25,7 @@ import android.support.v7.app.AlertDialog;
 import cc.metapro.openct.R;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.base.BaseDialog;
+import cc.metapro.openct.widget.DailyClassWidget;
 
 
 public class WeekSelectionDialog extends BaseDialog {
@@ -50,6 +51,7 @@ public class WeekSelectionDialog extends BaseDialog {
                                 int selectedWeek = which + 1;
                                 PrefHelper.putString(getActivity(), R.string.pref_current_week, selectedWeek + "");
                                 sCallBack.onSelection(selectedWeek);
+                                DailyClassWidget.update(getActivity());
                                 dismiss();
                             }
                         })

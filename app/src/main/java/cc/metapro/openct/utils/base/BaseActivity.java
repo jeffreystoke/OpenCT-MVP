@@ -17,7 +17,7 @@ package cc.metapro.openct.utils.base;
  */
 
 import android.os.Bundle;
-import android.support.annotation.ColorRes;
+import android.support.annotation.ColorInt;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
@@ -42,7 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract int getLayout();
 
     @StyleRes
-    protected final int getThemeByColor(@ColorRes int color) {
+    protected final int getThemeByColor(@ColorInt int color) {
         if (color == ContextCompat.getColor(this, R.color.material_white)) {
             return R.style.AppTheme;
         } else if (color == ContextCompat.getColor(this, R.color.material_blue)) {

@@ -17,6 +17,7 @@ package cc.metapro.openct.splash.schoolselection;
  */
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +77,6 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
             @Override
             public void subscribe(@NonNull ObservableEmitter observableEmitter) throws Exception {
                 ActivityUtils.showProgressDialog(context, R.string.loading_university_info_list);
-
                 Observable<List<UniversityInfo>> observable = Observable.create(new ObservableOnSubscribe<List<UniversityInfo>>() {
                     @Override
                     public void subscribe(ObservableEmitter<List<UniversityInfo>> e) throws Exception {
@@ -112,19 +112,42 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
         }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
     }
 
-    void setTextFilter(String filter) {
-        List<String> targetList = new ArrayList<>();
-        for (String s : mAllSchools) {
-            if (s.contains(filter)) {
-                targetList.add(s);
-            }
-        }
-        mSchools = targetList;
-    }
+    Observable setTextFilter(final String filter) {
+        return Observable.create(new ObservableOnSubscribe() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter observableEmitter) throws Exception {
+                synchronized (SchoolAdapter.class) {
+                    if (TextUtils.isEmpty(filter)) {
+                        mSchools = mAllSchools;
 
-    void clearTextFilter() {
-        mSchools.clear();
-        mSchools.addAll(mAllSchools);
+                    } else {
+                        String t = filter.trim();
+                        char[] chars = t.toCharArray();
+                        String[] s = new String[chars.length];
+                        for (int i = 0; i < chars.length; i++) {
+                            s[i] = chars[i] + "";
+                        }
+
+                        List<String> targetList = new ArrayList<>();
+                        for (String tmp : mAllSchools) {
+                            boolean match = true;
+                            for (String c : s) {
+                                if (!tmp.contains(c)) {
+                                    match = false;
+                                    break;
+                                }
+                            }
+                            if (match) {
+                                targetList.add(tmp);
+                            }
+                        }
+                        mSchools = targetList;
+                    }
+                }
+                observableEmitter.onNext("");
+            }
+        })
+                .subscribeOn(Schedulers.io());
     }
 
     @Override
