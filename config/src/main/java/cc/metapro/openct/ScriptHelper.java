@@ -24,13 +24,24 @@ import javax.script.ScriptException;
 public class ScriptHelper {
 
     static final String FUNCTION_NAME = "getPostContent";
+    static final String FUNCTION_STRUCTURE = "function %s(username, password, captcha, extraPart) { %s }";
+    static final String POST_CONTENT = "{POST_CONTENT}";
+    static final String CAPTCHA = "{CAPTCHA}";
+    static final String USERNAME = "{USERNAME}";
+    static final String PASSWORD = "{PASSWORD}";
+    static final String EXTRA_PART = "{EXTRA_PART}";
 
-    public static String getPostContent(LoginConfig config, String username, String password, String extraPart) throws ScriptException, NoSuchMethodException {
+    public static String getPostContent(LoginConfig config, String username, String password, String captcha, String extraPart) {
         if (config == null) return "";
 
         String script = config.getPostContentScript();
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("javascript");
-        engine.eval(script);
-        return (String) ((Invocable) engine).invokeFunction(FUNCTION_NAME, username, password, extraPart);
+        try {
+            engine.eval(script);
+            return (String) ((Invocable) engine).invokeFunction(FUNCTION_NAME, username, password, extraPart);
+        } catch (ScriptException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

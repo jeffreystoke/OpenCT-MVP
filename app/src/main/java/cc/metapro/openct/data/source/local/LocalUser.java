@@ -16,11 +16,12 @@ package cc.metapro.openct.data.source.local;
  * limitations under the License.
  */
 
+import android.text.TextUtils;
+
 import com.scottyab.aescrypt.AESCrypt;
 
 import java.security.GeneralSecurityException;
 
-import cc.metapro.openct.TextUtils;
 import cc.metapro.openct.utils.Constants;
 
 public class LocalUser {

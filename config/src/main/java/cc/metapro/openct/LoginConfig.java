@@ -16,6 +16,7 @@ package cc.metapro.openct;
  * limitations under the License.
  */
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class LoginConfig {
@@ -23,14 +24,28 @@ public class LoginConfig {
     private String loginURL;
     private String captchaURL;
     private String extraLoginPartURL;
-    private String script;
+    private String fetchExtraMethod;
+    private String[] script;
 
     private Map<String, String> postHeaderSpec;
     private String postReferer;
     private String postURL;
 
+    private transient String username, password, captcha, extraPart;
+
+    public void setInfo(String username, String password, String captcha) {
+        this.username = username;
+        this.password = password;
+        this.captcha = captcha;
+    }
+
+    public void setExtraPart(String extraPart) {
+        this.extraPart = extraPart;
+    }
+
     String getPostContentScript() {
-        return String.format("function %s(username, password, extraPart) { %s }", ScriptHelper.FUNCTION_NAME, script);
+        return String.format(ScriptHelper.FUNCTION_STRUCTURE,
+                ScriptHelper.FUNCTION_NAME, TextUtils.join("\n", script));
     }
 
     public String getLoginURL() {
@@ -45,8 +60,31 @@ public class LoginConfig {
         return extraLoginPartURL;
     }
 
+    public String getFetchExtraMethod() {
+        return fetchExtraMethod;
+    }
+
     public Map<String, String> getPostHeaderSpec() {
-        return postHeaderSpec;
+        Map<String, String> realHeader = new HashMap<>(0);
+        if (postHeaderSpec != null) {
+            for (String s : postHeaderSpec.keySet()) {
+                String value = postHeaderSpec.get(s);
+                if (value.equalsIgnoreCase(ScriptHelper.POST_CONTENT)) {
+                    realHeader.put(s, ScriptHelper.getPostContent(this, username, password, captcha, extraPart));
+                } else if (value.equalsIgnoreCase(ScriptHelper.CAPTCHA)) {
+                    realHeader.put(s, captcha);
+                } else if (value.equalsIgnoreCase(ScriptHelper.PASSWORD)) {
+                    realHeader.put(s, password);
+                } else if (value.equalsIgnoreCase(ScriptHelper.USERNAME)) {
+                    realHeader.put(s, username);
+                } else if (value.equalsIgnoreCase(ScriptHelper.EXTRA_PART)) {
+                    realHeader.put(s, extraPart);
+                } else {
+                    realHeader.put(s, value);
+                }
+            }
+        }
+        return realHeader;
     }
 
     public String getPostReferer() {

@@ -18,7 +18,21 @@ package cc.metapro.openct;
 
 public final class TextUtils {
 
-    public static boolean isEmpty(CharSequence sequence) {
+    static boolean isEmpty(CharSequence sequence) {
         return sequence == null || sequence.length() == 0;
+    }
+
+    static String join(CharSequence delimiter, Object[] tokens) {
+        StringBuilder sb = new StringBuilder();
+        boolean firstTime = true;
+        for (Object token : tokens) {
+            if (firstTime) {
+                firstTime = false;
+            } else {
+                sb.append(delimiter);
+            }
+            sb.append(token);
+        }
+        return sb.toString();
     }
 }

@@ -30,6 +30,7 @@ import cc.metapro.openct.data.source.local.LocalHelper;
 import cc.metapro.openct.data.university.LibraryFactory;
 import cc.metapro.openct.data.university.model.BookInfo;
 import cc.metapro.openct.utils.ActivityUtils;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.base.MyObserver;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -67,8 +68,8 @@ class LibSearchPresenter implements LibSearchContract.Presenter {
             @Override
             public void subscribe(ObservableEmitter<List<BookInfo>> e) throws Exception {
                 Map<String, String> map = new HashMap<>(2);
-                map.put(mContext.getString(R.string.key_search_type), type);
-                map.put(mContext.getString(R.string.key_search_content), content);
+                map.put(Constants.SEARCH_TYPE_KEY, type);
+                map.put(Constants.SEARCH_CONTENT_KEY, content);
                 e.onNext(mLibraryFactory.search(map));
             }
         });
