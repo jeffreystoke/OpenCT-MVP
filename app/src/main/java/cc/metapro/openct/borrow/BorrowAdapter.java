@@ -32,7 +32,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.item.BorrowInfo;
+import cc.metapro.openct.data.university.model.BorrowInfo;
 
 @Keep
 class BorrowAdapter extends RecyclerView.Adapter<BorrowAdapter.BorrowViewHolder> {

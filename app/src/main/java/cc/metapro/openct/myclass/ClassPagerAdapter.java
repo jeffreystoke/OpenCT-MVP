@@ -22,8 +22,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.source.local.LocalHelper;
+import cc.metapro.openct.data.university.model.classinfo.Classes;
 import cc.metapro.openct.myclass.classviews.DailyFragment;
 import cc.metapro.openct.myclass.classviews.TableFragment;
 
@@ -37,7 +37,7 @@ class ClassPagerAdapter extends FragmentPagerAdapter {
     ClassPagerAdapter(FragmentManager manager, Context context) {
         super(manager);
         mContext = context;
-        titleWeek = mContext.getString(R.string.text_current_week, Loader.getCurrentWeek(mContext));
+        titleWeek = mContext.getString(R.string.text_current_week, LocalHelper.getCurrentWeek(mContext));
         mDailyFragment = DailyFragment.newInstance();
         mTableFragment = TableFragment.newInstance();
     }
@@ -70,7 +70,7 @@ class ClassPagerAdapter extends FragmentPagerAdapter {
     }
 
     void updateClasses(final Classes classes, final int week) {
-        titleWeek = mContext.getString(R.string.text_current_week, Loader.getCurrentWeek(mContext));
+        titleWeek = mContext.getString(R.string.text_current_week, LocalHelper.getCurrentWeek(mContext));
         mDailyFragment.showClasses(classes, week);
         mTableFragment.showClasses(classes, week);
     }

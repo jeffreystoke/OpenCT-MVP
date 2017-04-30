@@ -40,21 +40,13 @@ public class OpenCT extends Application {
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         Constants.CLASS_WIDTH = (int) Math.round(metrics.widthPixels * (2.0 / 15.0));
         Constants.CLASS_BASE_HEIGHT = (int) Math.round(metrics.heightPixels * (1.0 / 15.0));
-
         Constants.NAME = getString(R.string.class_name);
         Constants.TIME = getString(R.string.class_time);
         Constants.TYPE = getString(R.string.class_type);
         Constants.DURING = getString(R.string.class_during);
         Constants.PLACE = getString(R.string.class_place);
         Constants.TEACHER = getString(R.string.class_teacher);
-
         Constants.CAPTCHA_FILE = getCacheDir().getPath() + "/captcha";
-        Constants.USERNAME_KEY = getString(R.string.key_username);
-        Constants.PASSWORD_KEY = getString(R.string.key_password);
-        Constants.CAPTCHA_KEY = getString(R.string.key_captcha);
-        Constants.ACTION_KEY = getString(R.string.key_action);
-        Constants.SEARCH_TYPE_KEY = getString(R.string.key_search_type);
-        Constants.SEARCH_CONTENT_KEY = getString(R.string.key_search_content);
     }
 
     @Override

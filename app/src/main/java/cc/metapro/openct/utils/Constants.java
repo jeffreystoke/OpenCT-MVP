@@ -19,9 +19,9 @@ package cc.metapro.openct.utils;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.university.AdvancedCustomInfo;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.source.local.DBManger;
+import cc.metapro.openct.data.university.DetailCustomInfo;
+import cc.metapro.openct.data.university.model.classinfo.Classes;
 
 public final class Constants {
 
@@ -33,6 +33,14 @@ public final class Constants {
     public static final String TYPE_SEARCH = "search";
     public static final String TYPE_BORROW = "borrow";
     public static final String TIME_PREFIX = "class_time_";
+    public static final String ACTION_KEY = "action";
+    public static final String USERNAME_KEY = "username";
+    public static final String PASSWORD_KEY = "password";
+    public static final String CAPTCHA_KEY = "captcha";
+    public static final String SEARCH_TYPE_KEY = "type";
+    public static final String SEARCH_CONTENT_KEY = "content";
+    public static final String DEFAULT_SCHOOL_NAME = "OpenCT";
+    public static final String DEFAULT_URL = "example.com";
 
     // encryption seed
     public static final String seed =
@@ -45,7 +53,7 @@ public final class Constants {
     // 苏文
     public static final String NJSUWEN = "njsuwen";
     // 普通
-    public static final String COMMON = "custom";
+    public static final String CUSTOM = "custom";
     // 强智
     public static final String QZDATASOFT = "qzdatasoft";
     // 青果
@@ -57,17 +65,8 @@ public final class Constants {
     // 汇文
     public static final String NJHUIWEN = "njhuiwen";
 
-    // web page form key
-    public static String ACTION_KEY;
-    public static String USERNAME_KEY;
-    public static String PASSWORD_KEY;
-    public static String CAPTCHA_KEY;
-    public static String SEARCH_TYPE_KEY;
-    public static String SEARCH_CONTENT_KEY;
-
     // captcha cache file path
     public static String CAPTCHA_FILE;
-
     // table choose dialog options
     public static String NAME;
     public static String TIME;
@@ -83,13 +82,9 @@ public final class Constants {
     public static Classes sClasses = new Classes();
 
 
-    public static AdvancedCustomInfo advCustomInfo;
+    public static DetailCustomInfo sDetailCustomInfo;
 
     public static void checkAdvCustomInfo(Context context) {
-        advCustomInfo = DBManger.getAdvancedCustomInfo(context);
-    }
-
-    public static void storeAdvCustomInfo(Context context) {
-        DBManger.getInstance(context).updateAdvCustomInfo(advCustomInfo);
+        sDetailCustomInfo = DBManger.getDetailCustomInfo(context);
     }
 }

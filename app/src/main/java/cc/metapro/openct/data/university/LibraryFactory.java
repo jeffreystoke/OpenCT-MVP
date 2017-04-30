@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import cc.metapro.interactiveweb.utils.HTMLUtils;
-import cc.metapro.openct.data.university.item.BookInfo;
+import cc.metapro.openct.data.university.model.BookInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.webutils.Form;
 import cc.metapro.openct.utils.webutils.FormHandler;

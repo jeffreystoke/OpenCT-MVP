@@ -34,7 +34,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.item.classinfo.ClassTime;
+import cc.metapro.openct.data.university.model.classinfo.ClassTime;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.ReferenceUtils;
 

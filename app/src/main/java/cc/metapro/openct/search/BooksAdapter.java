@@ -29,7 +29,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.item.BookInfo;
+import cc.metapro.openct.data.university.model.BookInfo;
 
 class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookInfoViewHolder> {
 

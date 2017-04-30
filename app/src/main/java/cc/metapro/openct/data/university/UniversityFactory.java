@@ -16,7 +16,6 @@ package cc.metapro.openct.data.university;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.webkit.URLUtil;
@@ -34,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import cc.metapro.openct.data.source.StoreHelper;
+import cc.metapro.openct.data.source.local.StoreHelper;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.interceptors.SchoolInterceptor;
 import cc.metapro.openct.utils.webutils.Form;
@@ -44,10 +43,9 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
-@Keep
 public abstract class UniversityFactory {
 
-    private static final String LOGIN_SUCCESS_PATTERN = "(当前)|(个人)";
+    private static final String LOGIN_SUCCESS_PATTERN = "(当前)|(个人)|(退出)|(注销)";
     static UniversityService mService;
     static String SYS;
     private static WebHelper webHelper;

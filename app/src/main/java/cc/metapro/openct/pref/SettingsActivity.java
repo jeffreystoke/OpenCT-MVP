@@ -17,16 +17,15 @@ package cc.metapro.openct.pref;
  */
 
 import android.app.ActionBar;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.DBManger;
+import cc.metapro.openct.data.source.local.DBManger;
 import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.utils.PrefHelper;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -49,19 +48,19 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
+        super.onStop();
         storeCustom();
-        super.onDestroy();
     }
 
     private void storeCustom() {
         DBManger manger = DBManger.getInstance(this);
-        UniversityInfo info = new UniversityInfo();
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        info.cmsSys = pref.getString(getString(R.string.pref_custom_cms_sys), Constants.COMMON);
-        info.cmsURL = pref.getString(getString(R.string.pref_custom_cms_url), "");
-        info.libSys = pref.getString(getString(R.string.pref_custom_lib_sys), Constants.NJHUIWEN);
-        info.libURL = pref.getString(getString(R.string.pref_custom_lib_url), "");
+        UniversityInfo info = UniversityInfo.getDefault();
+        info.setName(PrefHelper.getString(this, R.string.pref_custom_school_name, Constants.DEFAULT_SCHOOL_NAME));
+        info.setCmsSys(PrefHelper.getString(this, R.string.pref_custom_cms_sys, Constants.CUSTOM));
+        info.setCmsURL(PrefHelper.getString(this, R.string.pref_custom_cms_url, Constants.DEFAULT_URL));
+        info.setLibSys(PrefHelper.getString(this, R.string.pref_custom_lib_sys, Constants.CUSTOM));
+        info.setLibURL(PrefHelper.getString(this, R.string.pref_custom_lib_url, Constants.DEFAULT_URL));
         manger.updateCustomSchoolInfo(info);
     }
 }

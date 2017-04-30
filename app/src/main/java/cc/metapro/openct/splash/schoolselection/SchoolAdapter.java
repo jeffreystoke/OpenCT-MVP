@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +30,7 @@ import java.util.List;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.openctservice.ServiceGenerator;
-import cc.metapro.openct.data.source.DBManger;
+import cc.metapro.openct.data.source.local.DBManger;
 import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.base.MyObserver;
@@ -67,8 +66,8 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
         mAllSchools.clear();
         mSchools.clear();
         for (UniversityInfo info : universityList) {
-            mAllSchools.add(info.name);
-            mSchools.add(info.name);
+            mAllSchools.add(info.getName());
+            mSchools.add(info.getName());
         }
     }
 
@@ -77,37 +76,22 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
             @Override
             public void subscribe(@NonNull ObservableEmitter observableEmitter) throws Exception {
                 ActivityUtils.showProgressDialog(context, R.string.loading_university_info_list);
-                Observable<List<UniversityInfo>> observable = Observable.create(new ObservableOnSubscribe<List<UniversityInfo>>() {
-                    @Override
-                    public void subscribe(ObservableEmitter<List<UniversityInfo>> e) throws Exception {
-                        List<UniversityInfo> universityInfoList = ServiceGenerator
-                                .createOpenCTService().getOnlineUniversityInfo().execute().body();
-                        if (universityInfoList == null || universityInfoList.isEmpty()) {
-                            e.onError(new Exception(context.getString(R.string.fetch_school_list_fail)));
-                        } else {
-                            e.onNext(universityInfoList);
-                        }
-                    }
-                });
-
                 Observer<List<UniversityInfo>> observer = new MyObserver<List<UniversityInfo>>("OpenCT_School_Fetch") {
                     @Override
-                    public void onNext(final List<UniversityInfo> universityList) {
+                    public void onNext(List<UniversityInfo> universityList) {
                         super.onNext(universityList);
                         DBManger.updateSchools(context, universityList);
                         setSchools(universityList);
                     }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        super.onError(e);
-                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
                 };
 
-                observable.subscribeOn(Schedulers.io())
+                ServiceGenerator
+                        .createOpenCTService()
+                        .getOnlineUniversityInfo()
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(observer);
+                        .subscribeWith(observer);
+
             }
         }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
     }

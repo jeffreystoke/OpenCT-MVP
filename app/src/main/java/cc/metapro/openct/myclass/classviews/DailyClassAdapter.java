@@ -31,8 +31,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
-import cc.metapro.openct.data.university.item.classinfo.SingleClass;
+import cc.metapro.openct.data.university.model.classinfo.Classes;
+import cc.metapro.openct.data.university.model.classinfo.SingleClass;
 
 class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassViewHolder> {
 

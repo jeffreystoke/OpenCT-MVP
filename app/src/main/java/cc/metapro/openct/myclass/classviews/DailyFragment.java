@@ -28,7 +28,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.university.model.classinfo.Classes;
 import cc.metapro.openct.myclass.ClassContract;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.RecyclerViewHelper;

@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.source.local.LocalHelper;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.base.BaseDialog;
@@ -68,7 +68,7 @@ public class FormDialog extends BaseDialog {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         FormHandler handler = new FormHandler(document);
-        if (Constants.QZDATASOFT.equalsIgnoreCase(Loader.getUniversity(getActivity()).cmsSys)) {
+        if (Constants.QZDATASOFT.equalsIgnoreCase(LocalHelper.getUniversity(getActivity()).getCmsSys())) {
             mForm = handler.getForm(1);
             if (mForm == null) {
                 mForm = handler.getForm(0);

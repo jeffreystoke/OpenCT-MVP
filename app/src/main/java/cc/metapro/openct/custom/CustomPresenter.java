@@ -22,24 +22,21 @@ import android.support.v4.app.FragmentManager;
 
 import org.jsoup.nodes.Element;
 
-import java.util.Map;
+import java.security.GeneralSecurityException;
 
 import cc.metapro.interactiveweb.InteractiveWebView;
 import cc.metapro.interactiveweb.utils.HTMLUtils;
-import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.source.local.DBManger;
+import cc.metapro.openct.data.source.local.LocalHelper;
+import cc.metapro.openct.data.source.local.LocalUser;
 import cc.metapro.openct.utils.Constants;
-
-import static cc.metapro.interactiveweb.InteractiveWebView.CLICK_FLAG;
 
 class CustomPresenter implements CustomContract.Presenter {
 
     private Context mContext;
-    private String USERNAME;
     private String PASSWORD;
-    private WebConfiguration mConfiguration;
     private String TYPE;
+    private LocalUser mUser;
 
     CustomPresenter(Context context, CustomContract.View view, String type) {
         mContext = context;
@@ -49,29 +46,23 @@ class CustomPresenter implements CustomContract.Presenter {
 
     @Override
     public void start() {
-        Constants.advCustomInfo = DBManger.getAdvancedCustomInfo(mContext);
-        Map<String, String> userPassMap = null;
+        Constants.sDetailCustomInfo = DBManger.getDetailCustomInfo(mContext);
         switch (TYPE) {
             case Constants.TYPE_CLASS:
-                userPassMap = Loader.getCmsStuInfo(mContext);
-                mConfiguration = Constants.advCustomInfo.mClassWebConfig;
+                mUser = LocalHelper.getCmsStuInfo(mContext);
                 break;
             case Constants.TYPE_GRADE:
-                userPassMap = Loader.getCmsStuInfo(mContext);
-                mConfiguration = Constants.advCustomInfo.mGradeWebConfig;
+                mUser = LocalHelper.getCmsStuInfo(mContext);
                 break;
             case Constants.TYPE_BORROW:
-                userPassMap = Loader.getLibStuInfo(mContext);
-                mConfiguration = Constants.advCustomInfo.mBorrowWebConfig;
+                mUser = LocalHelper.getLibStuInfo(mContext);
                 break;
         }
-
-        if (userPassMap != null) {
-            USERNAME = userPassMap.get(mContext.getString(R.string.key_username));
-            PASSWORD = userPassMap.get(mContext.getString(R.string.key_password));
+        try {
+            PASSWORD = mUser.getPassword();
+        } catch (GeneralSecurityException e) {
+            PASSWORD = "";
         }
-
-        mConfiguration = new WebConfiguration();
     }
 
     @Override
@@ -80,7 +71,6 @@ class CustomPresenter implements CustomContract.Presenter {
             @Override
             public void onClick(@NonNull final Element element) {
                 if (HTMLUtils.isPasswordInput(element)) {
-                    mConfiguration.addAction(element, PASSWORD);
                     if (!webView.setById(element.id(), "value", PASSWORD)) {
                         webView.setByName(element.attr("name"), "value", PASSWORD);
                     }
@@ -88,7 +78,6 @@ class CustomPresenter implements CustomContract.Presenter {
                     ClickDialog.newInstance(new ClickDialog.TypeCallback() {
                         @Override
                         public void onResult(String type) {
-                            mConfiguration.addAction(element, type);
                             switch (type) {
                                 case InteractiveWebView.COMMON_INPUT_FLAG:
                                     if (!webView.focusById(element.id())) {
@@ -96,18 +85,13 @@ class CustomPresenter implements CustomContract.Presenter {
                                     }
                                     break;
                                 case InteractiveWebView.USERNAME_INPUT_FLAG:
-                                    mConfiguration.addAction(element, USERNAME);
-                                    if (!webView.setById(element.id(), "value", USERNAME)) {
-                                        webView.setByName(element.attr("name"), "value", USERNAME);
+                                    if (!webView.setById(element.id(), "value", mUser.getUsername())) {
+                                        webView.setByName(element.attr("name"), "value", mUser.getUsername());
                                     }
                                     break;
                             }
                         }
                     }).show(manager, "click_dialog");
-                } else if (HTMLUtils.isClickable(element)) {
-                    mConfiguration.addAction(element, CLICK_FLAG);
-                } else {
-                    mConfiguration.addAction(element, "");
                 }
             }
         });

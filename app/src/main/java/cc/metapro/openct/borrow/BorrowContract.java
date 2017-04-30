@@ -21,7 +21,7 @@ import android.support.v4.app.FragmentManager;
 
 import java.util.List;
 
-import cc.metapro.openct.data.university.item.BorrowInfo;
+import cc.metapro.openct.data.university.model.BorrowInfo;
 import cc.metapro.openct.utils.base.BaseView;
 import cc.metapro.openct.utils.base.LoginPresenter;
 

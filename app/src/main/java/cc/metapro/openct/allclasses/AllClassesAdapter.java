@@ -36,8 +36,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.classdetail.ClassDetailActivity;
-import cc.metapro.openct.data.university.item.classinfo.ClassTime;
-import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
+import cc.metapro.openct.data.university.model.classinfo.ClassTime;
+import cc.metapro.openct.data.university.model.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.REHelper;
@@ -91,7 +91,7 @@ class AllClassesAdapter extends RecyclerView.Adapter<AllClassesAdapter.ClassView
             List<ClassTime> tmpTimeList = new ArrayList<>(info.getTimeSet());
             Collections.sort(tmpTimeList);
             for (ClassTime t : tmpTimeList) {
-                String tmp = DateHelper.weekDayTrans(mName.getContext(), t.getWeekDay()) + " " + t.getTime() + " , ";
+                String tmp = DateHelper.weekDayTrans(mName.getContext(), t.getWeekDay()) + " " + t.getTimeString() + " , ";
                 if (!time.contains(tmp)) {
                     time += tmp;
                 }

@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.source;
+package cc.metapro.openct.data.source.local;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -31,21 +31,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.AdvancedCustomInfo;
-import cc.metapro.openct.data.university.CmsFactory;
+import cc.metapro.openct.data.university.ClassTableInfo;
+import cc.metapro.openct.data.university.DetailCustomInfo;
 import cc.metapro.openct.data.university.UniversityInfo;
-import cc.metapro.openct.data.university.item.BorrowInfo;
-import cc.metapro.openct.data.university.item.GradeInfo;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
-import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
+import cc.metapro.openct.data.university.model.BorrowInfo;
+import cc.metapro.openct.data.university.model.GradeInfo;
+import cc.metapro.openct.data.university.model.classinfo.Classes;
+import cc.metapro.openct.data.university.model.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.CloseUtils;
+import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
 
 public class DBManger {
 
-    private static final String TAG = DBManger.class.getSimpleName();
-    private static final UniversityInfo DEFAULT_UNIVERSITY =
-            new UniversityInfo("OpenCT-Default", "common", "example.com", "common", "example.com");
+    private static final String TAG = DBManger.class.getName();
+    private static final UniversityInfo DEFAULT_UNIVERSITY = new UniversityInfo();
     private static SQLiteDatabase mDatabase;
     private static DBManger manger;
 
@@ -66,48 +66,40 @@ public class DBManger {
     }
 
     @NonNull
-    public static AdvancedCustomInfo getAdvancedCustomInfo(Context context) {
+    public static DetailCustomInfo getDetailCustomInfo(Context context) {
         DBManger.getInstance(context);
         Cursor cursor = null;
         String name;
-        if (PrefHelper.getBoolean(context, R.string.pref_custom_enable)) {
-            name = PrefHelper.getString(context, R.string.pref_custom_school_name, "openct");
-        } else {
-            name = PrefHelper.getString(context, R.string.pref_school_name, context.getString(R.string.default_school_name));
-        }
-        try {
-            cursor = mDatabase.query(
-                    DBHelper.ADV_CUSTOM_TABLE, null,
-                    DBHelper.SCHOOL_NAME + "=? COLLATE NOCASE", new String[]{name},
-                    null, null, null);
-            cursor.moveToFirst();
-            if (!cursor.isAfterLast()) {
-                AdvancedCustomInfo customInfo = StoreHelper.fromJson(cursor.getString(1), AdvancedCustomInfo.class);
-                if (customInfo.mClassTableInfo == null) {
-                    customInfo.mClassTableInfo = new CmsFactory.ClassTableInfo();
-                }
 
-                customInfo.mClassTableInfo.mNameRE = PrefHelper.getString(context, R.string.pref_class_name_re, "");
-                customInfo.mClassTableInfo.mTypeRE = PrefHelper.getString(context, R.string.pref_class_type_re, "");
-                customInfo.mClassTableInfo.mDuringRE = PrefHelper.getString(context, R.string.pref_class_during_re, "\\d+-\\d+");
-                customInfo.mClassTableInfo.mTimeRE = PrefHelper.getString(context, R.string.pref_class_time_re, "(\\d+,)+\\d+");
-                customInfo.mClassTableInfo.mPlaceRE = PrefHelper.getString(context, R.string.pref_class_place_re, "");
-                customInfo.mClassTableInfo.mTeacherRE = PrefHelper.getString(context, R.string.pref_class_teacher_re, "");
-                return customInfo;
+        // get user's school name, as a key of custom info
+        if (PrefHelper.getBoolean(context, R.string.pref_custom_enable)) {
+            name = PrefHelper.getString(context, R.string.pref_custom_school_name, Constants.DEFAULT_SCHOOL_NAME);
+        } else {
+            name = PrefHelper.getString(context, R.string.pref_school_name, Constants.DEFAULT_SCHOOL_NAME);
+        }
+
+        try {
+            // select custom info according to school name
+            cursor = mDatabase.query(DBHelper.DETAIL_CUSTOM_TABLE, null,
+                    String.format("%s=? COLLATE NOCASE", DBHelper.SCHOOL_NAME),
+                    new String[]{name}, null, null, null);
+
+            cursor.moveToFirst();
+            // only the first should be selected
+            if (!cursor.isAfterLast()) {
+                DetailCustomInfo detailCustomInfo = StoreHelper.fromJson(cursor.getString(1), DetailCustomInfo.class);
+                if (detailCustomInfo.mClassTableInfo == null) {
+                    detailCustomInfo.setClassTableInfo(ClassTableInfo.getDefault(context));
+                }
+                return detailCustomInfo;
             } else {
                 throw new Exception("need init advancedCustomInfo");
             }
         } catch (Exception e) {
             Log.v(TAG, e.getMessage(), e);
-            AdvancedCustomInfo customInfo = new AdvancedCustomInfo(context);
-            customInfo.mClassTableInfo = new CmsFactory.ClassTableInfo();
-            customInfo.mClassTableInfo.mNameRE = PrefHelper.getString(context, R.string.pref_class_name_re, "");
-            customInfo.mClassTableInfo.mTypeRE = PrefHelper.getString(context, R.string.pref_class_type_re, "");
-            customInfo.mClassTableInfo.mDuringRE = PrefHelper.getString(context, R.string.pref_class_during_re, "\\d+-\\d+");
-            customInfo.mClassTableInfo.mTimeRE = PrefHelper.getString(context, R.string.pref_class_time_re, "(\\d+,)+\\d+");
-            customInfo.mClassTableInfo.mPlaceRE = PrefHelper.getString(context, R.string.pref_class_place_re, "");
-            customInfo.mClassTableInfo.mTeacherRE = PrefHelper.getString(context, R.string.pref_class_teacher_re, "");
-            return customInfo;
+            DetailCustomInfo detailCustomInfo = new DetailCustomInfo(name);
+            detailCustomInfo.setClassTableInfo(ClassTableInfo.getDefault(context));
+            return detailCustomInfo;
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -123,7 +115,7 @@ public class DBManger {
             if (universityInfoList != null) {
                 for (UniversityInfo info : universityInfoList) {
                     ContentValues values = new ContentValues();
-                    values.put(DBHelper.SCHOOL_NAME, info.name);
+                    values.put(DBHelper.SCHOOL_NAME, info.getName());
                     values.put(DBHelper.JSON, info.toString());
                     mDatabase.insert(DBHelper.SCHOOL_TABLE, null, values);
                 }
@@ -134,13 +126,13 @@ public class DBManger {
         }
     }
 
-    public void updateAdvCustomInfo(AdvancedCustomInfo info) {
+    public void updateAdvCustomInfo(DetailCustomInfo info) {
         mDatabase.beginTransaction();
         try {
             String json = info.toString();
-            mDatabase.delete(DBHelper.ADV_CUSTOM_TABLE, null, null);
+            mDatabase.delete(DBHelper.DETAIL_CUSTOM_TABLE, null, null);
             if (!TextUtils.isEmpty(json)) {
-                mDatabase.execSQL("INSERT INTO " + DBHelper.ADV_CUSTOM_TABLE + " VALUES(?, ?)", new Object[]{info.getSchoolName(), json});
+                mDatabase.execSQL("INSERT INTO " + DBHelper.DETAIL_CUSTOM_TABLE + " VALUES(?, ?)", new Object[]{info.getSchoolName(), json});
             }
             mDatabase.setTransactionSuccessful();
         } catch (Exception e) {
@@ -153,7 +145,7 @@ public class DBManger {
     public void delAdvancedCustomInfo() {
         mDatabase.beginTransaction();
         try {
-            mDatabase.delete(DBHelper.ADV_CUSTOM_TABLE, null, null);
+            mDatabase.delete(DBHelper.DETAIL_CUSTOM_TABLE, null, null);
             mDatabase.setTransactionSuccessful();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);

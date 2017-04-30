@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.source;
+package cc.metapro.openct.data.source.local;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,9 +16,6 @@ package cc.metapro.openct.data.source;
  * limitations under the License.
  */
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -34,20 +31,10 @@ import java.util.List;
 
 import cc.metapro.openct.utils.CloseUtils;
 import okio.Buffer;
-import okio.ByteString;
 
 public final class StoreHelper {
 
     private final static Gson gson = new Gson();
-
-    @NonNull
-    static String getAssetText(Context context, String filename) throws IOException {
-        Buffer buffer = new Buffer();
-        ByteString byteString = buffer
-                .readFrom(context.getAssets().open(filename))
-                .readByteString();
-        return byteString.toString();
-    }
 
     public static String toJson(Object o) {
         return gson.toJson(o);

@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.university.item.classinfo;
+package cc.metapro.openct.data.university.model.classinfo;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -25,8 +25,8 @@ import java.util.Calendar;
 import java.util.Set;
 
 import cc.metapro.interactiveweb.utils.HTMLUtils;
-import cc.metapro.openct.data.source.StoreHelper;
-import cc.metapro.openct.data.university.CmsFactory;
+import cc.metapro.openct.data.source.local.StoreHelper;
+import cc.metapro.openct.data.university.ClassTableInfo;
 import cc.metapro.openct.utils.CharacterParser;
 import cc.metapro.openct.utils.ClassInfoHelper;
 
@@ -59,12 +59,12 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
      * @param info    cms class table for class info generation
      * @param color   color of background, same classes share the same color
      */
-    public EnrichedClassInfo(String content, int weekday, int dailySeq, int color, CmsFactory.ClassTableInfo info) {
+    public EnrichedClassInfo(String content, int weekday, int dailySeq, int color, ClassTableInfo info) {
         this(content, weekday, dailySeq, info);
         this.color = color;
     }
 
-    public EnrichedClassInfo(String content, int weekday, int dailySeq, CmsFactory.ClassTableInfo info) {
+    public EnrichedClassInfo(String content, int weekday, int dailySeq, ClassTableInfo info) {
         String[] tmp = content.split(HTMLUtils.BR_REPLACER);
         name = ClassInfoHelper.infoParser(info.mNameIndex, info.mNameRE, tmp);
         type = ClassInfoHelper.infoParser(info.mTypeIndex, info.mTypeRE, tmp);

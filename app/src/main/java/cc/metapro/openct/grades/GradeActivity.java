@@ -36,8 +36,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
 import cc.metapro.openct.custom.CustomActivity;
-import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.item.GradeInfo;
+import cc.metapro.openct.data.source.local.LocalHelper;
+import cc.metapro.openct.data.university.model.GradeInfo;
 import cc.metapro.openct.grades.cet.CETQueryDialog;
 import cc.metapro.openct.grades.cet.CETResultDialog;
 import cc.metapro.openct.pref.SettingsActivity;
@@ -82,7 +82,7 @@ public class GradeActivity extends BaseActivity implements GradeContract.View {
 
     @OnClick(R.id.fab)
     public void refresh() {
-        Map<String, String> map = Loader.getCmsStuInfo(this);
+        Map<String, String> map = LocalHelper.getCmsStuInfo(this);
         if (map.size() < 2) {
             Toast.makeText(this, R.string.please_fill_cms_info, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, SettingsActivity.class);

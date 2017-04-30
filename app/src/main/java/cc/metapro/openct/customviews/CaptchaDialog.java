@@ -39,7 +39,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.StoreHelper;
+import cc.metapro.openct.data.source.local.StoreHelper;
 import cc.metapro.openct.data.university.UniversityFactory;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;

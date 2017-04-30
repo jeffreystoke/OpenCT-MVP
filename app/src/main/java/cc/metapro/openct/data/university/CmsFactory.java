@@ -73,15 +73,4 @@ public class CmsFactory extends UniversityFactory {
         }
         return Jsoup.parse(tablePage, INFO_PAGE_URL);
     }
-
-    public static class ClassTableInfo {
-
-        public int mNameIndex, mTypeIndex, mDuringIndex, mPlaceIndex, mTimeIndex, mTeacherIndex;
-
-        public String mClassTableID;
-
-        // Regular Expressions for class info parse
-        public String mNameRE, mTypeRE, mDuringRE, mTimeRE, mTeacherRE, mPlaceRE;
-    }
-
 }

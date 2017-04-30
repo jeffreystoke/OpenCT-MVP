@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Map;
 
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.source.local.LocalHelper;
 import cc.metapro.openct.data.university.LibraryFactory;
-import cc.metapro.openct.data.university.item.BookInfo;
+import cc.metapro.openct.data.university.model.BookInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.base.MyObserver;
 import io.reactivex.Observable;
@@ -54,7 +54,7 @@ class LibSearchPresenter implements LibSearchContract.Presenter {
         mLibSearchView = libSearchView;
         mContext = context;
         mLibSearchView.setPresenter(this);
-        mLibraryFactory = Loader.getLibrary(mContext);
+        mLibraryFactory = LocalHelper.getLibrary(mContext);
     }
 
     @Override

@@ -47,8 +47,8 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.allclasses.AllClassesActivity;
 import cc.metapro.openct.borrow.BorrowActivity;
 import cc.metapro.openct.customviews.WeekSelectionDialog;
-import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.source.local.LocalHelper;
+import cc.metapro.openct.data.university.model.classinfo.Classes;
 import cc.metapro.openct.grades.GradeActivity;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.search.LibSearchActivity;
@@ -157,7 +157,7 @@ public class ClassActivity extends BaseActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.refresh_classes) {
-            Map<String, String> map = Loader.getCmsStuInfo(this);
+            Map<String, String> map = LocalHelper.getCmsStuInfo(this);
             if (map.size() < 2) {
                 Toast.makeText(this, R.string.please_fill_cms_info, Toast.LENGTH_LONG).show();
                 startActivity(new Intent(this, SettingsActivity.class));

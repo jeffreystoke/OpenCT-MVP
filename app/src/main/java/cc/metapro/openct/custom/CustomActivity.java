@@ -32,7 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.interactiveweb.InteractiveWebView;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.source.local.LocalHelper;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.base.BaseActivity;
@@ -76,19 +76,6 @@ public class CustomActivity extends BaseActivity implements CustomContract.View 
 
     @OnClick(R.id.fab_target)
     public void showTableChooseDialog() {
-        switch (TYPE) {
-            case Constants.TYPE_CLASS:
-                Constants.advCustomInfo.setClassWebConfig(mConfiguration);
-                break;
-            case Constants.TYPE_GRADE:
-                Constants.advCustomInfo.setGradeWebConfig(mConfiguration);
-                break;
-            case Constants.TYPE_SEARCH:
-                break;
-            case Constants.TYPE_BORROW:
-                Constants.advCustomInfo.setBorrowWebConfig(mConfiguration);
-                break;
-        }
         ActivityUtils.showTableChooseDialog(getSupportFragmentManager(), TYPE, mWebView.getPageDom(), null);
     }
 
@@ -102,16 +89,16 @@ public class CustomActivity extends BaseActivity implements CustomContract.View 
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
-        Loader.needUpdateUniversity();
+        LocalHelper.needUpdateUniversity();
 
         switch (TYPE) {
             case Constants.TYPE_CLASS:
             case Constants.TYPE_GRADE:
-                mURL.setText(Loader.getUniversity(this).cmsURL);
+                mURL.setText(LocalHelper.getUniversity(this).getCmsURL());
                 break;
             case Constants.TYPE_BORROW:
             case Constants.TYPE_SEARCH:
-                mURL.setText(Loader.getUniversity(this).libURL);
+                mURL.setText(LocalHelper.getUniversity(this).getLibURL());
                 break;
         }
 

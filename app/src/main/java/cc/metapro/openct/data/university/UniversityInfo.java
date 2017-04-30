@@ -16,26 +16,61 @@ package cc.metapro.openct.data.university;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 
-import cc.metapro.openct.data.source.StoreHelper;
+import cc.metapro.openct.data.source.local.StoreHelper;
 import cc.metapro.openct.utils.CharacterParser;
+import cc.metapro.openct.utils.Constants;
 
-@Keep
 public class UniversityInfo implements Comparable<UniversityInfo> {
 
-    public String name, cmsSys, cmsURL, libSys, libURL;
+    private String name = Constants.DEFAULT_SCHOOL_NAME;
+    private String cmsSys = Constants.CUSTOM;
+    private String cmsURL = Constants.DEFAULT_URL;
+    private String libSys = Constants.CUSTOM;
+    private String libURL = Constants.DEFAULT_URL;
 
-    public UniversityInfo() {
-
+    public static UniversityInfo getDefault() {
+        return new UniversityInfo();
     }
 
-    public UniversityInfo(String name, String cmsSys, String cmsURL, String libSys, String libURL) {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCmsSys() {
+        return cmsSys;
+    }
+
+    public void setCmsSys(String cmsSys) {
         this.cmsSys = cmsSys;
+    }
+
+    public String getCmsURL() {
+        return cmsURL;
+    }
+
+    public void setCmsURL(String cmsURL) {
         this.cmsURL = cmsURL;
+    }
+
+    public String getLibSys() {
+        return libSys;
+    }
+
+    public void setLibSys(String libSys) {
         this.libSys = libSys;
+    }
+
+    public String getLibURL() {
+        return libURL;
+    }
+
+    public void setLibURL(String libURL) {
         this.libURL = libURL;
     }
 

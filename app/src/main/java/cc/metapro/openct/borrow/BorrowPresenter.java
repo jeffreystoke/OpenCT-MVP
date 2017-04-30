@@ -17,7 +17,6 @@ package cc.metapro.openct.borrow;
  */
 
 import android.content.Context;
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
@@ -35,12 +34,12 @@ import java.util.Map;
 
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.AdvancedCustomInfo;
+import cc.metapro.openct.data.source.local.DBManger;
+import cc.metapro.openct.data.source.local.LocalHelper;
+import cc.metapro.openct.data.university.DetailCustomInfo;
 import cc.metapro.openct.data.university.LibraryFactory;
 import cc.metapro.openct.data.university.UniversityUtils;
-import cc.metapro.openct.data.university.item.BorrowInfo;
+import cc.metapro.openct.data.university.model.BorrowInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.base.MyObserver;
@@ -53,7 +52,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-@Keep
 class BorrowPresenter implements BorrowContract.Presenter {
 
     static List<String> list;
@@ -75,7 +73,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
     public Disposable loadOnlineInfo(final FragmentManager manager) {
         ActivityUtils.showProgressDialog(mContext, R.string.preparing_school_sys_info);
 
-        Observable<Boolean> observable = Loader.prepareOnlineInfo(Constants.TYPE_LIB, mContext);
+        Observable<Boolean> observable = LocalHelper.prepareOnlineInfo(Constants.TYPE_LIB, mContext);
 
         Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
             @Override
@@ -106,14 +104,14 @@ class BorrowPresenter implements BorrowContract.Presenter {
     @Override
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
         ActivityUtils.showProgressDialog(mContext, R.string.loading_borrows);
-        Observable<Document> observable = Loader.login(Constants.TYPE_LIB, mContext, code);
+        Observable<Document> observable = LocalHelper.login(Constants.TYPE_LIB, mContext, code);
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(final Document userCenterDom) {
                 super.onNext(userCenterDom);
                 Constants.checkAdvCustomInfo(mContext);
-                final List<String> urlPatterns = Constants.advCustomInfo.getBorrowUrlPatterns();
+                final List<String> urlPatterns = Constants.sDetailCustomInfo.getBorrowUrlPatterns();
                 if (!urlPatterns.isEmpty()) {
                     if (urlPatterns.size() == 1) {
                         // fetch first page from user center, it will find the borrow info page for most cases
@@ -126,7 +124,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
                         Observable<String> extraObservable = Observable.create(new ObservableOnSubscribe<String>() {
                             @Override
                             public void subscribe(ObservableEmitter<String> e) throws Exception {
-                                LibraryFactory factory = Loader.getLibrary(mContext);
+                                LibraryFactory factory = LocalHelper.getLibrary(mContext);
                                 Document lastDom = userCenterDom;
                                 Element finalTarget = null;
                                 for (String pattern : urlPatterns) {
@@ -184,7 +182,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
             public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                e.onNext(Loader.getLibrary(mContext).getBorrowPageDom(url));
+                e.onNext(LocalHelper.getLibrary(mContext).getBorrowPageDom(url));
                 e.onComplete();
             }
         });
@@ -193,11 +191,11 @@ class BorrowPresenter implements BorrowContract.Presenter {
             @Override
             public void onNext(Document document) {
                 super.onNext(document);
-                AdvancedCustomInfo customInfo = DBManger.getAdvancedCustomInfo(mContext);
-                if (!TextUtils.isEmpty(customInfo.BORROW_TABLE_ID)) {
+                DetailCustomInfo detailCustomInfo = DBManger.getDetailCustomInfo(mContext);
+                if (!TextUtils.isEmpty(detailCustomInfo.getBorrowTableId())) {
                     Map<String, Element> map = TableUtils.getTablesFromTargetPage(document);
                     if (!map.isEmpty()) {
-                        mBorrows = UniversityUtils.generateInfo(map.get(customInfo.BORROW_TABLE_ID), BorrowInfo.class);
+                        mBorrows = UniversityUtils.generateInfo(map.get(detailCustomInfo.getBorrowTableId()), BorrowInfo.class);
                         if (mBorrows.size() == 0) {
                             Toast.makeText(mContext, R.string.borrows_empty, Toast.LENGTH_LONG).show();
                         } else {
@@ -252,7 +250,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
 
     @Override
     public void loadLocalBorrows() {
-        Observable<List<BorrowInfo>> observable = Loader.getBorrows(mContext);
+        Observable<List<BorrowInfo>> observable = LocalHelper.getBorrows(mContext);
 
         Observer<List<BorrowInfo>> observer = new MyObserver<List<BorrowInfo>>(TAG) {
             @Override

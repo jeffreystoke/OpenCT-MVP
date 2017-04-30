@@ -38,12 +38,12 @@ import java.util.Collections;
 import java.util.List;
 
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.source.StoreHelper;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
-import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
-import cc.metapro.openct.data.university.item.classinfo.ExcelClass;
+import cc.metapro.openct.data.source.local.DBManger;
+import cc.metapro.openct.data.source.local.LocalHelper;
+import cc.metapro.openct.data.source.local.StoreHelper;
+import cc.metapro.openct.data.university.model.classinfo.Classes;
+import cc.metapro.openct.data.university.model.classinfo.EnrichedClassInfo;
+import cc.metapro.openct.data.university.model.classinfo.ExcelClass;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.ICalHelper;
@@ -88,7 +88,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
             public void subscribe(ObservableEmitter<Calendar> e) throws Exception {
                 FileOutputStream fos = null;
                 try {
-                    int week = Loader.getCurrentWeek(mContext);
+                    int week = LocalHelper.getCurrentWeek(mContext);
                     int everyClassTime = Integer.parseInt(PrefHelper.getString(mContext, R.string.pref_every_class_time, "45"));
                     int restTime = Integer.parseInt(PrefHelper.getString(mContext, R.string.pref_rest_time, "10"));
 
@@ -96,7 +96,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
                     calendar.getProperties().add(new ProdId("-//OpenCT //iCal4j 2.0//EN"));
                     calendar.getProperties().add(Version.VERSION_2_0);
                     calendar.getProperties().add(CalScale.GREGORIAN);
-                    SparseArray<java.util.Calendar> calendarSparseArray = Loader.getClassTime(mContext);
+                    SparseArray<java.util.Calendar> calendarSparseArray = LocalHelper.getClassTime(mContext);
                     for (EnrichedClassInfo c : Constants.sClasses) {
                         try {
                             List<VEvent> events = ICalHelper.getClassEvents(calendarSparseArray, week, everyClassTime, restTime, c);
@@ -219,7 +219,7 @@ class AllClassesPresenter implements AllClassesContract.Presenter {
     }
 
     private void loadLocalClasses() {
-        Observable<Classes> observable = Loader.getClasses(mContext);
+        Observable<Classes> observable = LocalHelper.getClasses(mContext);
 
         Observer<Classes> observer = new MyObserver<Classes>(TAG) {
             @Override

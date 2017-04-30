@@ -31,8 +31,8 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.source.local.DBManger;
+import cc.metapro.openct.data.source.local.LocalHelper;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.base.BaseActivity;
@@ -187,7 +187,7 @@ public class SchoolSelectionActivity
     @Override
     protected void onDestroy() {
         PrefHelper.putString(this, R.string.pref_school_name, result);
-        Loader.needUpdateUniversity();
+        LocalHelper.needUpdateUniversity();
         super.onDestroy();
     }
 }

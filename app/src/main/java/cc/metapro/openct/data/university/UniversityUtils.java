@@ -17,7 +17,6 @@ package cc.metapro.openct.data.university;
  */
 
 import android.content.Context;
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 
 import org.jsoup.Jsoup;
@@ -33,14 +32,13 @@ import java.util.regex.Pattern;
 
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
-import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
+import cc.metapro.openct.data.university.model.classinfo.Classes;
+import cc.metapro.openct.data.university.model.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.REHelper;
 
-@Keep
 public class UniversityUtils {
 
     private static final String CLASS_TABLE_PATTERN = "节|(\\d+)";
@@ -172,7 +170,7 @@ public class UniversityUtils {
     }
 
     @NonNull
-    public static Classes generateClasses(Context context, List<Element> rawInfo, CmsFactory.ClassTableInfo info) {
+    public static Classes generateClasses(Context context, List<Element> rawInfo, ClassTableInfo info) {
         Classes classes = new Classes();
         int[] colors = context.getResources().getIntArray(R.array.class_background);
         if (PrefHelper.getBoolean(context, R.string.pref_class_line_based)) {

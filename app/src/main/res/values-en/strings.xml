@@ -135,7 +135,7 @@
     <string name="class_place">Place</string>
     <string name="ical_create_success">Created successful, OpenCT Classes.ics has been stored in your external storage</string>
     <string name="preparing_school_sys_info">Preparing your school…</string>
-    <string name="no_write_permission">Permission denied, export fail</string>
+    <string name="no_write_permission">Permission denied, execution failed</string>
     <string name="custom_finish_tip">Classes loaded, you may have to change some value, modify the RegularExpression may be helpful</string>
     <string name="sorry_for_unable_to_get_class_info">Sorry, No classes in this page</string>
     <string name="swipe_choose_table">Swipe to choose table</string>

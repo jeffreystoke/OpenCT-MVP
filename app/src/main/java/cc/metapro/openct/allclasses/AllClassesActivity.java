@@ -38,7 +38,7 @@ import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.classdetail.ClassDetailActivity;
 import cc.metapro.openct.custom.CustomActivity;
-import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
+import cc.metapro.openct.data.university.model.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 import cc.metapro.openct.utils.base.BaseActivity;

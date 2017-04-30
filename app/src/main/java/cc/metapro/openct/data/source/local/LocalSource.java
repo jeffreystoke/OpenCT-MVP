@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.university.item;
+package cc.metapro.openct.data.source.local;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,26 +16,5 @@ package cc.metapro.openct.data.university.item;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
-
-import cc.metapro.openct.data.source.StoreHelper;
-
-@Keep
-public final class BookInfo {
-
-    public String mTitle, mAuthor, mContent, mStoreInfo, mLink;
-
-    public BookInfo(String title, String author, String content,
-                    String storeInfo, String link) {
-        mTitle = title;
-        mAuthor = author;
-        mContent = content;
-        mStoreInfo = storeInfo;
-        mLink = link;
-    }
-
-    @Override
-    public String toString() {
-        return StoreHelper.toJson(this);
-    }
+public final class LocalSource {
 }

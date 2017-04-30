@@ -16,13 +16,17 @@ package cc.metapro.openct.allclasses;
  * limitations under the License.
  */
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -43,6 +47,8 @@ import cc.metapro.openct.utils.base.BaseDialog;
 public class ExcelDialog extends BaseDialog {
 
     private static final int FILE_SELECT_CODE = 101;
+    private static final int REQUEST_EXTERNAL_FILE_WRITE = 102;
+
     private static ExcelCallback mCallback;
 
     public static ExcelDialog newInstance(@NonNull ExcelCallback callback) {
@@ -56,12 +62,7 @@ public class ExcelDialog extends BaseDialog {
         final AlertDialog dialog = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.import_from_excel)
                 .setMessage(R.string.select_file_tip)
-                .setPositiveButton(R.string.select_file, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog1, int which) {
-                        showFilerChooser();
-                    }
-                })
+                .setPositiveButton(R.string.select_file, null)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setNeutralButton(R.string.refer_to_usage, new DialogInterface.OnClickListener() {
                     @Override
@@ -80,12 +81,20 @@ public class ExcelDialog extends BaseDialog {
                 positiveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showFilerChooser();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            int hasPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                            if (hasPermission != PackageManager.PERMISSION_GRANTED) {
+                                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_FILE_WRITE);
+                            } else {
+                                showFilerChooser();
+                            }
+                        } else {
+                            showFilerChooser();
+                        }
                     }
                 });
             }
         });
-
         return dialog;
     }
 
@@ -112,6 +121,19 @@ public class ExcelDialog extends BaseDialog {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_EXTERNAL_FILE_WRITE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showFilerChooser();
+            } else {
+                dismiss();
+                Toast.makeText(getActivity(), R.string.no_write_permission, Toast.LENGTH_LONG).show();
             }
         }
     }

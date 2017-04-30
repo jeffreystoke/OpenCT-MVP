@@ -45,12 +45,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 import cc.metapro.openct.borrow.BorrowContract;
-import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.university.CmsFactory;
+import cc.metapro.openct.data.source.local.DBManger;
+import cc.metapro.openct.data.university.ClassTableInfo;
 import cc.metapro.openct.data.university.UniversityUtils;
-import cc.metapro.openct.data.university.item.BorrowInfo;
-import cc.metapro.openct.data.university.item.GradeInfo;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.university.model.BorrowInfo;
+import cc.metapro.openct.data.university.model.GradeInfo;
+import cc.metapro.openct.data.university.model.classinfo.Classes;
 import cc.metapro.openct.grades.GradeContract;
 import cc.metapro.openct.myclass.ClassContract;
 import cc.metapro.openct.utils.Constants;
@@ -76,9 +76,9 @@ public class TableChooseDialog extends BaseDialog {
         return new TableChooseDialog();
     }
 
-    private CmsFactory.ClassTableInfo generateClassTableInfo(CmsFactory.ClassTableInfo baseInfo, Map<String, Integer> indexMap) {
+    private ClassTableInfo generateClassTableInfo(ClassTableInfo baseInfo, Map<String, Integer> indexMap) {
         if (baseInfo == null) {
-            baseInfo = new CmsFactory.ClassTableInfo();
+            baseInfo = new ClassTableInfo();
         }
         try {
             baseInfo.mNameIndex = indexMap.get(Constants.NAME);
@@ -127,12 +127,12 @@ public class TableChooseDialog extends BaseDialog {
                         TableSettingDialog.newInstance(rawInfoList, new TableSettingDialog.TableSettingCallBack() {
                             @Override
                             public void onResult(Map<String, Integer> indexMap) {
-                                CmsFactory.ClassTableInfo info = generateClassTableInfo(Constants.advCustomInfo.mClassTableInfo, indexMap);
+                                ClassTableInfo info = generateClassTableInfo(Constants.sDetailCustomInfo.mClassTableInfo, indexMap);
                                 info.mClassTableID = tableId;
                                 Classes classes = UniversityUtils.generateClasses(context, rawInfoList, info);
-                                Constants.advCustomInfo.setClassTableInfo(info);
+                                Constants.sDetailCustomInfo.setClassTableInfo(info);
 
-                                manger.updateAdvCustomInfo(Constants.advCustomInfo);
+                                manger.updateAdvCustomInfo(Constants.sDetailCustomInfo);
                                 manger.updateClasses(classes);
                                 if (mPresenter != null && mPresenter instanceof ClassContract.Presenter) {
                                     ((ClassContract.Presenter) mPresenter).loadLocalClasses();
@@ -146,8 +146,8 @@ public class TableChooseDialog extends BaseDialog {
                     }
                     break;
                 case Constants.TYPE_GRADE:
-                    Constants.advCustomInfo.GRADE_TABLE_ID = tableId;
-                    manger.updateAdvCustomInfo(Constants.advCustomInfo);
+                    Constants.sDetailCustomInfo.setGradeTableId(tableId);
+                    manger.updateAdvCustomInfo(Constants.sDetailCustomInfo);
                     manger.updateGrades(UniversityUtils.generateInfo(targetTable, GradeInfo.class));
                     if (mPresenter != null && mPresenter instanceof GradeContract.Presenter) {
                         ((GradeContract.Presenter) mPresenter).loadLocalGrades();
@@ -157,8 +157,8 @@ public class TableChooseDialog extends BaseDialog {
                 case Constants.TYPE_SEARCH:
                     break;
                 case Constants.TYPE_BORROW:
-                    Constants.advCustomInfo.BORROW_TABLE_ID = tableId;
-                    manger.updateAdvCustomInfo(Constants.advCustomInfo);
+                    Constants.sDetailCustomInfo.setBorrowTableId(tableId);
+                    manger.updateAdvCustomInfo(Constants.sDetailCustomInfo);
                     manger.updateBorrows(UniversityUtils.generateInfo(targetTable, BorrowInfo.class));
                     if (mPresenter != null && mPresenter instanceof BorrowContract.Presenter) {
                         ((BorrowContract.Presenter) mPresenter).loadLocalBorrows();

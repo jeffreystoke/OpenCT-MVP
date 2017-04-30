@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.university.item;
+package cc.metapro.openct.data.university.model;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,28 +16,30 @@ package cc.metapro.openct.data.university.item;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
-
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 
-import cc.metapro.openct.data.source.StoreHelper;
 import cc.metapro.openct.utils.REHelper;
 
-@Keep
-public class GradeInfo {
+public class KeyValueModel {
 
-    private Map<String, String> mTitleValueMap;
+    LinkedHashMap<String, String> mTitleValueMap;
 
-    public GradeInfo(Element th, Element tr) {
-        mTitleValueMap = new HashMap<>();
+    public KeyValueModel() {
+    }
+
+    KeyValueModel(Element th, Element tr) {
+        mTitleValueMap = new LinkedHashMap<>();
         Elements titles = th.select("td");
         if (titles.isEmpty()) {
             titles = th.select("th");
         }
+
         Elements values = tr.select("td");
         int i = 0;
         for (Element title : titles) {
@@ -46,6 +48,35 @@ public class GradeInfo {
                 mTitleValueMap.put(title.text(), value);
             }
         }
+    }
+
+    public String getFilteredContent(List<String> filter) {
+        if (filter != null) {
+            Collections.sort(filter);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (!mTitleValueMap.isEmpty()) {
+            for (String key : mTitleValueMap.keySet()) {
+                if (filter != null) {
+                    int i = Collections.binarySearch(filter, key);
+                    if (i >= 0) {
+                        sb.append(key).append(": ").append(mTitleValueMap.get(key)).append("\n\n");
+                    }
+                } else {
+                    sb.append(key).append(": ").append(mTitleValueMap.get(key)).append("\n\n");
+                }
+            }
+
+            if (sb.charAt(sb.length() - 1) == '\n') {
+                sb.replace(sb.length() - 2, sb.length(), "");
+            }
+        }
+        return sb.toString();
+    }
+
+    public Collection<String> getTitles() {
+        return mTitleValueMap.keySet();
     }
 
     public String toFullString() {
@@ -59,10 +90,5 @@ public class GradeInfo {
             }
         }
         return sb.toString();
-    }
-
-    @Override
-    public String toString() {
-        return StoreHelper.toJson(this);
     }
 }

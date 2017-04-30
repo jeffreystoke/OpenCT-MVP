@@ -21,7 +21,7 @@ import android.support.annotation.Keep;
 import java.util.List;
 import java.util.Map;
 
-import cc.metapro.openct.data.university.item.GradeInfo;
+import cc.metapro.openct.data.university.model.GradeInfo;
 import cc.metapro.openct.utils.base.BaseView;
 import cc.metapro.openct.utils.base.LoginPresenter;
 

@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.university.item.classinfo;
+package cc.metapro.openct.data.university.model.classinfo;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table

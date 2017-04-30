@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.university.item.classinfo;
+package cc.metapro.openct.data.university.model.classinfo;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -21,7 +21,7 @@ import android.text.TextUtils;
 
 import java.util.Calendar;
 
-import cc.metapro.openct.data.university.CmsFactory;
+import cc.metapro.openct.data.university.ClassTableInfo;
 import cc.metapro.openct.utils.ClassInfoHelper;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.DateHelper;
@@ -55,7 +55,7 @@ public class ClassTime implements Comparable<ClassTime> {
         this.weeks = weeks;
     }
 
-    ClassTime(int weekDay, int dailySeq, String[] contents, CmsFactory.ClassTableInfo info) {
+    ClassTime(int weekDay, int dailySeq, String[] contents, ClassTableInfo info) {
         this(ClassInfoHelper.infoParser(info.mTimeIndex, info.mTimeRE, contents), weekDay, dailySeq);
         teacher = ClassInfoHelper.infoParser(info.mTeacherIndex, info.mTeacherRE, contents);
         place = ClassInfoHelper.infoParser(info.mPlaceIndex, info.mPlaceRE, contents);
@@ -127,7 +127,11 @@ public class ClassTime implements Comparable<ClassTime> {
         this.dailyEnd = dailyEnd;
     }
 
-    public String getTime() {
+    public int getLength() {
+        return dailyEnd - dailySeq + 1;
+    }
+
+    public String getTimeString() {
         if (dailyEnd - dailySeq <= 0) {
             return dailySeq + "";
         } else {

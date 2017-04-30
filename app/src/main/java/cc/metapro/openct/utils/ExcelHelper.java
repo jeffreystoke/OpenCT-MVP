@@ -41,11 +41,11 @@ public class ExcelHelper {
     }
 
     public static String tableToJson(@NonNull String table) throws JSONException {
-        String[] rows = table.split("\\n");
+        String[] rows = table.split("\n");
         String[][] tableContents = new String[rows.length][];
         int i = 0;
         for (String row : rows) {
-            String[] cols = row.split("\\t");
+            String[] cols = row.split("\t");
             tableContents[i++] = cols;
         }
 

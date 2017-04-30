@@ -46,9 +46,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.university.item.classinfo.ClassTime;
-import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
+import cc.metapro.openct.data.source.local.DBManger;
+import cc.metapro.openct.data.university.model.classinfo.ClassTime;
+import cc.metapro.openct.data.university.model.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.RecyclerViewHelper;
@@ -147,7 +147,7 @@ public class ClassDetailActivity extends BaseActivity {
                 mDetailAdapter.notifyDataSetChanged();
                 final String prefix = mName.getText().toString() + " " +
                         DateHelper.weekDayTrans(ClassDetailActivity.this, toRemove.getWeekDay()) + " " +
-                        toRemove.getTime() + " ";
+                        toRemove.getTimeString() + " ";
 
                 String msg = prefix + getString(R.string.deleted);
                 final Snackbar snackbar = Snackbar.make(mRecyclerView, msg, BaseTransientBottomBar.LENGTH_INDEFINITE);

@@ -18,7 +18,7 @@ package cc.metapro.openct.allclasses;
 
 import android.support.v4.app.FragmentManager;
 
-import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.university.model.classinfo.Classes;
 import cc.metapro.openct.utils.base.BasePresenter;
 import cc.metapro.openct.utils.base.BaseView;
 

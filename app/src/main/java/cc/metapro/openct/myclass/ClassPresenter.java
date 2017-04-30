@@ -32,11 +32,11 @@ import java.util.Map;
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.FormDialog;
-import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.source.local.DBManger;
+import cc.metapro.openct.data.source.local.LocalHelper;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.UniversityUtils;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.university.model.classinfo.Classes;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.base.MyObserver;
@@ -66,7 +66,7 @@ class ClassPresenter implements ClassContract.Presenter {
     public Disposable loadOnlineInfo(final FragmentManager manager) {
         ActivityUtils.showProgressDialog(mContext, R.string.preparing_school_sys_info);
 
-        Observable<Boolean> observable = Loader.prepareOnlineInfo(Constants.TYPE_CMS, mContext);
+        Observable<Boolean> observable = LocalHelper.prepareOnlineInfo(Constants.TYPE_CMS, mContext);
 
         Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
             @Override
@@ -98,14 +98,14 @@ class ClassPresenter implements ClassContract.Presenter {
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
         ActivityUtils.showProgressDialog(mContext, R.string.login_to_system);
 
-        Observable<Document> observable = Loader.login(Constants.TYPE_CMS, mContext, code);
+        Observable<Document> observable = LocalHelper.login(Constants.TYPE_CMS, mContext, code);
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(final Document userCenterDom) {
                 super.onNext(userCenterDom);
                 Constants.checkAdvCustomInfo(mContext);
-                final List<String> urlPatterns = Constants.advCustomInfo.getClassUrlPatterns();
+                final List<String> urlPatterns = Constants.sDetailCustomInfo.getClassUrlPatterns();
                 if (!urlPatterns.isEmpty()) {
                     if (urlPatterns.size() == 1) {
                         // fetch first page from user center, it will find the class info page in most case
@@ -120,7 +120,7 @@ class ClassPresenter implements ClassContract.Presenter {
                         Observable<String> extraObservable = Observable.create(new ObservableOnSubscribe<String>() {
                             @Override
                             public void subscribe(ObservableEmitter<String> e) throws Exception {
-                                CmsFactory factory = Loader.getCms(mContext);
+                                CmsFactory factory = LocalHelper.getCms(mContext);
                                 Document lastDom = userCenterDom;
                                 Element finalTarget = null;
                                 for (String pattern : urlPatterns) {
@@ -185,7 +185,7 @@ class ClassPresenter implements ClassContract.Presenter {
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
             public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                e.onNext(Loader.getCms(mContext).getPageDom(url));
+                e.onNext(LocalHelper.getCms(mContext).getPageDom(url));
             }
         });
 
@@ -218,7 +218,7 @@ class ClassPresenter implements ClassContract.Presenter {
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
             public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                e.onNext(Loader.getCms(mContext).queryClassPageDom(actionURL, queryMap, needNewPage));
+                e.onNext(LocalHelper.getCms(mContext).queryClassPageDom(actionURL, queryMap, needNewPage));
             }
         });
 
@@ -227,13 +227,13 @@ class ClassPresenter implements ClassContract.Presenter {
             public void onNext(Document document) {
                 super.onNext(document);
                 Constants.checkAdvCustomInfo(mContext);
-                String tableId = Constants.advCustomInfo.mClassTableInfo.mClassTableID;
+                String tableId = Constants.sDetailCustomInfo.mClassTableInfo.mClassTableID;
                 if (TextUtils.isEmpty(tableId)) {
                     ActivityUtils.showTableChooseDialog(manager, Constants.TYPE_CLASS, document, ClassPresenter.this);
                 } else {
                     Map<String, Element> map = TableUtils.getTablesFromTargetPage(document);
                     List<Element> rawClasses = UniversityUtils.getRawClasses(map.get(tableId), mContext);
-                    Constants.sClasses = UniversityUtils.generateClasses(mContext, rawClasses, Constants.advCustomInfo.mClassTableInfo);
+                    Constants.sClasses = UniversityUtils.generateClasses(mContext, rawClasses, Constants.sDetailCustomInfo.mClassTableInfo);
                     if (Constants.sClasses.size() == 0) {
                         Toast.makeText(mContext, R.string.classes_empty, Toast.LENGTH_LONG).show();
                     } else {
@@ -261,14 +261,14 @@ class ClassPresenter implements ClassContract.Presenter {
 
     @Override
     public void loadLocalClasses() {
-        Observable<Classes> observable = Loader.getClasses(mContext);
+        Observable<Classes> observable = LocalHelper.getClasses(mContext);
 
         Observer<Classes> observer = new MyObserver<Classes>(TAG) {
             @Override
             public void onNext(Classes enrichedClasses) {
                 Constants.sClasses = enrichedClasses;
                 try {
-                    mView.showClasses(Constants.sClasses, Loader.getCurrentWeek(mContext));
+                    mView.showClasses(Constants.sClasses, LocalHelper.getCurrentWeek(mContext));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

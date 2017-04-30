@@ -20,7 +20,7 @@ import android.support.annotation.Keep;
 
 import java.util.List;
 
-import cc.metapro.openct.data.university.item.BookInfo;
+import cc.metapro.openct.data.university.model.BookInfo;
 import cc.metapro.openct.utils.base.BasePresenter;
 import cc.metapro.openct.utils.base.BaseView;
 import io.reactivex.disposables.Disposable;

@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.source;
+package cc.metapro.openct.data.source.local;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -18,11 +18,8 @@ package cc.metapro.openct.data.source;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
-
-import com.scottyab.aescrypt.AESCrypt;
 
 import org.jsoup.nodes.Document;
 
@@ -36,9 +33,9 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.LibraryFactory;
 import cc.metapro.openct.data.university.UniversityInfo;
-import cc.metapro.openct.data.university.item.BorrowInfo;
-import cc.metapro.openct.data.university.item.GradeInfo;
-import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.university.model.BorrowInfo;
+import cc.metapro.openct.data.university.model.GradeInfo;
+import cc.metapro.openct.data.university.model.classinfo.Classes;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.REHelper;
@@ -47,8 +44,8 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.schedulers.Schedulers;
 
-public class Loader {
-    private static final String TAG = Loader.class.getName();
+public class LocalHelper {
+    private static final String TAG = LocalHelper.class.getName();
 
     public static UniversityInfo university;
     private static boolean needUpdateUniversity;
@@ -64,29 +61,33 @@ public class Loader {
 
     public static LibraryFactory getLibrary(Context context) {
         checkUniversity(context);
-        return new LibraryFactory(university.libSys, university.libURL);
+        return new LibraryFactory(university.getLibSys(), university.getLibURL());
     }
 
     public static CmsFactory getCms(Context context) {
         checkUniversity(context);
-        return new CmsFactory(university.cmsSys, university.cmsURL);
+        return new CmsFactory(university.getCmsSys(), university.getCmsURL());
     }
 
     public static Observable<Document> login(final int actionType, final Context context, final String captcha) {
         return Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
             public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                Map<String, String> loginMap;
+                Map<String, String> loginMap = new HashMap<>();
                 if (actionType == Constants.TYPE_CMS) {
-                    loginMap = getCmsStuInfo(context);
+                    LocalUser localUser = getCmsStuInfo(context);
+                    loginMap.put(Constants.USERNAME_KEY, localUser.getUsername());
+                    loginMap.put(Constants.PASSWORD_KEY, localUser.getPassword());
                 } else if (actionType == Constants.TYPE_LIB) {
-                    loginMap = getLibStuInfo(context);
+                    LocalUser localUser = getLibStuInfo(context);
+                    loginMap.put(Constants.USERNAME_KEY, localUser.getUsername());
+                    loginMap.put(Constants.PASSWORD_KEY, localUser.getPassword());
                 } else {
                     loginMap = new HashMap<>();
                 }
                 loginMap.put(Constants.CAPTCHA_KEY, captcha);
                 checkUniversity(context);
-                Document document = new CmsFactory(university.cmsSys, university.cmsURL).login(loginMap);
+                Document document = new CmsFactory(university.getCmsSys(), university.getCmsURL()).login(loginMap);
                 e.onNext(document);
             }
         }).subscribeOn(Schedulers.io());
@@ -131,9 +132,9 @@ public class Loader {
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 if (actionType == Constants.TYPE_CMS) {
                     checkUniversity(context);
-                    e.onNext(new CmsFactory(university.cmsSys, university.cmsURL).prepareOnlineInfo());
+                    e.onNext(new CmsFactory(university.getCmsSys(), university.getCmsURL()).prepareOnlineInfo());
                 } else if (actionType == Constants.TYPE_LIB) {
-                    e.onNext(new LibraryFactory(university.libSys, university.libURL).prepareOnlineInfo());
+                    e.onNext(new LibraryFactory(university.getLibSys(), university.getLibURL()).prepareOnlineInfo());
                 }
             }
         }).subscribeOn(Schedulers.io());
@@ -147,35 +148,17 @@ public class Loader {
     }
 
     @NonNull
-    public static Map<String, String> getLibStuInfo(Context context) {
-        Map<String, String> map = new HashMap<>(2);
-        try {
-            String password = PrefHelper.getString(context, R.string.pref_lib_password, "");
-            password = AESCrypt.decrypt(Constants.seed, password);
-            if (!TextUtils.isEmpty(password)) {
-                map.put(context.getString(R.string.key_username), PrefHelper.getString(context, R.string.pref_lib_username, ""));
-                map.put(context.getString(R.string.key_password), password);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
-        return map;
+    public static LocalUser getLibStuInfo(Context context) {
+        String username = PrefHelper.getString(context, R.string.pref_lib_username, "");
+        String password = PrefHelper.getString(context, R.string.pref_lib_password, "");
+        return new LocalUser(username, password);
     }
 
     @NonNull
-    public static Map<String, String> getCmsStuInfo(Context context) {
-        Map<String, String> map = new HashMap<>(2);
-        try {
-            String password = PrefHelper.getString(context, R.string.pref_cms_password, "");
-            password = AESCrypt.decrypt(Constants.seed, password);
-            if (!TextUtils.isEmpty(password)) {
-                map.put(context.getString(R.string.key_username), PrefHelper.getString(context, R.string.pref_cms_username, ""));
-                map.put(context.getString(R.string.key_password), password);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
-        return map;
+    public static LocalUser getCmsStuInfo(Context context) {
+        String username = PrefHelper.getString(context, R.string.pref_cms_username, "");
+        String password = PrefHelper.getString(context, R.string.pref_cms_password, "");
+        return new LocalUser(username, password);
     }
 
     public static int getCurrentWeek(Context context) {

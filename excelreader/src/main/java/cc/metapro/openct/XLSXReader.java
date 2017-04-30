@@ -96,9 +96,12 @@ public class XLSXReader {
             Node row = rows.item(i);
             NodeList columns = row.getChildNodes();
             for (int j = 0; j < columns.getLength(); j++) {
-                Node cell = columns.item(j).getFirstChild().getFirstChild();
-                String value = cell.getNodeValue();
-                builder.append(valueMap.get(value)).append("\t");
+                Node cell = columns.item(j).getFirstChild();
+                if (cell != null && cell.hasChildNodes()) {
+                    cell = cell.getFirstChild();
+                    String value = cell.getNodeValue();
+                    builder.append(valueMap.get(value)).append("\t");
+                }
             }
             builder.delete(builder.length() - 1, builder.length());
             builder.append("\n");

@@ -43,8 +43,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-import cc.metapro.openct.data.university.item.classinfo.ClassTime;
-import cc.metapro.openct.data.university.item.classinfo.EnrichedClassInfo;
+import cc.metapro.openct.data.university.model.classinfo.ClassTime;
+import cc.metapro.openct.data.university.model.classinfo.EnrichedClassInfo;
 
 public class ICalHelper {
 
@@ -98,7 +98,7 @@ public class ICalHelper {
         RRule rule = new RRule(recur);
 
         Calendar startTime = classTimeMap.get(time.getDailySeq());
-        int length = time.getDailyEnd() - time.getDailySeq() + 1;
+        int length = time.getLength();
         GregorianCalendar endTime = new GregorianCalendar(
                 startTime.get(Calendar.YEAR),
                 startTime.get(Calendar.MONTH),
@@ -135,7 +135,7 @@ public class ICalHelper {
         event.getProperties().add(new Uid(new UidGenerator("OPENCT").generateUid().getValue()));
         event.getProperties().add(new Location(time.getPlace() + " " + time.getTeacher()));
 
-        event.getProperties().add(new Description(time.getTime() + " " + time.getTeacher()));
+        event.getProperties().add(new Description(time.getTimeString() + " " + time.getTeacher()));
         event.getProperties().add(rdate);
         event.getProperties().add(rule);
         return event;

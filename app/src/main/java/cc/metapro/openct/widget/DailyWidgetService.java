@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.item.classinfo.SingleClass;
+import cc.metapro.openct.data.source.local.DBManger;
+import cc.metapro.openct.data.source.local.LocalHelper;
+import cc.metapro.openct.data.university.model.classinfo.SingleClass;
 
 public class DailyWidgetService extends RemoteViewsService {
 
@@ -55,7 +55,7 @@ public class DailyWidgetService extends RemoteViewsService {
         @Override
         public void onDataSetChanged() {
             DBManger manger = DBManger.getInstance(mContext);
-            int week = Loader.getCurrentWeek(mContext);
+            int week = LocalHelper.getCurrentWeek(mContext);
             mDailyClasses = manger.getClasses().getTodayClasses(week);
         }
 

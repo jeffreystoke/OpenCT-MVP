@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.source;
+package cc.metapro.openct.data.source.local;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -31,20 +31,20 @@ class DBHelper extends SQLiteOpenHelper {
     static final String GRADE_TABLE = "grades";
     static final String BORROW_TABLE = "borrows";
     static final String CUSTOM_TABLE = "custom";
-    static final String ADV_CUSTOM_TABLE = "adv_custom";
+    static final String DETAIL_CUSTOM_TABLE = "adv_custom";
     static final String JSON = "json";
     private static final String DB_NAME = "openct.db";
 
     private static final Map<String, String> TITLE_TABLE_MAP = new HashMap<String, String>() {{
         put(SCHOOL_TABLE, "(" + SCHOOL_NAME + " TEXT PRIMARY KEY, " + JSON + " TEXT)");
-        put(ADV_CUSTOM_TABLE, "(" + SCHOOL_NAME + " TEXT PRIMARY KEY, " + JSON + " TEXT)");
+        put(DETAIL_CUSTOM_TABLE, "(" + SCHOOL_NAME + " TEXT PRIMARY KEY, " + JSON + " TEXT)");
         put(CLASS_TABLE, "(id TEXT PRIMARY KEY, " + JSON + " TEXT)");
         put(GRADE_TABLE, "(id INTEGER PRIMARY KEY AUTOINCREMENT, " + JSON + " TEXT)");
         put(BORROW_TABLE, "(id INTEGER PRIMARY KEY AUTOINCREMENT, " + JSON + " TEXT)");
         put(CUSTOM_TABLE, "(id INTEGER PRIMARY KEY AUTOINCREMENT, " + JSON + " TEXT)");
     }};
 
-    private static final int DB_VERSION = 81;
+    private static final int DB_VERSION = 90;
 
 
     DBHelper(Context context) {

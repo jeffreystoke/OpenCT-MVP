@@ -31,7 +31,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.university.item.GradeInfo;
+import cc.metapro.openct.data.university.model.GradeInfo;
 
 @Keep
 class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHolder> {

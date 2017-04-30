@@ -16,16 +16,6 @@
   -->
 
 <resources>
-
-    <string name="key_username" translatable="false">username</string>
-    <string name="key_password" translatable="false">password</string>
-    <string name="key_captcha" translatable="false">captcha</string>
-    <string name="key_action" translatable="false">action</string>
-    <string name="key_search_type" translatable="false">type</string>
-    <string name="key_search_content" translatable="false">content</string>
-
-    <!--成绩查询相关-->
-
     <!--CET 成绩结果key-->
     <string name="key_full_name" translatable="false">full_name</string>
     <string name="key_school" translatable="false">school</string>

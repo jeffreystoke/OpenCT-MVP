@@ -31,8 +31,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.source.local.DBManger;
+import cc.metapro.openct.data.source.local.LocalHelper;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
@@ -49,7 +49,7 @@ import io.reactivex.schedulers.Schedulers;
 import static cc.metapro.openct.utils.Constants.TYPE_BORROW;
 import static cc.metapro.openct.utils.Constants.TYPE_CLASS;
 import static cc.metapro.openct.utils.Constants.TYPE_GRADE;
-import static cc.metapro.openct.utils.Constants.advCustomInfo;
+import static cc.metapro.openct.utils.Constants.sDetailCustomInfo;
 
 
 public class LinkSelectionDialog extends BaseDialog {
@@ -100,7 +100,7 @@ public class LinkSelectionDialog extends BaseDialog {
                         }
 
                         setUrlPattern();
-                        DBManger.getInstance(getActivity()).updateAdvCustomInfo(advCustomInfo);
+                        DBManger.getInstance(getActivity()).updateAdvCustomInfo(sDetailCustomInfo);
                         Constants.checkAdvCustomInfo(getActivity());
                         mPresenter.loadTargetPage(getFragmentManager(), mTarget.absUrl("href"));
 
@@ -135,7 +135,7 @@ public class LinkSelectionDialog extends BaseDialog {
                                 Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
                                     @Override
                                     public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                                        CmsFactory factory = Loader.getCms(getActivity());
+                                        CmsFactory factory = LocalHelper.getCms(getActivity());
                                         e.onNext(factory.getPageDom(mTarget.absUrl("href")));
                                     }
                                 });
@@ -204,21 +204,21 @@ public class LinkSelectionDialog extends BaseDialog {
     private void setUrlPattern() {
         if (TYPE_CLASS.equals(TYPE)) {
             if (sIsFirst) {
-                advCustomInfo.setFirstClassUrlPattern(mTarget.toString());
+                sDetailCustomInfo.setFirstClassUrlPattern(mTarget.toString());
             } else {
-                advCustomInfo.addClassUrlPattern(mTarget.toString());
+                sDetailCustomInfo.addClassUrlPattern(mTarget.toString());
             }
         } else if (TYPE_GRADE.equals(TYPE)) {
             if (sIsFirst) {
-                advCustomInfo.setFirstGradeUrlPattern(mTarget.toString());
+                sDetailCustomInfo.setFirstGradeUrlPattern(mTarget.toString());
             } else {
-                advCustomInfo.addGradeUrlPattern(mTarget.toString());
+                sDetailCustomInfo.addGradeUrlPattern(mTarget.toString());
             }
         } else if (TYPE_BORROW.equals(TYPE)) {
             if (sIsFirst) {
-                advCustomInfo.setFirstBorrowPattern(mTarget.toString());
+                sDetailCustomInfo.setFirstBorrowPattern(mTarget.toString());
             } else {
-                advCustomInfo.addBorrowPattern(mTarget.toString());
+                sDetailCustomInfo.addBorrowPattern(mTarget.toString());
             }
         }
     }

@@ -18,12 +18,17 @@ package cc.metapro.openct.data.openctservice;
 
 import java.util.List;
 
+import cc.metapro.openct.LoginConfig;
 import cc.metapro.openct.data.university.UniversityInfo;
-import retrofit2.Call;
+import io.reactivex.Observable;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 public interface OpenCTService {
 
     @GET("schools.json")
-    Call<List<UniversityInfo>> getOnlineUniversityInfo();
+    Observable<List<UniversityInfo>> getOnlineUniversityInfo();
+
+    @GET("/login/{school}")
+    Observable<LoginConfig> getLoginConfigOf(@Path("school") String school);
 }

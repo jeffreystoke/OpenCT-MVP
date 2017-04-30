@@ -36,11 +36,11 @@ import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.FormDialog;
 import cc.metapro.openct.data.openctservice.ServiceGenerator;
-import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.source.local.DBManger;
+import cc.metapro.openct.data.source.local.LocalHelper;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.UniversityUtils;
-import cc.metapro.openct.data.university.item.GradeInfo;
+import cc.metapro.openct.data.university.model.GradeInfo;
 import cc.metapro.openct.grades.cet.CETService;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.Constants;
@@ -76,7 +76,7 @@ class GradePresenter implements GradeContract.Presenter {
     public Disposable loadOnlineInfo(final FragmentManager manager) {
         ActivityUtils.showProgressDialog(mContext, R.string.preparing_school_sys_info);
 
-        Observable<Boolean> observable = Loader.prepareOnlineInfo(Constants.TYPE_CMS, mContext);
+        Observable<Boolean> observable = LocalHelper.prepareOnlineInfo(Constants.TYPE_CMS, mContext);
 
         Observer<Boolean> observer = new MyObserver<Boolean>(TAG) {
             @Override
@@ -107,14 +107,14 @@ class GradePresenter implements GradeContract.Presenter {
     public Disposable loadUserCenter(final FragmentManager manager, final String code) {
         ActivityUtils.showProgressDialog(mContext, R.string.login_to_system);
 
-        Observable<Document> observable = Loader.login(Constants.TYPE_CMS, mContext, code);
+        Observable<Document> observable = LocalHelper.login(Constants.TYPE_CMS, mContext, code);
 
         Observer<Document> observer = new MyObserver<Document>(TAG) {
             @Override
             public void onNext(final Document userCenterDom) {
                 super.onNext(userCenterDom);
                 Constants.checkAdvCustomInfo(mContext);
-                final List<String> urlPatterns = Constants.advCustomInfo.getGradeUrlPatterns();
+                final List<String> urlPatterns = Constants.sDetailCustomInfo.getGradeUrlPatterns();
                 if (!urlPatterns.isEmpty()) {
                     if (urlPatterns.size() == 1) {
                         // fetch first page from user center, it will find the grade info page in most case
@@ -127,7 +127,7 @@ class GradePresenter implements GradeContract.Presenter {
                         Observable<String> extraObservable = Observable.create(new ObservableOnSubscribe<String>() {
                             @Override
                             public void subscribe(ObservableEmitter<String> e) throws Exception {
-                                CmsFactory factory = Loader.getCms(mContext);
+                                CmsFactory factory = LocalHelper.getCms(mContext);
                                 Document lastDom = userCenterDom;
                                 Element finalTarget = null;
                                 for (String pattern : urlPatterns) {
@@ -182,7 +182,7 @@ class GradePresenter implements GradeContract.Presenter {
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
             public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                e.onNext(Loader.getCms(mContext).getPageDom(url));
+                e.onNext(LocalHelper.getCms(mContext).getPageDom(url));
             }
         });
 
@@ -214,7 +214,7 @@ class GradePresenter implements GradeContract.Presenter {
         Observable<Document> observable = Observable.create(new ObservableOnSubscribe<Document>() {
             @Override
             public void subscribe(ObservableEmitter<Document> e) throws Exception {
-                e.onNext(Loader.getCms(mContext).queryGradePageDom(actionURL, queryMap, needNewPage));
+                e.onNext(LocalHelper.getCms(mContext).queryGradePageDom(actionURL, queryMap, needNewPage));
             }
         });
 
@@ -224,12 +224,12 @@ class GradePresenter implements GradeContract.Presenter {
                 super.onNext(document);
                 Constants.checkAdvCustomInfo(mContext);
 
-                if (TextUtils.isEmpty(Constants.advCustomInfo.GRADE_TABLE_ID)) {
+                if (TextUtils.isEmpty(Constants.sDetailCustomInfo.getGradeTableId())) {
                     ActivityUtils.showTableChooseDialog(manager, Constants.TYPE_GRADE, document, GradePresenter.this);
                 } else {
                     mGrades = UniversityUtils.generateInfo(
                             TableUtils.getTablesFromTargetPage(document)
-                                    .get(Constants.advCustomInfo.GRADE_TABLE_ID),
+                                    .get(Constants.sDetailCustomInfo.getGradeTableId()),
                             GradeInfo.class);
                     if (mGrades.size() == 0) {
                         Toast.makeText(mContext, R.string.grades_empty, Toast.LENGTH_LONG).show();
@@ -258,7 +258,7 @@ class GradePresenter implements GradeContract.Presenter {
 
     @Override
     public void loadLocalGrades() {
-        Observable<List<GradeInfo>> observable = Loader.getGrades(mContext);
+        Observable<List<GradeInfo>> observable = LocalHelper.getGrades(mContext);
 
         Observer<List<GradeInfo>> observer = new MyObserver<List<GradeInfo>>(TAG) {
             @Override

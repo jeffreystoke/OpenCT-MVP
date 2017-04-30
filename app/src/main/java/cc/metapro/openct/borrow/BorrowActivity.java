@@ -31,14 +31,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.Loader;
-import cc.metapro.openct.data.university.item.BorrowInfo;
+import cc.metapro.openct.data.source.local.LocalHelper;
+import cc.metapro.openct.data.source.local.LocalUser;
+import cc.metapro.openct.data.university.model.BorrowInfo;
 import cc.metapro.openct.pref.SettingsActivity;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 import cc.metapro.openct.utils.base.BaseActivity;
@@ -59,8 +59,8 @@ public class BorrowActivity extends BaseActivity implements BorrowContract.View 
 
     @OnClick(R.id.fab)
     public void load() {
-        Map<String, String> map = Loader.getLibStuInfo(this);
-        if (map.size() < 2) {
+        LocalUser user = LocalHelper.getLibStuInfo(this);
+        if (user.isEmpty()) {
             Toast.makeText(this, R.string.please_fill_lib_info, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);

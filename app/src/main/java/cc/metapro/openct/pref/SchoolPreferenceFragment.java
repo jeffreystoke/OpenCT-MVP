@@ -40,8 +40,8 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.source.DBManger;
-import cc.metapro.openct.data.source.Loader;
+import cc.metapro.openct.data.source.local.DBManger;
+import cc.metapro.openct.data.source.local.LocalHelper;
 import cc.metapro.openct.splash.schoolselection.SchoolSelectionActivity;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.PrefHelper;
@@ -96,7 +96,7 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
                             public void onClick(DialogInterface dialog, int which) {
                                 DBManger manger = DBManger.getInstance(getActivity());
                                 manger.delAdvancedCustomInfo();
-                                Constants.advCustomInfo = null;
+                                Constants.sDetailCustomInfo = null;
                                 Constants.checkAdvCustomInfo(getActivity());
                             }
                         }).show();
@@ -279,7 +279,7 @@ public class SchoolPreferenceFragment extends PreferenceFragment implements Pref
                 } else {
                     preference.setSummary(value);
                 }
-                Loader.needUpdateUniversity();
+                LocalHelper.needUpdateUniversity();
             } else {
                 preference.setSummary(value);
             }

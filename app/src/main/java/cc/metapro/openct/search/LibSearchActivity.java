@@ -41,7 +41,7 @@ import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.EndlessRecyclerOnScrollListener;
-import cc.metapro.openct.data.university.item.BookInfo;
+import cc.metapro.openct.data.university.model.BookInfo;
 import cc.metapro.openct.utils.RecyclerViewHelper;
 import cc.metapro.openct.utils.base.BaseActivity;
 import io.reactivex.disposables.Disposable;

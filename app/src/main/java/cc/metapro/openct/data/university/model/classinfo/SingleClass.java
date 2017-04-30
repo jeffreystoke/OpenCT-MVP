@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.university.item.classinfo;
+package cc.metapro.openct.data.university.model.classinfo;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -57,7 +57,7 @@ public class SingleClass implements Comparable<SingleClass>, View.OnClickListene
      * for example 3 - 4 or 3
      */
     public String getTimeString() {
-        return time.getTime();
+        return time.getTimeString();
     }
 
     public ClassTime getClassTime() {
@@ -88,7 +88,7 @@ public class SingleClass implements Comparable<SingleClass>, View.OnClickListene
         card.setBackgroundColor(color);
 
         TextView textView = (TextView) card.findViewById(R.id.class_name);
-        int length = time.getDailyEnd() - time.getDailySeq() + 1;
+        int length = time.getLength();
         if (length > 5 || length < 1) {
             length = 1;
             textView.setText(name);

@@ -211,7 +211,7 @@
     <string name="class_place">上课地点</string>
     <string name="ical_create_success">创建成功, 文件 OpenCT Classes.ics 保存在手机存储根目录中</string>
     <string name="preparing_school_sys_info">正在准备校园系统信息…</string>
-    <string name="no_write_permission">没有写出到外部存储权限, 无法导出</string>
+    <string name="no_write_permission">没有外部存储读写权限, 无法执行</string>
     <string name="custom_finish_tip">课表解析完成, 请回到主界面查看课表\n部分信息可能需要修改\n\nTips: 尝试修改正则表达式进行匹配能得到更加准确的信息</string>
     <string name="sorry_for_unable_to_get_class_info">很遗憾, 没能在该页面解析到课程信息</string>
     <string name="swipe_choose_table">左右滑动选择目标信息</string>

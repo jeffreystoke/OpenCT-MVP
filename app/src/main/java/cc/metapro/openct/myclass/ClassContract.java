@@ -16,7 +16,7 @@ package cc.metapro.openct.myclass;
  * limitations under the License.
  */
 
-import cc.metapro.openct.data.university.item.classinfo.Classes;
+import cc.metapro.openct.data.university.model.classinfo.Classes;
 import cc.metapro.openct.utils.base.BaseView;
 import cc.metapro.openct.utils.base.LoginPresenter;
 
