@@ -9,47 +9,46 @@ This is an Open Source Project, which aims to be the start point for your develo
 
 ## ScreenShots
 
-<img src="./screenshots/features.jpg?raw=true" width="100">
-<img src="./screenshots/class_table_day.jpg?raw=true" width="100">
-<img src="./screenshots/class_table_week.jpg?raw=true" width="100">
-<img src="./screenshots/borrow_info.jpg?raw=true" width="100">
-<img src="./screenshots/search_result.jpg?raw=true" width="100">
-<img src="./screenshots/all_classes.jpg?raw=true" width="100">
-<img src="./screenshots/class_edit.jpg?raw=true" width="100">
-<img src="./screenshots/view_in_icalendar.png?raw=true" width="100">
-
-## Dependency
-
-- Jsoup 1.10.2
-- Google Gson 2.8.0
-- Android Support v4/v7/Design/CardView-v7 25.1
-- ReactiveX RxJava 2.0.5/RxAndroid 2.0.1
-- Squareup Retrofit 2.1.0/Converter-Gson 2.1.0/Converter-Scalars 2.1.0
-- Mnode iCal4j 2.0.0
-- Jakewharton ButterKnife 8.5.1
-- jp.wasabeef:recyclerview-animators 2.2.4
-- com.github.clans:fab 1.6.4
-- se.emilsjolander:stickylistheaders 2.7.0
-- com.rengwuxian.materialedittext:library 2.1.4
-- org.xdty.preference:color-picker 0.0.4
-- com.yanzhenjie:recyclerview-swipe 1.0.2
-- com.wdullaer:materialdatetimepicker 3.1.2
-- com.github.clans:fab 1.6.4
-- com.scottyab:aescrypt 0.0.1
-- me.relex:circleindicator 1.2.2@aar
+<img src="http://image.coolapk.com/apk_image/2017/0421/Screenshot_20170421-182921-for-126936-o_1be81s1ab1q1tmp1idj7c810nn12-uid-725520.png" width="200">
+<img src="http://image.coolapk.com/apk_image/2017/0421/Screenshot_20170421-182909-for-126936-bac47cfd2c927806c3f119491e2f5829-uid-725520.png" width="200">
+<img src="http://image.coolapk.com/apk_image/2017/0421/Screenshot_20170421-182912-for-126936-o_1be81s1abrsh1a421i8v147h1joo11-uid-725520.png" width="200">
+<img src="http://image.coolapk.com/apk_image/2017/0421/Screenshot_20170421-183021-for-126936-o_1be81s1ab1mf21vr41mgn7jeh3d15-uid-725520.png" width="200">
+<img src="http://image.coolapk.com/apk_image/2017/0421/Screenshot_20170421-183003-for-126936-o_1be81s1ab1drtqefpaq1v16e7i13-uid-725520.png" width="200">
+<img src="http://image.coolapk.com/apk_image/2017/0421/Screenshot_20170421-183013-for-126936-o_1be81s1ab1up5190u1arknoh1bbn14-uid-725520.png" width="200">
+<img src="http://image.coolapk.com/apk_image/2017/0421/Screenshot_20170421-183121-for-126936-o_1be81s1abs061gq1vev1egj15v216-uid-725520.png" width="200">
 
 ## Features
-
 
 1. Fetch your classes, update current week automatically
 2. Fetch your academic grade
 3. Search library
-4. Fetch book info you have borrowed
+4. Fetch books you have borrowed from library
 5. Export to iCal file (.ics) for Calendar Sync
 6. Add & edit classes manually
 7. Import class from Excel table content
 8. Query your CET grade
+9. Theme selection
+10. App widget
+11. Script based school custom (Coming soon!)
 
+## Dependency
+
+- Jsoup
+- Google Gson
+- Android Support v4/v7/Design/CardView-v7
+- ReactiveX RxJava/RxAndroid
+- Squareup Retrofit/Converter-Gson/Converter-Scalars/Adapter-RxJava2
+- Mnode iCal4j
+- Jakewharton ButterKnife
+- jp.wasabeef:recyclerview-animators
+- com.github.clans:fab
+- se.emilsjolander:stickylistheaders
+- com.rengwuxian.materialedittext:library
+- org.xdty.preference:color-picker
+- com.yanzhenjie:recyclerview-swipe
+- com.wdullaer:materialdatetimepicker
+- com.github.clans:fab
+- com.scottyab:aescrypt
 
 ## Import from XLSX (Excel 2007+)
 
