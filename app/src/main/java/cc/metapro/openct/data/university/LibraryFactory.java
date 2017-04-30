@@ -47,14 +47,14 @@ public class LibraryFactory extends UniversityFactory {
     private static String nextPageURL = "";
     private LibURLFactory mURLFactory;
 
-    public LibraryFactory(String libSys, String libBaseURL) {
-        super(libSys, libBaseURL);
-        mURLFactory = new LibURLFactory(libBaseURL);
+    public LibraryFactory(UniversityInfo info) {
+        super(info, Constants.TYPE_LIB);
+        mURLFactory = new LibURLFactory(info.getLibURL());
     }
 
     @NonNull
     public Document getBorrowPageDom(String url) throws Exception {
-        String tablePage = mService.getPage(url).execute().body();
+        String tablePage = mService.get(url).execute().body();
         tablePage = tablePage.replaceAll(HTMLUtils.BR, HTMLUtils.BR_REPLACER);
         return Jsoup.parse(tablePage, url);
     }
@@ -65,7 +65,7 @@ public class LibraryFactory extends UniversityFactory {
         nextPageURL = "";
         String searchPage = null;
         try {
-            searchPage = mService.getPage(mURLFactory.SEARCH_URL).execute().body();
+            searchPage = mService.get(mURLFactory.SEARCH_URL).execute().body();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
         }
@@ -98,7 +98,7 @@ public class LibraryFactory extends UniversityFactory {
             return new ArrayList<>(0);
         }
         if (Constants.NJHUIWEN.equalsIgnoreCase(SYS)) {
-            resultPage = mService.getPage(nextPageURL).execute().body();
+            resultPage = mService.get(nextPageURL).execute().body();
         }
         prepareNextPageURL(resultPage);
         return TextUtils.isEmpty(resultPage) ? new ArrayList<BookInfo>(0) : parseBook(resultPage);
@@ -127,15 +127,16 @@ public class LibraryFactory extends UniversityFactory {
     private String typeTrans(String cnType) {
         switch (cnType) {
             case "书名":
+            case "Title":
                 return "title";
             case "作者":
+            case "Author":
                 return "author";
             case "ISBN":
                 return "isbn";
             case "出版社":
+            case "Press":
                 return "publisher";
-            case "丛书名":
-                return "series";
             default:
                 return "title";
         }

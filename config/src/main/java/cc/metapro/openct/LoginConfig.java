@@ -70,7 +70,8 @@ public class LoginConfig {
             for (String s : postHeaderSpec.keySet()) {
                 String value = postHeaderSpec.get(s);
                 if (value.equalsIgnoreCase(ScriptHelper.POST_CONTENT)) {
-                    realHeader.put(s, ScriptHelper.getPostContent(this, username, password, captcha, extraPart));
+                    String content = ScriptHelper.getPostContent(this, username, password, captcha, extraPart);
+                    realHeader.put(s, content);
                 } else if (value.equalsIgnoreCase(ScriptHelper.CAPTCHA)) {
                     realHeader.put(s, captcha);
                 } else if (value.equalsIgnoreCase(ScriptHelper.PASSWORD)) {
@@ -105,5 +106,9 @@ public class LoginConfig {
 
     public boolean needExtraLoginPart() {
         return !TextUtils.isEmpty(extraLoginPartURL);
+    }
+
+    public boolean isEmpty() {
+        return script == null || script.length == 0;
     }
 }

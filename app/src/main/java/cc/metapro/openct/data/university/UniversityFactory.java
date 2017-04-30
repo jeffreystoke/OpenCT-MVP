@@ -28,42 +28,65 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
+import cc.metapro.openct.LoginConfig;
 import cc.metapro.openct.data.source.local.StoreHelper;
-import cc.metapro.openct.utils.Constants;
+import cc.metapro.openct.data.source.remote.RemoteSource;
+import cc.metapro.openct.utils.base.MyObserver;
 import cc.metapro.openct.utils.interceptors.SchoolInterceptor;
 import cc.metapro.openct.utils.webutils.Form;
 import cc.metapro.openct.utils.webutils.FormHandler;
 import cc.metapro.openct.utils.webutils.FormUtils;
+import io.reactivex.Observer;
+import okhttp3.HttpUrl;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static cc.metapro.openct.utils.Constants.ACTION_KEY;
+import static cc.metapro.openct.utils.Constants.CAPTCHA_FILE;
+import static cc.metapro.openct.utils.Constants.CAPTCHA_KEY;
+import static cc.metapro.openct.utils.Constants.PASSWORD_KEY;
+import static cc.metapro.openct.utils.Constants.TYPE_CMS;
+import static cc.metapro.openct.utils.Constants.TYPE_LIB;
+import static cc.metapro.openct.utils.Constants.USERNAME_KEY;
+
 public abstract class UniversityFactory {
 
-    private static final String LOGIN_SUCCESS_PATTERN = "(当前)|(个人)|(退出)|(注销)";
+    private static final String TAG = UniversityFactory.class.getName();
+    private static final Pattern LOGIN_SUCCESS_PATTERN = Pattern.compile("(当前)|(个人)|(退出)|(注销)");
     static UniversityService mService;
     static String SYS;
+    private static LoginConfig mLoginConfig;
     private static WebHelper webHelper;
     private static SchoolInterceptor interceptor;
     private static String BASE_URL;
-
+    private RemoteSource mRemoteRepoSource;
+    private String mUsername, mPassword, mCaptcha;
+    private Lock mLoginLock = new ReentrantLock();
     private boolean loginSuccess;
 
-    UniversityFactory(String sys, String url) {
-        SYS = sys;
-        BASE_URL = URLUtil.guessUrl(url);
+    UniversityFactory(UniversityInfo info, int type) {
+        mRemoteRepoSource = new RemoteSource(info.getName());
+        if (type == TYPE_CMS) {
+            SYS = info.getCmsSys();
+            BASE_URL = URLUtil.guessUrl(info.getCmsURL());
+        } else if (type == TYPE_LIB) {
+            SYS = info.getLibSys();
+            BASE_URL = URLUtil.guessUrl(info.getLibURL());
+        }
     }
 
     // 再次获取验证码
     public static void getOneMoreCAPTCHA() throws IOException {
         Response<ResponseBody> bodyResponse = mService.getCAPTCHA(webHelper.getCaptchaURL()).execute();
         ResponseBody body = bodyResponse.body();
-        StoreHelper.storeBytes(Constants.CAPTCHA_FILE, body.byteStream());
+        StoreHelper.storeBytes(CAPTCHA_FILE, body.byteStream());
     }
 
     @NonNull
@@ -78,35 +101,18 @@ public abstract class UniversityFactory {
             }
         });
 
-        Exception LOGIN_FAIL = new Exception("登录失败, 请检查您的用户名和密码\n" + "(以及验证码)");
+        mUsername = loginMap.get(USERNAME_KEY);
+        mPassword = loginMap.get(PASSWORD_KEY);
+        mCaptcha = loginMap.get(CAPTCHA_KEY);
 
+        Exception LOGIN_FAIL = new Exception("登录失败, 请检查您的用户名和密码\n" + "(以及验证码)");
         String USER_CENTER = "";
 
-        // 强智教务系统 (特殊处理)
-        if (Constants.QZDATASOFT.equalsIgnoreCase(SYS)) {
-            // 无需验证码则没有加密 -> 使用普通方法
-            if (webHelper.getLoginForm() != null) {
-                String urlTmp = webHelper.getBaseURL()
-                        .newBuilder("/Logon.do?method=logon&flag=sess")
-                        .build().toString();
-
-                final String serverResponse = mService.post(urlTmp, new HashMap<String, String>(0)).execute().body();
-
-                String action = webHelper.getLoginForm().absUrl("action");
-
-                USER_CENTER = mService.post(action, new LinkedHashMap<String, String>() {{
-                    put("useDogCode", "");
-                    put("encoded", UniversityUtils.QZEncryption(serverResponse, loginMap));
-                    put("RANDOMCODE", loginMap.get(Constants.CAPTCHA_KEY));
-                }}).execute().body();
-                if (loginSuccess || (!TextUtils.isEmpty(USER_CENTER) && Pattern.compile(LOGIN_SUCCESS_PATTERN).matcher(USER_CENTER).find())) {
-                    return Jsoup.parse(USER_CENTER, webHelper.getUserCenterURL());
-                } else {
-                    throw LOGIN_FAIL;
-                }
-            }
+        if (mLoginConfig != null && !mLoginConfig.isEmpty()) {
+            return fineLogin();
         }
 
+        // common login
         Document loginPageDom = webHelper.getLoginPageDOM();
         if (loginPageDom != null) {
             FormHandler formHandler = new FormHandler(loginPageDom);
@@ -116,15 +122,8 @@ public abstract class UniversityFactory {
             }
 
             Map<String, String> res = FormUtils.getLoginFiledMap(targetForm, loginMap, true);
-            if (Constants.KINGOSOFT.equalsIgnoreCase(SYS)) {
-                res.put("pcInfo", SchoolInterceptor.userAgent);
-                res.put("typeName", "学生");
-                res.put("txt_sdertfgsadscxcadsads", loginMap.get(Constants.CAPTCHA_KEY));
-                res.remove("sbtState");
-            }
-
-            String action = res.get(Constants.ACTION_KEY);
-            res.remove(Constants.ACTION_KEY);
+            String action = res.get(ACTION_KEY);
+            res.remove(ACTION_KEY);
             Response<String> stringResponse = mService.post(action, res).execute();
             USER_CENTER = stringResponse.body();
 
@@ -140,11 +139,13 @@ public abstract class UniversityFactory {
             for (Element frame : frames) {
                 String url = frame.absUrl("src");
                 if (!TextUtils.isEmpty(url)) {
-                    document.append(mService.getPage(url).execute().body());
+                    document.append(mService.get(url).execute().body());
                 }
             }
-            // login finish, check results
-            if (loginSuccess || (!TextUtils.isEmpty(USER_CENTER) && Pattern.compile(LOGIN_SUCCESS_PATTERN).matcher(USER_CENTER).find())) {
+            // fineLogin finish, check results
+            if (loginSuccess ||
+                    (!TextUtils.isEmpty(USER_CENTER) &&
+                            LOGIN_SUCCESS_PATTERN.matcher(USER_CENTER).find())) {
                 return document;
             } else {
                 throw LOGIN_FAIL;
@@ -154,6 +155,32 @@ public abstract class UniversityFactory {
         return Jsoup.parse(USER_CENTER, webHelper.getUserCenterURL());
     }
 
+    private Document fineLogin() throws IOException {
+//        String loginUrl = TextUtils.isEmpty(mLoginConfig.getLoginURL()) ?
+//                webHelper.getLoginPageURL() : mLoginConfig.getLoginURL();
+
+        mLoginConfig.setInfo(mUsername, mPassword, mCaptcha);
+        if (mLoginConfig.needExtraLoginPart()) {
+            String extraPartUrl = HttpUrl.parse(webHelper.getLoginPageURL())
+                    .newBuilder(mLoginConfig.getExtraLoginPartURL())
+                    .toString();
+            String extraPart = "";
+            String method = TextUtils.isEmpty(mLoginConfig.getFetchExtraMethod()) ?
+                    "GET" : mLoginConfig.getFetchExtraMethod().toUpperCase();
+            if (method.equals("POST")) {
+                extraPart = mService.post(extraPartUrl, new HashMap<String, String>(0)).execute().body();
+            } else if (method.equals("GET")) {
+                extraPart = mService.get(extraPartUrl).execute().body();
+            }
+            mLoginConfig.setExtraPart(extraPart);
+        }
+
+        Map<String, String> headerSpec = mLoginConfig.getPostHeaderSpec();
+        String postUrl = webHelper.getLoginForm().absUrl("action");
+        String userCenter = mService.post(postUrl, headerSpec).execute().body();
+        return Jsoup.parse(userCenter, webHelper.getUserCenterURL());
+    }
+
     // 初次获取验证码
     public boolean prepareOnlineInfo() throws IOException {
         destroyService();
@@ -161,12 +188,22 @@ public abstract class UniversityFactory {
         interceptor.setObserver(new SchoolInterceptor.RedirectObserver<String>() {
             @Override
             public void onRedirect(String x) {
-                // 获取登录页面后, 若是动态地址则发生302重定向, 更新LoginRefer地址 (默认是登录地址)
+                // 获取登录页面后, 若是动态地址则发生302重定向, 更新 LoginRefer 地址 (默认是登录地址)
                 webHelper.setLoginPageURL(x);
             }
         });
 
-        Call<String> call = mService.getPage(webHelper.getBaseURL().toString());
+        Observer<LoginConfig> loginConfigObserver = new MyObserver<LoginConfig>(TAG) {
+            @Override
+            public void onNext(LoginConfig config) {
+                super.onNext(config);
+                mLoginConfig = config;
+            }
+        };
+
+        mRemoteRepoSource.getLoginConfig().subscribeWith(loginConfigObserver);
+
+        Call<String> call = mService.get(webHelper.getBaseURL().toString());
         Response<String> stringResponse = call.execute();
         String loginPageHtml = stringResponse.body();
 
@@ -176,7 +213,7 @@ public abstract class UniversityFactory {
 
         // 获取框架网页 (部分学校将登陆表单置于框架中)
         Elements iFrames = document.select("iframe");
-        iFrames.addAll(document.select("span:matches(登录)"));
+        iFrames.addAll(document.select("span:matches(登.*?录)"));
         for (Element iFrame : iFrames) {
             String url = iFrame.attr("src");
             if (TextUtils.isEmpty(url)) {
@@ -185,7 +222,7 @@ public abstract class UniversityFactory {
                 url = iFrame.absUrl("src");
             }
             if (!TextUtils.isEmpty(url)) {
-                String frame = mService.getPage(url).execute().body();
+                String frame = mService.get(url).execute().body();
                 domList.add(Jsoup.parse(frame, url));
             }
         }
@@ -198,11 +235,19 @@ public abstract class UniversityFactory {
         if (!TextUtils.isEmpty(captchaURL)) {
             Response<ResponseBody> bodyResponse = mService.getCAPTCHA(captchaURL).execute();
             ResponseBody body = bodyResponse.body();
-            StoreHelper.storeBytes(Constants.CAPTCHA_FILE, body.byteStream());
+            StoreHelper.storeBytes(CAPTCHA_FILE, body.byteStream());
             return true;
-        } else {
-            return false;
+        } else if (mLoginConfig != null && !mLoginConfig.isEmpty()) {
+            if (mLoginConfig.needCaptcha()) {
+                captchaURL = mLoginConfig.getCaptchaURL();
+                Response<ResponseBody> bodyResponse = mService.getCAPTCHA(captchaURL).execute();
+                ResponseBody body = bodyResponse.body();
+                StoreHelper.storeBytes(CAPTCHA_FILE, body.byteStream());
+            }
+            return true;
         }
+
+        return false;
     }
 
     void checkService() {

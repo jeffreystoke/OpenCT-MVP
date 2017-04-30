@@ -16,5 +16,34 @@ package cc.metapro.openct.data.source.local;
  * limitations under the License.
  */
 
-public final class LocalSource {
+import java.util.List;
+
+import cc.metapro.openct.LoginConfig;
+import cc.metapro.openct.data.source.Source;
+import cc.metapro.openct.data.university.DetailCustomInfo;
+import cc.metapro.openct.data.university.UniversityInfo;
+import io.reactivex.Observable;
+
+public final class LocalSource implements Source {
+
+    private String SCHOOL_NAME;
+
+    public LocalSource(String schoolName) {
+        SCHOOL_NAME = schoolName;
+    }
+
+    @Override
+    public Observable<List<UniversityInfo>> getUniversities() {
+        return null;
+    }
+
+    @Override
+    public Observable<LoginConfig> getLoginConfig() {
+        return null;
+    }
+
+    @Override
+    public Observable<DetailCustomInfo> getDetailCustomInfo() {
+        return null;
+    }
 }

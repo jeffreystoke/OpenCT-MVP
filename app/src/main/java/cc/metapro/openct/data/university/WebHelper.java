@@ -29,7 +29,7 @@ import java.net.CookiePolicy;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import cc.metapro.openct.data.openctservice.QuotePreservingCookieJar;
+import cc.metapro.openct.data.service.QuotePreservingCookieJar;
 import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.interceptors.SchoolInterceptor;
 import okhttp3.HttpUrl;

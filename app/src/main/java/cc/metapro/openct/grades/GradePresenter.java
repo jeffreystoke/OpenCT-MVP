@@ -35,7 +35,7 @@ import java.util.Map;
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.customviews.FormDialog;
-import cc.metapro.openct.data.openctservice.ServiceGenerator;
+import cc.metapro.openct.data.service.ServiceCenter;
 import cc.metapro.openct.data.source.local.DBManger;
 import cc.metapro.openct.data.source.local.LocalHelper;
 import cc.metapro.openct.data.university.CmsFactory;
@@ -285,7 +285,7 @@ class GradePresenter implements GradeContract.Presenter {
         Observable.create(new ObservableOnSubscribe<Map<String, String>>() {
             @Override
             public void subscribe(ObservableEmitter<Map<String, String>> e) throws Exception {
-                CETService service = ServiceGenerator.createCETService();
+                CETService service = ServiceCenter.createCETService();
                 String queryResult = service.queryCET(
                         mContext.getString(R.string.url_chsi_referer),
                         queryMap.get(mContext.getString(R.string.key_ticket_num)),

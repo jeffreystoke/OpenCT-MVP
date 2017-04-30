@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.source.local;
+package cc.metapro.openct.data;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -29,7 +29,7 @@ public class LocalUser {
     private String username;
     private String password;
 
-    LocalUser(String username, String password) {
+    public LocalUser(String username, String password) {
         this.username = username;
         this.password = password;
     }

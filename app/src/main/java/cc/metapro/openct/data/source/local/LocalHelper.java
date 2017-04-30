@@ -30,6 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import cc.metapro.openct.R;
+import cc.metapro.openct.data.LocalUser;
 import cc.metapro.openct.data.university.CmsFactory;
 import cc.metapro.openct.data.university.LibraryFactory;
 import cc.metapro.openct.data.university.UniversityInfo;
@@ -45,8 +46,8 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.schedulers.Schedulers;
 
 public class LocalHelper {
-    private static final String TAG = LocalHelper.class.getName();
 
+    private static final String TAG = LocalHelper.class.getName();
     public static UniversityInfo university;
     private static boolean needUpdateUniversity;
 
@@ -61,12 +62,12 @@ public class LocalHelper {
 
     public static LibraryFactory getLibrary(Context context) {
         checkUniversity(context);
-        return new LibraryFactory(university.getLibSys(), university.getLibURL());
+        return new LibraryFactory(university);
     }
 
     public static CmsFactory getCms(Context context) {
         checkUniversity(context);
-        return new CmsFactory(university.getCmsSys(), university.getCmsURL());
+        return new CmsFactory(university);
     }
 
     public static Observable<Document> login(final int actionType, final Context context, final String captcha) {
@@ -87,7 +88,7 @@ public class LocalHelper {
                 }
                 loginMap.put(Constants.CAPTCHA_KEY, captcha);
                 checkUniversity(context);
-                Document document = new CmsFactory(university.getCmsSys(), university.getCmsURL()).login(loginMap);
+                Document document = new CmsFactory(university).login(loginMap);
                 e.onNext(document);
             }
         }).subscribeOn(Schedulers.io());
@@ -132,9 +133,9 @@ public class LocalHelper {
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 if (actionType == Constants.TYPE_CMS) {
                     checkUniversity(context);
-                    e.onNext(new CmsFactory(university.getCmsSys(), university.getCmsURL()).prepareOnlineInfo());
+                    e.onNext(new CmsFactory(university).prepareOnlineInfo());
                 } else if (actionType == Constants.TYPE_LIB) {
-                    e.onNext(new LibraryFactory(university.getLibSys(), university.getLibURL()).prepareOnlineInfo());
+                    e.onNext(new LibraryFactory(university).prepareOnlineInfo());
                 }
             }
         }).subscribeOn(Schedulers.io());

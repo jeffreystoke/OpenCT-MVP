@@ -16,7 +16,6 @@ package cc.metapro.openct.data.university;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -29,19 +28,18 @@ import cc.metapro.openct.utils.Constants;
 import okhttp3.HttpUrl;
 import retrofit2.Response;
 
-@Keep
 public class CmsFactory extends UniversityFactory {
 
     private static String INFO_PAGE_URL;
 
-    public CmsFactory(String cmsSys, String baseURL) {
-        super(cmsSys, baseURL);
+    public CmsFactory(UniversityInfo info) {
+        super(info, Constants.TYPE_CMS);
     }
 
     @Nullable
     public Document getPageDom(String url) throws Exception {
         INFO_PAGE_URL = HttpUrl.parse(url).toString();
-        Response<String> response = mService.getPage(url).execute();
+        Response<String> response = mService.get(url).execute();
         String tablePage = response.body();
         return Jsoup.parse(tablePage, url);
     }
@@ -68,7 +66,7 @@ public class CmsFactory extends UniversityFactory {
             if (needNewPage) {
                 tablePage = mService.post(actionURL, queryMap).execute().body();
             } else {
-                tablePage = mService.getPage(actionURL).execute().body();
+                tablePage = mService.get(actionURL).execute().body();
             }
         }
         return Jsoup.parse(tablePage, INFO_PAGE_URL);

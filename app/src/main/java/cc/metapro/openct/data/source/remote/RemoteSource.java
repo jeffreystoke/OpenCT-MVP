@@ -16,6 +16,40 @@ package cc.metapro.openct.data.source.remote;
  * limitations under the License.
  */
 
-public final class RemoteSource {
+import java.util.List;
 
+import cc.metapro.openct.LoginConfig;
+import cc.metapro.openct.data.service.GitRepoService;
+import cc.metapro.openct.data.service.ServiceCenter;
+import cc.metapro.openct.data.source.Source;
+import cc.metapro.openct.data.university.DetailCustomInfo;
+import cc.metapro.openct.data.university.UniversityInfo;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
+
+public final class RemoteSource implements Source {
+
+    private GitRepoService mService = ServiceCenter.createOpenCTService();
+    private String SCHOOL_NAME;
+
+    public RemoteSource(String schoolName) {
+        SCHOOL_NAME = schoolName;
+    }
+
+    @Override
+    public Observable<List<UniversityInfo>> getUniversities() {
+        return mService.getUniversityInfo()
+                .subscribeOn(Schedulers.io());
+    }
+
+    @Override
+    public Observable<LoginConfig> getLoginConfig() {
+        return mService.getLoginConfigOf(SCHOOL_NAME)
+                .subscribeOn(Schedulers.io());
+    }
+
+    @Override
+    public Observable<DetailCustomInfo> getDetailCustomInfo() {
+        return null;
+    }
 }

@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.openctservice;
+package cc.metapro.openct.data.service;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -27,7 +27,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-public class ServiceGenerator {
+public class ServiceCenter {
 
     public static CETService createCETService() {
         return new Retrofit.Builder()
@@ -43,11 +43,11 @@ public class ServiceGenerator {
                 .build().create(CETService.class);
     }
 
-    public static OpenCTService createOpenCTService() {
+    public static GitRepoService createOpenCTService() {
         return new Retrofit.Builder()
                 .baseUrl("https://raw.githubusercontent.com/jeffreystoke/openct-school-info/master/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build().create(OpenCTService.class);
+                .build().create(GitRepoService.class);
     }
 }

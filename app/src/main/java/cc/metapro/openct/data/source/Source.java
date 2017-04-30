@@ -30,4 +30,5 @@ public interface Source {
     Observable<LoginConfig> getLoginConfig();
 
     Observable<DetailCustomInfo> getDetailCustomInfo();
+
 }

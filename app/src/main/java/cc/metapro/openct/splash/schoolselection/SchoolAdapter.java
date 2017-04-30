@@ -29,8 +29,9 @@ import java.util.Collections;
 import java.util.List;
 
 import cc.metapro.openct.R;
-import cc.metapro.openct.data.openctservice.ServiceGenerator;
 import cc.metapro.openct.data.source.local.DBManger;
+import cc.metapro.openct.data.source.local.LocalHelper;
+import cc.metapro.openct.data.source.remote.RemoteSource;
 import cc.metapro.openct.data.university.UniversityInfo;
 import cc.metapro.openct.utils.ActivityUtils;
 import cc.metapro.openct.utils.base.MyObserver;
@@ -85,10 +86,8 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
                     }
                 };
 
-                ServiceGenerator
-                        .createOpenCTService()
-                        .getOnlineUniversityInfo()
-                        .subscribeOn(Schedulers.io())
+                RemoteSource source = new RemoteSource(LocalHelper.getUniversity(context).getName());
+                source.getUniversities()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(observer);
 

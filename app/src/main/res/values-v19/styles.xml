@@ -124,14 +124,6 @@
         <item name="android:textColor">@color/material_grey</item>
     </style>
 
-    <style name="AppTheme.SeqText" parent="TextAppearance.AppCompat">
-        <item name="android:textColor">@color/material_black</item>
-        <item name="android:gravity">center</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">2</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
-
     <style name="AppTheme.InitialText" parent="TextAppearance.AppCompat">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

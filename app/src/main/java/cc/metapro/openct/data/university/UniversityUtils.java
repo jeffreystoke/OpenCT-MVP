@@ -27,14 +27,12 @@ import org.jsoup.select.Elements;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.model.classinfo.Classes;
 import cc.metapro.openct.data.university.model.classinfo.EnrichedClassInfo;
-import cc.metapro.openct.utils.Constants;
 import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.REHelper;
@@ -42,55 +40,6 @@ import cc.metapro.openct.utils.REHelper;
 public class UniversityUtils {
 
     private static final String CLASS_TABLE_PATTERN = "节|(\\d+)";
-
-//    private static boolean loginSuccess = false;
-
-//    public static Document loginToQZDatasoft(final WebHelper webHelper, UniversityService mService, final Map<String, String> loginMap) throws Exception {
-//        String USER_CENTER = "";
-//        Exception LOGIN_FAIL = new Exception("登录失败, 请检查您的用户名和密码\n" + "(以及验证码)");
-//        loginSuccess = false;
-//        webHelper.getInterceptor().setObserver(new SchoolInterceptor.RedirectObserver<String>() {
-//            @Override
-//            public void onRedirect(String x) {
-//                loginSuccess = true;
-//                webHelper.setUserCenterURL(x);
-//            }
-//        });
-//
-//        String urlTmp = webHelper.getBaseURL()
-//                .newBuilder("/Logon.do?method=logon&flag=sess")
-//                .build().toString();
-//        final String serverResponse = mService.post(urlTmp, new HashMap<String, String>(0)).execute().body();
-//
-//        // method 1 with captcha
-//        if (webHelper.getLoginForm() != null) {
-//
-//            // try 1 encryption method 1
-//            if (!TextUtils.isEmpty(serverResponse)) {
-//
-//            } else {
-//
-//            }
-//
-//            String action = webHelper.getLoginForm().absUrl("action");
-//
-//            USER_CENTER = mService.post(action, new LinkedHashMap<String, String>() {{
-//                put("useDogCode", "");
-//                put("encoded", UniversityUtils.QZEncryption(serverResponse, loginMap));
-//                put("RANDOMCODE", loginMap.get(Constants.CAPTCHA_KEY));
-//            }}).execute().body();
-//            if (loginSuccess) {
-//                return Jsoup.parse(USER_CENTER, webHelper.getUserCenterURL());
-//            } else {
-//                throw LOGIN_FAIL;
-//            }
-//        }
-//
-//        // method 2, without captcha
-//        else {
-//
-//        }
-//    }
 
     @NonNull
     public static List<Element> getRawClasses(Element table, Context context) {
@@ -227,39 +176,4 @@ public class UniversityUtils {
         }
         return result;
     }
-
-    @NonNull
-    static String QZEncryption(String serverResponse, Map<String, String> loginMap) {
-        String scode = serverResponse.split("#")[0];
-        String sxh = serverResponse.split("#")[1];
-        String code = loginMap.get(Constants.USERNAME_KEY) + "%%%" + loginMap.get(Constants.PASSWORD_KEY);
-        String encoded = "";
-        for (int i = 0; i < code.length(); i++) {
-            if (i < 20) {
-                encoded = encoded + code.substring(i, i + 1) + scode.substring(0, Integer.parseInt(sxh.substring(i, i + 1)));
-                scode = scode.substring(Integer.parseInt(sxh.substring(i, i + 1)), scode.length());
-            } else {
-                encoded = encoded + code.substring(i, code.length());
-                i = code.length();
-            }
-        }
-
-        return encoded;
-    }
-
-//    static String QZEncryption(Map<String, String> loginMap) {
-//        String account = encodeInp(xh);
-//        var passwd = encodeInp(pwd);
-//        var encoded = account+"%%%"+passwd;
-//        document.getElementById("encoded").value = encoded;
-//
-//    }
-
-//    static String MD5Encryption(Map<String, String> loginMap) {
-//        String username = loginMap.get(Constants.USERNAME_KEY);
-//        String password = loginMap.get(Constants.PASSWORD_KEY);
-//        String captcha = loginMap.get(Constants.CAPTCHA_KEY);
-//
-//        return null;
-//    }
 }

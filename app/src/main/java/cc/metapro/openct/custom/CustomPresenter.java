@@ -26,9 +26,9 @@ import java.security.GeneralSecurityException;
 
 import cc.metapro.interactiveweb.InteractiveWebView;
 import cc.metapro.interactiveweb.utils.HTMLUtils;
+import cc.metapro.openct.data.LocalUser;
 import cc.metapro.openct.data.source.local.DBManger;
 import cc.metapro.openct.data.source.local.LocalHelper;
-import cc.metapro.openct.data.source.local.LocalUser;
 import cc.metapro.openct.utils.Constants;
 
 class CustomPresenter implements CustomContract.Presenter {

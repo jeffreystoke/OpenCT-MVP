@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.openctservice;
+package cc.metapro.openct.data.source;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,19 +16,22 @@ package cc.metapro.openct.data.openctservice;
  * limitations under the License.
  */
 
+import android.support.annotation.NonNull;
+
 import java.util.List;
 
-import cc.metapro.openct.LoginConfig;
-import cc.metapro.openct.data.university.UniversityInfo;
-import io.reactivex.Observable;
-import retrofit2.http.GET;
-import retrofit2.http.Path;
+import cc.metapro.openct.data.university.model.BookInfo;
+import cc.metapro.openct.data.university.model.BorrowInfo;
+import cc.metapro.openct.data.university.model.GradeInfo;
+import cc.metapro.openct.data.university.model.classinfo.EnrichedClassInfo;
 
-public interface OpenCTService {
+public interface SchoolSource {
 
-    @GET("schools.json")
-    Observable<List<UniversityInfo>> getOnlineUniversityInfo();
+    List<EnrichedClassInfo> getClasses();
 
-    @GET("/login/{school}")
-    Observable<LoginConfig> getLoginConfigOf(@Path("school") String school);
+    List<GradeInfo> getGrades();
+
+    List<BorrowInfo> getBorrows();
+
+    List<BookInfo> getBooks(@NonNull String type, @NonNull String query);
 }
