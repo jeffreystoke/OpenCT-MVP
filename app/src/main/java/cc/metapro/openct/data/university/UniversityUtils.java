@@ -20,6 +20,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
@@ -36,10 +37,22 @@ import cc.metapro.openct.data.university.model.classinfo.EnrichedClassInfo;
 import cc.metapro.openct.utils.DateHelper;
 import cc.metapro.openct.utils.PrefHelper;
 import cc.metapro.openct.utils.REHelper;
+import cc.metapro.openct.utils.webutils.Form;
+import cc.metapro.openct.utils.webutils.FormHandler;
 
 public class UniversityUtils {
 
     private static final String CLASS_TABLE_PATTERN = "节|(\\d+)";
+
+    static String getLoginFormAction(WebHelper webHelper) {
+        Document loginPage = webHelper.getLoginPageDOM();
+        FormHandler formHandler = new FormHandler(loginPage);
+        Form targetForm = webHelper.getLoginForm() == null ? formHandler.getForm(0) : new Form(webHelper.getLoginForm());
+        if (targetForm != null) {
+            return targetForm.getAction();
+        }
+        return "";
+    }
 
     @NonNull
     public static List<Element> getRawClasses(Element table, Context context) {

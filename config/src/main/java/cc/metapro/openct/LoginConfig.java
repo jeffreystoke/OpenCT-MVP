@@ -27,7 +27,7 @@ public class LoginConfig {
     private String fetchExtraMethod;
     private String[] script;
 
-    private Map<String, String> postHeaderSpec;
+    private Map<String, String> postKeyValueSpec;
     private String postReferer;
     private String postURL;
 
@@ -64,11 +64,11 @@ public class LoginConfig {
         return fetchExtraMethod;
     }
 
-    public Map<String, String> getPostHeaderSpec() {
+    public Map<String, String> getPostKeyValueSpec() {
         Map<String, String> realHeader = new HashMap<>(0);
-        if (postHeaderSpec != null) {
-            for (String s : postHeaderSpec.keySet()) {
-                String value = postHeaderSpec.get(s);
+        if (postKeyValueSpec != null) {
+            for (String s : postKeyValueSpec.keySet()) {
+                String value = postKeyValueSpec.get(s);
                 if (value.equalsIgnoreCase(ScriptHelper.POST_CONTENT)) {
                     String content = ScriptHelper.getPostContent(this, username, password, captcha, extraPart);
                     realHeader.put(s, content);
@@ -101,7 +101,7 @@ public class LoginConfig {
     }
 
     public boolean needHeaderSpec() {
-        return postHeaderSpec != null && !postHeaderSpec.isEmpty();
+        return postKeyValueSpec != null && !postKeyValueSpec.isEmpty();
     }
 
     public boolean needExtraLoginPart() {

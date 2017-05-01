@@ -16,25 +16,34 @@ package cc.metapro.openct.myclass;
  * limitations under the License.
  */
 
+import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.jrummyapps.android.colorpicker.ColorPickerDialog;
 import com.jrummyapps.android.colorpicker.ColorPickerDialogListener;
 import com.jrummyapps.android.colorpicker.ColorShape;
@@ -59,6 +68,9 @@ import cc.metapro.openct.utils.base.BaseActivity;
 public class ClassActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, ClassContract.View {
 
+    private static final int FILE_SELECT_CODE = 101;
+    private static final int REQUEST_WRITE_STORAGE = 112;
+
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.drawer_layout)
@@ -69,8 +81,8 @@ public class ClassActivity extends BaseActivity
     TabLayout mTabLayout;
     @BindView(R.id.view_pager)
     ViewPager mViewPager;
-    @BindView(R.id.content_main)
-    CoordinatorLayout mBackground;
+    @BindView(R.id.main_background)
+    ImageView mBackground;
 
     ClassContract.Presenter mPresenter;
     private boolean mExitState;
@@ -86,8 +98,8 @@ public class ClassActivity extends BaseActivity
         ActionBarDrawerToggle toggle = new
                 ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         toggle.syncState();
-        mNavigationView.setNavigationItemSelectedListener(this);
 
+        mNavigationView.setNavigationItemSelectedListener(this);
         initViewPager();
         mPresenter = new ClassPresenter(this, this);
     }
@@ -166,6 +178,17 @@ public class ClassActivity extends BaseActivity
             return true;
         } else if (id == R.id.edit_classes) {
             startActivity(new Intent(this, AllClassesActivity.class));
+        } else if (id == R.id.set_background) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                int hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if (hasPermission != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_STORAGE);
+                } else {
+                    showFilerChooser();
+                }
+            } else {
+                showFilerChooser();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -231,6 +254,10 @@ public class ClassActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
+        String bgUri = PrefHelper.getString(this, R.string.pref_background, "");
+        if (!TextUtils.isEmpty(bgUri)) {
+            Glide.with(this).load(bgUri).centerCrop().into(mBackground);
+        }
         mPresenter.start();
         mPagerAdapter.notifyDataSetChanged();
     }
@@ -242,7 +269,6 @@ public class ClassActivity extends BaseActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             if (mExitState) {
-                Constants.sClasses = null;
                 finish();
             } else {
                 Toast.makeText(this, R.string.one_more_press_to_exit, Toast.LENGTH_SHORT).show();
@@ -253,6 +279,39 @@ public class ClassActivity extends BaseActivity
                         mExitState = false;
                     }
                 }, 2000);
+            }
+        }
+    }
+
+    private void showFilerChooser() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        try {
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_schedule_file)), FILE_SELECT_CODE);
+        } catch (ActivityNotFoundException ex) {
+            Toast.makeText(this, R.string.fail_file_chooser, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == FILE_SELECT_CODE && resultCode == AppCompatActivity.RESULT_OK) {
+            Uri uri = data.getData();
+            PrefHelper.putString(this, R.string.pref_background, uri.toString());
+            Glide.with(this).load(uri).centerCrop().into(mBackground);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_WRITE_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showFilerChooser();
+            } else {
+                Toast.makeText(this, R.string.no_write_permission, Toast.LENGTH_LONG).show();
             }
         }
     }

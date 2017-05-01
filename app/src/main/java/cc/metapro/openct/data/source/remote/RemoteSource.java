@@ -16,6 +16,7 @@ package cc.metapro.openct.data.source.remote;
  * limitations under the License.
  */
 
+import java.io.IOException;
 import java.util.List;
 
 import cc.metapro.openct.LoginConfig;
@@ -25,7 +26,6 @@ import cc.metapro.openct.data.source.Source;
 import cc.metapro.openct.data.university.DetailCustomInfo;
 import cc.metapro.openct.data.university.UniversityInfo;
 import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
 
 public final class RemoteSource implements Source {
 
@@ -37,15 +37,13 @@ public final class RemoteSource implements Source {
     }
 
     @Override
-    public Observable<List<UniversityInfo>> getUniversities() {
-        return mService.getUniversityInfo()
-                .subscribeOn(Schedulers.io());
+    public List<UniversityInfo> getUniversities() throws IOException {
+        return mService.getUniversityInfo().execute().body();
     }
 
     @Override
-    public Observable<LoginConfig> getLoginConfig() {
-        return mService.getLoginConfigOf(SCHOOL_NAME)
-                .subscribeOn(Schedulers.io());
+    public LoginConfig getLoginConfig() throws IOException {
+        return mService.getLoginConfigOf(SCHOOL_NAME).execute().body();
     }
 
     @Override

@@ -26,26 +26,19 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import cc.metapro.openct.LoginConfig;
 import cc.metapro.openct.data.source.local.StoreHelper;
 import cc.metapro.openct.data.source.remote.RemoteSource;
-import cc.metapro.openct.utils.base.MyObserver;
+import cc.metapro.openct.utils.TextHelper;
 import cc.metapro.openct.utils.interceptors.SchoolInterceptor;
 import cc.metapro.openct.utils.webutils.Form;
 import cc.metapro.openct.utils.webutils.FormHandler;
 import cc.metapro.openct.utils.webutils.FormUtils;
-import io.reactivex.Observer;
-import okhttp3.HttpUrl;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
 import retrofit2.Response;
 
 import static cc.metapro.openct.utils.Constants.ACTION_KEY;
@@ -58,17 +51,17 @@ import static cc.metapro.openct.utils.Constants.USERNAME_KEY;
 
 public abstract class UniversityFactory {
 
-    private static final String TAG = UniversityFactory.class.getName();
     private static final Pattern LOGIN_SUCCESS_PATTERN = Pattern.compile("(当前)|(个人)|(退出)|(注销)");
     static UniversityService mService;
     static String SYS;
+
     private static LoginConfig mLoginConfig;
     private static WebHelper webHelper;
     private static SchoolInterceptor interceptor;
     private static String BASE_URL;
+
     private RemoteSource mRemoteRepoSource;
     private String mUsername, mPassword, mCaptcha;
-    private Lock mLoginLock = new ReentrantLock();
     private boolean loginSuccess;
 
     UniversityFactory(UniversityInfo info, int type) {
@@ -84,7 +77,7 @@ public abstract class UniversityFactory {
 
     // 再次获取验证码
     public static void getOneMoreCAPTCHA() throws IOException {
-        Response<ResponseBody> bodyResponse = mService.getCAPTCHA(webHelper.getCaptchaURL()).execute();
+        Response<ResponseBody> bodyResponse = mService.getPic(webHelper.getCaptchaURL()).execute();
         ResponseBody body = bodyResponse.body();
         StoreHelper.storeBytes(CAPTCHA_FILE, body.byteStream());
     }
@@ -156,12 +149,11 @@ public abstract class UniversityFactory {
     }
 
     private Document fineLogin() throws IOException {
-//        String loginUrl = TextUtils.isEmpty(mLoginConfig.getLoginURL()) ?
-//                webHelper.getLoginPageURL() : mLoginConfig.getLoginURL();
 
         mLoginConfig.setInfo(mUsername, mPassword, mCaptcha);
+        // get extra part
         if (mLoginConfig.needExtraLoginPart()) {
-            String extraPartUrl = HttpUrl.parse(webHelper.getLoginPageURL())
+            String extraPartUrl = webHelper.getLoginPageURL()
                     .newBuilder(mLoginConfig.getExtraLoginPartURL())
                     .toString();
             String extraPart = "";
@@ -175,9 +167,16 @@ public abstract class UniversityFactory {
             mLoginConfig.setExtraPart(extraPart);
         }
 
-        Map<String, String> headerSpec = mLoginConfig.getPostHeaderSpec();
-        String postUrl = webHelper.getLoginForm().absUrl("action");
-        String userCenter = mService.post(postUrl, headerSpec).execute().body();
+        // get form action url
+        String action;
+        if (!TextUtils.isEmpty(mLoginConfig.getPostURL())) {
+            action = mLoginConfig.getPostURL();
+        } else {
+            action = UniversityUtils.getLoginFormAction(webHelper);
+        }
+
+        Map<String, String> keyValueSpec = mLoginConfig.getPostKeyValueSpec();
+        String userCenter = mService.post(action, keyValueSpec).execute().body();
         return Jsoup.parse(userCenter, webHelper.getUserCenterURL());
     }
 
@@ -185,65 +184,38 @@ public abstract class UniversityFactory {
     public boolean prepareOnlineInfo() throws IOException {
         destroyService();
         checkService();
+
+        // 获取登录页面后, 若是动态地址则发生302重定向, 更新 LoginRefer 以及 LoginPage 地址 (默认是登录地址)
         interceptor.setObserver(new SchoolInterceptor.RedirectObserver<String>() {
             @Override
             public void onRedirect(String x) {
-                // 获取登录页面后, 若是动态地址则发生302重定向, 更新 LoginRefer 地址 (默认是登录地址)
                 webHelper.setLoginPageURL(x);
             }
         });
 
-        Observer<LoginConfig> loginConfigObserver = new MyObserver<LoginConfig>(TAG) {
-            @Override
-            public void onNext(LoginConfig config) {
-                super.onNext(config);
-                mLoginConfig = config;
-            }
-        };
-
-        mRemoteRepoSource.getLoginConfig().subscribeWith(loginConfigObserver);
-
-        Call<String> call = mService.get(webHelper.getBaseURL().toString());
-        Response<String> stringResponse = call.execute();
-        String loginPageHtml = stringResponse.body();
-
-        Document document = Jsoup.parse(loginPageHtml, webHelper.getLoginPageURL());
-        List<Document> domList = new ArrayList<>();
-        domList.add(document);
-
-        // 获取框架网页 (部分学校将登陆表单置于框架中)
-        Elements iFrames = document.select("iframe");
-        iFrames.addAll(document.select("span:matches(登.*?录)"));
-        for (Element iFrame : iFrames) {
-            String url = iFrame.attr("src");
-            if (TextUtils.isEmpty(url)) {
-                url = iFrame.absUrl("value");
-            } else {
-                url = iFrame.absUrl("src");
-            }
-            if (!TextUtils.isEmpty(url)) {
-                String frame = mService.get(url).execute().body();
-                domList.add(Jsoup.parse(frame, url));
-            }
+        // 获取精确配置
+        mLoginConfig = mRemoteRepoSource.getLoginConfig();
+        String loginUrl = "";
+        if (mLoginConfig != null) {
+            loginUrl = TextHelper.getFirstWhenNotEmpty(mLoginConfig.getLoginURL(), webHelper.getLoginPageURL().toString());
         }
 
-        // 从所有获取到的页面中解析出验证码图片地址
-        webHelper.setCaptchaURL(domList, SYS);
+        String loginPageHtml = mService.get(loginUrl).execute().body();
+        webHelper.parseCaptchaURL(SYS, loginPageHtml, mService);
 
-        // 获取验证码
+        // 获取验证码图片, 精确配置的优先级高于自动解析
         String captchaURL = webHelper.getCaptchaURL();
-        if (!TextUtils.isEmpty(captchaURL)) {
-            Response<ResponseBody> bodyResponse = mService.getCAPTCHA(captchaURL).execute();
-            ResponseBody body = bodyResponse.body();
-            StoreHelper.storeBytes(CAPTCHA_FILE, body.byteStream());
-            return true;
-        } else if (mLoginConfig != null && !mLoginConfig.isEmpty()) {
+        if (mLoginConfig != null && !mLoginConfig.isEmpty()) {
             if (mLoginConfig.needCaptcha()) {
-                captchaURL = mLoginConfig.getCaptchaURL();
-                Response<ResponseBody> bodyResponse = mService.getCAPTCHA(captchaURL).execute();
-                ResponseBody body = bodyResponse.body();
+                captchaURL = webHelper.getLoginPageURL()
+                        .newBuilder(mLoginConfig.getCaptchaURL()).toString();
+                ResponseBody body = mService.getPic(captchaURL).execute().body();
                 StoreHelper.storeBytes(CAPTCHA_FILE, body.byteStream());
             }
+            return true;
+        } else if (!TextUtils.isEmpty(captchaURL)) {
+            ResponseBody body = mService.getPic(captchaURL).execute().body();
+            StoreHelper.storeBytes(CAPTCHA_FILE, body.byteStream());
             return true;
         }
 
@@ -262,6 +234,7 @@ public abstract class UniversityFactory {
         interceptor = null;
         mService = null;
         webHelper = null;
+        mLoginConfig = null;
     }
 
     protected String getBaseURL() {

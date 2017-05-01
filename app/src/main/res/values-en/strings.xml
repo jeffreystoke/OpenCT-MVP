@@ -277,9 +277,11 @@
 
     <string name="default_school_name">Unknown</string>
     <string name="refer_to_usage">How To</string>
-    <string name="select_schedule_file">Select Class Schedule</string>
+    <string name="select_schedule_file">Select File</string>
     <string name="tmp_add_school_promt">Currently not supported, Please wait</string>
     <string name="theme">Theme</string>
     <string name="select_theme">Select a Theme</string>
     <string name="class_with_same_name">Class already exist, operation denied</string>
+    <string name="nav_header_img">nav_header_img</string>
+    <string name="set_bg">Set Background</string>
 </resources>

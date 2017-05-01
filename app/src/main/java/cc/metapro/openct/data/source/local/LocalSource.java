@@ -33,12 +33,12 @@ public final class LocalSource implements Source {
     }
 
     @Override
-    public Observable<List<UniversityInfo>> getUniversities() {
+    public List<UniversityInfo> getUniversities() {
         return null;
     }
 
     @Override
-    public Observable<LoginConfig> getLoginConfig() {
+    public LoginConfig getLoginConfig() {
         return null;
     }
 

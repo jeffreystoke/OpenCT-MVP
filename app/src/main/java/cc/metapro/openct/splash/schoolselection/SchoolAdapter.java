@@ -77,20 +77,26 @@ class SchoolAdapter extends BaseAdapter implements StickyListHeadersAdapter {
             @Override
             public void subscribe(@NonNull ObservableEmitter observableEmitter) throws Exception {
                 ActivityUtils.showProgressDialog(context, R.string.loading_university_info_list);
-                Observer<List<UniversityInfo>> observer = new MyObserver<List<UniversityInfo>>("OpenCT_School_Fetch") {
+                Observer<List<UniversityInfo>> observer = new MyObserver<List<UniversityInfo>>("Fetch_Universities") {
                     @Override
-                    public void onNext(List<UniversityInfo> universityList) {
-                        super.onNext(universityList);
-                        DBManger.updateSchools(context, universityList);
-                        setSchools(universityList);
+                    public void onNext(List<UniversityInfo> universityInfos) {
+                        super.onNext(universityInfos);
+                        ActivityUtils.dismissProgressDialog();
                     }
                 };
 
-                RemoteSource source = new RemoteSource(LocalHelper.getUniversity(context).getName());
-                source.getUniversities()
+                Observable.create(new ObservableOnSubscribe<List<UniversityInfo>>() {
+                    @Override
+                    public void subscribe(@NonNull ObservableEmitter<List<UniversityInfo>> observableEmitter) throws Exception {
+                        RemoteSource source = new RemoteSource(LocalHelper.getUniversity(context).getName());
+                        List<UniversityInfo> universityList = source.getUniversities();
+                        DBManger.updateSchools(context, universityList);
+                        setSchools(universityList);
+                    }
+                })
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(observer);
-
             }
         }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
     }

@@ -20,15 +20,15 @@ import java.util.List;
 
 import cc.metapro.openct.LoginConfig;
 import cc.metapro.openct.data.university.UniversityInfo;
-import io.reactivex.Observable;
+import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public interface GitRepoService {
 
     @GET("schools.json")
-    Observable<List<UniversityInfo>> getUniversityInfo();
+    Call<List<UniversityInfo>> getUniversityInfo();
 
     @GET("login/{school}")
-    Observable<LoginConfig> getLoginConfigOf(@Path("school") String school);
+    Call<LoginConfig> getLoginConfigOf(@Path("school") String school);
 }

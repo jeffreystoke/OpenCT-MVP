@@ -23,7 +23,6 @@ import retrofit2.Call;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
 import retrofit2.http.QueryMap;
 import retrofit2.http.Streaming;
@@ -35,13 +34,9 @@ interface UniversityService {
     @FormUrlEncoded
     Call<String> post(@Url String url, @FieldMap Map<String, String> postMap);
 
-    @POST
-    @FormUrlEncoded
-    Call<String> postWithHeader(@Url String url, @HeaderMap Map<String, String> headerMap, @FieldMap Map<String, String> postMap);
-
     @Streaming
     @GET
-    Call<ResponseBody> getCAPTCHA(@Url String url);
+    Call<ResponseBody> getPic(@Url String url);
 
     @GET
     Call<String> searchLibrary(@Url String url, @QueryMap Map<String, String> searchMap);

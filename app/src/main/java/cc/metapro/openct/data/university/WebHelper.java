@@ -19,13 +19,16 @@ package cc.metapro.openct.data.university;
 import android.text.TextUtils;
 import android.webkit.URLUtil;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -84,7 +87,29 @@ class WebHelper {
         return mCaptchaUrl == null ? null : mCaptchaUrl.toString();
     }
 
-    void setCaptchaURL(List<Document> documents, String system) {
+    void parseCaptchaURL(String sys, String loginPage, UniversityService service) throws IOException {
+        Document document = Jsoup.parse(loginPage, mLoginPageUrl.toString());
+
+        List<Document> domList = new ArrayList<>();
+        domList.add(document);
+        Elements iFrames = document.select("iframe");
+        iFrames.addAll(document.select("span:matches(登.*?录)"));
+        for (Element iFrame : iFrames) {
+            String url = iFrame.attr("src");
+            if (TextUtils.isEmpty(url)) {
+                url = iFrame.absUrl("value");
+            } else {
+                url = iFrame.absUrl("src");
+            }
+            if (!TextUtils.isEmpty(url)) {
+                String frame = service.get(url).execute().body();
+                domList.add(Jsoup.parse(frame, url));
+            }
+        }
+        setCaptchaURL(domList, sys);
+    }
+
+    private void setCaptchaURL(List<Document> documents, String system) {
         loop:
         for (Document document : documents) {
             loginPageDOM = document;
@@ -122,8 +147,8 @@ class WebHelper {
         return loginForm;
     }
 
-    String getLoginPageURL() {
-        return mLoginPageUrl.toString();
+    HttpUrl getLoginPageURL() {
+        return mLoginPageUrl;
     }
 
     void setLoginPageURL(String loginPageURL) {

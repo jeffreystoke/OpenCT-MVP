@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.source;
+package cc.metapro.openct.utils;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -16,20 +16,11 @@ package cc.metapro.openct.data.source;
  * limitations under the License.
  */
 
-import java.io.IOException;
-import java.util.List;
+import android.text.TextUtils;
 
-import cc.metapro.openct.LoginConfig;
-import cc.metapro.openct.data.university.DetailCustomInfo;
-import cc.metapro.openct.data.university.UniversityInfo;
-import io.reactivex.Observable;
+public final class TextHelper {
 
-public interface Source {
-
-    List<UniversityInfo> getUniversities() throws IOException;
-
-    LoginConfig getLoginConfig() throws IOException;
-
-    Observable<DetailCustomInfo> getDetailCustomInfo();
-
+    public static String getFirstWhenNotEmpty(String a, String b) {
+        return TextUtils.isEmpty(a) ? b : a;
+    }
 }

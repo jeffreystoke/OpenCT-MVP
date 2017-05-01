@@ -294,7 +294,7 @@
 
     <string name="default_school_name">未知学校</string>
     <string name="refer_to_usage">查看教程</string>
-    <string name="select_schedule_file">选择课程文件</string>
+    <string name="select_schedule_file">选择文件</string>
     <string name="sep"> - </string>
     <string name="search">检索</string>
     <string name="jie">节</string>
@@ -305,4 +305,6 @@
     <string name="theme">主题</string>
     <string name="select_theme">选择主题色</string>
     <string name="class_with_same_name">已存在同名课程, 拒绝添加</string>
+    <string name="nav_header_img">nav_header_img</string>
+    <string name="set_bg">设置背景</string>
 </resources>

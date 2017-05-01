@@ -65,8 +65,9 @@ public class LinkSelectionDialog extends BaseDialog {
     private Elements mElements;
 
 
-    public static LinkSelectionDialog newInstance(
-            String type, Document document, LoginPresenter presenter, boolean isFirst, boolean showAll) {
+    public static LinkSelectionDialog newInstance(String type, Document document,
+                                                  LoginPresenter presenter,
+                                                  boolean isFirst, boolean showAll) {
         sIsFirst = isFirst;
         sShowAll = showAll;
         TYPE = type;
@@ -81,6 +82,9 @@ public class LinkSelectionDialog extends BaseDialog {
         AlertDialog.Builder builder = ActivityUtils
                 .getAlertBuilder(getActivity(), R.string.target_selection)
                 .setNeutralButton(R.string.not_in_range_above, null);
+        if (!sIsFirst) {
+            builder.setNeutralButton(R.string.click_to_go, null);
+        }
 
         setView(builder);
         final AlertDialog alertDialog = builder.create();
@@ -115,13 +119,12 @@ public class LinkSelectionDialog extends BaseDialog {
                     neutralButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            newInstance(TYPE, DOCUMENT, mPresenter, true, true)
+                            newInstance(TYPE, DOCUMENT, mPresenter, false, true)
                                     .show(getFragmentManager(), "link_selection");
                             dismiss();
                         }
                     });
                 } else {
-                    neutralButton.setText(R.string.click_to_go);
                     neutralButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

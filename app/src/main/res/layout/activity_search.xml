@@ -69,7 +69,9 @@
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                style="@style/AppTheme.Toolbar.Light">
+                style="?attr/toolbarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize">
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>

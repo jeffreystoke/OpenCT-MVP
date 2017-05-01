@@ -24,6 +24,8 @@
     <string name="key_cet_grade" translatable="false">cet_grade</string>
     <string name="key_cet_type" translatable="false">cet_type</string>
 
+    <string name="pref_background" translatable="false">main_background</string>
+
     <!--是否初始化-->
     <string name="pref_initialed" translatable="false">initialed</string>
 
