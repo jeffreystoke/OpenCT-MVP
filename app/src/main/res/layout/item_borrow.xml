@@ -27,6 +27,6 @@
 
         <TextView
             android:id="@+id/borrow_item_title"
-            style="@style/AppTheme.ItemTitleText"/>
+            style="@style/AppTheme.ItemContentText"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>

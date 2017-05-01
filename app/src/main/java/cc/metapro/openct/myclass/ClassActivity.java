@@ -29,6 +29,8 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -86,7 +88,9 @@ public class ClassActivity extends BaseActivity
 
     ClassContract.Presenter mPresenter;
     private boolean mExitState;
-    private ClassPagerAdapter mPagerAdapter;
+    private FragmentPagerAdapter mPagerAdapter;
+    private DailyFragment mDailyFragment;
+    private TableFragment mTableFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,8 +114,39 @@ public class ClassActivity extends BaseActivity
     }
 
     private void initViewPager() {
-        mPagerAdapter = new ClassPagerAdapter(getSupportFragmentManager(), this);
+        mDailyFragment = DailyFragment.newInstance();
+        mTableFragment = TableFragment.newInstance();
+
+        mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                switch (position) {
+                    case 0:
+                        return mDailyFragment;
+                    case 1:
+                        return mTableFragment;
+                }
+                return null;
+            }
+
+            @Override
+            public int getCount() {
+                return 2;
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                switch (position) {
+                    case 0:
+                        return getString(R.string.text_daily_classes);
+                    case 1:
+                        return getString(R.string.text_current_week, LocalHelper.getCurrentWeek(ClassActivity.this));
+                }
+                return super.getPageTitle(position);
+            }
+        };
         mViewPager.setAdapter(mPagerAdapter);
+
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -149,8 +184,8 @@ public class ClassActivity extends BaseActivity
 
     @Override
     public void showClasses(@NonNull Classes classes, int week) {
-        mPagerAdapter.updateClasses(classes, week);
-        mPagerAdapter.notifyDataSetChanged();
+        mTableFragment.showClasses(classes, week);
+        mDailyFragment.showClasses(classes, week);
     }
 
     @Override

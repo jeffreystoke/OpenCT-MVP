@@ -1,4 +1,4 @@
-package cc.metapro.openct.myclass.classviews;
+package cc.metapro.openct.myclass;
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
