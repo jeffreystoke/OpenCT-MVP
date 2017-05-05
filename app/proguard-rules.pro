@@ -51,5 +51,6 @@
 -keepnames interface ** { *; }
 -keepnames enum ** { *; }
 
+-keep class org.mozilla.javascript.** { *; }
 -dontwarn org.mozilla.classfile.**
 -dontwarn org.mozilla.javascript.**

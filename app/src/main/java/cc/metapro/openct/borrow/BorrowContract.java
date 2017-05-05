@@ -16,7 +16,6 @@ package cc.metapro.openct.borrow;
  * limitations under the License.
  */
 
-import android.support.annotation.Keep;
 import android.support.v4.app.FragmentManager;
 
 import java.util.List;
@@ -25,7 +24,6 @@ import cc.metapro.openct.data.university.model.BorrowInfo;
 import cc.metapro.openct.utils.base.BaseView;
 import cc.metapro.openct.utils.base.LoginPresenter;
 
-@Keep
 public interface BorrowContract {
 
     interface View extends BaseView<Presenter> {

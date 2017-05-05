@@ -72,7 +72,7 @@ public class DBManger {
         String name;
 
         // get user's school name, as a key of custom info
-        if (PrefHelper.getBoolean(context, R.string.pref_custom_enable)) {
+        if (PrefHelper.getBoolean(context, R.string.pref_custom_enable, false)) {
             name = PrefHelper.getString(context, R.string.pref_custom_school_name, Constants.DEFAULT_SCHOOL_NAME);
         } else {
             name = PrefHelper.getString(context, R.string.pref_school_name, Constants.DEFAULT_SCHOOL_NAME);

@@ -307,4 +307,5 @@
     <string name="class_with_same_name">已存在同名课程, 拒绝添加</string>
     <string name="nav_header_img">nav_header_img</string>
     <string name="set_bg">设置背景</string>
+    <string name="show_sem_class">显示学期课程</string>
 </resources>

@@ -51,6 +51,7 @@ public class TableFragment extends Fragment implements ClassContract.View {
 
     private List<SingleClass> mClasses;
     private Observable mObservable;
+    private int mWeek;
 
     public static TableFragment newInstance() {
         return new TableFragment();
@@ -87,13 +88,18 @@ public class TableFragment extends Fragment implements ClassContract.View {
     }
 
     private void addContentView() {
+        boolean showAll = PrefHelper.getBoolean(getContext(), R.string.pref_show_all_classes, true);
         for (SingleClass singleClass : mClasses) {
+            if (!showAll && !singleClass.inSameWeek(mWeek)) {
+                continue;
+            }
             singleClass.addViewTo(mContent, LayoutInflater.from(getContext()));
         }
     }
 
     @Override
     public void showClasses(final Classes classes, final int week) {
+        mWeek = week;
         mObservable = Observable.create(new ObservableOnSubscribe() {
             @Override
             public void subscribe(@NonNull ObservableEmitter observableEmitter) throws Exception {

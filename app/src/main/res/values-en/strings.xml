@@ -284,4 +284,5 @@
     <string name="class_with_same_name">Class already exist, operation denied</string>
     <string name="nav_header_img">nav_header_img</string>
     <string name="set_bg">Set Background</string>
+    <string name="show_sem_class">Show all classes</string>
 </resources>

@@ -173,7 +173,7 @@ public class LocalHelper {
 
         final String defaultSchoolName = context.getString(R.string.default_school_name);
         UniversityInfo university;
-        if (PrefHelper.getBoolean(context, R.string.pref_custom_enable)) {
+        if (PrefHelper.getBoolean(context, R.string.pref_custom_enable, false)) {
             university = manger.getCustomUniversity();
         } else {
             university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name, defaultSchoolName));

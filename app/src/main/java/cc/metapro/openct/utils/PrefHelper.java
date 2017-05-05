@@ -57,13 +57,13 @@ public class PrefHelper {
         editor.apply();
     }
 
-    public static boolean getBoolean(Context context, int resId) {
-        return getBoolean(context, context.getString(resId));
+    public static boolean getBoolean(Context context, int resId, boolean defaultValue) {
+        return getBoolean(context, context.getString(resId), defaultValue);
     }
 
-    public static boolean getBoolean(Context context, String prefKey) {
+    public static boolean getBoolean(Context context, String prefKey, boolean defaultValue) {
         checkPref(context);
-        return mPref.getBoolean(prefKey, false);
+        return mPref.getBoolean(prefKey, defaultValue);
     }
 
     public static String getString(Context context, int resId, String defaultValue) {

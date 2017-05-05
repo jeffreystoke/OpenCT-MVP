@@ -57,7 +57,7 @@ public class UniversityUtils {
     @NonNull
     public static List<Element> getRawClasses(Element table, Context context) {
         if (table == null) return new ArrayList<>();
-        if (PrefHelper.getBoolean(context, R.string.pref_class_line_based)) {
+        if (PrefHelper.getBoolean(context, R.string.pref_class_line_based, false)) {
             List<Element> rawInfoList = new ArrayList<>();
             Elements trs = table.select("tr");
             Elements targetTrs = new Elements();
@@ -135,7 +135,7 @@ public class UniversityUtils {
     public static Classes generateClasses(Context context, List<Element> rawInfo, ClassTableInfo info) {
         Classes classes = new Classes();
         int[] colors = context.getResources().getIntArray(R.array.class_background);
-        if (PrefHelper.getBoolean(context, R.string.pref_class_line_based)) {
+        if (PrefHelper.getBoolean(context, R.string.pref_class_line_based, false)) {
             for (Element c : rawInfo) {
                 if (c.hasText()) {
                     String text = c.text();

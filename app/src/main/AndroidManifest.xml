@@ -45,7 +45,8 @@
             android:name=".pref.SettingsActivity"
             android:label="@string/settings"
             android:parentActivityName=".myclass.ClassActivity"
-            android:theme="@style/AppTheme.WithActionBar">
+            android:theme="@style/AppTheme.WithActionBar"
+            android:windowSoftInputMode="adjustPan|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cc.metapro.openct.myclass.ClassActivity"/>

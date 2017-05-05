@@ -37,7 +37,7 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (PrefHelper.getBoolean(this, R.string.pref_initialed)) {
+        if (PrefHelper.getBoolean(this, R.string.pref_initialed, false)) {
             startActivity(new Intent(this, ClassActivity.class));
             finish();
             return;

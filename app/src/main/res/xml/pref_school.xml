@@ -180,6 +180,11 @@
             android:defaultValue="@string/motto_default"
             android:key="@string/pref_empty_class_motto"
             android:title="@string/empty_class_motto"/>
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/pref_show_all_classes"
+            android:title="@string/show_sem_class"/>
     </PreferenceCategory>
 
     <!--关于-->

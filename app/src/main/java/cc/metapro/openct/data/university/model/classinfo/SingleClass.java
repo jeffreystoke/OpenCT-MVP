@@ -72,6 +72,10 @@ public class SingleClass implements Comparable<SingleClass>, View.OnClickListene
         return teacher;
     }
 
+    public boolean inSameWeek(int week) {
+        return time.hasClass(week);
+    }
+
     public void addViewTo(final ViewGroup container, LayoutInflater inflater) {
         int x = (time.getWeekDay() - 1) * Constants.CLASS_WIDTH;
         int y = (time.getDailySeq() - 1) * Constants.CLASS_BASE_HEIGHT;

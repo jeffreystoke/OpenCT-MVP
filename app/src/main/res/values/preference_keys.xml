@@ -85,7 +85,7 @@
 
     <string name="pref_theme_activity" translatable="false">theme_activity</string>
     <string name="pref_theme_dialog" translatable="false">theme_dialog</string>
-
+    <string name="pref_show_all_classes" translatable="false">show_all_classes</string>
     <!--周数键值-->
     <string-array name="pref_week_seq_keys">
         <item>@string/week_1</item>
