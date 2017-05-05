@@ -27,41 +27,45 @@ import java.security.GeneralSecurityException;
 import cc.metapro.interactiveweb.InteractiveWebView;
 import cc.metapro.interactiveweb.utils.HTMLUtils;
 import cc.metapro.openct.data.LocalUser;
-import cc.metapro.openct.data.source.local.DBManger;
 import cc.metapro.openct.data.source.local.LocalHelper;
 import cc.metapro.openct.utils.Constants;
 
 class CustomPresenter implements CustomContract.Presenter {
 
     private Context mContext;
-    private String PASSWORD;
-    private String TYPE;
-    private LocalUser mUser;
+    private String mUsername;
+    private String mPassword;
+    private String mType;
 
     CustomPresenter(Context context, CustomContract.View view, String type) {
         mContext = context;
-        TYPE = type;
+        mType = type;
         view.setPresenter(this);
     }
 
     @Override
     public void start() {
-        Constants.sDetailCustomInfo = DBManger.getDetailCustomInfo(mContext);
-        switch (TYPE) {
+        LocalUser user = null;
+        switch (mType) {
             case Constants.TYPE_CLASS:
-                mUser = LocalHelper.getCmsStuInfo(mContext);
+                user = LocalHelper.getCmsStuInfo(mContext);
                 break;
             case Constants.TYPE_GRADE:
-                mUser = LocalHelper.getCmsStuInfo(mContext);
+                user = LocalHelper.getCmsStuInfo(mContext);
                 break;
             case Constants.TYPE_BORROW:
-                mUser = LocalHelper.getLibStuInfo(mContext);
+                user = LocalHelper.getLibStuInfo(mContext);
                 break;
+            default:
+                user = LocalHelper.getCmsStuInfo(mContext);
         }
+
+        mUsername = user.getUsername();
+
         try {
-            PASSWORD = mUser.getPassword();
+            mPassword = user.getPassword();
         } catch (GeneralSecurityException e) {
-            PASSWORD = "";
+            mPassword = "";
         }
     }
 
@@ -71,8 +75,8 @@ class CustomPresenter implements CustomContract.Presenter {
             @Override
             public void onClick(@NonNull final Element element) {
                 if (HTMLUtils.isPasswordInput(element)) {
-                    if (!webView.setById(element.id(), "value", PASSWORD)) {
-                        webView.setByName(element.attr("name"), "value", PASSWORD);
+                    if (!webView.setById(element.id(), "value", mPassword)) {
+                        webView.setByName(element.attr("name"), "value", mPassword);
                     }
                 } else if (HTMLUtils.isTextInput(element)) {
                     ClickDialog.newInstance(new ClickDialog.TypeCallback() {
@@ -85,8 +89,8 @@ class CustomPresenter implements CustomContract.Presenter {
                                     }
                                     break;
                                 case InteractiveWebView.USERNAME_INPUT_FLAG:
-                                    if (!webView.setById(element.id(), "value", mUser.getUsername())) {
-                                        webView.setByName(element.attr("name"), "value", mUser.getUsername());
+                                    if (!webView.setById(element.id(), "value", mUsername)) {
+                                        webView.setByName(element.attr("name"), "value", mUsername);
                                     }
                                     break;
                             }

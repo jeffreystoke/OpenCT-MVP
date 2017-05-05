@@ -87,13 +87,13 @@ public class DailyFragment extends Fragment implements ClassContract.View {
         mObservable = Observable.create(new ObservableOnSubscribe() {
             @Override
             public void subscribe(@NonNull ObservableEmitter observableEmitter) throws Exception {
-                DailyClassAdapter dailyClassAdapter = new DailyClassAdapter(getContext());
-                RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, dailyClassAdapter);
+                DailyAdapter dailyAdapter = new DailyAdapter(getContext());
+                RecyclerViewHelper.setRecyclerView(getContext(), mRecyclerView, dailyAdapter);
 
-                dailyClassAdapter.updateTodayClasses(classes, week);
-                dailyClassAdapter.notifyDataSetChanged();
+                dailyAdapter.updateTodayClasses(classes, week);
+                dailyAdapter.notifyDataSetChanged();
 
-                if (dailyClassAdapter.hasClassToday()) {
+                if (dailyAdapter.hasClassToday()) {
                     showClasses();
                 } else {
                     mEmptyView.setText(PrefHelper.getString(getContext(), R.string.pref_empty_class_motto, getString(R.string.motto_default)));

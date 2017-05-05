@@ -23,6 +23,7 @@ import com.scottyab.aescrypt.AESCrypt;
 
 import java.security.GeneralSecurityException;
 import java.util.Calendar;
+import java.util.Locale;
 
 import cc.metapro.openct.R;
 import cc.metapro.openct.splash.views.SplashContract;
@@ -60,7 +61,8 @@ class SplashPresenter implements SplashContract.Presenter {
 
     @Override
     public void setSelectedWeek(int week) {
-        int currentWeekOfYear = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
+        int currentWeekOfYear = Calendar.getInstance(Locale.CHINA)
+                .get(Calendar.WEEK_OF_YEAR);
         PrefHelper.putString(mContext, R.string.pref_current_week, week + "");
         PrefHelper.putString(mContext, R.string.pref_week_set_week, currentWeekOfYear + "");
     }
@@ -91,7 +93,7 @@ class SplashPresenter implements SplashContract.Presenter {
 
     private String getEncryptedPassword(String password) throws GeneralSecurityException {
         if (TextUtils.isEmpty(password))
-            throw new NullPointerException("password can't be null");
+            throw new NullPointerException("password shouldn't be empty");
         return AESCrypt.encrypt(Constants.seed, password);
     }
 }

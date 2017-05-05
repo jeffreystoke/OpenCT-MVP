@@ -45,11 +45,12 @@ public class ClassInfoHelper {
     }
 
     private static boolean[] getDuring(String duringRe, String rawDuring) {
-        boolean[] weeks = new boolean[30];
-        for (int i = 0; i < weeks.length; i++) {
+        boolean[] weeks = new boolean[Constants.WEEKS];
+        for (int i = 0; i < Constants.WEEKS; i++) {
             weeks[i] = false;
         }
 
+        // 通过正则表达式提取有效信息
         String during = rawDuring;
         if (!TextUtils.isEmpty(duringRe)) {
             Matcher matcher = Pattern.compile(duringRe).matcher(rawDuring);
@@ -57,12 +58,14 @@ public class ClassInfoHelper {
                 during = matcher.group();
             }
         }
+
         int[] result = REHelper.getStartEnd(during);
-        if (result[0] >= 0 && result[0] <= weeks.length && result[1] >= result[0] && result[1] <= weeks.length) {
-            for (int i = result[0] - 1; i <= result[1] - 1; i++) {
+        if (result[0] > 0 && result[0] <= Constants.WEEKS && result[1] >= result[0] && result[1] <= Constants.WEEKS) {
+            for (int i = result[0] - 1; i < result[1]; i++) {
                 weeks[i] = true;
             }
         }
+
         boolean odd = Pattern.compile("单周?").matcher(rawDuring).find();
         boolean even = Pattern.compile("双周?").matcher(rawDuring).find();
 

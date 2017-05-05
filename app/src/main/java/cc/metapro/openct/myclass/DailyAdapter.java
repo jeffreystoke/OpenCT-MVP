@@ -34,14 +34,14 @@ import cc.metapro.openct.R;
 import cc.metapro.openct.data.university.model.classinfo.Classes;
 import cc.metapro.openct.data.university.model.classinfo.SingleClass;
 
-class DailyClassAdapter extends RecyclerView.Adapter<DailyClassAdapter.ClassViewHolder> {
+class DailyAdapter extends RecyclerView.Adapter<DailyAdapter.ClassViewHolder> {
 
     @NonNull
     private List<SingleClass> mTodayClasses = new ArrayList<>(0);
 
     private LayoutInflater mInflater;
 
-    DailyClassAdapter(Context context) {
+    DailyAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
     }
 

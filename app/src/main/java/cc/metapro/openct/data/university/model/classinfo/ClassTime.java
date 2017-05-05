@@ -59,6 +59,7 @@ public class ClassTime implements Comparable<ClassTime> {
         this(ClassInfoHelper.infoParser(info.mTimeIndex, info.mTimeRE, contents), weekDay, dailySeq);
         teacher = ClassInfoHelper.infoParser(info.mTeacherIndex, info.mTeacherRE, contents);
         place = ClassInfoHelper.infoParser(info.mPlaceIndex, info.mPlaceRE, contents);
+
         String rawDuring = "";
         if (info.mDuringIndex < contents.length && info.mDuringIndex >= 0) {
             rawDuring = contents[info.mDuringIndex];

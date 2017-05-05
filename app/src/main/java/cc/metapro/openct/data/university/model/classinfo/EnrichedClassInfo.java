@@ -65,10 +65,10 @@ public class EnrichedClassInfo implements Comparable<EnrichedClassInfo> {
     }
 
     public EnrichedClassInfo(String content, int weekday, int dailySeq, ClassTableInfo info) {
-        String[] tmp = content.split(HTMLUtils.BR_REPLACER);
-        name = ClassInfoHelper.infoParser(info.mNameIndex, info.mNameRE, tmp);
-        type = ClassInfoHelper.infoParser(info.mTypeIndex, info.mTypeRE, tmp);
-        mTimeSet.add(new ClassTime(weekday, dailySeq, tmp, info));
+        String[] infoContents = content.split(HTMLUtils.BR_REPLACER);
+        name = ClassInfoHelper.infoParser(info.mNameIndex, info.mNameRE, infoContents);
+        type = ClassInfoHelper.infoParser(info.mTypeIndex, info.mTypeRE, infoContents);
+        mTimeSet.add(new ClassTime(weekday, dailySeq, infoContents, info));
     }
 
     public String getName() {

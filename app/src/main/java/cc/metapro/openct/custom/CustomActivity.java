@@ -39,9 +39,7 @@ import cc.metapro.openct.utils.base.BaseActivity;
 
 public class CustomActivity extends BaseActivity implements CustomContract.View {
 
-    public static final String TAG = CustomActivity.class.getSimpleName();
-
-    public static String TYPE = Constants.TYPE_CLASS;
+    private static final String KEY_TYPE = "type";
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -55,28 +53,28 @@ public class CustomActivity extends BaseActivity implements CustomContract.View 
     ViewGroup mViewGroup;
 
     private CustomContract.Presenter mPresenter;
-    private WebConfiguration mConfiguration;
+    private String mType;
 
     public static void actionStart(Context context, String type) {
-        TYPE = type;
         Intent intent = new Intent(context, CustomActivity.class);
+        intent.putExtra(KEY_TYPE, type);
         context.startActivity(intent);
     }
 
     @OnClick(R.id.fab)
-    public void startRecord() {
-        mURL.setText(getUrl());
-        mConfiguration = new WebConfiguration();
+    public void start() {
+        String url = URLUtil.guessUrl(mURL.getText().toString());
+        mURL.setText(url);
         mPresenter.setWebView(mWebView, getSupportFragmentManager());
         tipText.setVisibility(View.GONE);
         mWebView.setVisibility(View.VISIBLE);
-
-        mWebView.loadUrl(getUrl());
+        mWebView.loadUrl(url);
     }
 
     @OnClick(R.id.fab_target)
     public void showTableChooseDialog() {
-        ActivityUtils.showTableChooseDialog(getSupportFragmentManager(), TYPE, mWebView.getPageDom(), null);
+        ActivityUtils.showTableChooseDialog(
+                getSupportFragmentManager(), mType, mWebView.getPageDom(), null);
     }
 
     @Override
@@ -91,7 +89,19 @@ public class CustomActivity extends BaseActivity implements CustomContract.View 
         }
         LocalHelper.needUpdateUniversity();
 
-        switch (TYPE) {
+        mType = getIntent().getStringExtra(KEY_TYPE);
+        new CustomPresenter(this, this, mType);
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_custom;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        switch (mType) {
             case Constants.TYPE_CLASS:
             case Constants.TYPE_GRADE:
                 mURL.setText(LocalHelper.getUniversity(this).getCmsURL());
@@ -102,21 +112,6 @@ public class CustomActivity extends BaseActivity implements CustomContract.View 
                 break;
         }
 
-        new CustomPresenter(this, this, TYPE);
-    }
-
-    @Override
-    protected int getLayout() {
-        return R.layout.activity_custom;
-    }
-
-    public String getUrl() {
-        return URLUtil.guessUrl(mURL.getText().toString());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         mPresenter.start();
     }
 

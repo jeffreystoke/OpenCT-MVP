@@ -153,9 +153,9 @@ public class UniversityUtils {
                         String text = td.text();
                         if (!REHelper.isEmpty(text)) {
                             String[] classStrings = text.split(HTMLUtils.BR_REPLACER + HTMLUtils.BR_REPLACER + "+");
-                            for (String klass : classStrings) {
+                            for (String clazz : classStrings) {
                                 colorIndex = colorIndex >= colors.length ? 0 : colorIndex;
-                                classes.add(new EnrichedClassInfo(klass, i + 1, j + 1, colors[colorIndex++], info));
+                                classes.add(new EnrichedClassInfo(clazz, i + 1, j + 1, colors[colorIndex++], info));
                             }
                         }
                     }

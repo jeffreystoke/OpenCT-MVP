@@ -186,22 +186,32 @@ public class LocalHelper {
         try {
             Calendar cal = Calendar.getInstance(Locale.CHINA);
             cal.setFirstDayOfWeek(Calendar.MONDAY);
+            // 当前周是年度第几周
             int weekOfYearWhenSetCurrentWeek = cal.get(Calendar.WEEK_OF_YEAR);
 
+            // 上次设置本周的时候是年度第几周
             int lastSetWeek = Integer.parseInt(PrefHelper.getString(context, R.string.pref_week_set_week, weekOfYearWhenSetCurrentWeek + ""));
+            // 上次存储的是学期第几周
             int currentWeek = Integer.parseInt(PrefHelper.getString(context, R.string.pref_current_week, "1"));
+
             if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
+                // 跨年的情况
                 if (lastSetWeek == 53) {
+                    // 上次设置的时候是一年的最后一周
                     currentWeek += weekOfYearWhenSetCurrentWeek;
                 } else {
+                    // 上次设置的时候不是最后一周
                     currentWeek += (52 - lastSetWeek) + weekOfYearWhenSetCurrentWeek;
                 }
             } else {
+                // 在年内
                 currentWeek += (weekOfYearWhenSetCurrentWeek - lastSetWeek);
             }
-            if (currentWeek >= 30) {
+
+            if (currentWeek > 30) {
                 currentWeek = 1;
             }
+
             PrefHelper.putString(context, R.string.pref_current_week, currentWeek + "");
             PrefHelper.putString(context, R.string.pref_week_set_week, weekOfYearWhenSetCurrentWeek + "");
         } catch (Exception e) {

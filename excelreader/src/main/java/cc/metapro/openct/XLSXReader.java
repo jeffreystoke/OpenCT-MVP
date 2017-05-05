@@ -45,7 +45,7 @@ public class XLSXReader {
         this(new File(file));
     }
 
-    public XLSXReader(File file) throws FileNotFoundException {
+    private XLSXReader(File file) throws FileNotFoundException {
         mFile = file;
         if (!mFile.exists()) {
             throw new FileNotFoundException();

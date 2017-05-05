@@ -29,10 +29,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cc.metapro.openct.R;
 
-public class LoginFragment extends Fragment implements SplashContract.LoginView {
+import static cc.metapro.openct.utils.Constants.TYPE_CMS;
+import static cc.metapro.openct.utils.Constants.TYPE_LIB;
 
-    public static final int TYPE_LIB = 0;
-    public static final int TYPE_CMS = 1;
+public class LoginFragment extends Fragment implements SplashContract.LoginView {
     private static final String KEY_TYPE = "type";
 
     @BindView(R.id.img)
