@@ -195,7 +195,7 @@ class BorrowPresenter implements BorrowContract.Presenter {
                 if (!TextUtils.isEmpty(detailCustomInfo.getBorrowTableId())) {
                     Map<String, Element> map = TableUtils.getTablesFromTargetPage(document);
                     if (!map.isEmpty()) {
-                        mBorrows = UniversityUtils.generateInfo(map.get(detailCustomInfo.getBorrowTableId()), BorrowInfo.class);
+                        mBorrows = UniversityUtils.generateInfoFromTable(map.get(detailCustomInfo.getBorrowTableId()), BorrowInfo.class);
                         if (mBorrows.size() == 0) {
                             Toast.makeText(mContext, R.string.borrows_empty, Toast.LENGTH_LONG).show();
                         } else {

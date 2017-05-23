@@ -227,7 +227,7 @@ class GradePresenter implements GradeContract.Presenter {
                 if (TextUtils.isEmpty(Constants.sDetailCustomInfo.getGradeTableId())) {
                     ActivityUtils.showTableChooseDialog(manager, Constants.TYPE_GRADE, document, GradePresenter.this);
                 } else {
-                    mGrades = UniversityUtils.generateInfo(
+                    mGrades = UniversityUtils.generateInfoFromTable(
                             TableUtils.getTablesFromTargetPage(document)
                                     .get(Constants.sDetailCustomInfo.getGradeTableId()),
                             GradeInfo.class);

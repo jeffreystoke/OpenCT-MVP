@@ -80,6 +80,7 @@ public class TableChooseDialog extends BaseDialog {
         if (baseInfo == null) {
             baseInfo = new ClassTableInfo();
         }
+
         try {
             baseInfo.mNameIndex = indexMap.get(Constants.NAME);
         } catch (Exception e) {
@@ -148,7 +149,7 @@ public class TableChooseDialog extends BaseDialog {
                 case Constants.TYPE_GRADE:
                     Constants.sDetailCustomInfo.setGradeTableId(tableId);
                     manger.updateAdvCustomInfo(Constants.sDetailCustomInfo);
-                    manger.updateGrades(UniversityUtils.generateInfo(targetTable, GradeInfo.class));
+                    manger.updateGrades(UniversityUtils.generateInfoFromTable(targetTable, GradeInfo.class));
                     if (mPresenter != null && mPresenter instanceof GradeContract.Presenter) {
                         ((GradeContract.Presenter) mPresenter).loadLocalGrades();
                     }
@@ -159,7 +160,7 @@ public class TableChooseDialog extends BaseDialog {
                 case Constants.TYPE_BORROW:
                     Constants.sDetailCustomInfo.setBorrowTableId(tableId);
                     manger.updateAdvCustomInfo(Constants.sDetailCustomInfo);
-                    manger.updateBorrows(UniversityUtils.generateInfo(targetTable, BorrowInfo.class));
+                    manger.updateBorrows(UniversityUtils.generateInfoFromTable(targetTable, BorrowInfo.class));
                     if (mPresenter != null && mPresenter instanceof BorrowContract.Presenter) {
                         ((BorrowContract.Presenter) mPresenter).loadLocalBorrows();
                     }

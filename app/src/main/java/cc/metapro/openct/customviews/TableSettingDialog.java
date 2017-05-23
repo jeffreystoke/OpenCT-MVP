@@ -100,7 +100,7 @@ public class TableSettingDialog extends BaseDialog {
                             }
                         }
 
-                        if (mShowingOptions.size() > 0 || mContents.isEmpty()) {
+                        if (mShowingOptions.size() > 0 && mIndex < mContents.size()) {
                             new TableSettingDialog().show(getFragmentManager(), "table_setting");
                         } else {
                             mCallBack.onResult(mResult);

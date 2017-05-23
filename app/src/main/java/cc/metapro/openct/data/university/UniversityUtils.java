@@ -165,7 +165,7 @@ public class UniversityUtils {
         return classes;
     }
 
-    public static <T> List<T> generateInfo(Element targetTable, Class<T> tClass) {
+    public static <T> List<T> generateInfoFromTable(Element targetTable, Class<T> tClass) {
         if (targetTable == null) return new ArrayList<>();
         List<T> result = new ArrayList<>();
         Elements trs = targetTable.select("tr");
