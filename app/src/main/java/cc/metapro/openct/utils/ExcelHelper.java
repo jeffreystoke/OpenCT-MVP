@@ -53,6 +53,7 @@ public class ExcelHelper {
         if (tableContents.length > 0) {
             headers = tableContents[0];
         }
+
         if (headers == null) {
             return "";
         }

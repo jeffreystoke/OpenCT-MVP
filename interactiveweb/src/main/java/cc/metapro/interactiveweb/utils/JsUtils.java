@@ -16,6 +16,7 @@ package cc.metapro.interactiveweb.utils;
  * limitations under the License.
  */
 
+import android.os.Build;
 import android.webkit.WebView;
 
 import cc.metapro.interactiveweb.JsInteraction;
@@ -31,162 +32,105 @@ public final class JSUtils {
                     "targ.click();" +
                     "window." + JsInteraction.INTERFACE_NAME + ".onClicked(targ.outerHTML);}\"";
 
-    public static void injectClickListener(final WebView webView) {
+    private static void execJS(final WebView webView, final String js) {
         webView.post(new Runnable() {
             @Override
             public void run() {
-                webView.loadUrl("javascript:" +
-                        "var script=document.createElement('script');" +
-                        "var node = document.createTextNode(" + CLICK_LISTENER + ");" +
-                        "script.appendChild(node);" +
-                        "var body=document.getElementsByTagName(\"body\")[0];" +
-                        "body.setAttribute(\"onmousedown\",\"getClick(event)\");" +
-                        "var head = document.getElementsByTagName(\"head\")[0];" +
-                        "head.appendChild(script);");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    webView.evaluateJavascript(js, null);
+                } else {
+                    webView.loadUrl("javascript:" + js);
+                }
             }
         });
+    }
+
+    public static void injectClickListener(final WebView webView) {
+        execJS(webView, "var script=document.createElement('script');" +
+                "var node = document.createTextNode(" + CLICK_LISTENER + ");" +
+                "script.appendChild(node);" +
+                "var body=document.getElementsByTagName(\"body\")[0];" +
+                "body.setAttribute(\"onmousedown\",\"getClick(event)\");" +
+                "var head = document.getElementsByTagName(\"head\")[0];" +
+                "head.appendChild(script);");
     }
 
     public static void loadPageSource(final WebView webView) {
-        webView.post(new Runnable() {
-            @Override
-            public void run() {
-                webView.loadUrl("javascript:" +
-                        "var frs=document.getElementsByTagName(\"iframe\");" +
-                        "var frameContent=\"\";" +
-                        "for(var i=0;i<frs.length;i++){" +
-                        "frameContent=frameContent+frs[i].contentDocument.body.parentElement.outerHTML;" +
-                        "}" +
-                        "window." + JsInteraction.INTERFACE_NAME + ".getPageSource(document.getElementsByTagName('html')[0].innerHTML + frameContent);");
-            }
-        });
+        execJS(webView, "var frs=document.getElementsByTagName(\"iframe\");" +
+                "var frameContent=\"\";" +
+                "for(var i=0;i<frs.length;i++){" +
+                "frameContent=frameContent+frs[i].contentDocument.body.parentElement.outerHTML;" +
+                "}" +
+                "window." + JsInteraction.INTERFACE_NAME + ".getPageSource(document.getElementsByTagName('html')[0].innerHTML + frameContent);");
     }
 
     public static void clickById(final WebView webView, final String id) {
-        webView.post(new Runnable() {
-            @Override
-            public void run() {
-                webView.loadUrl("javascript:document.getElementById(\"" + id + "\").click();");
-            }
-        });
+        execJS(webView, "document.getElementById(\"" + id + "\").click();");
     }
 
     public static void clickByName(final WebView webView, final String name) {
-        webView.post(new Runnable() {
-            @Override
-            public void run() {
-                webView.loadUrl("javascript:" +
-                        "var targets = document.getElementsByName(\"" + name + "\");" +
-                        "for(var i = 0; i < targets.length; i++){" +
-                        "targets[i].click();" +
-                        "}");
-            }
-        });
+        execJS(webView, "var targets = document.getElementsByName(\"" + name + "\");" +
+                "for(var i = 0; i < targets.length; i++){" +
+                "targets[i].click();" +
+                "}");
     }
 
     public static void clickByTag(final WebView webView, final String tag) {
-        webView.post(new Runnable() {
-            @Override
-            public void run() {
-                webView.loadUrl("javascript:" +
-                        "var targets = document.getElementsByTagName(\"" + tag + "\");" +
-                        "for(var i = 0; i < targets.length; i++){" +
-                        "targets[i].click();" +
-                        "}");
-            }
-        });
+        execJS(webView, "var targets = document.getElementsByTagName(\"" + tag + "\");" +
+                "for(var i = 0; i < targets.length; i++){" +
+                "targets[i].click();" +
+                "}");
     }
 
     public static void clickByPattern(final WebView webView, final String pattern) {
-        webView.post(new Runnable() {
-            @Override
-            public void run() {
-                webView.loadUrl("javascript:" +
-                        "var pattern = /" + pattern + "/;" +
-                        "var elements = document.all;" +
-                        "for(var i=0;i<elements.length;i++){" +
-                        "if(pattern.exec(elements[i].outerHTML)){" +
-                        "elements[i].click();" +
-                        "}" +
-                        "}");
-            }
-        });
+        execJS(webView, "var pattern = /" + pattern + "/;" +
+                "var elements = document.all;" +
+                "for(var i=0;i<elements.length;i++){" +
+                "if(pattern.exec(elements[i].outerHTML)){" +
+                "elements[i].click();" +
+                "}" +
+                "}");
     }
 
     public static void setById(final WebView webView, final String id, final String key, final String value) {
-        webView.post(new Runnable() {
-            @Override
-            public void run() {
-                webView.loadUrl("javascript:" +
-                        "document.getElementById(\"" + id + "\").setAttribute(\"" + key + "\",\"" + value + "\");");
-            }
-        });
+        execJS(webView, "document.getElementById(\"" + id + "\").setAttribute(\"" + key + "\",\"" + value + "\");");
 
     }
 
     public static void setByTag(final WebView webView, final String tag, final String key, final String value) {
-        webView.post(new Runnable() {
-            @Override
-            public void run() {
-                webView.loadUrl("javascript:" +
-                        "var targets = document.getElementsByTagName(\"" + tag + "\");" +
-                        "for(var i = 0; i < targets.length; i++){" +
-                        "targets[i].setAttribute(\"" + key + "\",\"" + value + "\");" +
-                        "}");
-            }
-        });
+        execJS(webView, "var targets = document.getElementsByTagName(\"" + tag + "\");" +
+                "for(var i = 0; i < targets.length; i++){" +
+                "targets[i].setAttribute(\"" + key + "\",\"" + value + "\");" +
+                "}");
     }
 
     public static void setByName(final WebView webView, final String name, final String key, final String value) {
-        webView.post(new Runnable() {
-            @Override
-            public void run() {
-                webView.loadUrl("javascript:" +
-                        "var targets = document.getElementsByName(\"" + name + "\");" +
-                        "for(var i = 0; i < targets.length; i++){" +
-                        "targets[i].click();" +
-                        "targets[i].setAttribute(\"" + key + "\",\"" + value + "\");" +
-                        "}");
-            }
-        });
+        execJS(webView, "var targets = document.getElementsByName(\"" + name + "\");" +
+                "for(var i = 0; i < targets.length; i++){" +
+                "targets[i].click();" +
+                "targets[i].setAttribute(\"" + key + "\",\"" + value + "\");" +
+                "}");
     }
 
     public static void setByPattern(final WebView webView, final String pattern, final String key, final String value) {
-        webView.post(new Runnable() {
-            @Override
-            public void run() {
-                webView.loadUrl("javascript:" +
-                        "var pattern = /" + pattern + "/;" +
-                        "var elements = document.all;" +
-                        "for(var i=0;i<elements.length;i++){" +
-                        "if(pattern.exec(elements[i].outerHTML)){" +
-                        "elements[i].click();" +
-                        "elements[i].setAttribute(\"" + key + "\",\"" + value + "\");" +
-                        "}" +
-                        "}");
-            }
-        });
+        execJS(webView, "var pattern = /" + pattern + "/;" +
+                "var elements = document.all;" +
+                "for(var i=0;i<elements.length;i++){" +
+                "if(pattern.exec(elements[i].outerHTML)){" +
+                "elements[i].click();" +
+                "elements[i].setAttribute(\"" + key + "\",\"" + value + "\");" +
+                "}" +
+                "}");
     }
 
     public static void focusById(final WebView webView, final String id) {
-        webView.post(new Runnable() {
-            @Override
-            public void run() {
-                webView.loadUrl("javascript:document.getElementById(\"" + id + "\").focus();");
-            }
-        });
+        execJS(webView, "document.getElementById(\"" + id + "\").focus();");
     }
 
     public static void focusByName(final WebView webView, final String name) {
-        webView.post(new Runnable() {
-            @Override
-            public void run() {
-                webView.loadUrl("javascript:" +
-                        "var targets = document.getElementsByName(\"" + name + "\");" +
-                        "for(var i = 0; i < targets.length; i++){" +
-                        "targets[i].focus();" +
-                        "}");
-            }
-        });
+        execJS(webView, "var targets = document.getElementsByName(\"" + name + "\");" +
+                "for(var i = 0; i < targets.length; i++){" +
+                "targets[i].focus();" +
+                "}");
     }
 }

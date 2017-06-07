@@ -39,13 +39,11 @@ import cc.metapro.interactiveweb.utils.JSUtils;
 
 public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSetter, HTMLInspector {
 
-    public static final String CLICK_FLAG = "click_it";
     public static final String COMMON_INPUT_FLAG = "common_input";
     public static final String USERNAME_INPUT_FLAG = "username_input";
 
     private LinkedHashMap<String, Document> mVisitedPageDomMap = new LinkedHashMap<>();
     private InteractiveWebViewClient mWebViewClient = new InteractiveWebViewClient();
-    private InteractiveWebChromeClient mChromeClient = new InteractiveWebChromeClient();
     private ClickCallback mUserClickCallback;
 
     public InteractiveWebView(Context context) {
@@ -98,26 +96,6 @@ public class InteractiveWebView extends WebView implements HTMLClicker, HTMLSett
 
     public void setUserClickCallback(ClickCallback callback) {
         mUserClickCallback = callback;
-    }
-
-    public void removeUserClickCallback() {
-        mUserClickCallback = null;
-    }
-
-    public void setPageFinishCallback(InteractiveWebViewClient.FinishCallBack callback) {
-        mChromeClient.setFinishCallBack(callback);
-    }
-
-    public void removePageFinishCallback() {
-        mChromeClient.removeFinishCallBack();
-    }
-
-    public void setOnStartCallBack(InteractiveWebViewClient.StartCallBack startCallBack) {
-        mWebViewClient.setOnStartCallBack(startCallBack);
-    }
-
-    public void removeOnStartCallBack() {
-        mWebViewClient.removeOnStartCallBack();
     }
 
     @Override

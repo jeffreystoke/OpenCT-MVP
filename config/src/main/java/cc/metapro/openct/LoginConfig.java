@@ -92,6 +92,10 @@ public class LoginConfig {
         return postReferer;
     }
 
+    public String getViewState() {
+        return null;
+    }
+
     public String getPostURL() {
         return postURL;
     }

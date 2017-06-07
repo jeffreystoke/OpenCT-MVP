@@ -26,10 +26,6 @@ public class HTMLUtils {
     public static final String BR = "(<\\s*?br\\s*?/?>)|(---+)|(◇)";
     public static final String BR_REPLACER = "&";
 
-    public static boolean isUserInput(Element element) {
-        return isTextInput(element) || isPasswordInput(element);
-    }
-
     public static boolean isTextInput(Element element) {
         return isInput(element) && "text".equalsIgnoreCase(element.attr("type"));
     }
@@ -42,25 +38,10 @@ public class HTMLUtils {
         return element != null && "input".equalsIgnoreCase(element.tagName());
     }
 
-    public static boolean isFrame(Element element) {
-        return element != null && ("frame".equalsIgnoreCase(element.tagName()) || "iframe".equalsIgnoreCase(element.tagName()));
-    }
-
-    public static boolean isClickable(Element element) {
-        return element != null &&
-                ("button".equalsIgnoreCase(element.tagName())
-                        || "submit".equalsIgnoreCase(element.attr("type"))
-                        || "a".equalsIgnoreCase(element.tagName()));
-    }
-
-    public static String getElementPattern(Element element) {
-        return element.toString();
-    }
-
     public static Element getElementSimilar(Document document, Element element) {
         if (element == null) return null;
         Elements elements = document.select(element.tagName());
-        Element result = null;
+        Element result;
         boolean found = true;
         for (Element e : elements) {
             result = e;

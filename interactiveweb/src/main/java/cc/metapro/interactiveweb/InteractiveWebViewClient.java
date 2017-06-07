@@ -31,28 +31,15 @@ import cc.metapro.interactiveweb.utils.JSUtils;
 public class InteractiveWebViewClient extends WebViewClient {
 
     private String CURRENT_URL;
-    private FinishCallBack mFinishCallBack;
-    private StartCallBack mStartCallBack;
 
     String getCurrentPageURL() {
         return CURRENT_URL;
-    }
-
-    void setOnStartCallBack(StartCallBack startCallBack) {
-        mStartCallBack = startCallBack;
-    }
-
-    void removeOnStartCallBack() {
-        mStartCallBack = null;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
         view.loadUrl(request.getUrl().toString());
-        if (mStartCallBack != null) {
-            mStartCallBack.onPageStart();
-        }
         return true;
     }
 
@@ -60,18 +47,12 @@ public class InteractiveWebViewClient extends WebViewClient {
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         view.loadUrl(url);
-        if (mStartCallBack != null) {
-            mStartCallBack.onPageStart();
-        }
         return true;
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
-        if (mStartCallBack != null) {
-            mStartCallBack.onPageStart();
-        }
     }
 
     @Override
@@ -84,9 +65,6 @@ public class InteractiveWebViewClient extends WebViewClient {
         super.onLoadResource(view, url);
         JSUtils.injectClickListener(view);
         JSUtils.loadPageSource(view);
-        if (mStartCallBack != null) {
-            mStartCallBack.onPageStart();
-        }
     }
 
     @Override
@@ -94,17 +72,6 @@ public class InteractiveWebViewClient extends WebViewClient {
         CURRENT_URL = url;
         JSUtils.injectClickListener(view);
         JSUtils.loadPageSource(view);
-        if (mFinishCallBack != null) {
-            mFinishCallBack.onPageFinish();
-        }
         super.onPageFinished(view, url);
-    }
-
-    public interface StartCallBack {
-        void onPageStart();
-    }
-
-    public interface FinishCallBack {
-        void onPageFinish();
     }
 }

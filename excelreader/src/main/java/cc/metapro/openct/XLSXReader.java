@@ -54,7 +54,7 @@ public class XLSXReader {
 
     public String[] getSheets() throws IOException, ZipException {
         ZipFile zipFile = new ZipFile(mFile);
-        File tmp = new File(mFile.getParentFile(), ".xlsx-tmp");
+        File tmp = new File(mFile.getParentFile(), "xlsx-tmp");
         tmp.mkdir();
 
         zipFile.extractAll(tmp.getAbsolutePath());
@@ -85,6 +85,7 @@ public class XLSXReader {
         for (String s : sheetsString) {
             result[i++] = s;
         }
+
         tmp.delete();
         return result;
     }

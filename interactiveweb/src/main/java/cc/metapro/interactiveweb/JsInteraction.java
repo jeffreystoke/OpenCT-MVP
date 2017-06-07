@@ -32,16 +32,6 @@ public class JsInteraction {
         mCallBackList.add(callBack);
     }
 
-//    void addCallBack(CallBack callBack) {
-//        if (callBack != null) {
-//            mCallBackList.add(callBack);
-//        }
-//    }
-//
-//    void removeCallBack(CallBack callBack) {
-//        mCallBackList.remove(callBack);
-//    }
-
     @JavascriptInterface
     public void getPageSource(String html) {
         int N = mCallBackList.size();
