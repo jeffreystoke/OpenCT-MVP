@@ -19,6 +19,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion versions.compilesdk
     buildToolsVersion versions.buildtools
+
     defaultConfig {
         applicationId "cc.metapro.openct"
         minSdkVersion versions.minsdk
