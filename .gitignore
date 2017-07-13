@@ -51,3 +51,6 @@ captures/
 app/src/main/assets/schools.json
 
 app/src/main/assets/school_info/
+
+# vscode
+.vscode
