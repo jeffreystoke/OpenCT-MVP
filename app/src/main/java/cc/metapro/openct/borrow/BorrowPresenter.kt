@@ -33,24 +33,31 @@ import cc.metapro.openct.utils.webutils.TableUtils
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.util.*
 
-internal class BorrowPresenter(private val mLibBorrowView: BorrowContract.View, private val mContext: Context) : BorrowContract.Presenter {
+class BorrowPresenter(private val mLibBorrowView: BorrowContract.View, private val mContext: Context) : BorrowContract.Presenter {
+
     private val TAG = BorrowPresenter::class.java.simpleName
     private var mBorrows: List<BorrowInfo> = ArrayList()
-    private val mDBManger: DBManger
+    private val mDBManger: DBManger = DBManger.getInstance(mContext)
 
     init {
         mLibBorrowView.setPresenter(this)
-        mDBManger = DBManger.getInstance(mContext)
     }
 
-    override fun loadOnlineInfo(manager: FragmentManager): Disposable? {
+    override fun subscribe() {
+        loadLocalBorrows()
+    }
+
+    override fun unSubscribe() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun loadOnlineInfo(f: FragmentManager) {
         ActivityUtils.showProgressDialog(mContext, R.string.preparing_school_sys_info)
 
         val observable = LocalHelper.prepareOnlineInfo(Constants.TYPE_LIB, mContext)
@@ -59,9 +66,9 @@ internal class BorrowPresenter(private val mLibBorrowView: BorrowContract.View, 
             override fun onNext(t: Boolean) {
                 super.onNext(t)
                 if (t) {
-                    ActivityUtils.showCaptchaDialog(manager, this@BorrowPresenter)
+                    ActivityUtils.showCaptchaDialog(f, this@BorrowPresenter)
                 } else {
-                    loadUserCenter(manager, "")
+                    loadUserCenter(f, "")
                 }
             }
 
@@ -74,12 +81,10 @@ internal class BorrowPresenter(private val mLibBorrowView: BorrowContract.View, 
 
         observable.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer)
-
-        return null
+                .subscribeWith(observer)
     }
 
-    override fun loadUserCenter(manager: FragmentManager, code: String): Disposable? {
+    override fun loadUserCenter(f: FragmentManager, code: String) {
         ActivityUtils.showProgressDialog(mContext, R.string.loading_borrows)
         val observable = LocalHelper.login(Constants.TYPE_LIB, mContext, code)
 
@@ -93,7 +98,7 @@ internal class BorrowPresenter(private val mLibBorrowView: BorrowContract.View, 
                         // fetch first page from user center, it will find the borrow info page for most cases
                         val target = HTMLUtils.getElementSimilar(t, Jsoup.parse(urlPatterns[0]).body().children().first())
                         if (target != null) {
-                            loadTargetPage(manager, target.absUrl("href"))
+                            loadTargetPage(f, target.absUrl("href"))
                         }
                     } else if (urlPatterns.size > 1) {
                         // fetch more page to reach borrow info page
@@ -116,8 +121,8 @@ internal class BorrowPresenter(private val mLibBorrowView: BorrowContract.View, 
                         })
 
                         val extraObserver = object : MyObserver<String>(TAG) {
-                            override fun onNext(t: String) {
-                                loadTargetPage(manager, t)
+                            override fun onNext(t :String) {
+                                loadTargetPage(f, t)
                             }
                         }
 
@@ -125,10 +130,10 @@ internal class BorrowPresenter(private val mLibBorrowView: BorrowContract.View, 
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(extraObserver)
                     } else {
-                        ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_BORROW, t, this@BorrowPresenter)
+                        ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_BORROW, t, this@BorrowPresenter)
                     }
                 } else {
-                    ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_BORROW, t, this@BorrowPresenter)
+                    ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_BORROW, t, this@BorrowPresenter)
                 }
             }
 
@@ -142,11 +147,9 @@ internal class BorrowPresenter(private val mLibBorrowView: BorrowContract.View, 
         observable.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer)
-
-        return null
     }
 
-    override fun loadTargetPage(manager: FragmentManager, url: String): Disposable? {
+    override fun loadTargetPage(f: FragmentManager, url: String) {
         ActivityUtils.showProgressDialog(mContext, R.string.loading_target_page)
 
         val observable = Observable.create(ObservableOnSubscribe<Document> { e ->
@@ -170,10 +173,10 @@ internal class BorrowPresenter(private val mLibBorrowView: BorrowContract.View, 
                             Toast.makeText(mContext, R.string.load_online_borrows_successful, Toast.LENGTH_LONG).show()
                         }
                     } else {
-                        ActivityUtils.showTableChooseDialog(manager, Constants.TYPE_BORROW, t, this@BorrowPresenter)
+                        ActivityUtils.showTableChooseDialog(f, Constants.TYPE_BORROW, t, this@BorrowPresenter)
                     }
                 } else {
-                    ActivityUtils.showTableChooseDialog(manager, Constants.TYPE_BORROW, t, this@BorrowPresenter)
+                    ActivityUtils.showTableChooseDialog(f, Constants.TYPE_BORROW, t, this@BorrowPresenter)
                 }
             }
 
@@ -187,12 +190,9 @@ internal class BorrowPresenter(private val mLibBorrowView: BorrowContract.View, 
         observable.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer)
-
-        return null
     }
 
-    override fun loadQuery(manager: FragmentManager, actionURL: String, queryMap: Map<String, String>, needNewPage: Boolean): Disposable? {
-        return null
+    override fun loadQuery(manager: FragmentManager, actionURL: String, queryMap: Map<String, String>, needNewPage: Boolean) {
     }
 
     override fun showDue() {
@@ -227,7 +227,7 @@ internal class BorrowPresenter(private val mLibBorrowView: BorrowContract.View, 
                 .subscribe(observer)
     }
 
-    override fun startFilter(manager: FragmentManager) {
+    override fun startFilter(f: FragmentManager) {
         if (!mBorrows.isEmpty()) {
             for (s in mBorrows[0].titles) {
                 list!!.add(s)
@@ -244,10 +244,6 @@ internal class BorrowPresenter(private val mLibBorrowView: BorrowContract.View, 
             Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
         }
 
-    }
-
-    override fun start() {
-        loadLocalBorrows()
     }
 
     companion object {

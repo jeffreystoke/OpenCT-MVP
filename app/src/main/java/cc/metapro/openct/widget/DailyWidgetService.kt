@@ -29,10 +29,10 @@ import java.util.*
 class DailyWidgetService : RemoteViewsService() {
 
     override fun onGetViewFactory(intent: Intent): RemoteViewsService.RemoteViewsFactory {
-        return DailyWidgetFactory(applicationContext, intent)
+        return DailyWidgetFactory(applicationContext)
     }
 
-    private class DailyWidgetFactory internal constructor(private val mContext: Context, intent: Intent) : RemoteViewsService.RemoteViewsFactory {
+    private class DailyWidgetFactory internal constructor(private val mContext: Context) : RemoteViewsService.RemoteViewsFactory {
 
         private var mDailyClasses: List<SingleClass> = ArrayList()
 

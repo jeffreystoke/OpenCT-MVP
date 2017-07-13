@@ -34,37 +34,41 @@ import cc.metapro.openct.data.source.local.LocalHelper
 import cc.metapro.openct.utils.ActivityUtils
 import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.base.BaseActivity
+import cc.metapro.openct.utils.base.BasePresenter
 
 class CustomActivity : BaseActivity(), CustomContract.View {
 
     @BindView(R.id.toolbar)
-    internal var mToolbar: Toolbar? = null
+    internal lateinit var mToolbar: Toolbar
     @BindView(R.id.custom_web_view)
-    internal var mWebView: InteractiveWebView? = null
+    internal lateinit var mWebView: InteractiveWebView
     @BindView(R.id.url_input)
-    internal var mURL: EditText? = null
+    internal lateinit var mURL: EditText
     @BindView(R.id.tips)
-    internal var tipText: TextView? = null
+    internal lateinit var tipText: TextView
     @BindView(R.id.web_layout)
-    internal var mViewGroup: ViewGroup? = null
+    internal lateinit var mViewGroup: ViewGroup
 
-    private var mPresenter: CustomContract.Presenter? = null
-    private var mType: String? = null
+    private lateinit var mPresenter: CustomContract.Presenter
+    private lateinit var mType: String
+
+    override val presenter: BasePresenter?
+        get() = mPresenter
 
     @OnClick(R.id.fab)
     fun start() {
-        val url = URLUtil.guessUrl(mURL!!.text.toString())
-        mURL!!.setText(url)
-        mPresenter!!.setWebView(mWebView!!, supportFragmentManager)
-        tipText!!.visibility = View.GONE
-        mWebView!!.visibility = View.VISIBLE
-        mWebView!!.loadUrl(url)
+        val url = URLUtil.guessUrl(mURL.text.toString())
+        mURL.setText(url)
+        mPresenter.setWebView(mWebView, supportFragmentManager)
+        tipText.visibility = View.GONE
+        mWebView.visibility = View.VISIBLE
+        mWebView.loadUrl(url)
     }
 
     @OnClick(R.id.fab_target)
     fun showTableChooseDialog() {
         ActivityUtils.showTableChooseDialog(
-                supportFragmentManager, mType!!, mWebView!!.pageDom, null)
+                supportFragmentManager, mType, mWebView.pageDom, null)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,7 +81,7 @@ class CustomActivity : BaseActivity(), CustomContract.View {
         LocalHelper.needUpdateUniversity()
 
         mType = intent.getStringExtra(KEY_TYPE)
-        CustomPresenter(this, this, mType!!)
+        CustomPresenter(this, this, mType)
     }
 
     override val layout: Int
@@ -86,21 +90,19 @@ class CustomActivity : BaseActivity(), CustomContract.View {
     override fun onResume() {
         super.onResume()
         when (mType) {
-            Constants.TYPE_CLASS, Constants.TYPE_GRADE -> mURL!!.setText(LocalHelper.getUniversity(this).cmsURL)
-            Constants.TYPE_BORROW, Constants.TYPE_SEARCH -> mURL!!.setText(LocalHelper.getUniversity(this).libURL)
+            Constants.TYPE_CLASS, Constants.TYPE_GRADE -> mURL.setText(LocalHelper.getUniversity(this).cmsURL)
+            Constants.TYPE_BORROW, Constants.TYPE_SEARCH -> mURL.setText(LocalHelper.getUniversity(this).libURL)
         }
-
-        mPresenter!!.start()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mViewGroup!!.removeAllViews()
-        mWebView!!.destroy()
+        mViewGroup.removeAllViews()
+        mWebView.destroy()
     }
 
-    override fun setPresenter(presenter: CustomContract.Presenter) {
-        mPresenter = presenter
+    override fun setPresenter(p: CustomContract.Presenter) {
+        mPresenter = p
     }
 
     companion object {

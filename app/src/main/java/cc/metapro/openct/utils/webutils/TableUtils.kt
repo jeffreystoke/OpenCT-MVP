@@ -27,8 +27,7 @@ object TableUtils {
         if (html == null) return HashMap()
         val result = HashMap<String, Element>()
         val tables = html.select("table")
-        var i = 0
-        for (table in tables) {
+        for ((i, table) in tables.withIndex()) {
             var id = table.id()
             if (TextUtils.isEmpty(id)) {
                 id = table.attr("name")
@@ -45,7 +44,6 @@ object TableUtils {
             if (result[id] == null) {
                 result.put(id, table)
             }
-            i++
         }
         return result
     }

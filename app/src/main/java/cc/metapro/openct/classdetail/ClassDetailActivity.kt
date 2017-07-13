@@ -41,6 +41,7 @@ import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.DateHelper
 import cc.metapro.openct.utils.RecyclerViewHelper
 import cc.metapro.openct.utils.base.BaseActivity
+import cc.metapro.openct.utils.base.BasePresenter
 import com.jrummyapps.android.colorpicker.ColorPickerDialog
 import com.jrummyapps.android.colorpicker.ColorPickerDialogListener
 import com.rengwuxian.materialedittext.MaterialEditText
@@ -51,20 +52,23 @@ import java.util.*
 class ClassDetailActivity : BaseActivity() {
 
     @BindView(R.id.toolbar)
-    internal var mToolbar: Toolbar? = null
+    internal lateinit var mToolbar: Toolbar
     @BindView(R.id.recycler_view)
-    internal var mRecyclerView: SwipeMenuRecyclerView? = null
+    internal lateinit var mRecyclerView: SwipeMenuRecyclerView
     @BindView(R.id.content)
-    internal var mName: MaterialEditText? = null
+    internal lateinit var mName: MaterialEditText
     @BindView(R.id.type)
-    internal var mType: MaterialEditText? = null
+    internal lateinit var mType: MaterialEditText
     @BindView(R.id.bg)
-    internal var mBackground: FloatingActionButton? = null
+    internal lateinit var mBackground: FloatingActionButton
 
-    private var mDetailAdapter: ClassDetailAdapter? = null
-    private var mInfoEditing: EnrichedClassInfo? = null
-    private var mClassTimes: MutableList<ClassTime>? = null
-    private var mOldName: String? = null
+    private lateinit var mDetailAdapter: ClassDetailAdapter
+    private lateinit var mInfoEditing: EnrichedClassInfo
+    private lateinit var mClassTimes: MutableList<ClassTime>
+    private lateinit var mOldName: String
+
+    override val presenter: BasePresenter?
+        get() = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -73,16 +77,16 @@ class ClassDetailActivity : BaseActivity() {
         setSupportActionBar(mToolbar)
     }
 
-    protected override val layout: Int
+    override val layout: Int
         get() = R.layout.activity_class_detail
 
     @OnClick(R.id.bg)
     internal fun showColorPicker() {
-        val dialog = ColorPickerDialog.newBuilder().setColor(mInfoEditing!!.color).create()
+        val dialog = ColorPickerDialog.newBuilder().setColor(mInfoEditing.color).create()
         dialog.setColorPickerDialogListener(object : ColorPickerDialogListener {
             override fun onColorSelected(dialogId: Int, @ColorInt color: Int) {
-                mInfoEditing!!.color = color
-                mBackground!!.setColorFilter(color)
+                mInfoEditing.color = color
+                mBackground.setColorFilter(color)
             }
 
             override fun onDialogDismissed(dialogId: Int) {
@@ -95,48 +99,44 @@ class ClassDetailActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         mOldName = intent.getStringExtra(KEY_CLASS_NAME)
-        mInfoEditing = DBManger.getInstance(this).getSingleClass(mOldName!!)
-        if (mInfoEditing == null) {
-            mInfoEditing = EnrichedClassInfo(getString(R.string.new_class), getString(R.string.mandatory), ClassTime())
-        }
+        mInfoEditing = DBManger.getInstance(this).getSingleClass(mOldName)
+        mInfoEditing = EnrichedClassInfo(getString(R.string.new_class), getString(R.string.mandatory), ClassTime())
 
-        mClassTimes = ArrayList(mInfoEditing!!.timeSet)
-        Collections.sort(mClassTimes!!)
+        mClassTimes = ArrayList(mInfoEditing.timeSet)
+        Collections.sort(mClassTimes)
 
-        mName!!.setText(mInfoEditing!!.name)
-        mType!!.setText(mInfoEditing!!.type)
-        mBackground!!.setColorFilter(mInfoEditing!!.color)
+        mName.setText(mInfoEditing.name)
+        mType.setText(mInfoEditing.type)
+        mBackground.setColorFilter(mInfoEditing.color)
         setRecyclerView()
     }
 
     private fun setRecyclerView() {
         mDetailAdapter = ClassDetailAdapter(this, mClassTimes)
-        RecyclerViewHelper.setRecyclerView(this, mRecyclerView!!, mDetailAdapter!!)
-        mRecyclerView!!.isItemViewSwipeEnabled = true
-        mRecyclerView!!.setOnItemMoveListener(object : OnItemMoveListener {
+        RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mDetailAdapter)
+        mRecyclerView.isItemViewSwipeEnabled = true
+        mRecyclerView.setOnItemMoveListener(object : OnItemMoveListener {
             override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
                 return false
             }
 
             override fun onItemDismiss(position: Int) {
-                val toRemove = mClassTimes!![position]
-                mClassTimes!!.remove(toRemove)
-                mDetailAdapter!!.notifyDataSetChanged()
-                val prefix = mName!!.text.toString() + " " +
+                val toRemove = mClassTimes[position]
+                mClassTimes.remove(toRemove)
+                mDetailAdapter.notifyDataSetChanged()
+                val prefix = mName.text.toString() + " " +
                         DateHelper.weekDayTrans(this@ClassDetailActivity, toRemove.weekDay) + " " +
                         toRemove.timeString + " "
 
                 val msg = prefix + getString(R.string.deleted)
-                val snackbar = Snackbar.make(mRecyclerView!!, msg, BaseTransientBottomBar.LENGTH_INDEFINITE)
+                val snackbar = Snackbar.make(mRecyclerView, msg, BaseTransientBottomBar.LENGTH_INDEFINITE)
                 snackbar.setAction(android.R.string.cancel) {
-                    mClassTimes!!.add(toRemove)
-                    mDetailAdapter!!.notifyDataSetChanged()
+                    mClassTimes.add(toRemove)
+                    mDetailAdapter.notifyDataSetChanged()
                     snackbar.dismiss()
-
                     val msg = prefix + getString(R.string.restored)
-
-                    Snackbar.make(mRecyclerView!!, msg, BaseTransientBottomBar.LENGTH_LONG).show()
-                    mRecyclerView!!.smoothScrollToPosition(mClassTimes!!.size - 1)
+                    Snackbar.make(mRecyclerView, msg, BaseTransientBottomBar.LENGTH_LONG).show()
+                    mRecyclerView.smoothScrollToPosition(mClassTimes.size - 1)
                 }
                 snackbar.show()
             }
@@ -151,22 +151,22 @@ class ClassDetailActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if (id == R.id.add) {
-            if (!mClassTimes!!.isEmpty()) {
-                mClassTimes!!.add(0, ClassTime(mClassTimes!![mClassTimes!!.size - 1]))
+            if (!mClassTimes.isEmpty()) {
+                mClassTimes.add(0, ClassTime(mClassTimes[mClassTimes.size - 1]))
             } else {
-                mClassTimes!!.add(0, ClassTime())
+                mClassTimes.add(0, ClassTime())
             }
-            mDetailAdapter!!.notifyDataSetChanged()
+            mDetailAdapter.notifyDataSetChanged()
         }
         return super.onOptionsItemSelected(item)
     }
 
     override fun onBackPressed() {
-        mInfoEditing!!.name = mName!!.text.toString()
-        mInfoEditing!!.type = mType!!.text.toString()
-        mInfoEditing!!.setTimes(ArraySet(mClassTimes))
+        mInfoEditing.name = mName.text.toString()
+        mInfoEditing.type = mType.text.toString()
+        mInfoEditing.setTimes(ArraySet(mClassTimes))
         try {
-            if (mClassTimes == null || mClassTimes!!.isEmpty()) {
+            if (mClassTimes.isEmpty()) {
                 try {
                     DBManger.getInstance(this).updateSingleClass(mOldName, "", null)
                 } catch (e: Exception) {
@@ -175,7 +175,7 @@ class ClassDetailActivity : BaseActivity() {
 
             } else {
                 try {
-                    DBManger.getInstance(this).updateSingleClass(mOldName, mInfoEditing!!.name!!, mInfoEditing)
+                    DBManger.getInstance(this).updateSingleClass(mOldName, mInfoEditing.name!!, mInfoEditing)
                 } catch (e: Exception) {
                     Log.d(TAG, e.message, e)
                     Toast.makeText(this, R.string.class_with_same_name, Toast.LENGTH_LONG).show()
@@ -184,7 +184,7 @@ class ClassDetailActivity : BaseActivity() {
 
             }
         } finally {
-            Constants.sClasses.setInfoByName(mOldName!!, mInfoEditing!!)
+            Constants.sClasses.setInfoByName(mOldName, mInfoEditing)
         }
         super.onBackPressed()
     }

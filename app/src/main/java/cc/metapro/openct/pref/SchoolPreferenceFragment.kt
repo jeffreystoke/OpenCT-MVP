@@ -74,9 +74,9 @@ class SchoolPreferenceFragment : PreferenceFragment(), Preference.OnPreferenceCh
                     .setTitle(R.string.notice)
                     .setMessage(R.string.clear_action_confirm)
                     .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(android.R.string.ok) { dialog, which ->
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
                         val manger = DBManger.getInstance(activity)
-                        manger!!.delAdvancedCustomInfo()
+                        manger.delAdvancedCustomInfo()
                         Constants.sDetailCustomInfo = DetailCustomInfo()
                         Constants.checkAdvCustomInfo(activity)
                     }.show()
@@ -165,7 +165,7 @@ class SchoolPreferenceFragment : PreferenceFragment(), Preference.OnPreferenceCh
             preference.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
                 val value = PrefHelper.getString(activity, key, defaultValue)
                 val parts = REHelper.getUserSetTime(value)
-                val dialog = TimePickerDialog.newInstance({ view, hourOfDay, minute, second ->
+                val dialog = TimePickerDialog.newInstance({ _, hourOfDay, minute, _ ->
                     var value = ""
                     if (hourOfDay < 10) {
                         value += "0"

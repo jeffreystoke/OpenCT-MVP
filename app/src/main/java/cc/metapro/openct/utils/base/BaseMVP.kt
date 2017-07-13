@@ -16,11 +16,22 @@
 
 package cc.metapro.openct.utils.base
 
-interface BaseView<T : BasePresenter> {
+import android.support.v4.app.FragmentManager
+
+// implementing MVP design pattern with RxJava
+
+interface BaseView<in T : BasePresenter> {
     fun setPresenter(p: T)
 }
 
 interface BasePresenter {
     fun subscribe()
-    fun unSuvscribe()
+    fun unSubscribe()
+}
+
+interface LoginPresenter : BasePresenter {
+    fun loadOnlineInfo(f: FragmentManager)
+    fun loadUserCenter(f: FragmentManager, code: String)
+    fun loadTargetPage(f: FragmentManager, url: String)
+    fun loadQuery(manager: FragmentManager, actionURL: String, queryMap: Map<String, String>, needNewPage: Boolean)
 }

@@ -33,7 +33,7 @@ internal class CustomPresenter(private val mContext: Context, view: CustomContra
         view.setPresenter(this)
     }
 
-    override fun start() {
+    override fun subscribe() {
         val user: LocalUser?
         when (mType) {
             Constants.TYPE_CLASS -> user = LocalHelper.getCmsStuInfo(mContext)
@@ -41,15 +41,16 @@ internal class CustomPresenter(private val mContext: Context, view: CustomContra
             Constants.TYPE_BORROW -> user = LocalHelper.getLibStuInfo(mContext)
             else -> user = LocalHelper.getCmsStuInfo(mContext)
         }
-
         mUsername = user.username
-
         try {
             mPassword = user.password
         } catch (e: GeneralSecurityException) {
             mPassword = ""
         }
+    }
 
+    override fun unSubscribe() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun setWebView(webView: InteractiveWebView, manager: FragmentManager) {
@@ -59,16 +60,20 @@ internal class CustomPresenter(private val mContext: Context, view: CustomContra
                     webView.setByName(element.attr("name"), "value", mPassword)
                 }
             } else if (HTMLUtils.isTextInput(element)) {
-                ClickDialog.newInstance { type ->
-                    when (type) {
-                        InteractiveWebView.COMMON_INPUT_FLAG -> if (!webView.focusById(element.id())) {
-                            webView.focusByName(element.attr("name"))
-                        }
-                        InteractiveWebView.USERNAME_INPUT_FLAG -> if (!webView.setById(element.id(), "value", mUsername)) {
-                            webView.setByName(element.attr("name"), "value", mUsername)
+                class s : ClickDialog.TypeCallback {
+                    override fun onResult(type: String) {
+                        when (type) {
+                            InteractiveWebView.COMMON_INPUT_FLAG -> if (!webView.focusById(element.id())) {
+                                webView.focusByName(element.attr("name"))
+                            }
+                            InteractiveWebView.USERNAME_INPUT_FLAG -> if (!webView.setById(element.id(), "value", mUsername)) {
+                                webView.setByName(element.attr("name"), "value", mUsername)
+                            }
                         }
                     }
-                }.show(manager, "click_dialog")
+                }
+
+                ClickDialog.newInstance(s()).show(manager, "click_dialog")
             }
         }
     }

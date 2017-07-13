@@ -45,7 +45,7 @@ internal class SchoolAdapter(context: Context) : BaseAdapter(), StickyListHeader
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     init {
-        val universityList = DBManger.getInstance(context)!!.schools
+        val universityList = DBManger.getInstance(context).schools
         mAllSchools = ArrayList<CharSequence>()
         mSchools = ArrayList<CharSequence>()
         if (universityList.isEmpty()) {
@@ -58,10 +58,10 @@ internal class SchoolAdapter(context: Context) : BaseAdapter(), StickyListHeader
     private fun setSchools(universityList: List<UniversityInfo>) {
         Collections.sort(universityList)
         mAllSchools.clear()
-        mSchools!!.clear()
+        mSchools.clear()
         for (info in universityList) {
             mAllSchools.add(info.name)
-            mSchools!!.add(info.name)
+            mSchools.add(info.name)
         }
     }
 
@@ -76,7 +76,7 @@ internal class SchoolAdapter(context: Context) : BaseAdapter(), StickyListHeader
             }
 
             Observable.create(ObservableOnSubscribe<List<UniversityInfo>> {
-                val source = RemoteSource(LocalHelper.getUniversity(context)!!.name)
+                val source = RemoteSource(LocalHelper.getUniversity(context).name)
                 val universityList = source.universities
                 DBManger.updateSchools(context, universityList)
                 setSchools(universityList)
@@ -102,10 +102,10 @@ internal class SchoolAdapter(context: Context) : BaseAdapter(), StickyListHeader
 
                     val targetList = ArrayList<CharSequence>().toMutableList()
                     for (tmp in mAllSchools) {
-                        val match = s.any { tmp.contains(it!!) }
-                        if (match) {
-                            targetList.add(tmp.toString())
-                        }
+//                        val match = s.any { tmp.contains(it) }
+//                        if (match) {
+//                            targetList.add(tmp.toString())
+//                        }
                     }
                     mSchools = targetList
                 }
@@ -121,27 +121,27 @@ internal class SchoolAdapter(context: Context) : BaseAdapter(), StickyListHeader
         if (convertView == null) {
             holder = HeaderViewHolder()
             convertView = inflater.inflate(R.layout.item_header, parent, false)
-            holder.headerText = convertView!!.findViewById<View>(R.id.header_text) as TextView
+            holder.headerText = convertView.findViewById<View>(R.id.header_text) as TextView
             convertView.tag = holder
         } else {
             holder = convertView.tag as HeaderViewHolder
         }
 
-        val headerText = mSchools!![position].substring(0, 2)
-        holder.headerText!!.text = headerText
-        return convertView
+        val headerText = mSchools[position].substring(0, 2)
+        holder.headerText?.text = headerText
+        return convertView!!
     }
 
     override fun getHeaderId(position: Int): Long {
-        return mSchools!![position].substring(0, 2).hashCode().toLong()
+        return mSchools[position].substring(0, 2).hashCode().toLong()
     }
 
     override fun getCount(): Int {
-        return mSchools!!.size
+        return mSchools.size
     }
 
     override fun getItem(position: Int): Any {
-        return mSchools!![position]
+        return mSchools[position]
     }
 
     override fun getItemId(position: Int): Long {
@@ -155,13 +155,13 @@ internal class SchoolAdapter(context: Context) : BaseAdapter(), StickyListHeader
         if (convertView == null) {
             holder = ViewHolder()
             convertView = inflater.inflate(R.layout.item_floating_header, parent, false)
-            holder.schoolText = convertView!!.findViewById<View>(R.id.school_name_text) as TextView
+            holder.schoolText = convertView.findViewById<View>(R.id.school_name_text) as TextView
             convertView.tag = holder
         } else {
             holder = convertView.tag as ViewHolder
         }
-        holder.schoolText!!.text = mSchools!![position]
-        return convertView
+        holder.schoolText?.text = mSchools[position]
+        return convertView!!
     }
 
     private inner class HeaderViewHolder {

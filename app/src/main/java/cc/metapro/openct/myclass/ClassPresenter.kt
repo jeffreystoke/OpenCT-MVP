@@ -35,7 +35,6 @@ import cc.metapro.openct.widget.DailyClassWidget
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -43,13 +42,21 @@ import org.jsoup.nodes.Element
 
 internal class ClassPresenter(private val mView: ClassContract.View, private val mContext: Context) : ClassContract.Presenter {
 
+    override fun subscribe() {
+        loadLocalClasses()
+    }
+
+    override fun unSubscribe() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     private val TAG = ClassPresenter::class.java.simpleName
 
     init {
         mView.setPresenter(this)
     }
 
-    override fun loadOnlineInfo(manager: FragmentManager): Disposable? {
+    override fun loadOnlineInfo(f: FragmentManager) {
         ActivityUtils.showProgressDialog(mContext, R.string.preparing_school_sys_info)
 
         val observable = LocalHelper.prepareOnlineInfo(Constants.TYPE_CMS, mContext)
@@ -58,9 +65,9 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
             override fun onNext(t: Boolean) {
                 ActivityUtils.dismissProgressDialog()
                 if (t) {
-                    ActivityUtils.showCaptchaDialog(manager, this@ClassPresenter)
+                    ActivityUtils.showCaptchaDialog(f, this@ClassPresenter)
                 } else {
-                    loadUserCenter(manager, "")
+                    loadUserCenter(f, "")
                 }
             }
 
@@ -74,11 +81,9 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
 
         observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer)
-
-        return null
     }
 
-    override fun loadUserCenter(manager: FragmentManager, code: String): Disposable? {
+    override fun loadUserCenter(f: FragmentManager, code: String) {
         ActivityUtils.showProgressDialog(mContext, R.string.login_to_system)
 
         val observable = LocalHelper.login(Constants.TYPE_CMS, mContext, code)
@@ -93,9 +98,9 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
                         // fetch first page from user center, it will find the class info page in most case
                         val target = HTMLUtils.getElementSimilar(t, Jsoup.parse(urlPatterns[0]).body().children().first())
                         if (target != null) {
-                            loadTargetPage(manager, target.absUrl("href"))
+                            loadTargetPage(f, target.absUrl("href"))
                         } else {
-                            ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, t, this@ClassPresenter)
+                            ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_CLASS, t, this@ClassPresenter)
                         }
                     } else if (urlPatterns.size > 1) {
                         // fetch more page to reach class info page, especially in QZ Data Soft CMS System
@@ -120,13 +125,13 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
 
                         val extraObserver = object : MyObserver<String>(TAG) {
                             override fun onNext(t: String) {
-                                loadTargetPage(manager, t)
+                                loadTargetPage(f, t)
                             }
 
                             override fun onError(e: Throwable) {
                                 super.onError(e)
                                 Toast.makeText(mContext, R.string.can_not_fetch_target_page, Toast.LENGTH_LONG).show()
-                                ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, t, this@ClassPresenter)
+                                ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_CLASS, t, this@ClassPresenter)
                             }
                         }
 
@@ -134,10 +139,10 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(extraObserver)
                     } else {
-                        ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, t, this@ClassPresenter)
+                        ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_CLASS, t, this@ClassPresenter)
                     }
                 } else {
-                    ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_CLASS, t, this@ClassPresenter)
+                    ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_CLASS, t, this@ClassPresenter)
                 }
             }
 
@@ -150,11 +155,9 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
 
         observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer)
-
-        return null
     }
 
-    override fun loadTargetPage(manager: FragmentManager, url: String): Disposable? {
+    override fun loadTargetPage(f: FragmentManager, url: String) {
         ActivityUtils.showProgressDialog(mContext, R.string.loading_class_page)
 
         val observable = Observable.create(ObservableOnSubscribe<Document> { e -> e.onNext(LocalHelper.getCms(mContext).getPageDom(url)!!) })
@@ -162,7 +165,7 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
         val observer = object : MyObserver<Document>(TAG) {
             override fun onNext(t: Document) {
                 super.onNext(t)
-                FormDialog.newInstance(t, this@ClassPresenter).show(manager, "form_dialog")
+                FormDialog.newInstance(t, this@ClassPresenter).show(f, "form_dialog")
             }
 
             override fun onError(e: Throwable) {
@@ -175,11 +178,9 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer)
-
-        return null
     }
 
-    override fun loadQuery(manager: FragmentManager, actionURL: String, queryMap: Map<String, String>, needNewPage: Boolean): Disposable? {
+    override fun loadQuery(manager: FragmentManager, actionURL: String, queryMap: Map<String, String>, needNewPage: Boolean) {
         ActivityUtils.showProgressDialog(mContext, R.string.loading_classes)
 
         val observable = Observable.create(ObservableOnSubscribe<Document> { e -> e.onNext(LocalHelper.getCms(mContext).queryClassPageDom(actionURL, queryMap, needNewPage)) })
@@ -215,16 +216,14 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer)
-
-        return null
     }
 
     override fun loadLocalClasses() {
         val observable = LocalHelper.getClasses(mContext)
 
         val observer = object : MyObserver<Classes>(TAG) {
-            override fun onNext(enrichedClasses: Classes) {
-                Constants.sClasses = enrichedClasses
+            override fun onNext(t: Classes) {
+                Constants.sClasses = t
                 try {
                     mView.showClasses(Constants.sClasses, LocalHelper.getCurrentWeek(mContext))
                 } catch (e: Exception) {
@@ -252,9 +251,5 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
             Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
         }
 
-    }
-
-    override fun start() {
-        loadLocalClasses()
     }
 }

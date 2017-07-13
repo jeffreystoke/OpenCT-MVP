@@ -35,16 +35,25 @@ import cc.metapro.openct.custom.CustomActivity
 import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.RecyclerViewHelper
 import cc.metapro.openct.utils.base.BaseActivity
+import cc.metapro.openct.utils.base.BasePresenter
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener
 
 class AllClassesActivity : BaseActivity(), AllClassesContract.View {
+
     @BindView(R.id.toolbar)
-    internal var mToolbar: Toolbar? = null
+    internal lateinit var mToolbar: Toolbar
     @BindView(R.id.recycler_view)
-    internal var mRecyclerView: SwipeMenuRecyclerView? = null
-    private var mAdapter: AllClassesAdapter? = null
-    private var mPresenter: AllClassesContract.Presenter? = null
+    internal lateinit var mRecyclerView: SwipeMenuRecyclerView
+
+    private lateinit var mAdapter: AllClassesAdapter
+    private lateinit var mPresenter: AllClassesContract.Presenter
+
+    override val presenter: BasePresenter
+        get() = mPresenter
+
+    override val layout: Int
+        get() = R.layout.activity_all_classes
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,16 +62,8 @@ class AllClassesActivity : BaseActivity(), AllClassesContract.View {
         AllClassesPresenter(this, this)
     }
 
-    override val layout: Int
-        get() = R.layout.activity_all_classes
-
-    override fun onResume() {
-        super.onResume()
-        mPresenter!!.start()
-    }
-
-    override fun setPresenter(presenter: AllClassesContract.Presenter) {
-        mPresenter = presenter
+    override fun setPresenter(p: AllClassesContract.Presenter) {
+        mPresenter = p
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -78,17 +79,17 @@ class AllClassesActivity : BaseActivity(), AllClassesContract.View {
                 if (hasPermission != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_WRITE_STORAGE)
                 } else {
-                    mPresenter!!.exportClasses()
+                    mPresenter.exportClasses()
                 }
             } else {
-                mPresenter!!.exportClasses()
+                mPresenter.exportClasses()
             }
         } else if (id == R.id.clear_classes) {
-            mPresenter!!.clearClasses()
+            mPresenter.clearClasses()
         } else if (id == R.id.custom) {
             CustomActivity.actionStart(this, Constants.TYPE_CLASS)
         } else if (id == R.id.import_from_excel) {
-            mPresenter!!.loadFromExcel(supportFragmentManager)
+            mPresenter.loadFromExcel(supportFragmentManager)
         } else if (id == R.id.add_class) {
             ClassDetailActivity.actionStart(this, getString(R.string.new_class))
         }
@@ -97,10 +98,10 @@ class AllClassesActivity : BaseActivity(), AllClassesContract.View {
 
     override fun updateClasses() {
         mAdapter = AllClassesAdapter(this)
-        RecyclerViewHelper.setRecyclerView(this, mRecyclerView!!, mAdapter!!)
-        mRecyclerView!!.isItemViewSwipeEnabled = true
+        RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mAdapter)
+        mRecyclerView.isItemViewSwipeEnabled = true
 
-        mRecyclerView!!.setOnItemMoveListener(object : OnItemMoveListener {
+        mRecyclerView.setOnItemMoveListener(object : OnItemMoveListener {
             override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
                 return false
             }
@@ -108,14 +109,14 @@ class AllClassesActivity : BaseActivity(), AllClassesContract.View {
             override fun onItemDismiss(position: Int) {
                 val toRemove = Constants.sClasses[position]
                 Constants.sClasses.removeAt(position)
-                mAdapter!!.notifyDataSetChanged()
-                val snackbar = Snackbar.make(mRecyclerView!!, toRemove.name + " " + getString(R.string.deleted), BaseTransientBottomBar.LENGTH_INDEFINITE)
+                mAdapter.notifyDataSetChanged()
+                val snackbar = Snackbar.make(mRecyclerView, toRemove.name + " " + getString(R.string.deleted), BaseTransientBottomBar.LENGTH_INDEFINITE)
                 snackbar.setAction(android.R.string.cancel) {
                     Constants.sClasses.add(toRemove)
-                    mAdapter!!.notifyDataSetChanged()
+                    mAdapter.notifyDataSetChanged()
                     snackbar.dismiss()
-                    Snackbar.make(mRecyclerView!!, toRemove.name + " " + getString(R.string.restored), BaseTransientBottomBar.LENGTH_LONG).show()
-                    mRecyclerView!!.smoothScrollToPosition(0)
+                    Snackbar.make(mRecyclerView, toRemove.name + " " + getString(R.string.restored), BaseTransientBottomBar.LENGTH_LONG).show()
+                    mRecyclerView.smoothScrollToPosition(0)
                 }
                 snackbar.show()
             }
@@ -123,7 +124,7 @@ class AllClassesActivity : BaseActivity(), AllClassesContract.View {
     }
 
     override fun onBackPressed() {
-        mPresenter!!.storeClasses(Constants.sClasses)
+        mPresenter.storeClasses(Constants.sClasses)
         super.onBackPressed()
     }
 
@@ -131,7 +132,7 @@ class AllClassesActivity : BaseActivity(), AllClassesContract.View {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_WRITE_STORAGE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                mPresenter!!.exportClasses()
+                mPresenter.exportClasses()
             } else {
                 Toast.makeText(this, R.string.no_write_permission, Toast.LENGTH_LONG).show()
             }
@@ -139,7 +140,6 @@ class AllClassesActivity : BaseActivity(), AllClassesContract.View {
     }
 
     companion object {
-
         private val REQUEST_WRITE_STORAGE = 112
     }
 }

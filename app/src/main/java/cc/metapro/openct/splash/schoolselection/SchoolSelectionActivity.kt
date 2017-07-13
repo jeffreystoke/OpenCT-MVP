@@ -16,6 +16,7 @@ package cc.metapro.openct.splash.schoolselection
  * limitations under the License.
  */
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BaseTransientBottomBar
@@ -33,6 +34,7 @@ import cc.metapro.openct.data.source.local.LocalHelper
 import cc.metapro.openct.utils.ActivityUtils
 import cc.metapro.openct.utils.PrefHelper
 import cc.metapro.openct.utils.base.BaseActivity
+import cc.metapro.openct.utils.base.BasePresenter
 import cc.metapro.openct.utils.base.MyObserver
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -43,14 +45,20 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView
 class SchoolSelectionActivity : BaseActivity(), SearchView.OnQueryTextListener {
 
     @BindView(R.id.toolbar)
-    internal var mToolbar: Toolbar? = null
+    internal lateinit var mToolbar: Toolbar
     @BindView(R.id.school_name)
-    internal var mSearchView: SearchView? = null
+    internal lateinit var mSearchView: SearchView
     @BindView(R.id.school_list_view)
-    internal var mListView: StickyListHeadersListView? = null
+    internal lateinit var mListView: StickyListHeadersListView
 
-    private var result: String? = null
-    private var mAdapter: SchoolAdapter? = null
+    private lateinit var result: String
+    private lateinit var mAdapter: SchoolAdapter
+
+    override val presenter: BasePresenter?
+        get() = null
+
+    override val layout: Int
+        get() = R.layout.activity_school_selection
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,9 +66,6 @@ class SchoolSelectionActivity : BaseActivity(), SearchView.OnQueryTextListener {
         setSupportActionBar(mToolbar)
         result = PrefHelper.getString(this, R.string.pref_school_name, "")
     }
-
-    protected override val layout: Int
-        get() = R.layout.activity_school_selection
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.schools, menu)
@@ -96,11 +101,11 @@ class SchoolSelectionActivity : BaseActivity(), SearchView.OnQueryTextListener {
         })
 
         val observer = object : MyObserver<SchoolAdapter>(TAG) {
-            override fun onNext(schoolAdapter: SchoolAdapter) {
+            override fun onNext(t: SchoolAdapter) {
                 if (!online) {
                     ActivityUtils.dismissProgressDialog()
                 }
-                setViews(schoolAdapter)
+                setViews(t)
             }
         }
 
@@ -110,10 +115,10 @@ class SchoolSelectionActivity : BaseActivity(), SearchView.OnQueryTextListener {
     }
 
     private fun setViews(mAdapter: SchoolAdapter) {
-        mListView!!.adapter = mAdapter
-        mListView!!.setOnItemClickListener { parent, view, position, id ->
+        mListView.adapter = mAdapter
+        mListView.setOnItemClickListener { _, _, position, _ ->
             result = mAdapter.getItem(position).toString()
-            Snackbar.make(mListView!!, getString(R.string.selected_school, result), BaseTransientBottomBar.LENGTH_INDEFINITE)
+            Snackbar.make(mListView, getString(R.string.selected_school, result), BaseTransientBottomBar.LENGTH_INDEFINITE)
                     .setAction(android.R.string.ok) {
                         val intent = Intent()
                         intent.putExtra(SCHOOL_RESULT, result)
@@ -121,30 +126,30 @@ class SchoolSelectionActivity : BaseActivity(), SearchView.OnQueryTextListener {
                         finish()
                     }.show()
         }
-        mListView!!.requestFocus()
+        mListView.requestFocus()
 
-        mSearchView!!.onActionViewExpanded()
-        mSearchView!!.isSubmitButtonEnabled = true
-        mSearchView!!.setOnQueryTextListener(this)
+        mSearchView.onActionViewExpanded()
+        mSearchView.isSubmitButtonEnabled = true
+        mSearchView.setOnQueryTextListener(this)
     }
 
     override fun onQueryTextSubmit(query: String): Boolean {
-        mAdapter!!.setTextFilter(query)
+        mAdapter.setTextFilter(query)
                 .subscribeWith(object : MyObserver("") {
                     override fun onNext(o: Any) {
-                        mAdapter!!.notifyDataSetChanged()
-                        mListView!!.smoothScrollToPosition(0)
+                        mAdapter.notifyDataSetChanged()
+                        mListView.smoothScrollToPosition(0)
                     }
                 })
         return true
     }
 
     override fun onQueryTextChange(newText: String): Boolean {
-        mAdapter!!.setTextFilter(newText)
+        mAdapter.setTextFilter(newText)
                 .subscribeWith(object : MyObserver("") {
                     override fun onNext(o: Any) {
-                        mAdapter!!.notifyDataSetChanged()
-                        mListView!!.smoothScrollToPosition(0)
+                        mAdapter.notifyDataSetChanged()
+                        mListView.smoothScrollToPosition(0)
                     }
                 })
         return true

@@ -16,7 +16,6 @@ package cc.metapro.openct.data.source.local
  * limitations under the License.
  */
 
-import cc.metapro.openct.utils.CloseUtils
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import okio.Buffer
@@ -40,13 +39,13 @@ object StoreHelper {
         return result
     }
 
-    internal fun <T> fromJson(jsonElement: String, tClass: Class<T>): T {
-        return gson.fromJson(jsonElement, tClass)
+    internal inline fun <reified T> fromJson(jsonElement: String): T {
+        return gson.fromJson(jsonElement, T::class.java)
     }
 
     @Throws(IOException::class)
     fun storeBytes(path: String, `in`: InputStream) {
-        var out: DataOutputStream? = null
+        val out: DataOutputStream
         try {
             out = DataOutputStream(FileOutputStream(path))
             val buffer = Buffer()

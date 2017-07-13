@@ -100,7 +100,7 @@ class TableFragment : Fragment(), ClassContract.View {
         }
     }
 
-    override fun setPresenter(presenter: ClassContract.Presenter) {
+    override fun setPresenter(p: ClassContract.Presenter) {
         throw UnsupportedOperationException("Presenter not used here")
     }
 

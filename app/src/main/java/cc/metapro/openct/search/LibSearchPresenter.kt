@@ -17,7 +17,6 @@ package cc.metapro.openct.search
  */
 
 import android.content.Context
-import android.support.annotation.Keep
 import android.widget.Toast
 import cc.metapro.openct.R
 import cc.metapro.openct.data.source.local.LocalHelper
@@ -29,12 +28,18 @@ import cc.metapro.openct.utils.base.MyObserver
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 
-@Keep
 internal class LibSearchPresenter(private val mLibSearchView: LibSearchContract.View, private val mContext: Context) : LibSearchContract.Presenter {
+
+    override fun subscribe() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun unSubscribe() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     private val mLibraryFactory: LibraryFactory
 
@@ -43,7 +48,7 @@ internal class LibSearchPresenter(private val mLibSearchView: LibSearchContract.
         mLibraryFactory = LocalHelper.getLibrary(mContext)
     }
 
-    override fun search(type: String, content: String): Disposable? {
+    override fun search(type: String, content: String) {
         mLibSearchView.showOnSearching()
 
         ActivityUtils.showProgressDialog(mContext, R.string.searching_library)
@@ -69,18 +74,16 @@ internal class LibSearchPresenter(private val mLibSearchView: LibSearchContract.
 
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer)
-
-        return null
+                .subscribeWith(observer)
     }
 
-    override fun nextPage(): Disposable? {
+    override fun nextPage() {
         mLibSearchView.showOnSearching()
         val observable = Observable.create(ObservableOnSubscribe<List<BookInfo>> { e -> e.onNext(mLibraryFactory.nextPage) })
 
         val observer = object : MyObserver<List<BookInfo>>(TAG) {
-            override fun onNext(books: List<BookInfo>) {
-                mLibSearchView.onNextPageResult(books)
+            override fun onNext(t: List<BookInfo>) {
+                mLibSearchView.onNextPageResult(t)
             }
 
             override fun onError(e: Throwable) {
@@ -92,16 +95,9 @@ internal class LibSearchPresenter(private val mLibSearchView: LibSearchContract.
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer)
-
-        return null
-    }
-
-    override fun start() {
-
     }
 
     companion object {
-
         private val TAG = LibSearchPresenter::class.java.name
     }
 }

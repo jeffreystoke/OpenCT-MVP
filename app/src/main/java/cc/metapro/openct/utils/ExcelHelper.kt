@@ -42,13 +42,12 @@ object ExcelHelper {
         val rows = table.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val tableContents = arrayOfNulls<Array<String>>(rows.size)
         var i = 0
-        for (row in rows) {
-            val cols = row.split("\t".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            tableContents[i++] = cols
-        }
+        rows
+                .map { row -> row.split("\t".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() }
+                .forEach { tableContents[i++] = it }
 
         var headers: Array<String>? = null
-        if (tableContents.size > 0) {
+        if (tableContents.isNotEmpty()) {
             headers = tableContents[0]
         }
 

@@ -34,7 +34,7 @@ import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.ReferenceUtils
 import com.rengwuxian.materialedittext.MaterialEditText
 
-internal class ClassDetailAdapter(context: Context, private val mClassTimes: MutableList<ClassTime>?) : RecyclerView.Adapter<ClassDetailAdapter.ClassDetailViewHolder>() {
+internal class ClassDetailAdapter(context: Context, private val mClassTimes: MutableList<ClassTime>) : RecyclerView.Adapter<ClassDetailAdapter.ClassDetailViewHolder>() {
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -48,26 +48,26 @@ internal class ClassDetailAdapter(context: Context, private val mClassTimes: Mut
     }
 
     override fun getItemCount(): Int {
-        return mClassTimes?.size ?: 0
+        return mClassTimes.size
     }
 
     internal inner class ClassDetailViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         @BindView(R.id.week_day)
-        var mWeekDay: Spinner? = null
+        lateinit var mWeekDay: Spinner
         @BindView(R.id.time_start)
-        var mTimeStart: MaterialEditText? = null
+        lateinit var mTimeStart: MaterialEditText
         @BindView(R.id.time_end)
-        var mTimeEnd: MaterialEditText? = null
+        lateinit var mTimeEnd: MaterialEditText
         @BindView(R.id.during_container)
-        var mDuringContainer: LinearLayout? = null
-        var selections: Array<TextView?> = arrayOfNulls(Constants.WEEKS)
+        lateinit var mDuringContainer: LinearLayout
+        lateinit var selections: Array<TextView>
         @BindView(R.id.class_teacher)
-        var mTeacher: MaterialEditText? = null
+        lateinit var mTeacher: MaterialEditText
         @BindView(R.id.class_place)
-        var mPlace: MaterialEditText? = null
+        lateinit var mPlace: MaterialEditText
         @BindView(R.id.edit)
-        var mEdit: TextView? = null
+        lateinit var mEdit: TextView
 
         var posit = 0
 
@@ -76,47 +76,47 @@ internal class ClassDetailAdapter(context: Context, private val mClassTimes: Mut
         }
 
         private fun setEditable(isEditable: Boolean) {
-            mWeekDay!!.isEnabled = isEditable
-            mTimeStart!!.isEnabled = isEditable
-            mTimeEnd!!.isEnabled = isEditable
-            mTeacher!!.isEnabled = isEditable
-            mPlace!!.isEnabled = isEditable
+            mWeekDay.isEnabled = isEditable
+            mTimeStart.isEnabled = isEditable
+            mTimeEnd.isEnabled = isEditable
+            mTeacher.isEnabled = isEditable
+            mPlace.isEnabled = isEditable
             for (textView in selections) {
-                textView!!.isEnabled = isEditable
+                textView.isEnabled = isEditable
             }
             if (isEditable) {
-                mEdit!!.setText(R.string.save)
-                mEdit!!.setOnClickListener {
+                mEdit.setText(R.string.save)
+                mEdit.setOnClickListener {
                     setEditable(false)
-                    var time = mClassTimes!![posit]
+                    var time = mClassTimes[posit]
                     mClassTimes.remove(time)
                     time = getInfo(time)
                     mClassTimes.add(posit, time)
                 }
             } else {
-                mEdit!!.setText(R.string.edit)
-                mEdit!!.setOnClickListener { setEditable(true) }
+                mEdit.setText(R.string.edit)
+                mEdit.setOnClickListener { setEditable(true) }
             }
         }
 
         // set info and react to during click
         fun setInfo(position: Int) {
             this.posit = position
-            val time = mClassTimes!![position]
-            mTimeStart!!.setText("" + time.dailySeq)
-            mTimeEnd!!.setText("" + time.dailyEnd)
-            mWeekDay!!.setSelection(time.weekDay - 1, true)
-            mTeacher!!.setText(time.teacher)
-            mPlace!!.setText(time.place)
+            val time = mClassTimes[position]
+            mTimeStart.setText("" + time.dailySeq)
+            mTimeEnd.setText("" + time.dailyEnd)
+            mWeekDay.setSelection(time.weekDay - 1, true)
+            mTeacher.setText(time.teacher)
+            mPlace.setText(time.place)
 
-            val context = mDuringContainer!!.context
+            val context = mDuringContainer.context
 
-            mDuringContainer!!.removeAllViews()
+            mDuringContainer.removeAllViews()
             for (i in 0..Constants.WEEKS / 6 - 1) {
-                val linearLayout = LinearLayout(mDuringContainer!!.context)
+                val linearLayout = LinearLayout(mDuringContainer.context)
                 linearLayout.orientation = LinearLayout.HORIZONTAL
 
-                mDuringContainer!!.addView(linearLayout)
+                mDuringContainer.addView(linearLayout)
                 val params = linearLayout.layoutParams
                 params.height = ViewGroup.LayoutParams.WRAP_CONTENT
                 params.width = ViewGroup.LayoutParams.MATCH_PARENT
@@ -157,12 +157,12 @@ internal class ClassDetailAdapter(context: Context, private val mClassTimes: Mut
         }
 
         fun getInfo(oldTime: ClassTime): ClassTime {
-            val weekDay = mWeekDay!!.selectedItemPosition + 1
-            val dailySeq = Integer.parseInt(mTimeStart!!.text.toString())
-            val dailyEnd = Integer.parseInt(mTimeEnd!!.text.toString())
+            val weekDay = mWeekDay.selectedItemPosition + 1
+            val dailySeq = Integer.parseInt(mTimeStart.text.toString())
+            val dailyEnd = Integer.parseInt(mTimeEnd.text.toString())
 
-            oldTime.place = mPlace!!.text.toString()
-            oldTime.teacher = mTeacher!!.text.toString()
+            oldTime.place = mPlace.text.toString()
+            oldTime.teacher = mTeacher.text.toString()
             oldTime.dailySeq = dailySeq
             oldTime.weekDay = weekDay
             oldTime.dailyEnd = dailyEnd

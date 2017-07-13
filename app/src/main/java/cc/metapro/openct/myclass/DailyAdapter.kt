@@ -53,7 +53,7 @@ internal class DailyAdapter(context: Context) : RecyclerView.Adapter<DailyAdapte
     }
 
     fun hasClassToday(): Boolean {
-        return mTodayClasses.size > 0
+        return mTodayClasses.isNotEmpty()
     }
 
     internal class ClassViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

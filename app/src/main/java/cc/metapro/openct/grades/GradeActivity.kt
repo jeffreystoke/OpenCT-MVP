@@ -37,7 +37,6 @@ import cc.metapro.openct.grades.cet.CETResultDialog
 import cc.metapro.openct.pref.SettingsActivity
 import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.RecyclerViewHelper
-import cc.metapro.openct.utils.base.BaseActivity
 import java.util.*
 
 class GradeActivity : BaseActivity(), GradeContract.View {
@@ -102,8 +101,8 @@ class GradeActivity : BaseActivity(), GradeContract.View {
                 .show(supportFragmentManager, "cet_result")
     }
 
-    override fun setPresenter(presenter: GradeContract.Presenter) {
-        mPresenter = presenter
+    override fun setPresenter(p: GradeContract.Presenter) {
+        mPresenter = p
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

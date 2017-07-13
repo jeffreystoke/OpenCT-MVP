@@ -30,7 +30,6 @@ import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
 
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -41,29 +40,32 @@ import cc.metapro.openct.customviews.EndlessRecyclerOnScrollListener
 import cc.metapro.openct.data.university.model.BookInfo
 import cc.metapro.openct.utils.RecyclerViewHelper
 import cc.metapro.openct.utils.base.BaseActivity
+import cc.metapro.openct.utils.base.BasePresenter
 import io.reactivex.disposables.Disposable
 
 class LibSearchActivity : BaseActivity(), LibSearchContract.View {
-
     @BindView(R.id.toolbar)
-    internal var mToolbar: Toolbar? = null
+    internal lateinit var mToolbar: Toolbar
     @BindView(R.id.fab)
-    internal var mFabSearch: FloatingActionButton? = null
+    internal lateinit var mFabSearch: FloatingActionButton
     @BindView(R.id.lib_search_content_edittext)
-    internal var mEditText: EditText? = null
+    internal lateinit var mEditText: EditText
     @BindView(R.id.type_spinner)
-    internal var mSpinner: AppCompatSpinner? = null
+    internal lateinit var mSpinner: AppCompatSpinner
     @BindView(R.id.recycler_view)
-    internal var mRecyclerView: RecyclerView? = null
+    internal lateinit var mRecyclerView: RecyclerView
     @BindView(R.id.fab_up)
-    internal var mFabUp: FloatingActionButton? = null
+    internal lateinit var mFabUp: FloatingActionButton
     @BindView(R.id.image)
-    internal var mImage: ImageView? = null
+    internal lateinit var mImage: ImageView
 
-    private var mPresenter: LibSearchContract.Presenter? = null
-    private var mAdapter: BooksAdapter? = null
-    private var mTask: Disposable? = null
-    private var mLinearLayoutManager: LinearLayoutManager? = null
+    private lateinit var mPresenter: LibSearchContract.Presenter
+    private lateinit var mAdapter: BooksAdapter
+    private lateinit var mTask: Disposable
+    private lateinit var mLinearLayoutManager: LinearLayoutManager
+
+    override val presenter: BasePresenter?
+        get() = mPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,79 +78,75 @@ class LibSearchActivity : BaseActivity(), LibSearchContract.View {
 
         mAdapter = BooksAdapter(this)
         val adapter = ArrayAdapter(this, R.layout.item_search_type, resources.getStringArray(R.array.lib_search_type))
-        mSpinner!!.adapter = adapter
-        mLinearLayoutManager = RecyclerViewHelper.setRecyclerView(this, mRecyclerView!!, mAdapter!!)
-        mEditText!!.requestFocus()
+        mSpinner.adapter = adapter
+        mLinearLayoutManager = RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mAdapter)
+        mEditText.requestFocus()
 
         // TODO: 17/4/12 load image
         LibSearchPresenter(this, this)
     }
 
-    protected override val layout: Int
+    override val layout: Int
         get() = R.layout.activity_search
 
     @OnClick(R.id.fab_up)
     fun upToTop() {
-        mRecyclerView!!.smoothScrollToPosition(0)
+        mRecyclerView.smoothScrollToPosition(0)
     }
 
     @OnClick(R.id.fab)
     fun fabSearch() {
-        mTask = mPresenter!!.search(mSpinner!!.selectedItem.toString(), mEditText!!.text.toString())
+        mTask = mPresenter.search(mSpinner.selectedItem.toString(), mEditText.text.toString())
     }
 
     @OnEditorAction(R.id.lib_search_content_edittext)
-    fun editorSearch(textView: TextView, i: Int, keyEvent: KeyEvent?): Boolean {
+    fun editorSearch(i: Int, keyEvent: KeyEvent?): Boolean {
         if (i == EditorInfo.IME_ACTION_SEARCH || keyEvent != null && keyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
-            mTask = mPresenter!!.search(mSpinner!!.selectedItem.toString(), mEditText!!.text.toString())
+            mTask = mPresenter.search(mSpinner.selectedItem.toString(), mEditText.text.toString())
             return true
         }
         return false
     }
 
     override fun onDestroy() {
-        if (mTask != null) {
-            mTask!!.dispose()
-        }
+        mTask.dispose()
         super.onDestroy()
     }
 
     override fun showOnSearching() {
-        mRecyclerView!!.postDelayed({
-            if (mRecyclerView != null) {
-                mRecyclerView!!.clearOnScrollListeners()
-                mRecyclerView!!.addOnScrollListener(object : EndlessRecyclerOnScrollListener(mLinearLayoutManager!!) {
-                    override fun onLoadMore(currentPage: Int) {
-                        mTask = mPresenter!!.nextPage()
-                    }
-                })
-            }
+        mRecyclerView.postDelayed({
+            mRecyclerView.clearOnScrollListeners()
+            mRecyclerView.addOnScrollListener(object : EndlessRecyclerOnScrollListener(mLinearLayoutManager) {
+                override fun onLoadMore(currentPage: Int) {
+                    mTask = mPresenter.nextPage()
+                }
+            })
         }, 5000)
     }
 
     override fun onSearchResult(books: List<BookInfo>) {
-        mAdapter!!.setBooks(books)
-        mAdapter!!.notifyDataSetChanged()
-        if (books!!.size > 0) {
-            Snackbar.make(mRecyclerView!!, getString(R.string.founded_entries, books.size), BaseTransientBottomBar.LENGTH_LONG).show()
-            mFabUp!!.visibility = View.VISIBLE
-        } else {
-            Snackbar.make(mRecyclerView!!, R.string.no_related_books, BaseTransientBottomBar.LENGTH_LONG).show()
-            mFabUp!!.visibility = View.GONE
-        }
-    }
-
-    override fun onNextPageResult(books: List<BookInfo>?) {
-        mAdapter!!.addBooks(books!!)
-        mAdapter!!.notifyDataSetChanged()
+        mAdapter.setBooks(books.toMutableList())
+        mAdapter.notifyDataSetChanged()
         if (books.isNotEmpty()) {
-            Snackbar.make(mRecyclerView!!, getString(R.string.loaded_entries, books.size), BaseTransientBottomBar.LENGTH_LONG).show()
+            Snackbar.make(mRecyclerView, getString(R.string.founded_entries, books.size), BaseTransientBottomBar.LENGTH_LONG).show()
+            mFabUp.visibility = View.VISIBLE
         } else {
-            Snackbar.make(mRecyclerView!!, R.string.no_more_results, BaseTransientBottomBar.LENGTH_LONG).show()
+            Snackbar.make(mRecyclerView, R.string.no_related_books, BaseTransientBottomBar.LENGTH_LONG).show()
+            mFabUp.visibility = View.GONE
         }
     }
 
-    override fun setPresenter(presenter: LibSearchContract.Presenter) {
-        mPresenter = presenter
+    override fun onNextPageResult(books: List<BookInfo>) {
+        mAdapter.addBooks(books)
+        mAdapter.notifyDataSetChanged()
+        if (books.isNotEmpty()) {
+            Snackbar.make(mRecyclerView, getString(R.string.loaded_entries, books.size), BaseTransientBottomBar.LENGTH_LONG).show()
+        } else {
+            Snackbar.make(mRecyclerView, R.string.no_more_results, BaseTransientBottomBar.LENGTH_LONG).show()
+        }
+    }
+
+    override fun setPresenter(p: LibSearchContract.Presenter) {
+        mPresenter = p
     }
 }

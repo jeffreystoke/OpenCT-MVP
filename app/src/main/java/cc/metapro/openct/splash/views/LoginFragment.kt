@@ -28,6 +28,7 @@ import android.widget.ImageView
 import butterknife.BindView
 import butterknife.ButterKnife
 import cc.metapro.openct.R
+import cc.metapro.openct.splash.SplashContract
 
 import cc.metapro.openct.utils.Constants.TYPE_CMS
 import cc.metapro.openct.utils.Constants.TYPE_LIB
@@ -73,8 +74,8 @@ class LoginFragment : Fragment(), SplashContract.LoginView {
         super.setUserVisibleHint(isVisibleToUser)
     }
 
-    override fun setPresenter(presenter: SplashContract.Presenter) {
-        mPresenter = presenter
+    override fun setPresenter(p: SplashContract.Presenter) {
+        mPresenter = p
     }
 
     companion object {

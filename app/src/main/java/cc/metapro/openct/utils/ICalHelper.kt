@@ -56,17 +56,11 @@ object ICalHelper {
 
     /**
      * @param classTimeMap contains daily class time info user had set
-     * *
      * @param info         to generate event
-     * *
      * @param time         a piece of time in info
-     * *
      * @param startWeek    which week the event happen
-     * *
      * @param endWeek      which week the event end
-     * *
      * @param currentWeek  current week of this semi
-     * *
      * @return a fully configured event
      */
     @Throws(URISyntaxException::class, SocketException::class)

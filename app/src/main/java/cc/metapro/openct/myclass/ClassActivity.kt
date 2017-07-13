@@ -57,6 +57,7 @@ import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.PrefHelper
 import cc.metapro.openct.utils.ReferenceUtils
 import cc.metapro.openct.utils.base.BaseActivity
+import cc.metapro.openct.utils.base.BasePresenter
 import com.bumptech.glide.Glide
 import com.jrummyapps.android.colorpicker.ColorPickerDialog
 import com.jrummyapps.android.colorpicker.ColorPickerDialogListener
@@ -65,23 +66,26 @@ import com.jrummyapps.android.colorpicker.ColorShape
 class ClassActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener, ClassContract.View {
 
     @BindView(R.id.toolbar)
-    internal var mToolbar: Toolbar? = null
+    internal lateinit var mToolbar: Toolbar
     @BindView(R.id.drawer_layout)
-    internal var mDrawerLayout: DrawerLayout? = null
+    internal lateinit var mDrawerLayout: DrawerLayout
     @BindView(R.id.nav_view)
-    internal var mNavigationView: NavigationView? = null
+    internal lateinit var mNavigationView: NavigationView
     @BindView(R.id.tab_layout)
-    internal var mTabLayout: TabLayout? = null
+    internal lateinit var mTabLayout: TabLayout
     @BindView(R.id.view_pager)
-    internal var mViewPager: ViewPager? = null
+    internal lateinit var mViewPager: ViewPager
     @BindView(R.id.main_background)
-    internal var mBackground: ImageView? = null
+    internal lateinit var mBackground: ImageView
 
     internal lateinit var mPresenter: ClassContract.Presenter
     private var mExitState: Boolean = false
-    private var mPagerAdapter: FragmentPagerAdapter? = null
-    private var mDailyFragment: DailyFragment? = null
-    private var mTableFragment: TableFragment? = null
+    private lateinit var mPagerAdapter: FragmentPagerAdapter
+    private lateinit var mDailyFragment: DailyFragment
+    private lateinit var mTableFragment: TableFragment
+
+    override val presenter: BasePresenter?
+        get() = mPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,7 +96,7 @@ class ClassActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLis
         val toggle = ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         toggle.syncState()
 
-        mNavigationView!!.setNavigationItemSelectedListener(this)
+        mNavigationView.setNavigationItemSelectedListener(this)
         initViewPager()
         mPresenter = ClassPresenter(this, this)
     }
@@ -125,19 +129,19 @@ class ClassActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLis
                 return super.getPageTitle(position)
             }
         }
-        mViewPager!!.adapter = mPagerAdapter
+        mViewPager.adapter = mPagerAdapter
 
-        mTabLayout!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        mTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {}
 
             override fun onTabUnselected(tab: TabLayout.Tab) {}
 
             override fun onTabReselected(tab: TabLayout.Tab) {
-                if (tab == mTabLayout!!.getTabAt(1)) {
+                if (tab == mTabLayout.getTabAt(1)) {
                     class selectionCallback : WeekSelectionDialog.SelectionCallback {
                         override fun onSelection(index: Int) {
                             showClasses(Constants.sClasses, index)
-                            val tab1 = mTabLayout!!.getTabAt(1)
+                            val tab1 = mTabLayout.getTabAt(1)
                             if (tab1 != null) {
                                 tab1.text = getString(R.string.text_current_week, index)
                             }
@@ -149,23 +153,23 @@ class ClassActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLis
                 }
             }
         })
-        mTabLayout!!.setupWithViewPager(mViewPager)
+        mTabLayout.setupWithViewPager(mViewPager)
 
         var index = Integer.parseInt(PrefHelper.getString(this, R.string.pref_homepage_selection, "0"))
         if (index > 1) {
             index = 0
             PrefHelper.putString(this, R.string.pref_homepage_selection, "0")
         }
-        mViewPager!!.currentItem = index
+        mViewPager.currentItem = index
     }
 
     override fun showClasses(classes: Classes, week: Int) {
-        mTableFragment!!.showClasses(classes, week)
-        mDailyFragment!!.showClasses(classes, week)
+        mTableFragment.showClasses(classes, week)
+        mDailyFragment.showClasses(classes, week)
     }
 
-    override fun setPresenter(presenter: ClassContract.Presenter) {
-        mPresenter = presenter
+    override fun setPresenter(p: ClassContract.Presenter) {
+        mPresenter = p
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -209,7 +213,7 @@ class ClassActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLis
             R.id.nav_settings -> startActivity(Intent(this, SettingsActivity::class.java))
             R.id.nav_theme -> showThemePicker()
         }
-        mDrawerLayout!!.closeDrawer(GravityCompat.START)
+        mDrawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -247,13 +251,12 @@ class ClassActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLis
     }
 
     override fun onResume() {
-        super.onResume()
         val bgUri = PrefHelper.getString(this, R.string.pref_background, "")
         if (!TextUtils.isEmpty(bgUri)) {
-            Glide.with(this).load(bgUri).centerCrop().into(mBackground!!)
+            Glide.with(this).load(bgUri).centerCrop().into(mBackground)
         }
-        mPresenter.start()
-        mPagerAdapter!!.notifyDataSetChanged()
+        mPagerAdapter.notifyDataSetChanged()
+        super.onResume()
     }
 
     override fun onBackPressed() {
@@ -288,7 +291,7 @@ class ClassActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLis
         if (requestCode == FILE_SELECT_CODE && resultCode == AppCompatActivity.RESULT_OK) {
             val uri = data.data
             PrefHelper.putString(this, R.string.pref_background, uri.toString())
-            Glide.with(this).load(uri).centerCrop().into(mBackground!!)
+            Glide.with(this).load(uri).centerCrop().into(mBackground)
         }
     }
 

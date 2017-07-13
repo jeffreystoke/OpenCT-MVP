@@ -47,15 +47,19 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 
-internal class AllClassesPresenter(private val mContext: Context, private val mView: AllClassesContract.View) : AllClassesContract.Presenter {
-    private val mDBManger: DBManger = DBManger.getInstance(mContext)!!
+internal class AllClassesPresenter(val mContext: Context, val mView: AllClassesContract.View) : AllClassesContract.Presenter {
+    private val mDBManger: DBManger = DBManger.getInstance(mContext)
 
     init {
         mView.setPresenter(this)
     }
 
-    override fun start() {
+    override fun subscribe() {
         loadLocalClasses()
+    }
+
+    override fun unSubscribe() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     /**
@@ -108,8 +112,7 @@ internal class AllClassesPresenter(private val mContext: Context, private val mV
                 }
             }
         })
-
-        val observer = object : MyObserver<Calendar>(TAG) {
+        class m : MyObserver<Calendar>(TAG) {
             override fun onNext(t: Calendar) {
                 ActivityUtils.dismissProgressDialog()
                 Toast.makeText(mContext, R.string.ical_create_success, Toast.LENGTH_LONG).show()
@@ -121,6 +124,7 @@ internal class AllClassesPresenter(private val mContext: Context, private val mV
                 Toast.makeText(mContext, mContext.getString(R.string.error_creating_calendar) + e.message, Toast.LENGTH_SHORT).show()
             }
         }
+        val observer = m()
 
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -140,7 +144,7 @@ internal class AllClassesPresenter(private val mContext: Context, private val mV
                 .show()
     }
 
-    override fun loadFromExcel(manager: FragmentManager) {
+    override fun loadFromExcel(f: FragmentManager) {
         class back : ExcelDialog.ExcelCallback {
             override fun onJsonResult(json: String) {
                 try {
@@ -158,9 +162,7 @@ internal class AllClassesPresenter(private val mContext: Context, private val mV
                                 Toast.makeText(mContext, R.string.classes_updated, Toast.LENGTH_LONG).show()
                             }
                             .setNeutralButton(R.string.combine) { _, _ ->
-                                for (info in addedClasses) {
-                                    oldAllClasses.add(info)
-                                }
+                                oldAllClasses += addedClasses
                                 storeClasses(oldAllClasses)
                                 loadLocalClasses()
                                 Toast.makeText(mContext, R.string.classes_combined, Toast.LENGTH_LONG).show()
@@ -170,12 +172,12 @@ internal class AllClassesPresenter(private val mContext: Context, private val mV
                 }
             }
         }
-        ExcelDialog.newInstance(back()).show(manager, "excel_dialog")
+        ExcelDialog.newInstance(back()).show(f, "excel_dialog")
     }
 
-    override fun storeClasses(classes: Classes) {
+    override fun storeClasses(c: Classes) {
         try {
-            mDBManger.updateClasses(classes)
+            mDBManger.updateClasses(c)
             DailyClassWidget.update(mContext)
         } catch (e: Exception) {
             Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
@@ -187,8 +189,8 @@ internal class AllClassesPresenter(private val mContext: Context, private val mV
         val observable = LocalHelper.getClasses(mContext)
 
         val observer = object : MyObserver<Classes>(TAG) {
-            override fun onNext(enrichedClasses: Classes) {
-                Constants.sClasses = enrichedClasses
+            override fun onNext(t: Classes) {
+                Constants.sClasses = t
                 Collections.sort(Constants.sClasses)
                 mView.updateClasses()
             }

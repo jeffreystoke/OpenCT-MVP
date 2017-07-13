@@ -32,11 +32,8 @@ object FileUtils {
      * Get a file path from a Uri. This will get the the path for Storage Access
      * Framework Documents, as well as the _data field for the MediaStore and
      * other file-based ContentProviders.
-
      * @param context The context.
-     * *
      * @param uri     The Uri to query.
-     * *
      * @author paulburke
      */
     @SuppressLint("NewApi")
@@ -80,7 +77,8 @@ object FileUtils {
                 val selectionArgs = arrayOf(split[1])
 
                 return getDataColumn(context, contentUri!!, selection, selectionArgs)
-            }// MediaProvider
+            }
+            // MediaProvider
             // DownloadsProvider
         } else if ("content".equals(uri.scheme, ignoreCase = true)) {
 
@@ -100,15 +98,10 @@ object FileUtils {
     /**
      * Get the value of the data column for this Uri. This is useful for
      * MediaStore Uris, and other file-based ContentProviders.
-
      * @param context       The context.
-     * *
      * @param uri           The Uri to query.
-     * *
      * @param selection     (Optional) Filter used in the query.
-     * *
      * @param selectionArgs (Optional) Selection arguments used in the query.
-     * *
      * @return The value of the _data column, which is typically a file path.
      */
     fun getDataColumn(context: Context, uri: Uri, selection: String?,
@@ -134,7 +127,6 @@ object FileUtils {
 
     /**
      * @param uri The Uri to check.
-     * *
      * @return Whether the Uri authority is ExternalStorageProvider.
      */
     fun isExternalStorageDocument(uri: Uri): Boolean {
@@ -143,7 +135,6 @@ object FileUtils {
 
     /**
      * @param uri The Uri to check.
-     * *
      * @return Whether the Uri authority is DownloadsProvider.
      */
     fun isDownloadsDocument(uri: Uri): Boolean {
@@ -152,7 +143,6 @@ object FileUtils {
 
     /**
      * @param uri The Uri to check.
-     * *
      * @return Whether the Uri authority is MediaProvider.
      */
     fun isMediaDocument(uri: Uri): Boolean {
@@ -161,7 +151,6 @@ object FileUtils {
 
     /**
      * @param uri The Uri to check.
-     * *
      * @return Whether the Uri authority is Google Photos.
      */
     fun isGooglePhotosUri(uri: Uri): Boolean {

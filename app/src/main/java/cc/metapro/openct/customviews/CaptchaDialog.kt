@@ -75,7 +75,7 @@ class CaptchaDialog : BaseDialog() {
     }
 
     @OnEditorAction(R.id.captcha_edit_text)
-    fun onEnter(textView: TextView, i: Int, keyEvent: KeyEvent?): Boolean {
+    fun onEnter(i: Int, keyEvent: KeyEvent?): Boolean {
         if (i == EditorInfo.IME_ACTION_GO || keyEvent != null && keyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
             val code = mEditText!!.text.toString()
             if (TextUtils.isEmpty(code)) {

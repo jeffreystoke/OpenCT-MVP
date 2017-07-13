@@ -110,19 +110,23 @@ class TableChooseDialog : BaseDialog() {
                 Constants.TYPE_CLASS -> {
                     val rawInfoList = UniversityUtils.getRawClasses(targetTable, activity)
                     try {
-                        TableSettingDialog.newInstance(rawInfoList) { indexMap ->
-                            val info = generateClassTableInfo(Constants.sDetailCustomInfo.mClassTableInfo, indexMap as Map<String, Int>)
-                            info.mClassTableID = tableId
-                            val classes = UniversityUtils.generateClasses(context, rawInfoList, info)
-                            Constants.sDetailCustomInfo.setClassTableInfo(info)
+                        class c : TableSettingDialog.TableSettingCallBack {
+                            override fun onResult(indexMap: Map<String, Int>) {
+                                val info = generateClassTableInfo(Constants.sDetailCustomInfo.mClassTableInfo, indexMap as Map<String, Int>)
+                                info.mClassTableID = tableId
+                                val classes = UniversityUtils.generateClasses(context, rawInfoList, info)
+                                Constants.sDetailCustomInfo.setClassTableInfo(info)
 
-                            manger.updateAdvCustomInfo(Constants.sDetailCustomInfo)
-                            manger.updateClasses(classes)
-                            if (mPresenter != null && mPresenter is ClassContract.Presenter) {
-                                (mPresenter as ClassContract.Presenter).loadLocalClasses()
+                                manger.updateAdvCustomInfo(Constants.sDetailCustomInfo)
+                                manger.updateClasses(classes)
+                                if (mPresenter is ClassContract.Presenter) {
+                                    (mPresenter as ClassContract.Presenter).loadLocalClasses()
+                                }
+                                Toast.makeText(context, R.string.custom_finish_tip, Toast.LENGTH_LONG).show()
                             }
-                            Toast.makeText(context, R.string.custom_finish_tip, Toast.LENGTH_LONG).show()
-                        }.show(fragmentManager, "setting_dialog")
+
+                        }
+                        TableSettingDialog.newInstance(rawInfoList, c()).show(fragmentManager, "setting_dialog")
                         dismiss()
                     } catch (e: Exception) {
                         Toast.makeText(context, R.string.sorry_for_unable_to_get_class_info, Toast.LENGTH_LONG).show()
@@ -133,7 +137,7 @@ class TableChooseDialog : BaseDialog() {
                     Constants.sDetailCustomInfo.gradeTableId = tableId
                     manger.updateAdvCustomInfo(Constants.sDetailCustomInfo)
                     manger.updateGrades(UniversityUtils.generateInfoFromTable(targetTable, GradeInfo::class.java))
-                    if (mPresenter != null && mPresenter is GradeContract.Presenter) {
+                    if (mPresenter is GradeContract.Presenter) {
                         (mPresenter as GradeContract.Presenter).loadLocalGrades()
                     }
                     dismiss()

@@ -26,11 +26,10 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import cc.metapro.openct.R
 import cc.metapro.openct.data.university.model.BookInfo
-import java.util.*
 
 internal class BooksAdapter(private val mContext: Context) : RecyclerView.Adapter<BooksAdapter.BookInfoViewHolder>() {
 
-    private var mBooks: MutableList<BookInfo>? = null
+    private var mBooks: MutableList<BookInfo> = ArrayList<BookInfo>().toMutableList()
 
     init {
         mBooks = ArrayList<BookInfo>(0)
@@ -43,7 +42,7 @@ internal class BooksAdapter(private val mContext: Context) : RecyclerView.Adapte
     }
 
     override fun onBindViewHolder(holder: BookInfoViewHolder, position: Int) {
-        val b = mBooks!![position]
+        val b = mBooks[position]
         holder.setTitle(b.mTitle)
         holder.setAuthor(b.mAuthor)
         holder.setContent(b.mContent)
@@ -53,61 +52,53 @@ internal class BooksAdapter(private val mContext: Context) : RecyclerView.Adapte
 
     fun addBooks(books: List<BookInfo>) {
         for (b in books) {
-            mBooks!!.add(b)
+            mBooks.add(b)
         }
     }
 
-    fun setBooks(books: MutableList<BookInfo>?) {
-        if (books != null) {
-            mBooks = books
-        } else {
-            mBooks = ArrayList<BookInfo>(0)
-        }
+    fun setBooks(books: MutableList<BookInfo>) {
+        mBooks = books
     }
 
     override fun getItemCount(): Int {
-        return mBooks!!.size
+        return mBooks.size
     }
 
     internal class BookInfoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         @BindView(R.id.book_title)
-        var mTitle: TextView? = null
-
+        lateinit var mTitle: TextView
         @BindView(R.id.author)
-        var mAuthor: TextView? = null
-
+        lateinit var mAuthor: TextView
         @BindView(R.id.content)
-        var mContent: TextView? = null
-
+        lateinit var mContent: TextView
         @BindView(R.id.store_info)
-        var mStoreInfo: TextView? = null
-
+        lateinit var mStoreInfo: TextView
         @BindView(R.id.load_raw)
-        var mLink: TextView? = null
+        lateinit var mLink: TextView
 
         init {
             ButterKnife.bind(this, itemView)
         }
 
         fun setTitle(title: String) {
-            mTitle!!.text = title
+            mTitle.text = title
         }
 
         fun setAuthor(author: String) {
-            mAuthor!!.text = author
+            mAuthor.text = author
         }
 
         fun setContent(content: String) {
-            mContent!!.text = content
+            mContent.text = content
         }
 
         fun setStoreInfo(storeInfo: String) {
-            mStoreInfo!!.text = storeInfo
+            mStoreInfo.text = storeInfo
         }
 
         fun setLoadRaw(context: Context, link: String) {
-            mLink!!.setOnClickListener { BookDetailActivity.actionStart(context, mTitle!!.text.toString(), link) }
+            mLink.setOnClickListener { BookDetailActivity.actionStart(context, mTitle.text.toString(), link) }
         }
     }
 }

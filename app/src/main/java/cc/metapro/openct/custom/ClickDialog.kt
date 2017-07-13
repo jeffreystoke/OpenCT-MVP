@@ -53,7 +53,7 @@ class ClickDialog : BaseDialog() {
     companion object {
         private var mTypeCallback: TypeCallback? = null
 
-        fun newInstance(typeCallback: (Any) -> Unit): ClickDialog {
+        fun newInstance(typeCallback: TypeCallback): ClickDialog {
             mTypeCallback = typeCallback
             return ClickDialog()
         }

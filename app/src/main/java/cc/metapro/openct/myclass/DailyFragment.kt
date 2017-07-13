@@ -66,7 +66,7 @@ class DailyFragment : Fragment(), ClassContract.View {
         mRecyclerView!!.visibility = View.INVISIBLE
     }
 
-    override fun setPresenter(presenter: ClassContract.Presenter) {
+    override fun setPresenter(p: ClassContract.Presenter) {
         throw UnsupportedOperationException("Presenter not used here")
     }
 

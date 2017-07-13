@@ -39,6 +39,18 @@ abstract class BaseActivity : AppCompatActivity() {
     @get:LayoutRes
     protected abstract val layout: Int
 
+    protected abstract val presenter : BasePresenter?
+
+    override fun onResume() {
+        super.onResume()
+        presenter?.subscribe()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter?.unSubscribe()
+    }
+
     @StyleRes
     protected fun getThemeByColor(@ColorInt color: Int): Int {
         if (color == ContextCompat.getColor(this, R.color.material_white)) {

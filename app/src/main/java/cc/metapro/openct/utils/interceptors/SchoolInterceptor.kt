@@ -48,9 +48,7 @@ class SchoolInterceptor(private val mBaseUrl: HttpUrl) : Interceptor {
         if (response.isRedirect) {
             var location: String = response.headers().get("Location")!!
             location = mBaseUrl.newBuilder(location)!!.toString()
-            if (mObserver != null) {
-                mObserver!!.onRedirect(location)
-            }
+            mObserver.onRedirect(location)
         } else {
             val type = response.body()!!.contentType()!!.toString()
             if (type.contains("text/html")) {
@@ -68,9 +66,7 @@ class SchoolInterceptor(private val mBaseUrl: HttpUrl) : Interceptor {
                     if (matcher.find()) {
                         found = matcher.group()
                         found = mBaseUrl.newBuilder(found)!!.toString()
-                        if (mObserver != null) {
-                            mObserver!!.onRedirect(found)
-                        }
+                        mObserver.onRedirect(found)
 
                         response = response.newBuilder()
                                 .addHeader("Location", found)
@@ -88,10 +84,8 @@ class SchoolInterceptor(private val mBaseUrl: HttpUrl) : Interceptor {
         return response
     }
 
-    interface RedirectObserver<T> {
-
+    interface RedirectObserver<in T> {
         fun onRedirect(x: T)
-
     }
 
     companion object {

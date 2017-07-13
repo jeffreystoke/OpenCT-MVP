@@ -31,11 +31,12 @@ import com.rengwuxian.materialedittext.MaterialEditText
 import java.util.*
 
 class CETQueryDialog : BaseDialog() {
-    internal lateinit var mPreferences: SharedPreferences
     @BindView(R.id.ticket_num)
-    internal var mNum: MaterialEditText? = null
+    internal lateinit var mNum: MaterialEditText
     @BindView(R.id.full_name)
-    internal var mName: MaterialEditText? = null
+    internal lateinit var mName: MaterialEditText
+
+    internal lateinit var mPreferences: SharedPreferences
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val view = activity.layoutInflater.inflate(R.layout.dialog_cet_query, null)
@@ -43,35 +44,30 @@ class CETQueryDialog : BaseDialog() {
         val alertDialog = AlertDialog.Builder(activity)
                 .setTitle(R.string.cet_query)
                 .setView(view)
-                .setPositiveButton(android.R.string.ok) { dialog, which ->
+                .setPositiveButton(android.R.string.ok) { _, _ ->
                     val queryMap = HashMap<String, String>(2)
-                    queryMap.put(getString(R.string.key_ticket_num), mNum!!.text.toString())
-                    queryMap.put(getString(R.string.key_full_name), mName!!.text.toString())
-                    mPresenter!!.loadCETGrade(queryMap)
+                    queryMap.put(getString(R.string.key_ticket_num), mNum.text.toString())
+                    queryMap.put(getString(R.string.key_full_name), mName.text.toString())
+                    mPresenter.loadCETGrade(queryMap)
                 }
                 .setNegativeButton(android.R.string.cancel, null)
-                .setNeutralButton(R.string.preserve) { dialog, which ->
+                .setNeutralButton(R.string.preserve) { _, _ ->
                     val editor = mPreferences.edit()
-                    editor.putString(getString(R.string.pref_cet_ticket_num), mNum!!.text.toString())
-                    editor.putString(getString(R.string.pref_cet_full_name), mName!!.text.toString())
+                    editor.putString(getString(R.string.pref_cet_ticket_num), mNum.text.toString())
+                    editor.putString(getString(R.string.pref_cet_full_name), mName.text.toString())
                     editor.apply()
                     Toast.makeText(context, R.string.saved, Toast.LENGTH_SHORT).show()
                 }.create()
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        mNum!!.setText(mPreferences.getString(getString(R.string.pref_cet_ticket_num), ""))
-        mName!!.setText(mPreferences.getString(getString(R.string.pref_cet_full_name), ""))
+        mNum.setText(mPreferences.getString(getString(R.string.pref_cet_ticket_num), ""))
+        mName.setText(mPreferences.getString(getString(R.string.pref_cet_full_name), ""))
         return alertDialog
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mPresenter = null
     }
 
     companion object {
 
-        private var mPresenter: GradeContract.Presenter? = null
+        private lateinit var mPresenter: GradeContract.Presenter
 
         fun newInstance(presenter: GradeContract.Presenter): CETQueryDialog {
             mPresenter = presenter

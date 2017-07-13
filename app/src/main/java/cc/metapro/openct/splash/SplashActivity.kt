@@ -26,13 +26,20 @@ import cc.metapro.openct.R
 import cc.metapro.openct.myclass.ClassActivity
 import cc.metapro.openct.utils.PrefHelper
 import cc.metapro.openct.utils.base.BaseActivity
+import cc.metapro.openct.utils.base.BasePresenter
 
 class SplashActivity : BaseActivity() {
 
     @BindView(R.id.view_pager)
-    internal var mViewPager: ViewPager? = null
+    internal lateinit var mViewPager: ViewPager
 
     private var misScrolled = false
+
+    override val presenter: BasePresenter?
+        get() = null
+
+    override val layout: Int
+        get() = R.layout.activity_splash
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,13 +54,10 @@ class SplashActivity : BaseActivity() {
         setViewPager()
     }
 
-    protected override val layout: Int
-        get() = R.layout.activity_splash
-
     private fun setViewPager() {
         val pagerAdapter = InitPagerAdapter(supportFragmentManager, this)
-        mViewPager!!.adapter = pagerAdapter
-        mViewPager!!.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        mViewPager.adapter = pagerAdapter
+        mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {}
@@ -61,7 +65,7 @@ class SplashActivity : BaseActivity() {
             override fun onPageScrollStateChanged(state: Int) {
                 when (state) {
                     ViewPager.SCROLL_STATE_IDLE -> {
-                        if (mViewPager!!.currentItem == pagerAdapter.count - 1 && !misScrolled) {
+                        if (mViewPager.currentItem == pagerAdapter.count - 1 && !misScrolled) {
                             pagerAdapter.getItem(pagerAdapter.count - 1).userVisibleHint = false
                             startActivity(Intent(this@SplashActivity, ClassActivity::class.java))
                             finish()

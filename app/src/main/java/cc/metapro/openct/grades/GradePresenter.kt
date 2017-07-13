@@ -17,7 +17,6 @@ package cc.metapro.openct.grades
  */
 
 import android.content.Context
-import android.support.annotation.Keep
 import android.support.v4.app.FragmentManager
 import android.text.TextUtils
 import android.widget.Toast
@@ -36,24 +35,31 @@ import cc.metapro.openct.utils.webutils.TableUtils
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.util.*
 
-@Keep
 internal class GradePresenter(private val mView: GradeContract.View, private val mContext: Context) : GradeContract.Presenter {
-    private var mGrades: List<GradeInfo>? = null
+
+    override fun subscribe() {
+        loadLocalGrades()
+    }
+
+    override fun unSubscribe() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private lateinit var mGrades: List<GradeInfo>
     private val mDBManger: DBManger
 
     init {
         mView.setPresenter(this)
-        mDBManger = DBManger.getInstance(mContext)!!
+        mDBManger = DBManger.getInstance(mContext)
     }
 
-    override fun loadOnlineInfo(manager: FragmentManager): Disposable? {
+    override fun loadOnlineInfo(f: FragmentManager) {
         ActivityUtils.showProgressDialog(mContext, R.string.preparing_school_sys_info)
 
         val observable = LocalHelper.prepareOnlineInfo(Constants.TYPE_CMS, mContext)
@@ -62,9 +68,9 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
             override fun onNext(t: Boolean) {
                 super.onNext(t)
                 if (t) {
-                    ActivityUtils.showCaptchaDialog(manager, this@GradePresenter)
+                    ActivityUtils.showCaptchaDialog(f, this@GradePresenter)
                 } else {
-                    loadUserCenter(manager, "")
+                    loadUserCenter(f, "")
                 }
             }
 
@@ -77,11 +83,9 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
 
         observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer)
-
-        return null
     }
 
-    override fun loadUserCenter(manager: FragmentManager, code: String): Disposable? {
+    override fun loadUserCenter(f: FragmentManager, code: String) {
         ActivityUtils.showProgressDialog(mContext, R.string.login_to_system)
 
         val observable = LocalHelper.login(Constants.TYPE_CMS, mContext, code)
@@ -96,7 +100,7 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
                         // fetch first page from user center, it will find the grade info page in most case
                         val target = HTMLUtils.getElementSimilar(t, Jsoup.parse(urlPatterns[0]).body().children().first())
                         if (target != null) {
-                            loadTargetPage(manager, target.absUrl("href"))
+                            loadTargetPage(f, target.absUrl("href"))
                         }
                     } else if (urlPatterns.size > 1) {
                         // fetch more page to reach class info page, especially in QZ Data Soft CMS System
@@ -118,7 +122,7 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
 
                         val extraObserver = object : MyObserver<String>(TAG) {
                             override fun onNext(t: String) {
-                                loadTargetPage(manager, t)
+                                loadTargetPage(f, t)
                             }
                         }
 
@@ -126,10 +130,10 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(extraObserver)
                     } else {
-                        ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_GRADE, t, this@GradePresenter)
+                        ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_GRADE, t, this@GradePresenter)
                     }
                 } else {
-                    ActivityUtils.showLinkSelectionDialog(manager, Constants.TYPE_GRADE, t, this@GradePresenter)
+                    ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_GRADE, t, this@GradePresenter)
                 }
             }
 
@@ -142,11 +146,9 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
 
         observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer)
-
-        return null
     }
 
-    override fun loadTargetPage(manager: FragmentManager, url: String): Disposable? {
+    override fun loadTargetPage(f: FragmentManager, url: String) {
         ActivityUtils.showProgressDialog(mContext, R.string.loading_grade_page)
 
         val observable = Observable.create(ObservableOnSubscribe<Document> { e -> e.onNext(LocalHelper.getCms(mContext).getPageDom(url)!!) })
@@ -154,7 +156,7 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
         val observer = object : MyObserver<Document>(TAG) {
             override fun onNext(t: Document) {
                 super.onNext(t)
-                FormDialog.newInstance(t, this@GradePresenter).show(manager, "form_dialog")
+                FormDialog.newInstance(t, this@GradePresenter).show(f, "form_dialog")
             }
 
             override fun onError(e: Throwable) {
@@ -167,10 +169,9 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer)
-        return null
     }
 
-    override fun loadQuery(manager: FragmentManager, actionURL: String, queryMap: Map<String, String>, needNewPage: Boolean): Disposable? {
+    override fun loadQuery(manager: FragmentManager, actionURL: String, queryMap: Map<String, String>, needNewPage: Boolean) {
         ActivityUtils.showProgressDialog(mContext, R.string.loading_grades)
 
         val observable = Observable.create(ObservableOnSubscribe<Document> { e -> e.onNext(LocalHelper.getCms(mContext).queryGradePageDom(actionURL, queryMap, needNewPage)) })
@@ -186,7 +187,7 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
                     mGrades = UniversityUtils.generateInfoFromTable(
                             TableUtils.getTablesFromTargetPage(t)[Constants.sDetailCustomInfo.gradeTableId],
                             GradeInfo::class.java)
-                    if (mGrades!!.size == 0) {
+                    if (mGrades.size == 0) {
                         Toast.makeText(mContext, R.string.grades_empty, Toast.LENGTH_LONG).show()
                     } else {
                         storeGrades()
@@ -206,18 +207,16 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer)
-
-        return null
     }
 
     override fun loadLocalGrades() {
         val observable = LocalHelper.getGrades(mContext)
 
         val observer = object : MyObserver<List<GradeInfo>>(TAG) {
-            override fun onNext(enrichedClasses: List<GradeInfo>) {
-                mGrades = enrichedClasses
-                if (mGrades!!.isNotEmpty()) {
-                    mView.onLoadGrades(mGrades!!)
+            override fun onNext(t: List<GradeInfo>) {
+                mGrades = t
+                if (mGrades.isNotEmpty()) {
+                    mView.onLoadGrades(mGrades)
                 }
             }
 
@@ -231,11 +230,11 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
                 .subscribe(observer)
     }
 
-    override fun loadCETGrade(queryMap: Map<String, String>) {
+    override fun loadCETGrade(m: Map<String, String>) {
         Observable.create(ObservableOnSubscribe<Map<String, String>> { e ->
             val service = ServiceCenter.createCETService()
-            val queryResult = queryMap[mContext.getString(R.string.key_ticket_num)]?.let {
-                queryMap[mContext.getString(R.string.key_full_name)]?.let { it1 ->
+            val queryResult = m[mContext.getString(R.string.key_ticket_num)]?.let {
+                m[mContext.getString(R.string.key_full_name)]?.let { it1 ->
                     service.queryCET(
                             mContext.getString(R.string.url_chsi_referer),
                             it,
@@ -287,10 +286,6 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
     override fun clearGrades() {
         mGrades = ArrayList<GradeInfo>(0)
         storeGrades()
-        loadLocalGrades()
-    }
-
-    override fun start() {
         loadLocalGrades()
     }
 

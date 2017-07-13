@@ -24,10 +24,9 @@ import java.util.*
 class FormHandler(document: Document) {
 
     // use linkedHashMap to ensure form seq
-    private val mForms: LinkedHashMap<String, List<Form>>
+    private val mForms: LinkedHashMap<String, MutableList<Form>> = LinkedHashMap()
 
     init {
-        mForms = LinkedHashMap<String, List<Form>>()
         val elements = document.getElementsByTag("form")
         for (form in elements) {
             addForm(form)

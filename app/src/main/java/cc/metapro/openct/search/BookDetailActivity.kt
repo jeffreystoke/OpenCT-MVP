@@ -32,18 +32,26 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import cc.metapro.openct.R
 import cc.metapro.openct.utils.base.BaseActivity
+import cc.metapro.openct.utils.base.BasePresenter
 
 class BookDetailActivity : BaseActivity() {
+
     @BindView(R.id.toolbar)
-    internal var mToolbar: Toolbar? = null
+    internal lateinit var mToolbar: Toolbar
     @BindView(R.id.fab_back)
-    internal var mFab: FloatingActionButton? = null
+    internal lateinit var mFab: FloatingActionButton
     @BindView(R.id.book_detail_web)
-    internal var mWebView: WebView? = null
+    internal lateinit var mWebView: WebView
     @BindView(R.id.book_detail_progress)
-    internal var pb: ProgressBar? = null
+    internal lateinit var pb: ProgressBar
     @BindView(R.id.activity_book_detail)
-    internal var mActivityBookDetail: CoordinatorLayout? = null
+    internal lateinit var mActivityBookDetail: CoordinatorLayout
+
+    override val layout: Int
+        get() = R.layout.activity_book_detail
+
+    override val presenter: BasePresenter?
+        get() = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,62 +69,56 @@ class BookDetailActivity : BaseActivity() {
         setWebView(url)
     }
 
-    protected override val layout: Int
-        get() = R.layout.activity_book_detail
-
     @OnClick(R.id.fab_back)
     fun goBack() {
-        if (mWebView!!.canGoBack()) {
-            mWebView!!.goBack()
+        if (mWebView.canGoBack()) {
+            mWebView.goBack()
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (id == android.R.id.home) {
-            finish()
+        when(item.itemId) {
+            android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
     }
 
     private fun setWebView(URL: String) {
-        mWebView!!.webViewClient = object : WebViewClient() {
+        mWebView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 return true
             }
 
             override fun onPageStarted(view: WebView, url: String, favicon: Bitmap) {
                 super.onPageStarted(view, url, favicon)
-                pb!!.progress = 0
-                pb!!.visibility = View.VISIBLE
+                pb.progress = 0
+                pb.visibility = View.VISIBLE
             }
         }
 
-        mWebView!!.webChromeClient = object : WebChromeClient() {
+        mWebView.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView, newProgress: Int) {
                 super.onProgressChanged(view, newProgress)
                 if (newProgress == 100) {
-                    pb!!.visibility = View.GONE
+                    pb.visibility = View.GONE
                 } else {
-                    if (pb!!.visibility == View.INVISIBLE) {
-                        pb!!.visibility = View.VISIBLE
+                    if (pb.visibility == View.INVISIBLE) {
+                        pb.visibility = View.VISIBLE
                     }
-                    pb!!.progress = newProgress
+                    pb.progress = newProgress
                 }
             }
         }
 
-        mWebView!!.loadUrl(URL)
-        mWebView!!.settings.javaScriptEnabled = true
-        mWebView!!.settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
-        mWebView!!.settings.setSupportZoom(true)
-        mWebView!!.settings.useWideViewPort = true
+        mWebView.loadUrl(URL)
+        mWebView.settings.javaScriptEnabled = true
+        mWebView.settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+        mWebView.settings.setSupportZoom(true)
+        mWebView.settings.useWideViewPort = true
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mWebView = null
-        mActivityBookDetail = null
     }
 
     companion object {

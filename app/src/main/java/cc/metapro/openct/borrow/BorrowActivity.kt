@@ -37,20 +37,28 @@ import cc.metapro.openct.data.university.model.BorrowInfo
 import cc.metapro.openct.pref.SettingsActivity
 import cc.metapro.openct.utils.RecyclerViewHelper
 import cc.metapro.openct.utils.base.BaseActivity
+import cc.metapro.openct.utils.base.BasePresenter
 
 class BorrowActivity : BaseActivity(), BorrowContract.View {
 
+    // init view with butterknife
     @BindView(R.id.toolbar)
-    internal var mToolbar: Toolbar? = null
+    internal lateinit var mToolbar: Toolbar
     @BindView(R.id.fab)
-    internal var mFab: FloatingActionButton? = null
+    internal lateinit var mFab: FloatingActionButton
     @BindView(R.id.recycler_view)
-    internal var mRecyclerView: RecyclerView? = null
+    internal lateinit var mRecyclerView: RecyclerView
     @BindView(R.id.image)
-    internal var mImage: ImageView? = null
+    internal lateinit var mImage: ImageView
 
-    private var mPresenter: BorrowContract.Presenter? = null
-    private var mBorrowAdapter: BorrowAdapter? = null
+    private lateinit var mBorrowAdapter: BorrowAdapter
+    private lateinit var mBorrowPresenter: BorrowContract.Presenter
+
+    override val presenter: BasePresenter
+        get() = mBorrowPresenter
+
+    override val layout: Int
+        get() = R.layout.activity_borrow
 
     @OnClick(R.id.fab)
     fun load() {
@@ -60,7 +68,7 @@ class BorrowActivity : BaseActivity(), BorrowContract.View {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         } else {
-            mPresenter!!.loadOnlineInfo(supportFragmentManager)
+            mBorrowPresenter.loadOnlineInfo(supportFragmentManager)
         }
     }
 
@@ -69,42 +77,34 @@ class BorrowActivity : BaseActivity(), BorrowContract.View {
         ButterKnife.bind(this)
 
         // set toolbar
-        mToolbar!!.overflowIcon = ContextCompat.getDrawable(this, R.drawable.ic_filter)
+        mToolbar.overflowIcon = ContextCompat.getDrawable(this, R.drawable.ic_filter)
         setSupportActionBar(mToolbar)
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
         mBorrowAdapter = BorrowAdapter(this)
-        RecyclerViewHelper.setRecyclerView(this, mRecyclerView!!, mBorrowAdapter!!)
+        RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mBorrowAdapter)
         BorrowPresenter(this, this)
     }
 
-    override val layout: Int
-        get() = R.layout.activity_borrow
-
-    public override fun onResume() {
-        super.onResume()
-        mPresenter!!.start()
+    override fun setPresenter(p: BorrowContract.Presenter) {
+        mBorrowPresenter = p
     }
 
-    override fun setPresenter(presenter: BorrowContract.Presenter) {
-        mPresenter = presenter
-    }
-
-    override fun updateBorrows(borrows: List<BorrowInfo>) {
-        if (borrows.isEmpty()) {
-            Snackbar.make(mRecyclerView!!, R.string.no_borrows, BaseTransientBottomBar.LENGTH_LONG).show()
+    override fun updateBorrows(l: List<BorrowInfo>) {
+        if (l.isEmpty()) {
+            Snackbar.make(mRecyclerView, R.string.no_borrows, BaseTransientBottomBar.LENGTH_LONG).show()
         } else {
-            mBorrowAdapter!!.setNewBorrows(borrows)
-            mBorrowAdapter!!.notifyDataSetChanged()
-            Snackbar.make(mRecyclerView!!, getString(R.string.borrow_entries, borrows.size), BaseTransientBottomBar.LENGTH_LONG).show()
+            mBorrowAdapter.setNewBorrows(l)
+            mBorrowAdapter.notifyDataSetChanged()
+            Snackbar.make(mRecyclerView, getString(R.string.borrow_entries, l.size), BaseTransientBottomBar.LENGTH_LONG).show()
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.show_all -> mPresenter!!.showAll()
-            R.id.show_due -> mPresenter!!.showDue()
+            R.id.show_all -> mBorrowPresenter.showAll()
+            R.id.show_due -> mBorrowPresenter.showDue()
         }
         return super.onOptionsItemSelected(item)
     }

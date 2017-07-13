@@ -27,7 +27,6 @@ import cc.metapro.openct.data.university.ClassTableInfo
 import cc.metapro.openct.data.university.DetailCustomInfo
 import cc.metapro.openct.data.university.UniversityInfo
 import cc.metapro.openct.data.university.model.BorrowInfo
-import cc.metapro.openct.data.university.model.GradeInfo
 import cc.metapro.openct.data.university.model.classinfo.Classes
 import cc.metapro.openct.data.university.model.classinfo.EnrichedClassInfo
 import cc.metapro.openct.utils.CloseUtils
@@ -36,11 +35,85 @@ import cc.metapro.openct.utils.PrefHelper
 import net.fortuna.ical4j.validate.ValidationException
 import java.util.*
 
-class DBManger private constructor(context: Context) {
+class DBManger private constructor() {
 
-    init {
-        val DBHelper = DBHelper(context)
-        mDatabase = DBHelper.writableDatabase
+    companion object {
+
+        private val TAG = DBManger::class.java.name
+        private val DEFAULT_UNIVERSITY = UniversityInfo()
+        private lateinit var mDatabase: SQLiteDatabase
+        private var manger: DBManger? = null
+
+        fun getInstance(context: Context): DBManger {
+            synchronized(DBManger::class.java) {
+                if (manger == null) {
+                    synchronized(DBManger::class.java) {
+                        manger = DBManger()
+                        val DBHelper = DBHelper(context)
+                        mDatabase = DBHelper.writableDatabase
+                    }
+                }
+            }
+            return manger!!
+        }
+
+        fun getDetailCustomInfo(context: Context): DetailCustomInfo {
+            DBManger.getInstance(context)
+            var cursor: Cursor? = null
+            val name: String
+
+            // get user's school name, as a key of custom info
+            if (PrefHelper.getBoolean(context, R.string.pref_custom_enable, false)) {
+                name = PrefHelper.getString(context, R.string.pref_custom_school_name, Constants.DEFAULT_SCHOOL_NAME)
+            } else {
+                name = PrefHelper.getString(context, R.string.pref_school_name, Constants.DEFAULT_SCHOOL_NAME)
+            }
+
+            try {
+                // select custom info according to school name
+                cursor = mDatabase.query(DBHelper.DETAIL_CUSTOM_TABLE, null,
+                        String.format("%s=? COLLATE NOCASE", DBHelper.SCHOOL_NAME),
+                        arrayOf(name), null, null, null)
+
+                cursor!!.moveToFirst()
+                // only the first should be selected
+                if (!cursor.isAfterLast) {
+                    val detailCustomInfo : DetailCustomInfo = StoreHelper.fromJson(cursor.getString(1))
+                    detailCustomInfo.setClassTableInfo(ClassTableInfo.getDefault(context))
+                    return detailCustomInfo
+                } else {
+                    throw Exception("need init advancedCustomInfo")
+                }
+            } catch (e: Exception) {
+                Log.v(TAG, e.message, e)
+                val detailCustomInfo = DetailCustomInfo(name)
+                detailCustomInfo.setClassTableInfo(ClassTableInfo.getDefault(context))
+                return detailCustomInfo
+            } finally {
+                if (cursor != null) {
+                    cursor.close()
+                }
+            }
+        }
+
+        fun updateSchools(context: Context, universityInfoList: List<UniversityInfo>?) {
+            DBManger.getInstance(context)
+            mDatabase.beginTransaction()
+            try {
+                mDatabase.delete(DBHelper.SCHOOL_TABLE, null, null)
+                if (universityInfoList != null) {
+                    for (info in universityInfoList) {
+                        val values = ContentValues()
+                        values.put(DBHelper.SCHOOL_NAME, info.name)
+                        values.put(DBHelper.JSON, info.toString())
+                        mDatabase.insert(DBHelper.SCHOOL_TABLE, null, values)
+                    }
+                }
+                mDatabase.setTransactionSuccessful()
+            } finally {
+                mDatabase.endTransaction()
+            }
+        }
     }
 
     fun updateAdvCustomInfo(info: DetailCustomInfo) {
@@ -92,12 +165,9 @@ class DBManger private constructor(context: Context) {
                 cursor = mDatabase.query(
                         DBHelper.CUSTOM_TABLE, null, null, null, null, null, null)
                 cursor!!.moveToFirst()
-                var universityInfo: UniversityInfo? = null
+                var universityInfo: UniversityInfo = DEFAULT_UNIVERSITY
                 if (!cursor.isAfterLast) {
-                    universityInfo = StoreHelper.fromJson(cursor.getString(1), UniversityInfo::class.java)
-                }
-                if (universityInfo == null) {
-                    universityInfo = DEFAULT_UNIVERSITY
+                    universityInfo = StoreHelper.fromJson(cursor.getString(1))
                 }
                 cursor.close()
                 return universityInfo
@@ -116,12 +186,9 @@ class DBManger private constructor(context: Context) {
                     DBHelper.SCHOOL_TABLE, null,
                     DBHelper.SCHOOL_NAME + "=? COLLATE NOCASE", arrayOf(name), null, null, null)
             cursor!!.moveToFirst()
-            var info: UniversityInfo? = null
+            var info: UniversityInfo = DEFAULT_UNIVERSITY
             if (!cursor.isAfterLast) {
-                info = StoreHelper.fromJson(cursor.getString(1), UniversityInfo::class.java)
-            }
-            if (info == null) {
-                info = DEFAULT_UNIVERSITY
+                info = StoreHelper.fromJson(cursor.getString(1))
             }
             cursor.close()
             return info
@@ -135,10 +202,10 @@ class DBManger private constructor(context: Context) {
 
     /**
      * return a class info according to the given name, if not exists, return null
-
      * @param name class name
      */
-    fun getSingleClass(name: String): EnrichedClassInfo? {
+    @Throws(Exception::class)
+    fun getSingleClass(name: String): EnrichedClassInfo {
         var cursor: Cursor? = null
         try {
             if (TextUtils.isEmpty(name)) {
@@ -146,16 +213,14 @@ class DBManger private constructor(context: Context) {
             }
             cursor = mDatabase.query(DBHelper.CLASS_TABLE, null,
                     "id=? COLLATE NOCASE", arrayOf(name), null, null, null)
-            cursor!!.moveToFirst()
-            var info: EnrichedClassInfo? = null
+            cursor.moveToFirst()
+            val info: EnrichedClassInfo
             if (!cursor.isAfterLast) {
-                info = StoreHelper.fromJson(cursor.getString(1), EnrichedClassInfo::class.java)
+                info = StoreHelper.fromJson(cursor.getString(1))
+            } else {
+                throw Exception("No such class named {name}!")
             }
-            cursor.close()
             return info
-        } catch (e: Exception) {
-            Log.e(TAG, e.message, e)
-            return null
         } finally {
             CloseUtils.close(cursor)
         }
@@ -246,7 +311,8 @@ class DBManger private constructor(context: Context) {
                 cursor!!.moveToFirst()
                 val classes = Classes()
                 while (!cursor.isAfterLast) {
-                    classes.add(StoreHelper.fromJson(cursor.getString(1), EnrichedClassInfo::class.java))
+                    val o : EnrichedClassInfo = StoreHelper.fromJson(cursor.getString(1))
+                    classes.add(o)
                     cursor.moveToNext()
                 }
                 cursor.close()
@@ -290,7 +356,8 @@ class DBManger private constructor(context: Context) {
                 cursor!!.moveToFirst()
                 val grades = ArrayList<GradeInfo>()
                 while (!cursor.isAfterLast) {
-                    grades.add(StoreHelper.fromJson(cursor.getString(1), GradeInfo::class.java))
+                    val g : GradeInfo = StoreHelper.fromJson(cursor.getString(1))
+                    grades.add(g)
                     cursor.moveToNext()
                 }
                 cursor.close()
@@ -334,7 +401,8 @@ class DBManger private constructor(context: Context) {
                 cursor!!.moveToFirst()
                 val grades = ArrayList<BorrowInfo>()
                 while (!cursor.isAfterLast) {
-                    grades.add(StoreHelper.fromJson(cursor.getString(1), BorrowInfo::class.java))
+                    val b : BorrowInfo = StoreHelper.fromJson(cursor.getString(1))
+                    grades.add(b)
                     cursor.moveToNext()
                 }
                 cursor.close()
@@ -355,12 +423,13 @@ class DBManger private constructor(context: Context) {
             try {
                 cursor = mDatabase.query(DBHelper.SCHOOL_TABLE, null, null, null, null, null, null)
                 cursor!!.moveToFirst()
-                val grades = ArrayList<UniversityInfo>()
+                val list = ArrayList<UniversityInfo>()
                 while (!cursor.isAfterLast) {
-                    grades.add(StoreHelper.fromJson(cursor.getString(1), UniversityInfo::class.java))
+                    val u :UniversityInfo = StoreHelper.fromJson(cursor.getString(1))
+                    list.add(u)
                     cursor.moveToNext()
                 }
-                return grades
+                return list
             } catch (e: Exception) {
                 Log.e(TAG, e.message, e)
             } finally {
@@ -370,81 +439,4 @@ class DBManger private constructor(context: Context) {
             }
             return ArrayList(0)
         }
-
-    companion object {
-
-        private val TAG = DBManger::class.java.name
-        private val DEFAULT_UNIVERSITY = UniversityInfo()
-        private lateinit var mDatabase: SQLiteDatabase
-        private var manger: DBManger? = null
-
-        fun getInstance(context: Context): DBManger? {
-            synchronized(DBManger::class.java) {
-                if (manger == null) {
-                    synchronized(DBManger::class.java) {
-                        manger = DBManger(context)
-                    }
-                }
-            }
-            return manger
-        }
-
-        fun getDetailCustomInfo(context: Context): DetailCustomInfo {
-            DBManger.getInstance(context)
-            var cursor: Cursor? = null
-            val name: String
-
-            // get user's school name, as a key of custom info
-            if (PrefHelper.getBoolean(context, R.string.pref_custom_enable, false)) {
-                name = PrefHelper.getString(context, R.string.pref_custom_school_name, Constants.DEFAULT_SCHOOL_NAME)
-            } else {
-                name = PrefHelper.getString(context, R.string.pref_school_name, Constants.DEFAULT_SCHOOL_NAME)
-            }
-
-            try {
-                // select custom info according to school name
-                cursor = mDatabase.query(DBHelper.DETAIL_CUSTOM_TABLE, null,
-                        String.format("%s=? COLLATE NOCASE", DBHelper.SCHOOL_NAME),
-                        arrayOf(name), null, null, null)
-
-                cursor!!.moveToFirst()
-                // only the first should be selected
-                if (!cursor.isAfterLast) {
-                    val detailCustomInfo = StoreHelper.fromJson(cursor.getString(1), DetailCustomInfo::class.java)
-                    detailCustomInfo.setClassTableInfo(ClassTableInfo.getDefault(context))
-                    return detailCustomInfo
-                } else {
-                    throw Exception("need init advancedCustomInfo")
-                }
-            } catch (e: Exception) {
-                Log.v(TAG, e.message, e)
-                val detailCustomInfo = DetailCustomInfo(name)
-                detailCustomInfo.setClassTableInfo(ClassTableInfo.getDefault(context))
-                return detailCustomInfo
-            } finally {
-                if (cursor != null) {
-                    cursor.close()
-                }
-            }
-        }
-
-        fun updateSchools(context: Context, universityInfoList: List<UniversityInfo>?) {
-            DBManger.getInstance(context)
-            mDatabase.beginTransaction()
-            try {
-                mDatabase.delete(DBHelper.SCHOOL_TABLE, null, null)
-                if (universityInfoList != null) {
-                    for (info in universityInfoList) {
-                        val values = ContentValues()
-                        values.put(DBHelper.SCHOOL_NAME, info.name)
-                        values.put(DBHelper.JSON, info.toString())
-                        mDatabase.insert(DBHelper.SCHOOL_TABLE, null, values)
-                    }
-                }
-                mDatabase.setTransactionSuccessful()
-            } finally {
-                mDatabase.endTransaction()
-            }
-        }
-    }
 }

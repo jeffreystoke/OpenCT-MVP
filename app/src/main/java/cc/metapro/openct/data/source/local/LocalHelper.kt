@@ -25,7 +25,6 @@ import cc.metapro.openct.data.university.CmsFactory
 import cc.metapro.openct.data.university.LibraryFactory
 import cc.metapro.openct.data.university.UniversityInfo
 import cc.metapro.openct.data.university.model.BorrowInfo
-import cc.metapro.openct.data.university.model.GradeInfo
 import cc.metapro.openct.data.university.model.classinfo.Classes
 import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.PrefHelper
@@ -39,26 +38,26 @@ import java.util.*
 object LocalHelper {
 
     private val TAG = LocalHelper::class.java.name
-    var university: UniversityInfo? = null
+    lateinit var university: UniversityInfo
     private var needUpdateUniversity: Boolean = false
 
     fun needUpdateUniversity() {
         needUpdateUniversity = true
     }
 
-    fun getUniversity(context: Context): UniversityInfo? {
+    fun getUniversity(context: Context): UniversityInfo {
         checkUniversity(context)
         return university
     }
 
     fun getLibrary(context: Context): LibraryFactory {
         checkUniversity(context)
-        return LibraryFactory(university!!)
+        return LibraryFactory(university)
     }
 
     fun getCms(context: Context): CmsFactory {
         checkUniversity(context)
-        return CmsFactory(university!!)
+        return CmsFactory(university)
     }
 
     fun login(actionType: Int, context: Context, captcha: String): Observable<Document> {
@@ -77,7 +76,7 @@ object LocalHelper {
             }
             loginMap.put(Constants.CAPTCHA_KEY, captcha)
             checkUniversity(context)
-            val document = CmsFactory(university!!).login(loginMap)
+            val document = CmsFactory(university).login(loginMap)
             e.onNext(document)
         }).subscribeOn(Schedulers.io())
     }
@@ -85,7 +84,7 @@ object LocalHelper {
     fun getClasses(context: Context): Observable<Classes> {
         return Observable.create(ObservableOnSubscribe<Classes> { e ->
             val manger = DBManger.getInstance(context)
-            val allClasses = manger!!.classes
+            val allClasses = manger.classes
             e.onNext(allClasses)
         }).subscribeOn(Schedulers.io())
     }
@@ -93,7 +92,7 @@ object LocalHelper {
     fun getGrades(context: Context): Observable<List<GradeInfo>> {
         return Observable.create(ObservableOnSubscribe<List<GradeInfo>> { e ->
             val manger = DBManger.getInstance(context)
-            val grades = manger!!.grades
+            val grades = manger.grades
             e.onNext(grades)
         }).subscribeOn(Schedulers.io())
     }
@@ -101,7 +100,7 @@ object LocalHelper {
     fun getBorrows(context: Context): Observable<List<BorrowInfo>> {
         return Observable.create(ObservableOnSubscribe<List<BorrowInfo>> { e ->
             val manger = DBManger.getInstance(context)
-            val borrowInfoList = manger!!.borrows
+            val borrowInfoList = manger.borrows
             e.onNext(borrowInfoList)
         }).subscribeOn(Schedulers.io())
     }
@@ -110,15 +109,15 @@ object LocalHelper {
         return Observable.create(ObservableOnSubscribe<Boolean> { e ->
             if (actionType == Constants.TYPE_CMS) {
                 checkUniversity(context)
-                e.onNext(CmsFactory(university!!).prepareOnlineInfo())
+                e.onNext(CmsFactory(university).prepareOnlineInfo())
             } else if (actionType == Constants.TYPE_LIB) {
-                e.onNext(LibraryFactory(university!!).prepareOnlineInfo())
+                e.onNext(LibraryFactory(university).prepareOnlineInfo())
             }
         }).subscribeOn(Schedulers.io())
     }
 
     private fun checkUniversity(context: Context) {
-        if (university == null || needUpdateUniversity) {
+        if (needUpdateUniversity) {
             university = loadUniversity(context)
             needUpdateUniversity = false
         }
@@ -147,9 +146,9 @@ object LocalHelper {
         val defaultSchoolName = context.getString(R.string.default_school_name)
         val university: UniversityInfo
         if (PrefHelper.getBoolean(context, R.string.pref_custom_enable, false)) {
-            university = manger?.customUniversity!!
+            university = manger.customUniversity
         } else {
-            university = manger?.getUniversity(PrefHelper.getString(context, R.string.pref_school_name, defaultSchoolName))!!
+            university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name, defaultSchoolName))
         }
 
         return university
@@ -167,7 +166,7 @@ object LocalHelper {
             // 上次存储的是学期第几周
             var currentWeek = Integer.parseInt(PrefHelper.getString(context, R.string.pref_current_week, "1"))
 
-            if (weekOfYearWhenSetCurrentWeek < lastSetWeek && lastSetWeek <= 53) {
+            if (lastSetWeek in (weekOfYearWhenSetCurrentWeek + 1)..53) {
                 // 跨年的情况
                 if (lastSetWeek == 53) {
                     // 上次设置的时候是一年的最后一周

@@ -31,6 +31,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import cc.metapro.openct.R
+import cc.metapro.openct.splash.SplashContract
 import cc.metapro.openct.splash.schoolselection.SchoolSelectionActivity
 
 class SchoolFragment : Fragment(), SplashContract.SchoolView {
@@ -75,8 +76,8 @@ class SchoolFragment : Fragment(), SplashContract.SchoolView {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun setPresenter(presenter: SplashContract.Presenter) {
-        mPresenter = presenter
+    override fun setPresenter(p: SplashContract.Presenter) {
+        mPresenter = p
     }
 
     override fun showSelectedSchool(name: String) {

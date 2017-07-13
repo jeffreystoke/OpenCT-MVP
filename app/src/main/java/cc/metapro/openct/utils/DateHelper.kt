@@ -47,7 +47,7 @@ object DateHelper {
     }
 
     fun weekDayConvert(i: Int): Int {
-        if (i > 0 && i < 8) {
+        if (i in 1..7) {
             when (i) {
                 1 -> return Calendar.MONDAY
                 2 -> return Calendar.TUESDAY
@@ -62,7 +62,7 @@ object DateHelper {
     }
 
     fun weekDayTrans(context: Context, i: Int): String {
-        if (i > 0 && i <= 7) {
+        if (i in 1..7) {
             return context.resources.getStringArray(R.array.weekdays)[i - 1]
         }
         throw IndexOutOfBoundsException("i (weekday) should >=1 && <= 7")

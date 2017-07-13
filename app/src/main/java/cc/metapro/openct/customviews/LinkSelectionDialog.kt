@@ -141,7 +141,7 @@ class LinkSelectionDialog : BaseDialog() {
             strings[i++] = e.text()
         }
 
-        builder.setSingleChoiceItems(strings, -1) { dialog, which -> mTarget = mElements!![which] }
+        builder.setSingleChoiceItems(strings, -1) { _, which -> mTarget = mElements!![which] }
     }
 
     private fun setUrlPattern() {

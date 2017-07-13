@@ -15,10 +15,12 @@
  */
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion versions.compilesdk
     buildToolsVersion versions.buildtools
+
     defaultConfig {
         applicationId "cc.metapro.openct"
         minSdkVersion versions.minsdk
@@ -35,6 +37,7 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
         debug {
             minifyEnabled false
             shrinkResources false

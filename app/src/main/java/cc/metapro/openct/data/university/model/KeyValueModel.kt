@@ -20,28 +20,9 @@ import cc.metapro.openct.utils.REHelper
 import org.jsoup.nodes.Element
 import java.util.*
 
-open class KeyValueModel {
+open class KeyValueModel constructor(th: Element, tr: Element) {
 
-    internal var mTitleValueMap: LinkedHashMap<String, String>
-
-    constructor() {}
-
-    internal constructor(th: Element, tr: Element) {
-        mTitleValueMap = LinkedHashMap<String, String>()
-        var titles = th.select("td")
-        if (titles.isEmpty()) {
-            titles = th.select("th")
-        }
-
-        val values = tr.select("td")
-        var i = 0
-        for (title in titles) {
-            val value = values[i++].text()
-            if (!REHelper.isEmpty(value)) {
-                mTitleValueMap.put(title.text(), value)
-            }
-        }
-    }
+    internal var mTitleValueMap: LinkedHashMap<String, String> = LinkedHashMap()
 
     fun getFilteredContent(filter: List<String>?): String {
         if (filter != null) {
@@ -83,4 +64,23 @@ open class KeyValueModel {
         }
         return sb.toString()
     }
+
+    init {
+        var titles = th.select("td")
+        if (titles.isEmpty()) {
+            titles = th.select("th")
+        }
+        val values = tr.select("td")
+        var i = 0
+        for (title in titles) {
+            val value = values[i++].text()
+            if (!REHelper.isEmpty(value)) {
+                mTitleValueMap.put(title.text(), value)
+            }
+        }
+    }
 }
+
+class GradeInfo(th: Element, tr: Element) : KeyValueModel(th, tr)
+
+//class BookInfo(th: Element, tr: Element) : KeyValueModel(th, tr)

@@ -24,7 +24,8 @@ import cc.metapro.openct.utils.base.BaseView
 
 interface CustomContract {
 
-    interface View : BaseView<Presenter>
+    interface View : BaseView<Presenter> {
+    }
 
     interface Presenter : BasePresenter {
         fun setWebView(webView: InteractiveWebView, manager: FragmentManager)

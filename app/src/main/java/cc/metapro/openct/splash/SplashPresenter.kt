@@ -19,7 +19,6 @@ package cc.metapro.openct.splash
 import android.content.Context
 import android.text.TextUtils
 import cc.metapro.openct.R
-import cc.metapro.openct.splash.views.SplashContract
 import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.PrefHelper
 import com.scottyab.aescrypt.AESCrypt
@@ -32,14 +31,18 @@ internal class SplashPresenter(private val mContext: Context,
                                cmsView: SplashContract.LoginView,
                                libView: SplashContract.LoginView) : SplashContract.Presenter {
 
+    override fun subscribe() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun unSubscribe() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     init {
         mSchoolView.setPresenter(this)
         cmsView.setPresenter(this)
         libView.setPresenter(this)
-    }
-
-    override fun start() {
-
     }
 
     override fun setSelectedSchool(name: String) {

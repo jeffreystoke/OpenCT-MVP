@@ -22,47 +22,14 @@ import org.jsoup.select.Elements
 import java.util.*
 import java.util.regex.Pattern
 
-class Form {
+class Form(form: Element) {
 
-    val formItems: LinkedHashMap<String, Elements>
+    var formItems: LinkedHashMap<String, Elements> = LinkedHashMap()
 
-    val name: String
-    val id: String
-    val method: String
-    val action: String
-
-    constructor() {
-
-    }
-
-    constructor(form: Element) {
-        name = form.attr("name")
-        id = form.attr("id")
-        method = form.attr("method")
-        action = form.absUrl("action")
-
-        formItems = LinkedHashMap<String, Elements>()
-
-        val elements = form.allElements
-        for (e in elements) {
-            if (Pattern.compile(FORM_ITEM_PATTERN).matcher(e.tagName()).find()) {
-                if ("select".equals(e.tagName(), ignoreCase = true)) {
-                    val options = e.select("option")
-                    if (options != null) {
-                        var defaultOption = options[0]
-                        for (option in options) {
-                            if (option.hasAttr("selected")) {
-                                defaultOption = option
-                                break
-                            }
-                        }
-                        e = e.attr("value", defaultOption.attr("value"))
-                    }
-                }
-                addFormItem(e)
-            }
-        }
-    }
+    var name: String = form.attr("name")
+    var id: String = form.attr("id")
+    var method: String = form.attr("method")
+    var action: String = form.absUrl("action")
 
     private fun addFormItem(item: Element) {
         var key = item.attr("name")
@@ -74,14 +41,10 @@ class Form {
     }
 
     fun getItemByIndex(i: Int): Element? {
-        var j = 0
-        for (elements in formItems.values) {
-            if (j == i) {
-                return elements.first()
-            }
-            j++
-        }
-        return null
+        return formItems.values
+                .filterIndexed { j, _ -> j == i }
+                .firstOrNull()
+                ?.first()
     }
 
     fun size(): Int {
@@ -91,6 +54,29 @@ class Form {
     companion object {
 
         val FORM_ITEM_PATTERN = "(select)|(input)|(textarea)|(button)|(datalist)|(keygen)|(output)"
+    }
+
+    init {
+        val elements = form.allElements
+        for (e in elements) {
+            var toAdd : Element = e
+            if (Pattern.compile(FORM_ITEM_PATTERN).matcher(e.tagName()).find()) {
+                if ("select".equals(e.tagName(), ignoreCase = true)) {
+                    val options = e.select("option")
+                    if (options != null) {
+                        var defaultOption = options[0]
+                        for (option in options) {
+                            if (option.hasAttr("selected")) {
+                                defaultOption = option
+                                break
+                            }
+                        }
+                        toAdd = e.attr("value", defaultOption.attr("value"))
+                    }
+                }
+                addFormItem(toAdd)
+            }
+        }
     }
 
 }
