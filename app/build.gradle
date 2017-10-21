@@ -62,12 +62,12 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    // iCal4J for generating .ical files
+    // iCal4J for generating .iCal files
     implementation('org.mnode.ical4j:ical4j:2.0.5') {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
     }
 
-    // Jsoup for parsing web page
+    // for parsing web page
     implementation "org.jsoup:jsoup:${rootProject.versions.jsoup}"
 
     // support library
