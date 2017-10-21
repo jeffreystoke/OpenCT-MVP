@@ -27,7 +27,7 @@ object ClassInfoHelper {
     }
 
     fun infoParser(idx: Int, re: String, contents: Array<String>): String {
-        if (idx < contents.size && idx >= 0) {
+        return if (idx < contents.size && idx >= 0) {
             var content = contents[idx]
             if (!TextUtils.isEmpty(re)) {
                 val matcher = Pattern.compile(re).matcher(content)
@@ -35,15 +35,15 @@ object ClassInfoHelper {
                     content = matcher.group()
                 }
             }
-            return content
+            content
         } else {
-            return ""
+            ""
         }
     }
 
     private fun getDuring(duringRe: String, rawDuring: String): BooleanArray {
         val weeks = BooleanArray(Constants.WEEKS)
-        for (i in 0..Constants.WEEKS - 1) {
+        for (i in 0 until Constants.WEEKS) {
             weeks[i] = false
         }
 
@@ -58,7 +58,7 @@ object ClassInfoHelper {
 
         val result = REHelper.getStartEnd(during)
         if (result[0] > 0 && result[0] <= Constants.WEEKS && result[1] >= result[0] && result[1] <= Constants.WEEKS) {
-            for (i in result[0] - 1..result[1] - 1) {
+            for (i in result[0] - 1 until result[1]) {
                 weeks[i] = true
             }
         }

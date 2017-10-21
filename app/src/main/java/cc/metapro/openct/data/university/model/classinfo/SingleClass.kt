@@ -20,7 +20,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-
 import cc.metapro.openct.R
 import cc.metapro.openct.classdetail.ClassDetailActivity
 import cc.metapro.openct.utils.Constants

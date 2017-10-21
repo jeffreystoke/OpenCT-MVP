@@ -18,7 +18,8 @@ package cc.metapro.openct.data.university
 
 import android.text.TextUtils
 import android.webkit.URLUtil
-import cc.metapro.openct.data.service.QuotePreservingCookieJar
+import cc.metapro.openct.data.QuotePreservingCookieJar
+import cc.metapro.openct.data.service.UniversityService
 import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.interceptors.SchoolInterceptor
 import okhttp3.HttpUrl
@@ -94,8 +95,8 @@ internal class WebHelper(baseURL: String) {
                 url = iFrame.absUrl("src")
             }
             if (!TextUtils.isEmpty(url)) {
-                val frame = service.get(url).execute().body()
-                domList.add(Jsoup.parse(frame, url))
+//                val frame = service.get(url).execute().body()
+//                domList.add(Jsoup.parse(frame, url))
             }
         }
         setCaptchaURL(domList, sys)

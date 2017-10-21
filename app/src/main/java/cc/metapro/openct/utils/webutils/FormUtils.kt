@@ -26,7 +26,6 @@ import android.widget.LinearLayout
 import android.widget.Spinner
 import cc.metapro.openct.R
 import cc.metapro.openct.utils.Constants
-import com.rengwuxian.materialedittext.MaterialEditText
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import java.util.*
@@ -193,7 +192,7 @@ object FormUtils {
             }
             if ("input".equals(tagName, ignoreCase = true)) {
                 if ("text".equals(e.attr("type"), ignoreCase = true)) {
-                    val editText = MaterialEditText(context)
+                    val editText = LayoutInflater.from(context).inflate(R.layout.widget_text_input, baseLinearLayout, false)
                     editText.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                     baseLinearLayout.addView(editText)
                 }

@@ -16,33 +16,44 @@ package cc.metapro.openct.utils
  * limitations under the License.
  */
 
-import android.app.ProgressDialog
+import android.annotation.SuppressLint
 import android.content.Context
 import android.support.annotation.StringRes
+import android.support.design.widget.TextInputEditText
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.ScrollView
 import cc.metapro.openct.R
-import cc.metapro.openct.custom.CustomActivity
-import cc.metapro.openct.customviews.CaptchaDialog
 import cc.metapro.openct.customviews.LinkSelectionDialog
 import cc.metapro.openct.customviews.TableChooseDialog
 import cc.metapro.openct.utils.base.LoginPresenter
+import com.afollestad.materialdialogs.MaterialDialog
 import org.jsoup.nodes.Document
 
 object ActivityUtils {
 
-    private var sProgressDialog: ProgressDialog? = null
+    @SuppressLint("StaticFieldLeak")
+    private var sProgressDialog: MaterialDialog? = null
 
-    fun showCaptchaDialog(manager: FragmentManager, presenter: LoginPresenter) {
+    fun showCaptchaDialog(context: Context, presenter: LoginPresenter) {
         try {
-            CaptchaDialog.newInstance(presenter).show(manager, "captcha_dialog")
+            val view = LayoutInflater.from(context).inflate(R.layout.dialog_captcha, null, false)
+            val img = view.findViewById<ImageView>(R.id.captcha_image)
+            val text = view.findViewById<TextInputEditText>(R.id.captcha_text)
+            MaterialDialog.Builder(context)
+                    .title(R.string.enter_captcha)
+                    .customView(view, true)
+                    .positiveText(android.R.string.ok)
+                    .onPositive { _, _ -> }
+                    .negativeText(android.R.string.cancel)
+                    .show()
         } catch (ignored: Exception) {
-
         }
 
     }
@@ -55,28 +66,46 @@ object ActivityUtils {
         TableChooseDialog.newInstance(type, document, presenter).show(manager, "table_choose_dialog")
     }
 
-    fun showAdvCustomTip(context: Context, type: String) {
-        AlertDialog.Builder(context)
-                .setTitle(R.string.load_fail)
-                .setMessage(R.string.load_fail_tip)
-                .setPositiveButton(android.R.string.ok) { dialog, which -> CustomActivity.actionStart(context, type) }
-                .setNegativeButton(android.R.string.cancel) { dialog, which -> }
-                .create().show()
+    /**
+     * 显示通过网页加载对话框
+     * @param context
+     * @param type 是图书馆还是教务网
+     */
+    fun showAdvCustomTip(context: Context, type: ActionType) {
+        MaterialDialog.Builder(context)
+                .title(R.string.load_fail)
+                .content(R.string.load_fail_tip)
+                .positiveText(android.R.string.ok)
+                .negativeText(android.R.string.cancel)
+                .onPositive { _, _ ->
+                    // CustomActivity.actionStart(context, type)
+                }
+                .show()
     }
 
-    private fun showProgressDialog(context: Context, @StringRes messageId: Int, cancelable: Boolean) {
-        if (sProgressDialog != null) {
-            sProgressDialog!!.dismiss()
-            sProgressDialog = null
-        }
-        sProgressDialog = ProgressDialog(context)
-        sProgressDialog!!.setMessage(context.getString(messageId))
-        sProgressDialog!!.setCancelable(cancelable)
-        sProgressDialog!!.show()
-    }
-
+    /**
+     * 显示可取消进度对话框, 标题固定, 可设定消息内容
+     * @param context
+     * @param messageId 消息内容
+     */
     fun showProgressDialog(context: Context, @StringRes messageId: Int) {
         showProgressDialog(context, messageId, true)
+    }
+
+    /**
+     * 显示进度对话框, 标题固定, 可设定消息内容, 是否可取消
+     * @param context
+     * @param messageId 消息内容
+     * @param cancelable 是否可取消
+     */
+    private fun showProgressDialog(context: Context, @StringRes messageId: Int, cancelable: Boolean) {
+        sProgressDialog?.dismiss()
+        sProgressDialog = MaterialDialog.Builder(context)
+                .title(R.string.dialog_title_please_wait)
+                .content(messageId)
+                .cancelable(cancelable)
+                .build()
+        sProgressDialog?.show()
     }
 
     fun dismissProgressDialog() {

@@ -17,8 +17,8 @@
 apply plugin: 'java'
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'org.mozilla:rhino:1.7.7.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'org.mozilla:rhino:1.7.7.2'
 }
 
 sourceCompatibility = "1.7"

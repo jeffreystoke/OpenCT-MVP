@@ -16,18 +16,4 @@ package cc.metapro.openct.data
  * limitations under the License.
  */
 
-import android.text.TextUtils
-import cc.metapro.openct.utils.Constants
-import com.scottyab.aescrypt.AESCrypt
-import java.security.GeneralSecurityException
-
-class LocalUser(val username: String, val password: String) {
-
-    @Throws(GeneralSecurityException::class)
-    fun getPwd(): String {
-        return AESCrypt.decrypt(Constants.seed, password)
-    }
-
-    val isEmpty: Boolean
-        get() = TextUtils.isEmpty(username) || TextUtils.isEmpty(password)
-}
+data class LocalUser(val username: String, val password: String)

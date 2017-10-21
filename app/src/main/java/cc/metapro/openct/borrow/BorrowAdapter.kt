@@ -17,19 +17,15 @@ package cc.metapro.openct.borrow
  */
 
 import android.content.Context
-import android.support.annotation.Keep
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
 import cc.metapro.openct.R
 import cc.metapro.openct.data.university.model.BorrowInfo
 import java.util.*
 
-@Keep
 internal class BorrowAdapter(context: Context) : RecyclerView.Adapter<BorrowAdapter.BorrowViewHolder>() {
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
@@ -41,7 +37,7 @@ internal class BorrowAdapter(context: Context) : RecyclerView.Adapter<BorrowAdap
     }
 
     override fun onBindViewHolder(holder: BorrowViewHolder, position: Int) {
-        holder.setInfo(mBorrows!![position])
+        holder.setInfo(mBorrows[position])
     }
 
     override fun getItemCount(): Int {
@@ -54,16 +50,11 @@ internal class BorrowAdapter(context: Context) : RecyclerView.Adapter<BorrowAdap
 
     internal class BorrowViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        @BindView(R.id.borrow_item_title)
-        var mTitle: TextView? = null
-
-        init {
-            ButterKnife.bind(this, itemView)
-        }
+        private lateinit var mTitle: TextView
 
         fun setInfo(info: BorrowInfo?) {
             if (info != null) {
-                mTitle!!.text = info.getFilteredContent(BorrowPresenter.list)
+                mTitle.text = info.getFilteredContent(BorrowPresenter.list)
             }
         }
     }

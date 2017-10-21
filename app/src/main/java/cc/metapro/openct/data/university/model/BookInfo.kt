@@ -16,11 +16,4 @@ package cc.metapro.openct.data.university.model
  * limitations under the License.
  */
 
-import cc.metapro.openct.data.source.local.StoreHelper
-
-class BookInfo(var mTitle: String, var mAuthor: String, var mContent: String, var mStoreInfo: String, var mLink: String) {
-
-    override fun toString(): String {
-        return StoreHelper.toJson(this)
-    }
-}
+class BookInfo(var mTitle: String, var mAuthor: String, var mContent: String, var mStoreInfo: String, var mLink: String)

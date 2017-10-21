@@ -17,20 +17,18 @@ package cc.metapro.openct
  */
 
 import android.app.Application
-import cc.metapro.openct.utils.ActivityUtils
 import cc.metapro.openct.utils.Constants
-import cc.metapro.openct.utils.CrashHandler
+import com.blankj.utilcode.util.CrashUtils
+import com.blankj.utilcode.util.Utils
 
 class OpenCT : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        //        if (LeakCanary.isInAnalyzerProcess(this)) {
-        //            return;
-        //        }
-        //        LeakCanary.install(this);
+        Utils.init(this)
+        CrashUtils.init()
+
         initStatic()
-        CrashHandler.initInstance(this)
     }
 
     private fun initStatic() {
@@ -44,10 +42,5 @@ class OpenCT : Application() {
         Constants.PLACE = getString(R.string.class_place)
         Constants.TEACHER = getString(R.string.class_teacher)
         Constants.CAPTCHA_FILE = cacheDir.path + "/captcha"
-    }
-
-    override fun onTerminate() {
-        super.onTerminate()
-        ActivityUtils.dismissProgressDialog()
     }
 }

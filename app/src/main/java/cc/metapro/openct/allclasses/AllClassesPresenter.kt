@@ -23,11 +23,8 @@ import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.widget.Toast
 import cc.metapro.openct.R
-import cc.metapro.openct.data.source.local.DBManger
-import cc.metapro.openct.data.source.local.LocalHelper
-import cc.metapro.openct.data.source.local.StoreHelper
+import cc.metapro.openct.data.source.LocalHelper
 import cc.metapro.openct.data.university.model.classinfo.Classes
-import cc.metapro.openct.data.university.model.classinfo.ExcelClass
 import cc.metapro.openct.utils.ActivityUtils
 import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.ICalHelper
@@ -48,7 +45,6 @@ import java.io.FileOutputStream
 import java.util.*
 
 internal class AllClassesPresenter(val mContext: Context, val mView: AllClassesContract.View) : AllClassesContract.Presenter {
-    private val mDBManger: DBManger = DBManger.getInstance(mContext)
 
     init {
         mView.setPresenter(this)
@@ -85,7 +81,6 @@ internal class AllClassesPresenter(val mContext: Context, val mView: AllClassesC
                         val events = ICalHelper.getClassEvents(calendarSparseArray, week, everyClassTime, restTime, c)
                         calendar.components.addAll(events)
                     } catch (ignored: Exception) {
-
                     }
 
                 }
@@ -112,6 +107,7 @@ internal class AllClassesPresenter(val mContext: Context, val mView: AllClassesC
                 }
             }
         })
+
         class m : MyObserver<Calendar>(TAG) {
             override fun onNext(t: Calendar) {
                 ActivityUtils.dismissProgressDialog()
@@ -124,6 +120,7 @@ internal class AllClassesPresenter(val mContext: Context, val mView: AllClassesC
                 Toast.makeText(mContext, mContext.getString(R.string.error_creating_calendar) + e.message, Toast.LENGTH_SHORT).show()
             }
         }
+
         val observer = m()
 
         observable.subscribeOn(Schedulers.io())
@@ -145,39 +142,39 @@ internal class AllClassesPresenter(val mContext: Context, val mView: AllClassesC
     }
 
     override fun loadFromExcel(f: FragmentManager) {
-        class back : ExcelDialog.ExcelCallback {
-            override fun onJsonResult(json: String) {
-                try {
-                    val excelClasses = StoreHelper.fromJsonList(json, ExcelClass::class.java)
-                    val addedClasses = Classes()
-                    val oldAllClasses = Constants.sClasses
-                    Constants.sClasses = Classes()
-                    excelClasses.mapTo(addedClasses) { it.enrichedClassInfo }
-                    AlertDialog.Builder(mContext)
-                            .setTitle(R.string.select_action)
-                            .setMessage(mContext.getString(R.string.excel_import_tip, excelClasses.size))
-                            .setPositiveButton(R.string.replace) { _, _ ->
-                                storeClasses(addedClasses)
-                                loadLocalClasses()
-                                Toast.makeText(mContext, R.string.classes_updated, Toast.LENGTH_LONG).show()
-                            }
-                            .setNeutralButton(R.string.combine) { _, _ ->
-                                oldAllClasses += addedClasses
-                                storeClasses(oldAllClasses)
-                                loadLocalClasses()
-                                Toast.makeText(mContext, R.string.classes_combined, Toast.LENGTH_LONG).show()
-                            }.show()
-                } catch (e: Exception) {
-                    Toast.makeText(mContext, mContext.getString(R.string.excel_fail_tip) + ", " + e.message, Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-        ExcelDialog.newInstance(back()).show(f, "excel_dialog")
+//        class back : ExcelDialog.ExcelCallback {
+//            override fun onJsonResult(json: String) {
+//                try {
+//                    val excelClasses = StoreHelper.fromJsonList(json, ExcelClass::class.java)
+//                    val addedClasses = Classes()
+//                    val oldAllClasses = Constants.sClasses
+//                    Constants.sClasses = Classes()
+//                    excelClasses.mapTo(addedClasses) { it.enrichedClassInfo }
+//                    AlertDialog.Builder(mContext)
+//                            .setTitle(R.string.select_action)
+//                            .setMessage(mContext.getString(R.string.excel_import_tip, excelClasses.size))
+//                            .setPositiveButton(R.string.replace) { _, _ ->
+//                                storeClasses(addedClasses)
+//                                loadLocalClasses()
+//                                Toast.makeText(mContext, R.string.classes_updated, Toast.LENGTH_LONG).show()
+//                            }
+//                            .setNeutralButton(R.string.combine) { _, _ ->
+//                                oldAllClasses += addedClasses
+//                                storeClasses(oldAllClasses)
+//                                loadLocalClasses()
+//                                Toast.makeText(mContext, R.string.classes_combined, Toast.LENGTH_LONG).show()
+//                            }.show()
+//                } catch (e: Exception) {
+//                    Toast.makeText(mContext, mContext.getString(R.string.excel_fail_tip) + ", " + e.message, Toast.LENGTH_LONG).show()
+//                }
+//            }
+//        }
+//        ExcelDialog.newInstance(back()).show(f, "excel_dialog")
     }
 
     override fun storeClasses(c: Classes) {
         try {
-            mDBManger.updateClasses(c)
+//            mDBManger.updateClasses(c)
             DailyClassWidget.update(mContext)
         } catch (e: Exception) {
             Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()

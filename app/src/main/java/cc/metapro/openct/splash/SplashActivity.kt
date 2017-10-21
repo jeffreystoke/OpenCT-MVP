@@ -16,22 +16,28 @@ package cc.metapro.openct.splash
  * limitations under the License.
  */
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
-
-import butterknife.BindView
-import butterknife.ButterKnife
 import cc.metapro.openct.R
 import cc.metapro.openct.myclass.ClassActivity
+import cc.metapro.openct.splash.views.LoginFragment
+import cc.metapro.openct.splash.views.SchoolFragment
+import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.PrefHelper
 import cc.metapro.openct.utils.base.BaseActivity
 import cc.metapro.openct.utils.base.BasePresenter
 
 class SplashActivity : BaseActivity() {
 
-    @BindView(R.id.view_pager)
-    internal lateinit var mViewPager: ViewPager
+    private lateinit var mViewPager: ViewPager
+    private val mSchoolFragment: SchoolFragment = SchoolFragment.instance
+    private val mCmsFragment: LoginFragment = LoginFragment.getInstance(Constants.TYPE_CMS)
+    private val mLibFragment: LoginFragment = LoginFragment.getInstance(Constants.TYPE_LIB)
 
     private var misScrolled = false
 
@@ -50,12 +56,26 @@ class SplashActivity : BaseActivity() {
         }
 
         PrefHelper.putBoolean(this, R.string.pref_initialed, true)
-        ButterKnife.bind(this)
         setViewPager()
     }
 
     private fun setViewPager() {
-        val pagerAdapter = InitPagerAdapter(supportFragmentManager, this)
+        SplashPresenter(mSchoolFragment, mCmsFragment, mLibFragment)
+        val pagerAdapter = object : FragmentStatePagerAdapter(supportFragmentManager) {
+            override fun getItem(position: Int): Fragment {
+                when (position) {
+                    0 -> return mSchoolFragment
+                    1 -> return mCmsFragment
+                    2 -> return mLibFragment
+                }
+                throw IndexOutOfBoundsException("three fragments at most!")
+            }
+
+            override fun getCount(): Int {
+                return 3
+            }
+        }
+
         mViewPager.adapter = pagerAdapter
         mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}

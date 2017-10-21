@@ -26,20 +26,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Spinner
 import android.widget.TextView
-
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import cc.metapro.openct.R
 import cc.metapro.openct.splash.SplashContract
 import cc.metapro.openct.splash.schoolselection.SchoolSelectionActivity
 
 class SchoolFragment : Fragment(), SplashContract.SchoolView {
 
-    @BindView(R.id.selection)
-    internal var mSelection: TextView? = null
-    @BindView(R.id.week)
-    internal var mWeek: Spinner? = null
+    private var mSelection: TextView? = null
+    private var mWeek: Spinner? = null
 
     private var mPresenter: SplashContract.Presenter? = null
 
@@ -47,12 +41,10 @@ class SchoolFragment : Fragment(), SplashContract.SchoolView {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_school, container, false)
-        ButterKnife.bind(this, view)
         initialed = true
         return view
     }
 
-    @OnClick(R.id.selection)
     fun onClick() {
         startActivityForResult(
                 Intent(context, SchoolSelectionActivity::class.java),

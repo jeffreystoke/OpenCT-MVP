@@ -23,28 +23,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
 import cc.metapro.openct.R
 import cc.metapro.openct.data.university.model.classinfo.Classes
 import cc.metapro.openct.utils.PrefHelper
-import cc.metapro.openct.utils.RecyclerViewHelper
+import cc.metapro.openct.utils.setRecyclerView
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 
 class DailyFragment : Fragment(), ClassContract.View {
 
-    @BindView(R.id.recycler_view)
-    internal var mRecyclerView: RecyclerView? = null
-    @BindView(R.id.empty_view)
-    internal var mEmptyView: TextView? = null
+    private lateinit var mRecyclerView: RecyclerView
+    private lateinit var mEmptyView: TextView
 
     private var mObservable: Observable<*>? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_class_today, container, false)
-        ButterKnife.bind(this, view)
         return view
     }
 
@@ -73,7 +68,7 @@ class DailyFragment : Fragment(), ClassContract.View {
     override fun showClasses(classes: Classes, week: Int) {
         mObservable = Observable.create(ObservableOnSubscribe<Any> {
             val dailyAdapter = DailyAdapter(context)
-            RecyclerViewHelper.setRecyclerView(context, mRecyclerView!!, dailyAdapter)
+            setRecyclerView(context, mRecyclerView!!, dailyAdapter)
 
             dailyAdapter.updateTodayClasses(classes, week)
             dailyAdapter.notifyDataSetChanged()

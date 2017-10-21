@@ -25,8 +25,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
 import cc.metapro.openct.R
 import cc.metapro.openct.data.university.model.classinfo.Classes
 import cc.metapro.openct.data.university.model.classinfo.SingleClass
@@ -38,10 +36,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 
 class TableFragment : Fragment(), ClassContract.View {
 
-    @BindView(R.id.seq)
-    internal var mSeq: LinearLayout? = null
-    @BindView(R.id.content)
-    internal var mContent: RelativeLayout? = null
+    private var mSeq: LinearLayout? = null
+    private var mContent: RelativeLayout? = null
 
     private var mClasses: List<SingleClass>? = null
     private var mObservable: Observable<*>? = null
@@ -49,7 +45,6 @@ class TableFragment : Fragment(), ClassContract.View {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_class_table, container, false)
-        ButterKnife.bind(this, view)
         return view
     }
 

@@ -16,7 +16,6 @@ package cc.metapro.openct.data.university.model
  * limitations under the License.
  */
 
-import cc.metapro.openct.data.source.local.StoreHelper
 import org.jsoup.nodes.Element
 import java.text.SimpleDateFormat
 import java.util.*
@@ -34,9 +33,4 @@ class BorrowInfo(th: Element, tr: Element) : KeyValueModel(th, tr) {
 
         return false
     }
-
-    override fun toString(): String {
-        return StoreHelper.toJson(this)
-    }
-
 }

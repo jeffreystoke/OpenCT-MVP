@@ -16,40 +16,20 @@ package cc.metapro.openct.borrow
  * limitations under the License.
  */
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BaseTransientBottomBar
-import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageView
-import android.widget.Toast
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import cc.metapro.openct.R
-import cc.metapro.openct.data.source.local.LocalHelper
+import cc.metapro.openct.data.source.LocalHelper
 import cc.metapro.openct.data.university.model.BorrowInfo
-import cc.metapro.openct.pref.SettingsActivity
-import cc.metapro.openct.utils.RecyclerViewHelper
 import cc.metapro.openct.utils.base.BaseActivity
 import cc.metapro.openct.utils.base.BasePresenter
+import cc.metapro.openct.utils.setRecyclerView
+import kotlinx.android.synthetic.main.activity_borrow.*
 
 class BorrowActivity : BaseActivity(), BorrowContract.View {
-
-    // init view with butterknife
-    @BindView(R.id.toolbar)
-    internal lateinit var mToolbar: Toolbar
-    @BindView(R.id.fab)
-    internal lateinit var mFab: FloatingActionButton
-    @BindView(R.id.recycler_view)
-    internal lateinit var mRecyclerView: RecyclerView
-    @BindView(R.id.image)
-    internal lateinit var mImage: ImageView
 
     private lateinit var mBorrowAdapter: BorrowAdapter
     private lateinit var mBorrowPresenter: BorrowContract.Presenter
@@ -60,31 +40,28 @@ class BorrowActivity : BaseActivity(), BorrowContract.View {
     override val layout: Int
         get() = R.layout.activity_borrow
 
-    @OnClick(R.id.fab)
     fun load() {
         val user = LocalHelper.getLibStuInfo(this)
-        if (user.isEmpty) {
-            Toast.makeText(this, R.string.please_fill_lib_info, Toast.LENGTH_LONG).show()
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
-        } else {
-            mBorrowPresenter.loadOnlineInfo(supportFragmentManager)
-        }
+//        if (user.isEmpty) {
+//            Toast.makeText(this, R.string.please_fill_lib_info, Toast.LENGTH_LONG).show()
+//            val intent = Intent(this, SettingsActivity::class.java)
+//            startActivity(intent)
+//        } else {
+//            mBorrowPresenter.loadOnlineInfo(supportFragmentManager)
+//        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ButterKnife.bind(this)
-
         // set toolbar
-        mToolbar.overflowIcon = ContextCompat.getDrawable(this, R.drawable.ic_filter)
-        setSupportActionBar(mToolbar)
+//        mToolbar.overflowIcon = ContextCompat.getDrawable(this, R.drawable.ic_filter)
+        setSupportActionBar(toolbar)
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
         mBorrowAdapter = BorrowAdapter(this)
-        RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mBorrowAdapter)
-        BorrowPresenter(this, this)
+        setRecyclerView(this, recycler_view, mBorrowAdapter)
+        BorrowPresenter(this)
     }
 
     override fun setPresenter(p: BorrowContract.Presenter) {
@@ -93,11 +70,11 @@ class BorrowActivity : BaseActivity(), BorrowContract.View {
 
     override fun updateBorrows(l: List<BorrowInfo>) {
         if (l.isEmpty()) {
-            Snackbar.make(mRecyclerView, R.string.no_borrows, BaseTransientBottomBar.LENGTH_LONG).show()
+            Snackbar.make(recycler_view, R.string.no_borrows, BaseTransientBottomBar.LENGTH_LONG).show()
         } else {
             mBorrowAdapter.setNewBorrows(l)
             mBorrowAdapter.notifyDataSetChanged()
-            Snackbar.make(mRecyclerView, getString(R.string.borrow_entries, l.size), BaseTransientBottomBar.LENGTH_LONG).show()
+            Snackbar.make(recycler_view, getString(R.string.borrow_entries, l.size), BaseTransientBottomBar.LENGTH_LONG).show()
         }
     }
 

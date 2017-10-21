@@ -19,21 +19,17 @@ package cc.metapro.openct.utils.base
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 
-abstract class MyObserver<T>(val tag : String) : Observer<T> {
+abstract class MyObserver<T>(val tag: String) : Observer<T> {
 
     override fun onNext(t: T) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onError(e: Throwable) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onComplete() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onSubscribe(d: Disposable) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

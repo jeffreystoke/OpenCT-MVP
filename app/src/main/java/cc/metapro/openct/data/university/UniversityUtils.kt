@@ -17,7 +17,6 @@ package cc.metapro.openct.data.university
  */
 
 import android.content.Context
-import cc.metapro.interactiveweb.utils.HTMLUtils
 import cc.metapro.openct.R
 import cc.metapro.openct.data.university.model.classinfo.Classes
 import cc.metapro.openct.data.university.model.classinfo.EnrichedClassInfo
@@ -80,7 +79,7 @@ object UniversityUtils {
                     val tds = tr.select("td")
                     val builder = StringBuilder()
                     for (td in tds) {
-                        builder.append(td.text()).append(HTMLUtils.BR_REPLACER)
+//                        builder.append(td.text()).append(HTMLUtils.BR_REPLACER)
                     }
                     val td = Element(Tag.valueOf("td"), tr.baseUri())
                     td.text(builder.toString())
@@ -90,7 +89,7 @@ object UniversityUtils {
             return rawInfoList
         } else {
             var tableString = table.toString()
-            tableString = tableString.replace(HTMLUtils.BR.toRegex(), HTMLUtils.BR_REPLACER)
+//            tableString = tableString.replace(HTMLUtils.BR.toRegex(), HTMLUtils.BR_REPLACER)
             table = Jsoup.parse(tableString).body().children().first()
 
             val pattern = Pattern.compile(CLASS_TABLE_PATTERN)
@@ -147,11 +146,11 @@ object UniversityUtils {
                     if (td != null) {
                         val text = td.text()
                         if (!REHelper.isEmpty(text)) {
-                            val classStrings = text.split((HTMLUtils.BR_REPLACER + HTMLUtils.BR_REPLACER + "+").toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                            for (clazz in classStrings) {
-                                colorIndex = if (colorIndex >= colors.size) 0 else colorIndex
-                                classes.add(EnrichedClassInfo(clazz, i + 1, j + 1, colors[colorIndex++], info))
-                            }
+//                            val classStrings = text.split((HTMLUtils.BR_REPLACER + HTMLUtils.BR_REPLACER + "+").toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+//                            for (clazz in classStrings) {
+//                                colorIndex = if (colorIndex >= colors.size) 0 else colorIndex
+//                                classes.add(EnrichedClassInfo(clazz, i + 1, j + 1, colors[colorIndex++], info))
+//                            }
                         }
                     }
                 }

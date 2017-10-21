@@ -16,27 +16,19 @@ package cc.metapro.openct.splash
  * limitations under the License.
  */
 
-import android.content.Context
-import android.text.TextUtils
-import cc.metapro.openct.R
 import cc.metapro.openct.utils.Constants
-import cc.metapro.openct.utils.PrefHelper
-import com.scottyab.aescrypt.AESCrypt
-import java.security.GeneralSecurityException
-import java.util.*
+import com.blankj.utilcode.util.SPUtils
 
 
-internal class SplashPresenter(private val mContext: Context,
-                               private val mSchoolView: SplashContract.SchoolView,
-                               cmsView: SplashContract.LoginView,
-                               libView: SplashContract.LoginView) : SplashContract.Presenter {
+internal class SplashPresenter(
+        private val mSchoolView: SplashContract.SchoolView,
+        cmsView: SplashContract.LoginView,
+        libView: SplashContract.LoginView) : SplashContract.Presenter {
 
     override fun subscribe() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun unSubscribe() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     init {
@@ -46,45 +38,27 @@ internal class SplashPresenter(private val mContext: Context,
     }
 
     override fun setSelectedSchool(name: String) {
-        PrefHelper.putString(mContext, R.string.pref_school_name, name)
         mSchoolView.showSelectedSchool(name)
+        val sp = SPUtils.getInstance()
+        sp.put(Constants.PREF_SCHOOL_NAME, name)
     }
 
     override fun setSelectedWeek(week: Int) {
-        val currentWeekOfYear = Calendar.getInstance(Locale.CHINA)
-                .get(Calendar.WEEK_OF_YEAR)
-        PrefHelper.putString(mContext, R.string.pref_current_week, week.toString() + "")
-        PrefHelper.putString(mContext, R.string.pref_week_set_week, currentWeekOfYear.toString() + "")
+        val currentSetWeek = System.currentTimeMillis() / (1000 * 3600 * 24 * 7)
+        val sp = SPUtils.getInstance()
+        sp.put(Constants.PREF_CURRENT_WEEK, "$week")
+        sp.put(Constants.PREF_WEEK_SET_WEEK, "$currentSetWeek")
     }
 
     override fun storeCMSUserPass(username: String, password: String) {
-        var password = password
-        try {
-            password = getEncryptedPassword(password)
-        } catch (ignored: Exception) {
-
-        } finally {
-            PrefHelper.putString(mContext, R.string.pref_cms_username, username)
-            PrefHelper.putString(mContext, R.string.pref_cms_password, password)
-        }
+        val sp = SPUtils.getInstance()
+        sp.put(Constants.PREF_CMS_USERNAME, username)
+        sp.put(Constants.PREF_CMS_PASSWORD, password)
     }
 
     override fun storeLibUserPass(username: String, password: String) {
-        var password = password
-        try {
-            password = getEncryptedPassword(password)
-        } catch (ignored: Exception) {
-
-        } finally {
-            PrefHelper.putString(mContext, R.string.pref_lib_username, username)
-            PrefHelper.putString(mContext, R.string.pref_lib_password, password)
-        }
-    }
-
-    @Throws(GeneralSecurityException::class)
-    private fun getEncryptedPassword(password: String): String {
-        if (TextUtils.isEmpty(password))
-            throw NullPointerException("password shouldn't be empty")
-        return AESCrypt.encrypt(Constants.seed, password)
+        val sp = SPUtils.getInstance()
+        sp.put(Constants.PREF_LIB_USERNAME, username)
+        sp.put(Constants.PREF_LIB_PASSWORD, password)
     }
 }

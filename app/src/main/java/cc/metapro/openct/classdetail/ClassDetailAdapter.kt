@@ -17,6 +17,7 @@ package cc.metapro.openct.classdetail
  */
 
 import android.content.Context
+import android.support.design.widget.TextInputEditText
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.Gravity
@@ -26,13 +27,9 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
 import cc.metapro.openct.R
 import cc.metapro.openct.data.university.model.classinfo.ClassTime
 import cc.metapro.openct.utils.Constants
-import cc.metapro.openct.utils.ReferenceUtils
-import com.rengwuxian.materialedittext.MaterialEditText
 
 internal class ClassDetailAdapter(context: Context, private val mClassTimes: MutableList<ClassTime>) : RecyclerView.Adapter<ClassDetailAdapter.ClassDetailViewHolder>() {
 
@@ -53,27 +50,17 @@ internal class ClassDetailAdapter(context: Context, private val mClassTimes: Mut
 
     internal inner class ClassDetailViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        @BindView(R.id.week_day)
-        lateinit var mWeekDay: Spinner
-        @BindView(R.id.time_start)
-        lateinit var mTimeStart: MaterialEditText
-        @BindView(R.id.time_end)
-        lateinit var mTimeEnd: MaterialEditText
-        @BindView(R.id.during_container)
-        lateinit var mDuringContainer: LinearLayout
-        lateinit var selections: Array<TextView>
-        @BindView(R.id.class_teacher)
-        lateinit var mTeacher: MaterialEditText
-        @BindView(R.id.class_place)
-        lateinit var mPlace: MaterialEditText
-        @BindView(R.id.edit)
-        lateinit var mEdit: TextView
+        private lateinit var mWeekDay: Spinner
+        private lateinit var mTimeStart: TextInputEditText
+        private lateinit var mTimeEnd: TextInputEditText
+        private lateinit var mDuringContainer: LinearLayout
+        private lateinit var selections: Array<TextView>
+        private lateinit var mTeacher: TextInputEditText
+        private lateinit var mPlace: TextInputEditText
+        private lateinit var mEdit: TextView
 
         var posit = 0
 
-        init {
-            ButterKnife.bind(this, itemView)
-        }
 
         private fun setEditable(isEditable: Boolean) {
             mWeekDay.isEnabled = isEditable
@@ -129,7 +116,6 @@ internal class ClassDetailAdapter(context: Context, private val mClassTimes: Mut
                     textView.gravity = Gravity.CENTER
                     if (time.hasClass(week)) {
                         textView.background = ContextCompat.getDrawable(context, R.drawable.text_view_card_style_blue)
-                        textView.setTextColor(ReferenceUtils.getThemeColor(context, R.attr.colorAccent))
                     } else {
                         textView.background = ContextCompat.getDrawable(context, R.drawable.text_view_card_style_grey)
                         textView.setTextColor(ContextCompat.getColor(context, R.color.material_grey))
@@ -143,7 +129,6 @@ internal class ClassDetailAdapter(context: Context, private val mClassTimes: Mut
                             time.disableWeek(week)
                         } else {
                             textView.background = ContextCompat.getDrawable(context, R.drawable.text_view_card_style_blue)
-                            textView.setTextColor(ReferenceUtils.getThemeColor(context, R.attr.colorAccent))
                             time.enableWeek(week)
                         }
                         mClassTimes.add(position, time)

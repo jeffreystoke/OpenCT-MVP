@@ -17,7 +17,6 @@
 
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/AppTheme.CardView.FullWidth"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -43,15 +42,19 @@
             android:layout_margin="5dp"
             android:orientation="horizontal">
 
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/time_start"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:gravity="center"
-                android:hint="@string/start"
-                android:inputType="numberDecimal"
-                app:met_floatingLabel="normal"/>
+                android:gravity="center">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/time_start"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/start"
+                    android:inputType="numberDecimal"/>
+            </android.support.design.widget.TextInputLayout>
 
             <TextView
                 android:layout_width="0dp"
@@ -60,15 +63,19 @@
                 android:gravity="center"
                 android:text="@string/sep"/>
 
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/time_end"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:gravity="center"
-                android:hint="@string/end"
-                android:inputType="numberDecimal"
-                app:met_floatingLabel="normal"/>
+                android:gravity="center">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/time_end"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/end"
+                    android:inputType="numberDecimal"/>
+            </android.support.design.widget.TextInputLayout>
 
             <TextView
                 android:layout_width="0dp"
@@ -94,21 +101,31 @@
             android:orientation="vertical">
         </LinearLayout>
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/class_teacher"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:hint="@string/class_teacher"
-            app:met_floatingLabel="normal"/>
+            android:layout_margin="5dp">
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/class_place"
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/class_teacher"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/class_teacher"
+                android:inputType="numberDecimal"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:hint="@string/class_place"
-            app:met_floatingLabel="normal"/>
+            android:layout_margin="5dp">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/class_place"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/class_place"
+                android:inputType="numberDecimal"/>
+        </android.support.design.widget.TextInputLayout>
 
         <TextView
             android:id="@+id/edit"
@@ -119,6 +136,5 @@
             android:text="@string/edit"
             android:textColor="?attr/colorAccent"
             android:textSize="16sp"/>
-
     </LinearLayout>
 </android.support.v7.widget.CardView>

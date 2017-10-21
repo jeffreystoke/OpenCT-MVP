@@ -31,7 +31,6 @@ import java.util.Calendar
 
 object ICalHelper {
 
-    @Throws(URISyntaxException::class, SocketException::class)
     fun getClassEvents(classTimeMap: SparseArray<Calendar>, week: Int, everyClassTime: Int, restTime: Int, info: EnrichedClassInfo): List<VEvent> {
         val result = ArrayList<VEvent>()
         for (time in info.timeSet) {

@@ -19,16 +19,14 @@ package cc.metapro.openct.data.university
 import android.text.TextUtils
 import android.webkit.URLUtil
 import cc.metapro.openct.LoginConfig
-import cc.metapro.openct.data.source.local.StoreHelper
-import cc.metapro.openct.data.source.remote.RemoteSource
+import cc.metapro.openct.data.service.UniversityService
+import cc.metapro.openct.data.source.RemoteSource
 import cc.metapro.openct.utils.Constants.ACTION_KEY
-import cc.metapro.openct.utils.Constants.CAPTCHA_FILE
 import cc.metapro.openct.utils.Constants.CAPTCHA_KEY
 import cc.metapro.openct.utils.Constants.PASSWORD_KEY
 import cc.metapro.openct.utils.Constants.TYPE_CMS
 import cc.metapro.openct.utils.Constants.TYPE_LIB
 import cc.metapro.openct.utils.Constants.USERNAME_KEY
-import cc.metapro.openct.utils.TextHelper
 import cc.metapro.openct.utils.interceptors.SchoolInterceptor
 import cc.metapro.openct.utils.webutils.Form
 import cc.metapro.openct.utils.webutils.FormHandler
@@ -36,19 +34,17 @@ import cc.metapro.openct.utils.webutils.FormUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.IOException
-import java.util.*
 import java.util.regex.Pattern
 
 abstract class UniversityFactory internal constructor(info: UniversityInfo, type: Int) {
 
-    private val mRemoteRepoSource: RemoteSource
+    private val mRemoteRepoSource: RemoteSource = RemoteSource(info.name)
     private var mUsername: String? = null
     private var mPassword: String? = null
     private var mCaptcha: String? = null
     private var loginSuccess: Boolean = false
 
     init {
-        mRemoteRepoSource = RemoteSource(info.name)
         if (type == TYPE_CMS) {
             SYS = info.cmsSys
             BASE_URL = URLUtil.guessUrl(info.cmsURL)
@@ -90,13 +86,13 @@ abstract class UniversityFactory internal constructor(info: UniversityInfo, type
             val res = FormUtils.getLoginFiledMap(targetForm, loginMap, true).toMutableMap()
             val action = res[ACTION_KEY]
             res.remove(ACTION_KEY)
-            val stringResponse = mService!!.post(action!!, res).execute()
-            USER_CENTER = stringResponse.body()!!
+//            val stringResponse = mService!!.post(action!!, res).execute()
+//            USER_CENTER = stringResponse.body()!!
 
             // beat 5 seconds restriction
             if (USER_CENTER.length < 100) {
                 Thread.sleep((6 * 1000).toLong())
-                USER_CENTER = mService!!.post(action, res).execute().body()!!
+//                USER_CENTER = mService!!.post(action, res).execute().body()!!
             }
 
             val document = Jsoup.parse(USER_CENTER, webHelper!!.userCenterURL)
@@ -105,7 +101,7 @@ abstract class UniversityFactory internal constructor(info: UniversityInfo, type
             for (frame in frames) {
                 val url = frame.absUrl("src")
                 if (!TextUtils.isEmpty(url)) {
-                    document.append(mService!!.get(url).execute().body()!!)
+//                    document.append(mService!!.get(url).execute().body()!!)
                 }
             }
             // fineLogin finish, check results
@@ -134,9 +130,9 @@ abstract class UniversityFactory internal constructor(info: UniversityInfo, type
             else
                 mLoginConfig!!.fetchExtraMethod.toUpperCase()
             if (method == "POST") {
-                extraPart = mService!!.post(extraPartUrl, HashMap<String, String>(0)).execute().body()!!
+//                extraPart = mService!!.post(extraPartUrl, HashMap<String, String>(0)).execute().body()!!
             } else if (method == "GET") {
-                extraPart = mService!!.get(extraPartUrl).execute().body()!!
+//                extraPart = mService!!.get(extraPartUrl).execute().body()!!
             }
             mLoginConfig!!.setExtraPart(extraPart)
         }
@@ -150,8 +146,9 @@ abstract class UniversityFactory internal constructor(info: UniversityInfo, type
         }
 
         val keyValueSpec = mLoginConfig!!.postKeyValueSpec
-        val userCenter = mService!!.post(action, keyValueSpec).execute().body()
-        return Jsoup.parse(userCenter, webHelper!!.userCenterURL)
+//        val userCenter = mService!!.post(action, keyValueSpec).execute().body()
+//        return Jsoup.parse(userCenter, webHelper!!.userCenterURL)
+        return Jsoup.parse("")
     }
 
     // 初次获取验证码
@@ -169,14 +166,14 @@ abstract class UniversityFactory internal constructor(info: UniversityInfo, type
         interceptor!!.setObserver(x())
 
         // 获取精确配置
-        mLoginConfig = mRemoteRepoSource.loginConfig
+//        mLoginConfig = mRemoteRepoSource.loginConfig
         var loginUrl = ""
         if (mLoginConfig != null) {
-            loginUrl = TextHelper.getFirstWhenNotEmpty(mLoginConfig!!.loginURL, webHelper!!.loginPageURL.toString())
+//            loginUrl = TextHelper.getFirstWhenNotEmpty(mLoginConfig!!.loginURL, webHelper!!.loginPageURL.toString())
         }
 
-        val loginPageHtml = mService!!.get(loginUrl).execute().body()
-        webHelper!!.parseCaptchaURL(SYS, loginPageHtml!!, mService!!)
+//        val loginPageHtml = mService!!.get(loginUrl).execute().body()
+//        webHelper!!.parseCaptchaURL(SYS, loginPageHtml!!, mService!!)
 
         // 获取验证码图片, 精确配置的优先级高于自动解析
         var captchaURL: String = webHelper!!.captchaURL!!
@@ -184,13 +181,13 @@ abstract class UniversityFactory internal constructor(info: UniversityInfo, type
             if (mLoginConfig!!.needCaptcha()) {
                 captchaURL = webHelper!!.loginPageURL!!
                         .newBuilder(mLoginConfig!!.captchaURL)!!.toString()
-                val body = mService!!.getPic(captchaURL).execute().body()
-                StoreHelper.storeBytes(CAPTCHA_FILE!!, body!!.byteStream())
+//                val body = mService!!.getPic(captchaURL).execute().body()
+//                StoreHelper.storeBytes(CAPTCHA_FILE!!, body!!.byteStream())
             }
             return true
         } else if (!TextUtils.isEmpty(captchaURL)) {
-            val body = mService!!.getPic(captchaURL).execute().body()
-            StoreHelper.storeBytes(CAPTCHA_FILE!!, body!!.byteStream())
+//            val body = mService!!.getPic(captchaURL).execute().body()
+//            StoreHelper.storeBytes(CAPTCHA_FILE!!, body!!.byteStream())
             return true
         }
 
@@ -229,9 +226,9 @@ abstract class UniversityFactory internal constructor(info: UniversityInfo, type
         // 再次获取验证码
         @Throws(IOException::class)
         fun getOneMoreCAPTCHA() {
-            val bodyResponse = mService!!.getPic(webHelper!!.captchaURL!!).execute()
-            val body = bodyResponse.body()
-            StoreHelper.storeBytes(CAPTCHA_FILE!!, body!!.byteStream())
+//            val bodyResponse = mService!!.getPic(webHelper!!.captchaURL!!).execute()
+//            val body = bodyResponse.body()
+//            StoreHelper.storeBytes(CAPTCHA_FILE!!, body!!.byteStream())
         }
     }
 

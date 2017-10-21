@@ -33,14 +33,15 @@
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar_layout"
-        style="@style/AppTheme.AppBarLayout">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <android.support.design.widget.CollapsingToolbarLayout
             style="@style/AppTheme.CollapsingToolbarLayout">
 
             <ImageView
                 android:id="@+id/image"
-                style="@style/AppTheme.AppBarImage"/>
+                style="@style/AppTheme.NoActionbar.AppBarImage"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -55,23 +56,25 @@
                     android:layout_height="match_parent"
                     android:layout_weight="4"/>
 
-                <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/lib_search_content_edittext"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="6"
-                    android:hint="@string/search"
-                    android:imeOptions="actionSearch"
-                    android:inputType="text"
-                    app:met_baseColor="?android:attr/textColorPrimaryInverse"
-                    app:met_floatingLabel="normal"/>
+                    android:layout_weight="6">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/lib_search_content_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="@string/search"
+                        android:imeOptions="actionSearch"
+                        android:inputType="text"/>
+                </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                style="?attr/toolbarStyle"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize">
+                android:layout_height="?actionBarSize">
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>

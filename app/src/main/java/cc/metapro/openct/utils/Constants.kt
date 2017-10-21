@@ -17,20 +17,26 @@ package cc.metapro.openct.utils
  */
 
 import android.content.Context
-
-import cc.metapro.openct.data.source.local.DBManger
-import cc.metapro.openct.data.university.DetailCustomInfo
 import cc.metapro.openct.data.university.model.classinfo.Classes
 
 object Constants {
 
+    val PREF_CURRENT_WEEK = "current_week"
+    val PREF_WEEK_SET_WEEK = "week_set_week"
+    val PREF_CMS_USERNAME = "cms_username"
+    val PREF_CMS_PASSWORD = "cms_password"
+    val PREF_LIB_USERNAME = "lib_username"
+    val PREF_LIB_PASSWORD = "lib_password"
+    val PREF_SCHOOL_NAME = "school_name"
+
     val WEEKS = 30
     val TYPE_CMS = 0
     val TYPE_LIB = 1
-    val TYPE_CLASS = "class"
-    val TYPE_GRADE = "grade"
-    val TYPE_SEARCH = "search"
-    val TYPE_BORROW = "borrow"
+//    val TYPE_CLASS = "class"
+//    val TYPE_GRADE = "grade"
+//    val TYPE_SEARCH = "search"
+//    val TYPE_BORROW = "borrow"
+
     val TIME_PREFIX = "class_time_"
     val ACTION_KEY = "action"
     val USERNAME_KEY = "username"
@@ -64,20 +70,20 @@ object Constants {
     val NJHUIWEN = "njhuiwen"
 
     // captcha cache file path
-    var CAPTCHA_FILE: String? = null
+    lateinit var CAPTCHA_FILE: String
     // table choose dialog options
-    var NAME: String? = null
-    var TIME: String? = null
-    var TYPE: String? = null
-    var DURING: String? = null
-    var PLACE: String? = null
-    var TEACHER: String? = null
+    lateinit var NAME: String
+    lateinit var TIME: String
+    lateinit var TYPE: String
+    lateinit var DURING: String
+    lateinit var PLACE: String
+    lateinit var TEACHER: String
     var CLASS_WIDTH = 0
     var CLASS_BASE_HEIGHT = 0
     var sClasses = Classes()
     lateinit var sDetailCustomInfo: DetailCustomInfo
 
     fun checkAdvCustomInfo(context: Context) {
-        sDetailCustomInfo = DBManger.getDetailCustomInfo(context)
+//        sDetailCustomInfo = DBManger.getDetailCustomInfo(context)
     }
 }

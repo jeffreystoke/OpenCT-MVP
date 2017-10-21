@@ -26,9 +26,10 @@ class CmsFactory(info: UniversityInfo) : UniversityFactory(info, Constants.TYPE_
     @Throws(Exception::class)
     fun getPageDom(url: String): Document? {
         INFO_PAGE_URL = HttpUrl.parse(url)!!.toString()
-        val response = UniversityFactory.mService!!.get(url).execute()
-        val tablePage = response.body()
-        return Jsoup.parse(tablePage, url)
+//        val response = UniversityFactory.mService!!.get(url).execute()
+//        val tablePage = response.body()
+//        return Jsoup.parse(tablePage, url)
+        return Jsoup.parse("")
     }
 
     @Throws(Exception::class)
@@ -49,15 +50,15 @@ class CmsFactory(info: UniversityInfo) : UniversityFactory(info, Constants.TYPE_
     private fun getFinalPageDom(actionURL: String, queryMap: Map<String, String>, needNewPage: Boolean): Document {
         val tablePage: String
         if (Constants.QZDATASOFT.equals(UniversityFactory.SYS, ignoreCase = true)) {
-            tablePage = UniversityFactory.mService!!.post(actionURL, queryMap).execute().body()!!
+//            tablePage = UniversityFactory.mService!!.post(actionURL, queryMap).execute().body()!!
         } else {
             if (needNewPage) {
-                tablePage = UniversityFactory.mService!!.post(actionURL, queryMap).execute().body()!!
+//                tablePage = UniversityFactory.mService!!.post(actionURL, queryMap).execute().body()!!
             } else {
-                tablePage = UniversityFactory.mService!!.get(actionURL).execute().body()!!
+//                tablePage = UniversityFactory.mService!!.get(actionURL).execute().body()!!
             }
         }
-        return Jsoup.parse(tablePage, INFO_PAGE_URL)
+        return Jsoup.parse("")
     }
 
     companion object {

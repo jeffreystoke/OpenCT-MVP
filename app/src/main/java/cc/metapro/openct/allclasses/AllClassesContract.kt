@@ -24,13 +24,18 @@ import cc.metapro.openct.utils.base.BaseView
 interface AllClassesContract {
 
     interface View : BaseView<Presenter> {
+        // 更新所有课程信息
         fun updateClasses()
     }
 
     interface Presenter : BasePresenter {
+        // 导出课程到 iCal
         fun exportClasses()
+        // 清除所有课程
         fun clearClasses()
+        // 从 Excel 导入
         fun loadFromExcel(f : FragmentManager)
+        // 保存课程信息
         fun storeClasses(c : Classes)
     }
 }

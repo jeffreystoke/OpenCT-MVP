@@ -18,13 +18,9 @@ package cc.metapro.openct.myclass
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
 import cc.metapro.openct.R
 import cc.metapro.openct.data.university.model.classinfo.Classes
 import cc.metapro.openct.data.university.model.classinfo.SingleClass
@@ -58,31 +54,25 @@ internal class DailyAdapter(context: Context) : RecyclerView.Adapter<DailyAdapte
 
     internal class ClassViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        @BindView(R.id.class_name)
-        var mClassName: TextView? = null
-        @BindView(R.id.class_place_time)
-        var mTimePlace: TextView? = null
-
-        init {
-            ButterKnife.bind(this, itemView)
-        }
+//        var mClassName: TextView? = null
+//        var mTimePlace: TextView? = null
 
         fun setInfo(info: SingleClass) {
-            mClassName!!.text = info.name
-            var content = ""
-
-            if (!TextUtils.isEmpty(info.timeString)) {
-                content += mClassName!!.context.getString(R.string.text_today_seq, info.timeString)
-            }
-
-            if (!TextUtils.isEmpty(info.place)) {
-                if (!TextUtils.isEmpty(content)) {
-                    content += ", "
-                }
-                content += mClassName!!.context.getString(R.string.text_place_at, info.place)
-            }
-
-            mTimePlace!!.text = content
+//            mClassName!!.text = info.name
+//            var content = ""
+//
+//            if (!TextUtils.isEmpty(info.timeString)) {
+//                content += mClassName!!.context.getString(R.string.text_today_seq, info.timeString)
+//            }
+//
+//            if (!TextUtils.isEmpty(info.place)) {
+//                if (!TextUtils.isEmpty(content)) {
+//                    content += ", "
+//                }
+//                content += mClassName!!.context.getString(R.string.text_place_at, info.place)
+//            }
+//
+//            mTimePlace!!.text = content
         }
     }
 }

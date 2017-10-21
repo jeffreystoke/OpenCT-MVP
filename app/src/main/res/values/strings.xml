@@ -308,4 +308,5 @@
     <string name="nav_header_img">nav_header_img</string>
     <string name="set_bg">设置背景</string>
     <string name="show_sem_class">显示学期课程</string>
+    <string name="dialog_title_please_wait">请稍候</string>
 </resources>

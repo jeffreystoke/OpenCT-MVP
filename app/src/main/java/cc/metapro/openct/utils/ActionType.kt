@@ -16,12 +16,13 @@
 
 package cc.metapro.openct.utils
 
-import java.io.Closeable
-
-object CloseUtils {
-    fun close(vararg c: Closeable?) {
-        for (closeable in c) {
-            closeable?.close()
-        }
-    }
+enum class ActionType {
+    // 课程信息
+    CLASS,
+    // 成绩信息
+    GRADE,
+    // 图书检索
+    SEARCH,
+    // 借阅信息
+    BORROW
 }

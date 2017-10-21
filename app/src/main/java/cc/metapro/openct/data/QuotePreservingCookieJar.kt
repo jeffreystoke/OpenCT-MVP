@@ -1,4 +1,4 @@
-package cc.metapro.openct.data.service
+package cc.metapro.openct.data
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table

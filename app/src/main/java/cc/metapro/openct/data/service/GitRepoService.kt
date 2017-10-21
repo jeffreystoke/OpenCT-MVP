@@ -1,5 +1,3 @@
-package cc.metapro.openct.custom
-
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
  *
@@ -16,18 +14,25 @@ package cc.metapro.openct.custom
  * limitations under the License.
  */
 
-import android.support.v4.app.FragmentManager
+package cc.metapro.openct.data.service
 
-import cc.metapro.interactiveweb.InteractiveWebView
-import cc.metapro.openct.utils.base.BasePresenter
-import cc.metapro.openct.utils.base.BaseView
+import cc.metapro.openct.LoginConfig
+import cc.metapro.openct.data.university.UniversityInfo
+import io.reactivex.Observable
+import retrofit2.http.GET
+import retrofit2.http.Path
 
-interface CustomContract {
+interface GitRepoService {
 
-    interface View : BaseView<Presenter> {
-    }
+    /**
+     * 获取所有学校的基础信息
+     */
+    @GET("schools.json")
+    fun listUniversities(): Observable<List<UniversityInfo>>
 
-    interface Presenter : BasePresenter {
-        fun setWebView(webView: InteractiveWebView, manager: FragmentManager)
-    }
+    /**
+     * 获取某个学校的详细 js 登录配置
+     */
+    @GET("login/{school}")
+    fun getLoginConfig(@Path("school") school: String): Observable<LoginConfig>
 }

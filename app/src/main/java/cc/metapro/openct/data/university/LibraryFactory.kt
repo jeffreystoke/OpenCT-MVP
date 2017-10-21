@@ -19,7 +19,6 @@ package cc.metapro.openct.data.university
 
 import android.text.TextUtils
 import android.util.Log
-import cc.metapro.interactiveweb.utils.HTMLUtils
 import cc.metapro.openct.data.university.model.BookInfo
 import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.webutils.FormHandler
@@ -40,7 +39,7 @@ class LibraryFactory(info: UniversityInfo) : UniversityFactory(info, Constants.T
     @Throws(Exception::class)
     fun getBorrowPageDom(url: String): Document {
         var tablePage: String = UniversityFactory.mService!!.get(url).execute().body()!!
-        tablePage = tablePage.replace(HTMLUtils.BR.toRegex(), HTMLUtils.BR_REPLACER)
+//        tablePage = tablePage.replace(HTMLUtils.BR.toRegex(), HTMLUtils.BR_REPLACER)
         return Jsoup.parse(tablePage, url)
     }
 
@@ -67,7 +66,7 @@ class LibraryFactory(info: UniversityInfo) : UniversityFactory(info, Constants.T
 
         val action = postMap[Constants.ACTION_KEY]
         postMap.remove(Constants.ACTION_KEY)
-        val call = UniversityFactory.mService!!.searchLibrary(action!!, postMap)
+        val call = UniversityFactory.mService!!.paramGet(action!!, postMap)
         val resultPage = call.execute().body()
         prepareNextPageURL(resultPage!!)
         return if (TextUtils.isEmpty(resultPage)) ArrayList<BookInfo>(0) else parseBook(resultPage!!)

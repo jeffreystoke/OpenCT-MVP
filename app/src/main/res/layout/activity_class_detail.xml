@@ -40,23 +40,31 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/content"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|start"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:hint="@string/class_name"
-                    app:met_floatingLabel="normal"/>
+                    android:layout_marginTop="@dimen/activity_vertical_margin">
 
-                <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/type"
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/class_name"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|start"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:hint="@string/class_type"
-                    app:met_floatingLabel="normal"/>
+                    android:layout_marginTop="@dimen/activity_vertical_margin">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/type"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/class_type"/>
+                </android.support.design.widget.TextInputLayout>
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
 

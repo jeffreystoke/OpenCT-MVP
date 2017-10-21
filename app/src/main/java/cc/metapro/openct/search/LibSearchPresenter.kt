@@ -19,7 +19,7 @@ package cc.metapro.openct.search
 import android.content.Context
 import android.widget.Toast
 import cc.metapro.openct.R
-import cc.metapro.openct.data.source.local.LocalHelper
+import cc.metapro.openct.data.source.LocalHelper
 import cc.metapro.openct.data.university.LibraryFactory
 import cc.metapro.openct.data.university.model.BookInfo
 import cc.metapro.openct.utils.ActivityUtils
@@ -34,11 +34,9 @@ import java.util.*
 internal class LibSearchPresenter(private val mLibSearchView: LibSearchContract.View, private val mContext: Context) : LibSearchContract.Presenter {
 
     override fun subscribe() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun unSubscribe() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private val mLibraryFactory: LibraryFactory

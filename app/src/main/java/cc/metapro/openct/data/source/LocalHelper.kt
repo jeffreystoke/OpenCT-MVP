@@ -1,4 +1,20 @@
-package cc.metapro.openct.data.source.local
+/*
+ *  Copyright 2016 - 2017 OpenCT open source class table
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package cc.metapro.openct.data.source
 
 /*
  *  Copyright 2016 - 2017 OpenCT open source class table
@@ -25,6 +41,7 @@ import cc.metapro.openct.data.university.CmsFactory
 import cc.metapro.openct.data.university.LibraryFactory
 import cc.metapro.openct.data.university.UniversityInfo
 import cc.metapro.openct.data.university.model.BorrowInfo
+import cc.metapro.openct.data.university.model.GradeInfo
 import cc.metapro.openct.data.university.model.classinfo.Classes
 import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.PrefHelper
@@ -83,25 +100,16 @@ object LocalHelper {
 
     fun getClasses(context: Context): Observable<Classes> {
         return Observable.create(ObservableOnSubscribe<Classes> { e ->
-            val manger = DBManger.getInstance(context)
-            val allClasses = manger.classes
-            e.onNext(allClasses)
         }).subscribeOn(Schedulers.io())
     }
 
     fun getGrades(context: Context): Observable<List<GradeInfo>> {
         return Observable.create(ObservableOnSubscribe<List<GradeInfo>> { e ->
-            val manger = DBManger.getInstance(context)
-            val grades = manger.grades
-            e.onNext(grades)
         }).subscribeOn(Schedulers.io())
     }
 
     fun getBorrows(context: Context): Observable<List<BorrowInfo>> {
         return Observable.create(ObservableOnSubscribe<List<BorrowInfo>> { e ->
-            val manger = DBManger.getInstance(context)
-            val borrowInfoList = manger.borrows
-            e.onNext(borrowInfoList)
         }).subscribeOn(Schedulers.io())
     }
 
@@ -118,7 +126,6 @@ object LocalHelper {
 
     private fun checkUniversity(context: Context) {
         if (needUpdateUniversity) {
-            university = loadUniversity(context)
             needUpdateUniversity = false
         }
     }
@@ -138,20 +145,6 @@ object LocalHelper {
     fun getCurrentWeek(context: Context): Int {
         updateWeekSeq(context)
         return Integer.parseInt(PrefHelper.getString(context, R.string.pref_current_week, "1"))
-    }
-
-    private fun loadUniversity(context: Context): UniversityInfo {
-        val manger = DBManger.getInstance(context)
-
-        val defaultSchoolName = context.getString(R.string.default_school_name)
-        val university: UniversityInfo
-        if (PrefHelper.getBoolean(context, R.string.pref_custom_enable, false)) {
-            university = manger.customUniversity
-        } else {
-            university = manger.getUniversity(PrefHelper.getString(context, R.string.pref_school_name, defaultSchoolName))
-        }
-
-        return university
     }
 
     private fun updateWeekSeq(context: Context) {

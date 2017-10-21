@@ -46,7 +46,7 @@ class SchoolInterceptor(private val mBaseUrl: HttpUrl) : Interceptor {
         var response = chain.proceed(realRequest)
 
         if (response.isRedirect) {
-            var location: String = response.headers().get("Location")!!
+            var location: String = response.header("Location")!!
             location = mBaseUrl.newBuilder(location)!!.toString()
             mObserver.onRedirect(location)
         } else {

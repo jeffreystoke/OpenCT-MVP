@@ -22,7 +22,7 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import cc.metapro.openct.R
 import cc.metapro.openct.data.source.local.DBManger
-import cc.metapro.openct.data.source.local.LocalHelper
+import cc.metapro.openct.data.source.LocalHelper
 import cc.metapro.openct.data.university.model.classinfo.SingleClass
 import java.util.*
 

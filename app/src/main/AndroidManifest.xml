@@ -32,7 +32,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme.NoActionbar">
         <activity
             android:name=".myclass.ClassActivity"
             android:label="@string/app_name"
@@ -45,7 +45,7 @@
             android:name=".pref.SettingsActivity"
             android:label="@string/settings"
             android:parentActivityName=".myclass.ClassActivity"
-            android:theme="@style/AppTheme.WithActionBar"
+            android:theme="@style/AppTheme.Actionbar"
             android:windowSoftInputMode="adjustPan|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

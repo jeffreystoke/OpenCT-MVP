@@ -26,8 +26,4 @@
         android:id="@+id/show_due"
         android:title="@string/show_exceeded"
         app:showAsAction="never"/>
-    <!--<item-->
-    <!--android:id="@+id/filter"-->
-    <!--android:title="@string/filter"-->
-    <!--app:showAsAction="never"/>-->
 </menu>

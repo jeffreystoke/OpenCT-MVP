@@ -23,60 +23,33 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.annotation.ColorInt
 import android.support.design.widget.NavigationView
-import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
-import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
-import butterknife.BindView
-import butterknife.ButterKnife
 import cc.metapro.openct.R
 import cc.metapro.openct.allclasses.AllClassesActivity
 import cc.metapro.openct.borrow.BorrowActivity
-import cc.metapro.openct.customviews.WeekSelectionDialog
-import cc.metapro.openct.data.source.local.LocalHelper
+import cc.metapro.openct.data.source.LocalHelper
 import cc.metapro.openct.data.university.model.classinfo.Classes
 import cc.metapro.openct.grades.GradeActivity
 import cc.metapro.openct.pref.SettingsActivity
 import cc.metapro.openct.search.LibSearchActivity
-import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.PrefHelper
-import cc.metapro.openct.utils.ReferenceUtils
 import cc.metapro.openct.utils.base.BaseActivity
 import cc.metapro.openct.utils.base.BasePresenter
-import com.bumptech.glide.Glide
-import com.jrummyapps.android.colorpicker.ColorPickerDialog
-import com.jrummyapps.android.colorpicker.ColorPickerDialogListener
-import com.jrummyapps.android.colorpicker.ColorShape
+import kotlinx.android.synthetic.main.activity_main.*
 
 class ClassActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener, ClassContract.View {
-
-    @BindView(R.id.toolbar)
-    internal lateinit var mToolbar: Toolbar
-    @BindView(R.id.drawer_layout)
-    internal lateinit var mDrawerLayout: DrawerLayout
-    @BindView(R.id.nav_view)
-    internal lateinit var mNavigationView: NavigationView
-    @BindView(R.id.tab_layout)
-    internal lateinit var mTabLayout: TabLayout
-    @BindView(R.id.view_pager)
-    internal lateinit var mViewPager: ViewPager
-    @BindView(R.id.main_background)
-    internal lateinit var mBackground: ImageView
 
     internal lateinit var mPresenter: ClassContract.Presenter
     private var mExitState: Boolean = false
@@ -89,14 +62,13 @@ class ClassActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLis
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ButterKnife.bind(this)
-        setSupportActionBar(mToolbar)
+//        setSupportActionBar(mToolbar)
         mExitState = false
 
-        val toggle = ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        toggle.syncState()
+//        val toggle = ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+//        toggle.syncState()
 
-        mNavigationView.setNavigationItemSelectedListener(this)
+        nav_view.setNavigationItemSelectedListener(this)
         initViewPager()
         mPresenter = ClassPresenter(this, this)
     }
@@ -129,38 +101,38 @@ class ClassActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLis
                 return super.getPageTitle(position)
             }
         }
-        mViewPager.adapter = mPagerAdapter
+//        mViewPager.adapter = mPagerAdapter
 
-        mTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {}
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-
-            override fun onTabReselected(tab: TabLayout.Tab) {
-                if (tab == mTabLayout.getTabAt(1)) {
-                    class selectionCallback : WeekSelectionDialog.SelectionCallback {
-                        override fun onSelection(index: Int) {
-                            showClasses(Constants.sClasses, index)
-                            val tab1 = mTabLayout.getTabAt(1)
-                            if (tab1 != null) {
-                                tab1.text = getString(R.string.text_current_week, index)
-                            }
-                        }
-                    }
-
-                    val x = selectionCallback()
-                    WeekSelectionDialog.newInstance(x).show(supportFragmentManager, "week_selection")
-                }
-            }
-        })
-        mTabLayout.setupWithViewPager(mViewPager)
-
-        var index = Integer.parseInt(PrefHelper.getString(this, R.string.pref_homepage_selection, "0"))
-        if (index > 1) {
-            index = 0
-            PrefHelper.putString(this, R.string.pref_homepage_selection, "0")
-        }
-        mViewPager.currentItem = index
+//        mTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+//            override fun onTabSelected(tab: TabLayout.Tab) {}
+//
+//            override fun onTabUnselected(tab: TabLayout.Tab) {}
+//
+//            override fun onTabReselected(tab: TabLayout.Tab) {
+//                if (tab == mTabLayout.getTabAt(1)) {
+//                    class selectionCallback : WeekSelectionDialog.SelectionCallback {
+//                        override fun onSelection(index: Int) {
+//                            showClasses(Constants.sClasses, index)
+//                            val tab1 = mTabLayout.getTabAt(1)
+//                            if (tab1 != null) {
+//                                tab1.text = getString(R.string.text_current_week, index)
+//                            }
+//                        }
+//                    }
+//
+//                    val x = selectionCallback()
+//                    WeekSelectionDialog.newInstance(x).show(supportFragmentManager, "week_selection")
+//                }
+//            }
+//        })
+//        mTabLayout.setupWithViewPager(mViewPager)
+//
+//        var index = Integer.parseInt(PrefHelper.getString(this, R.string.pref_homepage_selection, "0"))
+//        if (index > 1) {
+//            index = 0
+//            PrefHelper.putString(this, R.string.pref_homepage_selection, "0")
+//        }
+//        mViewPager.currentItem = index
     }
 
     override fun showClasses(classes: Classes, week: Int) {
@@ -180,13 +152,13 @@ class ClassActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLis
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if (id == R.id.refresh_classes) {
-            val user = LocalHelper.getCmsStuInfo(this)
-            if (user.isEmpty) {
-                Toast.makeText(this, R.string.please_fill_cms_info, Toast.LENGTH_LONG).show()
-                startActivity(Intent(this, SettingsActivity::class.java))
-            } else {
-                mPresenter.loadOnlineInfo(supportFragmentManager)
-            }
+//            val user = LocalHelper.getCmsStuInfo(this)
+//            if (user.isEmpty) {
+//                Toast.makeText(this, R.string.please_fill_cms_info, Toast.LENGTH_LONG).show()
+//                startActivity(Intent(this, SettingsActivity::class.java))
+//            } else {
+//                mPresenter.loadOnlineInfo(supportFragmentManager)
+//            }
             return true
         } else if (id == R.id.edit_classes) {
             startActivity(Intent(this, AllClassesActivity::class.java))
@@ -213,7 +185,7 @@ class ClassActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLis
             R.id.nav_settings -> startActivity(Intent(this, SettingsActivity::class.java))
             R.id.nav_theme -> showThemePicker()
         }
-        mDrawerLayout.closeDrawer(GravityCompat.START)
+//        mDrawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -221,39 +193,38 @@ class ClassActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLis
         val typedValue = TypedValue()
         val theme = theme
         theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
-        val dialog = ColorPickerDialog.newBuilder()
-                .setDialogTitle(R.string.select_theme)
-                .setColorShape(ColorShape.CIRCLE)
-                .setAllowCustom(false)
-                .setAllowPresets(false)
-                .setDialogType(ColorPickerDialog.TYPE_PRESETS)
-                .setShowAlphaSlider(false)
-                .setShowColorShades(false)
-                .setPresets(resources.getIntArray(R.array.theme_color))
-                .setColor(ReferenceUtils.getThemeColor(this, R.attr.colorPrimary))
-                .create()
+//        val dialog = ColorPickerDialog.newBuilder()
+//                .setDialogTitle(R.string.select_theme)
+//                .setColorShape(ColorShape.CIRCLE)
+//                .setAllowCustom(false)
+//                .setAllowPresets(false)
+//                .setDialogType(ColorPickerDialog.TYPE_PRESETS)
+//                .setShowAlphaSlider(false)
+//                .setShowColorShades(false)
+//                .setPresets(resources.getIntArray(R.array.theme_color))
+//                .create()
 
-        val oldTheme = PrefHelper.getInt(this, R.string.pref_theme_activity, R.style.AppTheme)
-        dialog.setColorPickerDialogListener(object : ColorPickerDialogListener {
-            override fun onColorSelected(i: Int, @ColorInt i1: Int) {
-                PrefHelper.putInt(this@ClassActivity, R.string.pref_theme_activity, getThemeByColor(i1))
-            }
-
-            override fun onDialogDismissed(i: Int) {
-                val newTheme = PrefHelper.getInt(this@ClassActivity, R.string.pref_theme_activity, R.style.AppTheme)
-                if (oldTheme != newTheme) {
-                    finish()
-                    startActivity(intent)
-                }
-            }
-        })
-        dialog.show(fragmentManager, "color_picker")
+//        val oldTheme = PrefHelper.getInt(this, R.string.pref_theme_activity, R.style.AppTheme)
+//        dialog.setColorPickerDialogListener(object : ColorPickerDialogListener {
+//            override fun onColorSelected(i: Int, @ColorInt i1: Int) {
+//                PrefHelper.putInt(this@ClassActivity, R.string.pref_theme_activity, getThemeByColor(i1))
+//            }
+//
+//            override fun onDialogDismissed(i: Int) {
+//                val newTheme = PrefHelper.getInt(this@ClassActivity, R.string.pref_theme_activity, R.style.AppTheme)
+//                if (oldTheme != newTheme) {
+//                    finish()
+//                    startActivity(intent)
+//                }
+//            }
+//        })
+//        dialog.show(fragmentManager, "color_picker")
     }
 
     override fun onResume() {
         val bgUri = PrefHelper.getString(this, R.string.pref_background, "")
         if (!TextUtils.isEmpty(bgUri)) {
-            Glide.with(this).load(bgUri).centerCrop().into(mBackground)
+//            Glide.with(this).load(bgUri).centerCrop().into(mBackground)
         }
         mPagerAdapter.notifyDataSetChanged()
         super.onResume()
@@ -291,7 +262,7 @@ class ClassActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLis
         if (requestCode == FILE_SELECT_CODE && resultCode == AppCompatActivity.RESULT_OK) {
             val uri = data.data
             PrefHelper.putString(this, R.string.pref_background, uri.toString())
-            Glide.with(this).load(uri).centerCrop().into(mBackground)
+//            Glide.with(this).load(uri).centerCrop().into(mBackground)
         }
     }
 

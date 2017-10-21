@@ -82,5 +82,3 @@ open class KeyValueModel constructor(th: Element, tr: Element) {
 }
 
 class GradeInfo(th: Element, tr: Element) : KeyValueModel(th, tr)
-
-//class BookInfo(th: Element, tr: Element) : KeyValueModel(th, tr)

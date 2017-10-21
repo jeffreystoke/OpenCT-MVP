@@ -54,6 +54,11 @@ object REHelper {
         }
     }
 
+    /**
+     * 判断字符串是否是空串或空白串
+     * @param s 字符创
+     * @return 是否是空串或空白串
+     */
     fun isEmpty(s: String): Boolean {
         return TextUtils.isEmpty(s) || Pattern.compile(emptyPattern).matcher(s).find()
     }

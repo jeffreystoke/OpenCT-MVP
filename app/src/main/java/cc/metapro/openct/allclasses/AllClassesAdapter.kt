@@ -16,34 +16,28 @@ package cc.metapro.openct.allclasses
  * limitations under the License.
  */
 
-import android.app.FragmentManager
-import android.support.annotation.ColorInt
+import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
 import cc.metapro.openct.R
 import cc.metapro.openct.classdetail.ClassDetailActivity
 import cc.metapro.openct.data.university.model.classinfo.EnrichedClassInfo
 import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.DateHelper
 import cc.metapro.openct.utils.REHelper
-import com.jrummyapps.android.colorpicker.ColorPickerDialog
-import com.jrummyapps.android.colorpicker.ColorPickerDialogListener
 import java.util.*
 
 
 internal class AllClassesAdapter(activity: AppCompatActivity) : RecyclerView.Adapter<AllClassesAdapter.ClassViewHolder>() {
 
-    private val mInflater: LayoutInflater = LayoutInflater.from(activity)
-    private val mFragmentManager: FragmentManager = activity.fragmentManager
+    private val mFragmentManager: FragmentManager = activity.supportFragmentManager
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClassViewHolder {
-        return ClassViewHolder(mInflater.inflate(R.layout.item_class_all, parent, false))
+        return ClassViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_class_all, parent, false))
     }
 
     override fun onBindViewHolder(holder: ClassViewHolder, position: Int) {
@@ -56,51 +50,34 @@ internal class AllClassesAdapter(activity: AppCompatActivity) : RecyclerView.Ada
 
     internal class ClassViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        @BindView(R.id.color)
-        var mColor: TextView? = null
-        @BindView(R.id.content)
-        var mName: TextView? = null
-        @BindView(R.id.time)
-        var mTime: TextView? = null
-        @BindView(R.id.edit)
-        var mEdit: TextView? = null
-
-        init {
-            ButterKnife.bind(this, itemView)
-        }
+        private lateinit var mColor: TextView
+        private lateinit var mName: TextView
+        private lateinit var mTime: TextView
+        private lateinit var mEdit: TextView
 
         fun setInfo(info: EnrichedClassInfo, manager: FragmentManager, position: Int) {
-            mColor!!.setBackgroundColor(info.color)
-            mName!!.text = info.name + "   " + info.type
+            mColor.setBackgroundColor(info.color)
+            mName.text = info.name + "   " + info.type
             var time = ""
             val tmpTimeList = ArrayList(info.timeSet)
             Collections.sort(tmpTimeList)
-            for (t in tmpTimeList) {
-                val tmp = DateHelper.weekDayTrans(mName!!.context, t.weekDay) + " " + t.timeString + " , "
-                if (!time.contains(tmp)) {
-                    time += tmp
-                }
-            }
+            tmpTimeList
+                    .asSequence()
+                    .map { DateHelper.weekDayTrans(mName.context, it.weekDay) + " " + it.timeString + " , " }
+                    .filterNot { time.contains(it) }
+                    .forEach { time += it }
+
             if (!REHelper.isEmpty(time)) {
                 time = time.substring(0, time.length - 2)
             }
 
-            mTime!!.text = time
-            mColor!!.setOnClickListener {
-                val dialog = ColorPickerDialog.newBuilder().setColor(info.color).create()
-                dialog.setColorPickerDialogListener(object : ColorPickerDialogListener {
-                    override fun onColorSelected(dialogId: Int, @ColorInt color: Int) {
-                        mColor!!.setBackgroundColor(color)
-                        Constants.sClasses[position].color = color
-                    }
-
-                    override fun onDialogDismissed(dialogId: Int) {
-
-                    }
-                })
-                dialog.show(manager, "color_picker")
+            mTime.text = time
+            mColor.setOnClickListener {
+                //                val dialog = ColorChooserDialog.Builder(itemView.context, "选择颜色").show(manager)
+//                mColor.setBackgroundColor(color)
+//                Constants.sClasses[position].color = color
             }
-            mEdit!!.setOnClickListener { ClassDetailActivity.actionStart(mName!!.context, info.name!!) }
+            mEdit.setOnClickListener { ClassDetailActivity.actionStart(mName.context, info.name!!) }
         }
     }
 }

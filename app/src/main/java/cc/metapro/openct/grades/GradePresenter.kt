@@ -20,12 +20,8 @@ import android.content.Context
 import android.support.v4.app.FragmentManager
 import android.text.TextUtils
 import android.widget.Toast
-import cc.metapro.interactiveweb.utils.HTMLUtils
 import cc.metapro.openct.R
-import cc.metapro.openct.customviews.FormDialog
-import cc.metapro.openct.data.service.ServiceCenter
-import cc.metapro.openct.data.source.local.DBManger
-import cc.metapro.openct.data.source.local.LocalHelper
+import cc.metapro.openct.data.source.LocalHelper
 import cc.metapro.openct.data.university.UniversityUtils
 import cc.metapro.openct.data.university.model.GradeInfo
 import cc.metapro.openct.utils.ActivityUtils
@@ -36,7 +32,6 @@ import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.util.*
@@ -48,15 +43,12 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
     }
 
     override fun unSubscribe() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private lateinit var mGrades: List<GradeInfo>
-    private val mDBManger: DBManger
 
     init {
         mView.setPresenter(this)
-        mDBManger = DBManger.getInstance(mContext)
     }
 
     override fun loadOnlineInfo(f: FragmentManager) {
@@ -68,7 +60,7 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
             override fun onNext(t: Boolean) {
                 super.onNext(t)
                 if (t) {
-                    ActivityUtils.showCaptchaDialog(f, this@GradePresenter)
+//                    ActivityUtils.showCaptchaDialog(f, this@GradePresenter)
                 } else {
                     loadUserCenter(f, "")
                 }
@@ -76,7 +68,7 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
 
             override fun onError(e: Throwable) {
                 super.onError(e)
-                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE)
+//                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE)
                 Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
             }
         }
@@ -98,10 +90,10 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
                 if (!urlPatterns.isEmpty()) {
                     if (urlPatterns.size == 1) {
                         // fetch first page from user center, it will find the grade info page in most case
-                        val target = HTMLUtils.getElementSimilar(t, Jsoup.parse(urlPatterns[0]).body().children().first())
-                        if (target != null) {
-                            loadTargetPage(f, target.absUrl("href"))
-                        }
+//                        val target = HTMLUtils.getElementSimilar(t, Jsoup.parse(urlPatterns[0]).body().children().first())
+//                        if (target != null) {
+//                            loadTargetPage(f, target.absUrl("href"))
+//                        }
                     } else if (urlPatterns.size > 1) {
                         // fetch more page to reach class info page, especially in QZ Data Soft CMS System
                         val extraObservable = Observable.create(ObservableOnSubscribe<String> { e ->
@@ -110,7 +102,7 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
                             var finalTarget: Element? = null
                             for (pattern in urlPatterns) {
                                 if (lastDom != null) {
-                                    finalTarget = HTMLUtils.getElementSimilar(lastDom, Jsoup.parse(pattern).body().children().first())
+//                                    finalTarget = HTMLUtils.getElementSimilar(lastDom, Jsoup.parse(pattern).body().children().first())
                                 }
                                 if (finalTarget != null) {
                                     lastDom = factory.getPageDom(finalTarget.absUrl("href"))
@@ -130,16 +122,16 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(extraObserver)
                     } else {
-                        ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_GRADE, t, this@GradePresenter)
+//                        ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_GRADE, t, this@GradePresenter)
                     }
                 } else {
-                    ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_GRADE, t, this@GradePresenter)
+//                    ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_GRADE, t, this@GradePresenter)
                 }
             }
 
             override fun onError(e: Throwable) {
                 super.onError(e)
-                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE)
+//                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE)
                 Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
             }
         }
@@ -156,12 +148,12 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
         val observer = object : MyObserver<Document>(TAG) {
             override fun onNext(t: Document) {
                 super.onNext(t)
-                FormDialog.newInstance(t, this@GradePresenter).show(f, "form_dialog")
+//                FormDialog.newInstance(t, this@GradePresenter).show(f, "form_dialog")
             }
 
             override fun onError(e: Throwable) {
                 super.onError(e)
-                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE)
+//                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE)
                 Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
             }
         }
@@ -182,7 +174,7 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
                 Constants.checkAdvCustomInfo(mContext)
 
                 if (TextUtils.isEmpty(Constants.sDetailCustomInfo.gradeTableId)) {
-                    ActivityUtils.showTableChooseDialog(manager, Constants.TYPE_GRADE, t, this@GradePresenter)
+//                    ActivityUtils.showTableChooseDialog(manager, Constants.TYPE_GRADE, t, this@GradePresenter)
                 } else {
                     mGrades = UniversityUtils.generateInfoFromTable(
                             TableUtils.getTablesFromTargetPage(t)[Constants.sDetailCustomInfo.gradeTableId],
@@ -199,7 +191,7 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
 
             override fun onError(e: Throwable) {
                 super.onError(e)
-                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE)
+//                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_GRADE)
                 Toast.makeText(mContext, e.message, Toast.LENGTH_SHORT).show()
             }
         }
@@ -232,37 +224,37 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
 
     override fun loadCETGrade(m: Map<String, String>) {
         Observable.create(ObservableOnSubscribe<Map<String, String>> { e ->
-            val service = ServiceCenter.createCETService()
+            //            val service = ServiceCenter.createCETService()
             val queryResult = m[mContext.getString(R.string.key_ticket_num)]?.let {
                 m[mContext.getString(R.string.key_full_name)]?.let { it1 ->
-                    service.queryCET(
-                            mContext.getString(R.string.url_chsi_referer),
-                            it,
-                            it1, "t")
-                            .execute().body()
+                    //                    service.queryCET(
+//                            mContext.getString(R.string.url_chsi_referer),
+//                            it,
+//                            it1, "t")
+//                            .execute().body()
                 }
             }
 
-            val document = Jsoup.parse(queryResult)
-            val elements = document.select("table[class=cetTable]")
-            val targetTable = elements.first()
-            val tds = targetTable.getElementsByTag("td")
-            val name = tds[0].text()
-            val school = tds[1].text()
-            val type = tds[2].text()
-            val num = tds[3].text()
-            val time = tds[4].text()
-            val grade = tds[5].text()
+//            val document = Jsoup.parse(queryResult)
+//            val elements = document.select("table[class=cetTable]")
+//            val targetTable = elements.first()
+//            val tds = targetTable.getElementsByTag("td")
+//            val name = tds[0].text()
+//            val school = tds[1].text()
+//            val type = tds[2].text()
+//            val num = tds[3].text()
+//            val time = tds[4].text()
+//            val grade = tds[5].text()
+//
+//            val results = HashMap<String, String>(6)
+//            results.put(mContext.getString(R.string.key_full_name), name)
+//            results.put(mContext.getString(R.string.key_school), school)
+//            results.put(mContext.getString(R.string.key_cet_type), type)
+//            results.put(mContext.getString(R.string.key_ticket_num), num)
+//            results.put(mContext.getString(R.string.key_cet_time), time)
+//            results.put(mContext.getString(R.string.key_cet_grade), grade)
 
-            val results = HashMap<String, String>(6)
-            results.put(mContext.getString(R.string.key_full_name), name)
-            results.put(mContext.getString(R.string.key_school), school)
-            results.put(mContext.getString(R.string.key_cet_type), type)
-            results.put(mContext.getString(R.string.key_ticket_num), num)
-            results.put(mContext.getString(R.string.key_cet_time), time)
-            results.put(mContext.getString(R.string.key_cet_grade), grade)
-
-            e.onNext(results)
+//            e.onNext(results)
         })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -276,7 +268,7 @@ internal class GradePresenter(private val mView: GradeContract.View, private val
 
     override fun storeGrades() {
         try {
-            mDBManger.updateGrades(mGrades)
+//            mDBManger.updateGrades(mGrades)
         } catch (e: Exception) {
             Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
         }

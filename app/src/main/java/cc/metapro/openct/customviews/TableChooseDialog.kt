@@ -19,40 +19,23 @@ package cc.metapro.openct.customviews
 import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
+import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
-import butterknife.BindView
-import butterknife.ButterKnife
 import cc.metapro.openct.R
-import cc.metapro.openct.borrow.BorrowContract
-import cc.metapro.openct.data.source.local.DBManger
 import cc.metapro.openct.data.university.ClassTableInfo
-import cc.metapro.openct.data.university.UniversityUtils
-import cc.metapro.openct.data.university.model.BorrowInfo
-import cc.metapro.openct.data.university.model.GradeInfo
-import cc.metapro.openct.grades.GradeContract
-import cc.metapro.openct.myclass.ClassContract
 import cc.metapro.openct.utils.Constants
-import cc.metapro.openct.utils.base.BaseDialog
 import cc.metapro.openct.utils.base.LoginPresenter
 import cc.metapro.openct.utils.webutils.TableUtils
+import kotlinx.android.synthetic.main.dialog_table_choose.*
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.util.*
 
-class TableChooseDialog : BaseDialog() {
-    @BindView(R.id.view_pager)
-    internal var mViewPager: ViewPager? = null
-    @BindView(R.id.tab_bar)
-    internal var mTabBar: TabLayout? = null
+class TableChooseDialog : DialogFragment() {
     private var mTableIds: MutableList<String>? = null
 
     private fun generateClassTableInfo(baseInfo: ClassTableInfo?, indexMap: Map<String, Int>): ClassTableInfo {
@@ -102,64 +85,62 @@ class TableChooseDialog : BaseDialog() {
 
     fun select() {
         if (!mTableIds!!.isEmpty()) {
-            val tableId = mTableIds!![mViewPager!!.currentItem]
-            val manger = DBManger.getInstance(activity)
+            val tableId = mTableIds!![view_pager!!.currentItem]
             val context = activity
             val targetTable = tableMap!![tableId]
             when (TYPE) {
-                Constants.TYPE_CLASS -> {
-                    val rawInfoList = UniversityUtils.getRawClasses(targetTable, activity)
-                    try {
-                        class c : TableSettingDialog.TableSettingCallBack {
-                            override fun onResult(indexMap: Map<String, Int>) {
-                                val info = generateClassTableInfo(Constants.sDetailCustomInfo.mClassTableInfo, indexMap as Map<String, Int>)
-                                info.mClassTableID = tableId
-                                val classes = UniversityUtils.generateClasses(context, rawInfoList, info)
-                                Constants.sDetailCustomInfo.setClassTableInfo(info)
-
-                                manger.updateAdvCustomInfo(Constants.sDetailCustomInfo)
-                                manger.updateClasses(classes)
-                                if (mPresenter is ClassContract.Presenter) {
-                                    (mPresenter as ClassContract.Presenter).loadLocalClasses()
-                                }
-                                Toast.makeText(context, R.string.custom_finish_tip, Toast.LENGTH_LONG).show()
-                            }
-
-                        }
-                        TableSettingDialog.newInstance(rawInfoList, c()).show(fragmentManager, "setting_dialog")
-                        dismiss()
-                    } catch (e: Exception) {
-                        Toast.makeText(context, R.string.sorry_for_unable_to_get_class_info, Toast.LENGTH_LONG).show()
-                    }
-
-                }
-                Constants.TYPE_GRADE -> {
-                    Constants.sDetailCustomInfo.gradeTableId = tableId
-                    manger.updateAdvCustomInfo(Constants.sDetailCustomInfo)
-                    manger.updateGrades(UniversityUtils.generateInfoFromTable(targetTable, GradeInfo::class.java))
-                    if (mPresenter is GradeContract.Presenter) {
-                        (mPresenter as GradeContract.Presenter).loadLocalGrades()
-                    }
-                    dismiss()
-                }
-                Constants.TYPE_SEARCH -> {
-                }
-                Constants.TYPE_BORROW -> {
-                    Constants.sDetailCustomInfo.borrowTableId = tableId
-                    manger.updateAdvCustomInfo(Constants.sDetailCustomInfo)
-                    manger.updateBorrows(UniversityUtils.generateInfoFromTable(targetTable, BorrowInfo::class.java))
-                    if (mPresenter != null && mPresenter is BorrowContract.Presenter) {
-                        (mPresenter as BorrowContract.Presenter).loadLocalBorrows()
-                    }
-                    dismiss()
-                }
+//                Constants.TYPE_CLASS -> {
+//                    val rawInfoList = UniversityUtils.getRawClasses(targetTable, activity)
+//                    try {
+//                        class c : TableSettingDialog.TableSettingCallBack {
+//                            override fun onResult(indexMap: Map<String, Int>) {
+//                                val info = generateClassTableInfo(Constants.sDetailCustomInfo.mClassTableInfo, indexMap as Map<String, Int>)
+//                                info.mClassTableID = tableId
+//                                val classes = UniversityUtils.generateClasses(context, rawInfoList, info)
+//                                Constants.sDetailCustomInfo.setClassTableInfo(info)
+//
+//                                manger.updateAdvCustomInfo(Constants.sDetailCustomInfo)
+//                                manger.updateClasses(classes)
+//                                if (mPresenter is ClassContract.Presenter) {
+//                                    (mPresenter as ClassContract.Presenter).loadLocalClasses()
+//                                }
+//                                Toast.makeText(context, R.string.custom_finish_tip, Toast.LENGTH_LONG).show()
+//                            }
+//
+//                        }
+//                        TableSettingDialog.newInstance(rawInfoList, c()).show(fragmentManager, "setting_dialog")
+//                        dismiss()
+//                    } catch (e: Exception) {
+//                        Toast.makeText(context, R.string.sorry_for_unable_to_get_class_info, Toast.LENGTH_LONG).show()
+//                    }
+//
+//                }
+//                Constants.TYPE_GRADE -> {
+//                    Constants.sDetailCustomInfo.gradeTableId = tableId
+//                    manger.updateAdvCustomInfo(Constants.sDetailCustomInfo)
+//                    manger.updateGrades(UniversityUtils.generateInfoFromTable(targetTable, GradeInfo::class.java))
+//                    if (mPresenter is GradeContract.Presenter) {
+//                        (mPresenter as GradeContract.Presenter).loadLocalGrades()
+//                    }
+//                    dismiss()
+//                }
+//                Constants.TYPE_SEARCH -> {
+//                }
+//                Constants.TYPE_BORROW -> {
+//                    Constants.sDetailCustomInfo.borrowTableId = tableId
+//                    manger.updateAdvCustomInfo(Constants.sDetailCustomInfo)
+//                    manger.updateBorrows(UniversityUtils.generateInfoFromTable(targetTable, BorrowInfo::class.java))
+//                    if (mPresenter != null && mPresenter is BorrowContract.Presenter) {
+//                        (mPresenter as BorrowContract.Presenter).loadLocalBorrows()
+//                    }
+//                    dismiss()
+//                }
             }
         }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val view = LayoutInflater.from(activity).inflate(R.layout.dialog_table_choose, null)
-        ButterKnife.bind(this, view)
         setView()
 
         Constants.checkAdvCustomInfo(activity)
@@ -189,29 +170,29 @@ class TableChooseDialog : BaseDialog() {
             views.add(textView)
         }
 
-        mTabBar!!.setupWithViewPager(mViewPager)
-        mViewPager!!.adapter = object : PagerAdapter() {
-            override fun getCount(): Int {
-                return mTableIds!!.size
-            }
-
-            override fun getPageTitle(position: Int): CharSequence {
-                return mTableIds!![position]
-            }
-
-            override fun isViewFromObject(view: View, `object`: Any): Boolean {
-                return view === `object`
-            }
-
-            override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-                container.removeView(views[position])
-            }
-
-            override fun instantiateItem(container: ViewGroup, position: Int): Any {
-                container.addView(views[position])
-                return views[position]
-            }
-        }
+//        mTabBar!!.setupWithViewPager(mViewPager)
+//        mViewPager!!.adapter = object : PagerAdapter() {
+//            override fun getCount(): Int {
+//                return mTableIds!!.size
+//            }
+//
+//            override fun getPageTitle(position: Int): CharSequence {
+//                return mTableIds!![position]
+//            }
+//
+//            override fun isViewFromObject(view: View, `object`: Any): Boolean {
+//                return view === `object`
+//            }
+//
+//            override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+//                container.removeView(views[position])
+//            }
+//
+//            override fun instantiateItem(container: ViewGroup, position: Int): Any {
+//                container.addView(views[position])
+//                return views[position]
+//            }
+//        }
     }
 
     override fun onDestroy() {

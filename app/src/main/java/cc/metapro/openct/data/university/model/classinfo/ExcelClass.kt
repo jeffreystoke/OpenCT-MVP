@@ -23,12 +23,12 @@ import cc.metapro.openct.utils.REHelper
 
 class ExcelClass {
 
-    private val name: String? = null
-    private val type: String? = null
-    private val time: String? = null
-    private val during: String? = null
-    private val teacher: String? = null
-    private val place: String? = null
+    private lateinit var name: String
+    private lateinit var type: String
+    private lateinit var time: String
+    private lateinit var during: String
+    private lateinit var teacher: String
+    private lateinit var place: String
 
     private fun getDuring(): BooleanArray {
         val tmp = during!!.split("&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~  Copyright 2016 - 2017 OpenCT open source class table
   ~
@@ -14,6 +15,13 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <dimen name="activity_horizontal_margin">64dp</dimen>
-</resources>
+<android.support.design.widget.TextInputLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/input_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</android.support.design.widget.TextInputLayout>

@@ -41,7 +41,7 @@
 
             <ImageView
                 android:id="@+id/image"
-                style="@style/AppTheme.AppBarImage"/>
+                style="@style/AppTheme.NoActionbar.AppBarImage"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"

@@ -20,31 +20,18 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.BaseTransientBottomBar
-import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import butterknife.BindView
-import butterknife.ButterKnife
 import cc.metapro.openct.R
 import cc.metapro.openct.classdetail.ClassDetailActivity
-import cc.metapro.openct.custom.CustomActivity
 import cc.metapro.openct.utils.Constants
-import cc.metapro.openct.utils.RecyclerViewHelper
 import cc.metapro.openct.utils.base.BaseActivity
 import cc.metapro.openct.utils.base.BasePresenter
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
-import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener
+import kotlinx.android.synthetic.main.activity_all_classes.*
 
 class AllClassesActivity : BaseActivity(), AllClassesContract.View {
-
-    @BindView(R.id.toolbar)
-    internal lateinit var mToolbar: Toolbar
-    @BindView(R.id.recycler_view)
-    internal lateinit var mRecyclerView: SwipeMenuRecyclerView
 
     private lateinit var mAdapter: AllClassesAdapter
     private lateinit var mPresenter: AllClassesContract.Presenter
@@ -57,8 +44,7 @@ class AllClassesActivity : BaseActivity(), AllClassesContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ButterKnife.bind(this)
-        setSupportActionBar(mToolbar)
+        setSupportActionBar(toolbar)
         AllClassesPresenter(this, this)
     }
 
@@ -86,8 +72,6 @@ class AllClassesActivity : BaseActivity(), AllClassesContract.View {
             }
         } else if (id == R.id.clear_classes) {
             mPresenter.clearClasses()
-        } else if (id == R.id.custom) {
-            CustomActivity.actionStart(this, Constants.TYPE_CLASS)
         } else if (id == R.id.import_from_excel) {
             mPresenter.loadFromExcel(supportFragmentManager)
         } else if (id == R.id.add_class) {
@@ -98,29 +82,29 @@ class AllClassesActivity : BaseActivity(), AllClassesContract.View {
 
     override fun updateClasses() {
         mAdapter = AllClassesAdapter(this)
-        RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mAdapter)
-        mRecyclerView.isItemViewSwipeEnabled = true
-
-        mRecyclerView.setOnItemMoveListener(object : OnItemMoveListener {
-            override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
-                return false
-            }
-
-            override fun onItemDismiss(position: Int) {
-                val toRemove = Constants.sClasses[position]
-                Constants.sClasses.removeAt(position)
-                mAdapter.notifyDataSetChanged()
-                val snackbar = Snackbar.make(mRecyclerView, toRemove.name + " " + getString(R.string.deleted), BaseTransientBottomBar.LENGTH_INDEFINITE)
-                snackbar.setAction(android.R.string.cancel) {
-                    Constants.sClasses.add(toRemove)
-                    mAdapter.notifyDataSetChanged()
-                    snackbar.dismiss()
-                    Snackbar.make(mRecyclerView, toRemove.name + " " + getString(R.string.restored), BaseTransientBottomBar.LENGTH_LONG).show()
-                    mRecyclerView.smoothScrollToPosition(0)
-                }
-                snackbar.show()
-            }
-        })
+//        RecyclerViewHelper.setRecyclerView(this, mRecyclerView, mAdapter)
+//        mRecyclerView.isItemViewSwipeEnabled = true
+//
+//        mRecyclerView.setOnItemMoveListener(object : OnItemMoveListener {
+//            override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
+//                return false
+//            }
+//
+//            override fun onItemDismiss(position: Int) {
+//                val toRemove = Constants.sClasses[position]
+//                Constants.sClasses.removeAt(position)
+//                mAdapter.notifyDataSetChanged()
+//                val snackbar = Snackbar.make(mRecyclerView, toRemove.name + " " + getString(R.string.deleted), BaseTransientBottomBar.LENGTH_INDEFINITE)
+//                snackbar.setAction(android.R.string.cancel) {
+//                    Constants.sClasses.add(toRemove)
+//                    mAdapter.notifyDataSetChanged()
+//                    snackbar.dismiss()
+//                    Snackbar.make(mRecyclerView, toRemove.name + " " + getString(R.string.restored), BaseTransientBottomBar.LENGTH_LONG).show()
+//                    mRecyclerView.smoothScrollToPosition(0)
+//                }
+//                snackbar.show()
+//            }
+//        })
     }
 
     override fun onBackPressed() {

@@ -19,11 +19,8 @@ package cc.metapro.openct.data.university.model.classinfo
 import android.graphics.Color
 import android.support.v4.util.ArraySet
 import android.text.TextUtils
-import cc.metapro.interactiveweb.utils.HTMLUtils
-import cc.metapro.openct.data.source.local.StoreHelper
 import cc.metapro.openct.data.university.ClassTableInfo
 import cc.metapro.openct.utils.CharacterParser
-import cc.metapro.openct.utils.ClassInfoHelper
 import java.util.*
 
 /**
@@ -63,10 +60,10 @@ class EnrichedClassInfo : Comparable<EnrichedClassInfo> {
     }
 
     constructor(content: String, weekday: Int, dailySeq: Int, info: ClassTableInfo) {
-        val infoContents = content.split(HTMLUtils.BR_REPLACER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        name = ClassInfoHelper.infoParser(info.mNameIndex, info.mNameRE, infoContents)
-        type = ClassInfoHelper.infoParser(info.mTypeIndex, info.mTypeRE, infoContents)
-        mTimeSet!!.add(ClassTime(weekday, dailySeq, infoContents, info))
+//        val infoContents = content.split(HTMLUtils.BR_REPLACER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+//        name = ClassInfoHelper.infoParser(info.mNameIndex, info.mNameRE, infoContents)
+//        type = ClassInfoHelper.infoParser(info.mTypeIndex, info.mTypeRE, infoContents)
+//        mTimeSet!!.add(ClassTime(weekday, dailySeq, infoContents, info))
     }
 
     /**
@@ -148,7 +145,8 @@ class EnrichedClassInfo : Comparable<EnrichedClassInfo> {
         get() = mTimeSet == null || mTimeSet!!.isEmpty()
 
     override fun toString(): String {
-        return if (isEmpty) "" else StoreHelper.toJson(this)
+//        return if (isEmpty) "" else StoreHelper.toJson(this)
+        return ""
     }
 
     override fun equals(obj: Any?): Boolean {

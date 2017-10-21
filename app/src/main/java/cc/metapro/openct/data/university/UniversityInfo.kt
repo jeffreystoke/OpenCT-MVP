@@ -16,7 +16,6 @@ package cc.metapro.openct.data.university
  * limitations under the License.
  */
 
-import cc.metapro.openct.data.source.local.StoreHelper
 import cc.metapro.openct.utils.CharacterParser
 import cc.metapro.openct.utils.Constants
 
@@ -29,7 +28,8 @@ class UniversityInfo : Comparable<UniversityInfo> {
     var libURL = Constants.DEFAULT_URL
 
     override fun toString(): String {
-        return StoreHelper.toJson(this)
+//        return StoreHelper.toJson(this)
+        return ""
     }
 
     override fun compareTo(o: UniversityInfo): Int {

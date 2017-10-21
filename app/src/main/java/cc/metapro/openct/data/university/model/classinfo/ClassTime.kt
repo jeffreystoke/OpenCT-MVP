@@ -32,7 +32,7 @@ class ClassTime : Comparable<ClassTime> {
     var teacher = ""
     var place = ""
 
-    internal var during: BooleanArray? = BooleanArray(Constants.WEEKS)
+    internal var during: BooleanArray = BooleanArray(Constants.WEEKS)
         private set
 
     constructor(classTime: ClassTime) {

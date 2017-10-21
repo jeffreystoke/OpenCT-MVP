@@ -20,11 +20,8 @@ import android.content.Context
 import android.support.v4.app.FragmentManager
 import android.text.TextUtils
 import android.widget.Toast
-import cc.metapro.interactiveweb.utils.HTMLUtils
 import cc.metapro.openct.R
-import cc.metapro.openct.customviews.FormDialog
-import cc.metapro.openct.data.source.local.DBManger
-import cc.metapro.openct.data.source.local.LocalHelper
+import cc.metapro.openct.data.source.LocalHelper
 import cc.metapro.openct.data.university.UniversityUtils
 import cc.metapro.openct.data.university.model.classinfo.Classes
 import cc.metapro.openct.utils.ActivityUtils
@@ -36,18 +33,17 @@ import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
-internal class ClassPresenter(private val mView: ClassContract.View, private val mContext: Context) : ClassContract.Presenter {
+internal class ClassPresenter(private val mView: ClassContract.View,
+                              private val mContext: Context) : ClassContract.Presenter {
 
     override fun subscribe() {
         loadLocalClasses()
     }
 
     override fun unSubscribe() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private val TAG = ClassPresenter::class.java.simpleName
@@ -63,18 +59,18 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
 
         val observer = object : MyObserver<Boolean>(TAG) {
             override fun onNext(t: Boolean) {
-                ActivityUtils.dismissProgressDialog()
-                if (t) {
-                    ActivityUtils.showCaptchaDialog(f, this@ClassPresenter)
-                } else {
-                    loadUserCenter(f, "")
-                }
+//                ActivityUtils.dismissProgressDialog()
+//                if (t) {
+//                    ActivityUtils.showCaptchaDialog(f, this@ClassPresenter)
+//                } else {
+//                    loadUserCenter(f, "")
+//                }
             }
 
             override fun onError(e: Throwable) {
                 super.onError(e)
                 ActivityUtils.dismissProgressDialog()
-                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS)
+//                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS)
                 Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
             }
         }
@@ -96,12 +92,12 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
                 if (!urlPatterns.isEmpty()) {
                     if (urlPatterns.size == 1) {
                         // fetch first page from user center, it will find the class info page in most case
-                        val target = HTMLUtils.getElementSimilar(t, Jsoup.parse(urlPatterns[0]).body().children().first())
-                        if (target != null) {
-                            loadTargetPage(f, target.absUrl("href"))
-                        } else {
-                            ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_CLASS, t, this@ClassPresenter)
-                        }
+//                        val target = HTMLUtils.getElementSimilar(t, Jsoup.parse(urlPatterns[0]).body().children().first())
+//                        if (target != null) {
+//                            loadTargetPage(f, target.absUrl("href"))
+//                        } else {
+//                            ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_CLASS, t, this@ClassPresenter)
+//                        }
                     } else if (urlPatterns.size > 1) {
                         // fetch more page to reach class info page, especially in QZ Data Soft CMS System
                         val extraObservable = Observable.create(ObservableOnSubscribe<String> { e ->
@@ -110,7 +106,7 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
                             var finalTarget: Element? = null
                             for (pattern in urlPatterns) {
                                 if (lastDom != null) {
-                                    finalTarget = HTMLUtils.getElementSimilar(lastDom, Jsoup.parse(pattern).body().children().first())
+//                                    finalTarget = HTMLUtils.getElementSimilar(lastDom, Jsoup.parse(pattern).body().children().first())
                                 }
                                 if (finalTarget != null) {
                                     lastDom = factory.getPageDom(finalTarget.absUrl("href"))
@@ -131,7 +127,7 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
                             override fun onError(e: Throwable) {
                                 super.onError(e)
                                 Toast.makeText(mContext, R.string.can_not_fetch_target_page, Toast.LENGTH_LONG).show()
-                                ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_CLASS, t, this@ClassPresenter)
+//                                ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_CLASS, t, this@ClassPresenter)
                             }
                         }
 
@@ -139,16 +135,16 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(extraObserver)
                     } else {
-                        ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_CLASS, t, this@ClassPresenter)
+//                        ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_CLASS, t, this@ClassPresenter)
                     }
                 } else {
-                    ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_CLASS, t, this@ClassPresenter)
+//                    ActivityUtils.showLinkSelectionDialog(f, Constants.TYPE_CLASS, t, this@ClassPresenter)
                 }
             }
 
             override fun onError(e: Throwable) {
                 super.onError(e)
-                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS)
+//                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS)
                 Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
             }
         }
@@ -165,12 +161,12 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
         val observer = object : MyObserver<Document>(TAG) {
             override fun onNext(t: Document) {
                 super.onNext(t)
-                FormDialog.newInstance(t, this@ClassPresenter).show(f, "form_dialog")
+//                FormDialog.newInstance(t, this@ClassPresenter).show(f, "form_dialog")
             }
 
             override fun onError(e: Throwable) {
                 super.onError(e)
-                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS)
+//                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS)
                 Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
             }
         }
@@ -191,7 +187,7 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
                 Constants.checkAdvCustomInfo(mContext)
                 val tableId = Constants.sDetailCustomInfo.mClassTableInfo.mClassTableID
                 if (TextUtils.isEmpty(tableId)) {
-                    ActivityUtils.showTableChooseDialog(manager, Constants.TYPE_CLASS, t, this@ClassPresenter)
+//                    ActivityUtils.showTableChooseDialog(manager, Constants.TYPE_CLASS, t, this@ClassPresenter)
                 } else {
                     val map = TableUtils.getTablesFromTargetPage(t)
                     val rawClasses = UniversityUtils.getRawClasses(map[tableId], mContext)
@@ -208,7 +204,7 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
 
             override fun onError(e: Throwable) {
                 super.onError(e)
-                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS)
+//                ActivityUtils.showAdvCustomTip(mContext, Constants.TYPE_CLASS)
                 Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
             }
         }
@@ -244,8 +240,8 @@ internal class ClassPresenter(private val mView: ClassContract.View, private val
 
     private fun storeClasses() {
         try {
-            val manger = DBManger.getInstance(mContext)
-            manger?.updateClasses(Constants.sClasses)
+//            val manger = DBManger.getInstance(mContext)
+//            manger?.updateClasses(Constants.sClasses)
             DailyClassWidget.update(mContext)
         } catch (e: Exception) {
             Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()

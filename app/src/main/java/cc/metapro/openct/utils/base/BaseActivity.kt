@@ -20,9 +20,7 @@ import android.os.Bundle
 import android.support.annotation.ColorInt
 import android.support.annotation.LayoutRes
 import android.support.annotation.StyleRes
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-
 import cc.metapro.openct.R
 import cc.metapro.openct.utils.PrefHelper
 
@@ -30,7 +28,7 @@ import cc.metapro.openct.utils.PrefHelper
 abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val theme = PrefHelper.getInt(this, R.string.pref_theme_activity, R.style.AppTheme)
+        val theme = PrefHelper.getInt(this, R.string.pref_theme_activity, R.style.AppTheme_Colorful_Light)
         setTheme(theme)
         super.onCreate(savedInstanceState)
         setContentView(layout)
@@ -39,7 +37,7 @@ abstract class BaseActivity : AppCompatActivity() {
     @get:LayoutRes
     protected abstract val layout: Int
 
-    protected abstract val presenter : BasePresenter?
+    protected abstract val presenter: BasePresenter?
 
     override fun onResume() {
         super.onResume()
@@ -49,28 +47,5 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         presenter?.unSubscribe()
-    }
-
-    @StyleRes
-    protected fun getThemeByColor(@ColorInt color: Int): Int {
-        if (color == ContextCompat.getColor(this, R.color.material_white)) {
-            return R.style.AppTheme
-        } else if (color == ContextCompat.getColor(this, R.color.material_blue)) {
-            return R.style.AppTheme_Blue
-        } else if (color == ContextCompat.getColor(this, R.color.material_teal)) {
-            return R.style.AppTheme_Teal
-        } else if (color == ContextCompat.getColor(this, R.color.material_green)) {
-            return R.style.AppTheme_Green
-        } else if (color == ContextCompat.getColor(this, R.color.material_grey_blue)) {
-            return R.style.AppTheme_Grey
-        } else if (color == ContextCompat.getColor(this, R.color.material_amber)) {
-            return R.style.AppTheme_Amber
-        } else if (color == ContextCompat.getColor(this, R.color.material_indigo)) {
-            return R.style.AppTheme_Indigo
-        } else if (color == ContextCompat.getColor(this, R.color.material_red)) {
-            return R.style.AppTheme_Red
-        } else {
-            throw UnsupportedOperationException("the color is not supported")
-        }
     }
 }

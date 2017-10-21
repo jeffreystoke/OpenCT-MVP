@@ -21,20 +21,12 @@ import android.os.Bundle
 import android.preference.*
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.text.TextUtils
-import android.util.Log
 import android.widget.Toast
-import butterknife.ButterKnife
 import cc.metapro.openct.R
-import cc.metapro.openct.data.source.local.DBManger
-import cc.metapro.openct.data.source.local.LocalHelper
-import cc.metapro.openct.data.university.DetailCustomInfo
+import cc.metapro.openct.data.source.LocalHelper
 import cc.metapro.openct.splash.schoolselection.SchoolSelectionActivity
 import cc.metapro.openct.utils.Constants
 import cc.metapro.openct.utils.PrefHelper
-import cc.metapro.openct.utils.REHelper
-import com.scottyab.aescrypt.AESCrypt
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import java.util.*
 
 class SchoolPreferenceFragment : PreferenceFragment(), Preference.OnPreferenceChangeListener {
@@ -54,9 +46,8 @@ class SchoolPreferenceFragment : PreferenceFragment(), Preference.OnPreferenceCh
         super.onCreate(savedInstanceState)
         addPreferencesFromResource(R.xml.pref_school)
         setHasOptionsMenu(false)
-        ButterKnife.bind(this, activity)
-        mPreferences = ArrayList<Preference>()
-        mTimePreferences = ArrayList<Preference>()
+        mPreferences = ArrayList()
+        mTimePreferences = ArrayList()
 
         bindPreferences()
         bindListener()
@@ -75,10 +66,7 @@ class SchoolPreferenceFragment : PreferenceFragment(), Preference.OnPreferenceCh
                     .setMessage(R.string.clear_action_confirm)
                     .setNegativeButton(android.R.string.cancel, null)
                     .setPositiveButton(android.R.string.ok) { _, _ ->
-                        val manger = DBManger.getInstance(activity)
-                        manger.delAdvancedCustomInfo()
-                        Constants.sDetailCustomInfo = DetailCustomInfo()
-                        Constants.checkAdvCustomInfo(activity)
+
                     }.show()
             false
         }
@@ -163,22 +151,22 @@ class SchoolPreferenceFragment : PreferenceFragment(), Preference.OnPreferenceCh
 
             mPreferences!!.add(preference)
             preference.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
-                val value = PrefHelper.getString(activity, key, defaultValue)
-                val parts = REHelper.getUserSetTime(value)
-                val dialog = TimePickerDialog.newInstance({ _, hourOfDay, minute, _ ->
-                    var value = ""
-                    if (hourOfDay < 10) {
-                        value += "0"
-                    }
-                    value += hourOfDay.toString() + ":"
-                    if (minute < 10) {
-                        value += "0"
-                    }
-                    value += minute
-                    PrefHelper.putString(activity, key, value)
-                    preference.summary = value
-                }, parts[0], parts[1], 0, true)
-                dialog.show(fragmentManager, "time_picker")
+                //                val value = PrefHelper.getString(activity, key, defaultValue)
+//                val parts = REHelper.getUserSetTime(value)
+//                val dialog = Material.newInstance({ _, hourOfDay, minute, _ ->
+//                    var value = ""
+//                    if (hourOfDay < 10) {
+//                        value += "0"
+//                    }
+//                    value += hourOfDay.toString() + ":"
+//                    if (minute < 10) {
+//                        value += "0"
+//                    }
+//                    value += minute
+//                    PrefHelper.putString(activity, key, value)
+//                    preference.summary = value
+//                }, parts[0], parts[1], 0, true)
+//                dialog.show(fragmentManager, "time_picker")
                 true
             }
             mClassSettingScreen!!.addPreference(preference)
@@ -196,29 +184,11 @@ class SchoolPreferenceFragment : PreferenceFragment(), Preference.OnPreferenceCh
                 bindSummary(mSchoolPreference!!, value)
             }
         } else if (preference == mCmsPasswordPreference) {
-            return encryption(preference, value, R.string.pref_cms_password)
         } else if (preference == mLibPasswordPreference) {
-            return encryption(preference, value, R.string.pref_lib_password)
         } else if (preference == mDailyClassCountPreference) {
             PrefHelper.putString(activity, R.string.pref_daily_class_count, value)
             addTimePreferences()
             return false
-        }
-        return true
-    }
-
-    private fun encryption(preference: Preference, password: String, passwordId: Int): Boolean {
-        var password = password
-        if (!TextUtils.isEmpty(password)) {
-            try {
-                password = AESCrypt.encrypt(Constants.seed, password)
-                PrefHelper.putString(activity, getString(passwordId), password)
-                preference.setSummary(R.string.encrypted)
-                return false
-            } catch (e: Exception) {
-                Log.e("ENCRYPTION FAIL", e.message)
-            }
-
         }
         return true
     }

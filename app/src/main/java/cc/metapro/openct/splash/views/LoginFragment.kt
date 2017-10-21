@@ -24,23 +24,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
-
-import butterknife.BindView
-import butterknife.ButterKnife
 import cc.metapro.openct.R
 import cc.metapro.openct.splash.SplashContract
-
 import cc.metapro.openct.utils.Constants.TYPE_CMS
 import cc.metapro.openct.utils.Constants.TYPE_LIB
 
 class LoginFragment : Fragment(), SplashContract.LoginView {
 
-    @BindView(R.id.img)
-    internal var mImageView: ImageView? = null
-    @BindView(R.id.username)
-    internal var mUsername: EditText? = null
-    @BindView(R.id.password)
-    internal var mPassword: EditText? = null
+    private var mImageView: ImageView? = null
+    private var mUsername: EditText? = null
+    private var mPassword: EditText? = null
 
     private var mPresenter: SplashContract.Presenter? = null
     private var mType = TYPE_CMS
@@ -49,7 +42,6 @@ class LoginFragment : Fragment(), SplashContract.LoginView {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_userpass, container, false)
-        ButterKnife.bind(this, view)
         mType = arguments.getInt(KEY_TYPE)
         if (mType == TYPE_LIB) {
             mImageView!!.setImageResource(R.drawable.ic_lib_header)

@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
+package cc.metapro.openct.data.service
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'net.lingala.zip4j:zip4j:1.3.2'
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Query
+
+
+interface CETService {
+
+    @GET("http://www.chsi.com.cn/cet/query")
+    fun queryCET(@Header("Referer") refer: String,
+                 @Query("zkzh") num: String,
+                 @Query("xm") name: String,
+                 @Query("_t") t: String
+    ): Call<String>
 }
-
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"

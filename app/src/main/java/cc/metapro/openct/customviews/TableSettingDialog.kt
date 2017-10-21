@@ -18,15 +18,14 @@ package cc.metapro.openct.customviews
 
 import android.app.Dialog
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
-import cc.metapro.interactiveweb.utils.HTMLUtils
 import cc.metapro.openct.R
 import cc.metapro.openct.utils.Constants
-import cc.metapro.openct.utils.base.BaseDialog
 import org.jsoup.nodes.Element
 import java.util.*
 
-class TableSettingDialog : BaseDialog() {
+class TableSettingDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity)
@@ -85,11 +84,11 @@ class TableSettingDialog : BaseDialog() {
                 })
                 mShowingOptions = mOptions
                 mIndex = 0
-                val sample = element.text().split((HTMLUtils.BR_REPLACER + HTMLUtils.BR_REPLACER + "+").toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
-                val s = sample.split(HTMLUtils.BR_REPLACER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                mResult = HashMap<String, Int>()
-                mContents = ArrayList(Arrays.asList(*s))
-                mCallBack = callBack
+//                val sample = element.text().split((HTMLUtils.BR_REPLACER + HTMLUtils.BR_REPLACER + "+").toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+//                val s = sample.split(HTMLUtils.BR_REPLACER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+//                mResult = HashMap<String, Int>()
+//                mContents = ArrayList(Arrays.asList(*s))
+//                mCallBack = callBack
             } else {
                 throw NullPointerException("Can't find sample element")
             }
