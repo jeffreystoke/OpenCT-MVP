@@ -10,17 +10,16 @@
 1. 获取并显示成绩 (可查英语四六级)
 1. 搜索图书馆
 1. 获取图书馆借阅信息
-1. JS 自定义脚本登录教务网
-1. 导出 iCal 文件 (.ics) 用于日历同步
-1. 手动添加修改课程信息
-1. Excel 文件导入课程信息
+1. 自定义脚本登录教务网
+1. 导入/导出课程信息 iCal 文件 (.ics) 用于日历同步
+1. 导入/导出课程信息 Excel 文件
 1. 主题切换
 
 ## Dependency
 
-- openct-core
+- [openct-core](https://github.com/jeffreystoke/openct-core)
 - RxJava2 & RxAndroid
-- Android Support v4/v7/Design/CardView-v7/ConstraintLayout
+- Android Support Libs
 
 ## Import from XLSX (Excel 2007+)
 

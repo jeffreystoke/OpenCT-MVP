@@ -7,7 +7,6 @@ local.properties
 /build
 /captures
 .externalNativeBuild
-/openct-core
 
 # Built application files
 *.apk
