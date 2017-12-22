@@ -1,10 +1,8 @@
-# OpenCT-MVP
+# OpenCT-Android
 
-OpenCT 开源课程表, 是一款完全由学生打造的课表软件
+开源课程表 (Android 版) 使用 Kotlin 编写, 基于 Room, MVVM 完全重新设计构建
 
-(目前正在使用 Kotlin 重写中, Kotlin 分支不可用, Java 分支可用)
-
-酷安市场 - [http://www.coolapk.com/apk/cc.metapro.openct](http://www.coolapk.com/apk/cc.metapro.openct)
+酷安市场 [开源课程表](http://www.coolapk.com/apk/cc.metapro.openct)
 
 ## Features
 
@@ -17,17 +15,12 @@ OpenCT 开源课程表, 是一款完全由学生打造的课表软件
 1. 手动添加修改课程信息
 1. Excel 文件导入课程信息
 1. 主题切换
-1. 桌面插件(很丑, 暂不推荐)
 
 ## Dependency
 
-- Jsoup (用于 HTML 及 XML 解析)
-- Realm (用于简化数据库存储)
-- iCal4j (用于日历文件生成)
-- Gson
-- RxJava2 & RxKotlin & RxAndroid
+- openct-core
+- RxJava2 & RxAndroid
 - Android Support v4/v7/Design/CardView-v7/ConstraintLayout
-- Squareup Retrofit/Converter-Gson/Converter-Scalars/Adapter-RxJava2
 
 ## Import from XLSX (Excel 2007+)
 
@@ -46,4 +39,4 @@ Download Excel Template Document - <a href="./template.xlsx?raw=true">template.x
 
 |name|type|time|during|teacher|place|
 |----|----|----|-----|----|----|
-|哲♂学|必修|周一 5-6节|1-5&6-10双&11-15单|Van|教102|
+|哲学|必修|周一 5-6节|1-5&6-10双&11-15单|波澜哥|教102|

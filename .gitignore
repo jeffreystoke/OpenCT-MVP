@@ -1,13 +1,13 @@
-*.iml
-.gradle
-.vscode/
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
 .DS_Store
+*.iml
+/.gradle
+/.vscode
+local.properties
+/.idea
 /build
 /captures
 .externalNativeBuild
+/openct-core
 
 # Built application files
 *.apk

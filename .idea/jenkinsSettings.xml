@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="Jenkins.Application.Settings">
-    <option name="serverUrl" value="http://58.216.52.122:12305/" />
-    <option name="jobRefreshPeriod" value="10" />
-    <option name="rssRefreshPeriod" value="10" />
-  </component>
-</project>

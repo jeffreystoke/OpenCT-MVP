@@ -1,11 +1,11 @@
 /*
- *  Copyright 2016 - 2017 OpenCT open source class table
+ * Copyright 2016 - 2017 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,35 +15,26 @@
  */
 
 buildscript {
-    ext.kotlin_version = '1.1.51'
-    ext.kotlin_version = '1.1.4-2'
+    ext.kotlin_version = '1.2.10'
     ext.versions = [
             'minsdk'     : 21,
-            'compilesdk' : 26,
-            'targetsdk'  : 26,
-            'buildtools' : '26.0.2',
+            'compilesdk' : 27,
+            'targetsdk'  : 27,
+            'buildtools' : '27.0.1',
 
-            'supportlibs': '26.1.0',
-            'retrofit'   : '2.3.0',
-            'rxjava'     : '2.1.1',
-            'rxkotlin'   : '2.1.0',
+            'supportlibs': '27.0.2',
+            'rxjava'     : '2.1.6',
             'rxandroid'  : '2.0.1',
-            'jsoup'      : '1.10.3',
-            'md_dialogs' : '0.9.4.7'
+            'md_dialogs' : '0.9.6.0'
     ]
 
     repositories {
         google()
         jcenter()
-        // realm
-        maven {
-            url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
-        }
     }
 
     dependencies {
-        classpath "io.realm:realm-gradle-plugin:3.5.0"
-        classpath 'com.android.tools.build:gradle:3.0.0-rc1'
+        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -53,9 +44,6 @@ allprojects {
         google()
         jcenter()
         mavenCentral()
-        maven {
-            url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
-        }
     }
 }
 

@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~  Copyright 2016 - 2017 OpenCT open source class table
+  ~ Copyright 2016 - 2017 OpenCT open source class table
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
   ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~       http://www.apache.org/licenses/LICENSE-2.0
   ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,136 +15,24 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="cc.metapro.openct">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="cc.metapro.openct">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.VIBRATE"
-        tools:node="remove"/>
+        tools:node="remove" />
 
     <application
         android:name=".OpenCT"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionbar">
-        <activity
-            android:name=".myclass.ClassActivity"
-            android:label="@string/app_name"
-            android:windowSoftInputMode="adjustPan|stateHidden">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".pref.SettingsActivity"
-            android:label="@string/settings"
-            android:parentActivityName=".myclass.ClassActivity"
-            android:theme="@style/AppTheme.Actionbar"
-            android:windowSoftInputMode="adjustPan|stateHidden">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="cc.metapro.openct.myclass.ClassActivity"/>
-        </activity>
+        android:theme="@style/AppTheme.NoActionbar"
+        tools:ignore="GoogleAppIndexingWarning">
 
-        <activity
-            android:name=".grades.GradeActivity"
-            android:label="@string/grade_list"
-            android:parentActivityName=".myclass.ClassActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="cc.metapro.openct.myclass.ClassActivity"/>
-        </activity>
-        <activity
-            android:name=".search.LibSearchActivity"
-            android:label="@string/search_lib"
-            android:parentActivityName=".myclass.ClassActivity"
-            android:windowSoftInputMode="adjustPan|stateVisible">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="cc.metapro.openct.myclass.ClassActivity"/>
-        </activity>
-        <activity
-            android:name=".borrow.BorrowActivity"
-            android:label="@string/borrow_info"
-            android:parentActivityName=".myclass.ClassActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="cc.metapro.openct.myclass.ClassActivity"/>
-        </activity>
-        <activity
-            android:name=".custom.CustomActivity"
-            android:label="@string/custom"
-            android:parentActivityName=".myclass.ClassActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="cc.metapro.openct.myclass.ClassActivity"/>
-
-            <intent-filter>
-                <action android:name="cc.metapro.openct.custom"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".splash.schoolselection.SchoolSelectionActivity"
-            android:label="@string/select_school">
-            <intent-filter>
-                <action android:name="cc.metapro.openct.schoolselection"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".classdetail.ClassDetailActivity"
-            android:label="@string/class_detail"
-            android:windowSoftInputMode="adjustPan|stateHidden">
-        </activity>
-        <activity
-            android:name=".splash.SplashActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".search.BookDetailActivity">
-        </activity>
-        <activity
-            android:name=".allclasses.AllClassesActivity"
-            android:label="@string/all_classes"
-            android:windowSoftInputMode="adjustPan|stateHidden">
-        </activity>
-
-        <receiver
-            android:name=".widget.DailyClassWidget"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.DATE_CHANGED"/>
-                <action android:name="android.intent.action.TIME_SET"/>
-                <action android:name="android.intent.action.USER_PRESENT"/>
-                <action android:name="cc.metapro.openct.action.UPDATE_ITEMS"/>
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/daily_class_widget_info"/>
-        </receiver>
-        <service
-            android:name=".widget.DailyWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS">
-        </service>
     </application>
 
 </manifest>
