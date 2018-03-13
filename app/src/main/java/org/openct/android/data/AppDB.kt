@@ -29,7 +29,9 @@ import org.openct.android.data.entity.GradeInfo
 import org.openct.android.data.entity.SchoolInfo
 import org.openct.android.utils.Converters
 
-@Database(entities = [ClassInfo::class, GradeInfo::class, BorrowInfo::class, SchoolInfo::class], version = 1)
+@Database(entities = [
+    ClassInfo::class, GradeInfo::class,
+    BorrowInfo::class, SchoolInfo::class], version = 1)
 @TypeConverters(value = [Converters::class])
 abstract class AppDB : RoomDatabase() {
     abstract fun classDao(): ClassDao

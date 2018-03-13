@@ -34,10 +34,6 @@ class OpenCT : Application() {
         Utils.init(this)
         CrashUtils.init()
 
-        sDB = Room.databaseBuilder(
-                applicationContext,
-                AppDB::class.java,
-                "openct-db")
-                .build()
+        sDB = Room.databaseBuilder(applicationContext, AppDB::class.java, "openct-db").build()
     }
 }

@@ -1,4 +1,4 @@
-# OpenCT-Android
+# openct-android
 
 开源课程表 (Android 版) 使用 Kotlin 编写, 基于 Room, MVVM 完全重新设计构建
 
@@ -13,15 +13,21 @@
 1. 自定义脚本登录教务网
 1. 导入/导出课程信息 iCal 文件 (.ics) 用于日历同步
 1. 导入/导出课程信息 Excel 文件
-1. 主题切换
+1. 主题切换, 自定义背景
+
+注: 没有插件! 没有插件! 没有插件! 请导出 iCal 后导入日历软件使用日历插件!
 
 ## Dependency
 
-- [openct-core](https://github.com/jeffreystoke/openct-core)
-- RxJava2 & RxAndroid
-- Android Support Libs
+- Android Lifecycle, Room, KTX, Support Libs
+- Google Gson
+- BiliBili magicasakura (Theme)
+- bumptech Glide
+- blankj utilcode
+- afollestad material-dialogs
+- ReactiveX Tools
 
-## Import from XLSX (Excel 2007+)
+## Excel (.xlsx) 导入
 
 Download Excel Template Document - <a href="./template.xlsx?raw=true">template.xlsx</a>
 
