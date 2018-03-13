@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 - 2017 OpenCT open source class table
+ * Copyright 2016 - 2018 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,12 @@ buildscript {
             'targetsdk'  : 27,
             'buildtools' : '27.0.1',
 
-            'supportlibs': '27.0.2',
-            'rxjava'     : '2.1.6',
-            'rxandroid'  : '2.0.1',
-            'md_dialogs' : '0.9.6.0'
+            'supportlibs': '27.1.0',
+            'rxjava'     : '2.1.10',
+            'rxandroid'  : '2.0.2',
+            'md_dialogs' : '0.9.6.0',
+            'glide'      : '4.6.1',
+            'arch'       : '1.1.0',
     ]
 
     repositories {

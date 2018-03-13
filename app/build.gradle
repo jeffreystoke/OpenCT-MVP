@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 - 2017 OpenCT open source class table
+ * Copyright 2016 - 2018 OpenCT open source class table
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ android {
     buildToolsVersion rootProject.versions.buildtools
 
     defaultConfig {
-        applicationId "cc.metapro.openct"
+        applicationId "org.openct.andorid.OpenCT"
         minSdkVersion rootProject.versions.minsdk
         targetSdkVersion rootProject.versions.targetsdk
         versionCode 90
@@ -47,10 +47,12 @@ android {
 }
 
 dependencies {
-    implementation project(':openct-core')
-
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    // Android KTX
+    implementation 'androidx.core:core-ktx:0.2'
+    // Gson
+    implementation 'com.google.code.gson:gson:2.8.2'
 
     // Support Library
     implementation "com.android.support:design:${rootProject.versions.supportlibs}"
@@ -80,17 +82,18 @@ dependencies {
     implementation 'com.blankj:utilcode:1.9.12'
 
     // Glide
-    implementation 'com.github.bumptech.glide:glide:4.4.0'
+    implementation "com.github.bumptech.glide:glide:${rootProject.versions.glide}"
 
     // Android Arch
     // Lifecycle, LiveData, ViewModel
-    implementation "android.arch.lifecycle:runtime:1.0.3"
-    implementation "android.arch.lifecycle:extensions:1.0.0"
-    annotationProcessor "android.arch.lifecycle:compiler:1.0.0"
+    implementation "android.arch.lifecycle:runtime:${rootProject.versions.arch}"
+    implementation "android.arch.lifecycle:extensions:${rootProject.versions.arch}"
+    annotationProcessor "android.arch.lifecycle:compiler:${rootProject.versions.arch}"
 
     // Room
+    implementation "android.arch.persistence.room:rxjava2:1.0.0"
     implementation "android.arch.persistence.room:runtime:1.0.0"
-    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+    kapt "android.arch.persistence.room:compiler:1.0.0"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
